@@ -7,8 +7,10 @@ const routes = [
       { path: '', component: () => import('pages/Index.vue') },
       { path: '/member/adult', component: () => import('pages/membersAdult.vue') },
       { path: '/member/nonadult', component: () => import('pages/membersNonAdult.vue') },
-      { path: '/member/nonactive', component: () => import('pages/membersNonActive.vue') },
+      { path: '/member/adultnonactive', component: () => import('pages/membersAdultNonActive.vue') },
+      { path: '/member/nonadultnonactive', component: () => import('pages/membersNonAdultNonActive.vue') },
       { path: '/member/erased', component: () => import('pages/membersErased.vue') },
+      { path: '/member/', component: () => import('pages/member.vue') },
       { path: '/member/addmember', component: () => import('pages/addMember.vue') }
     ]
   },

@@ -5,9 +5,7 @@
       <q-expansion-item v-for="members in members" :key="members.uuid">
         <template v-slot:header>
           <q-item-section avatar>
-            <q-avatar v-if="members.weaponPermission&&!members.license.isValid" icon="warning" color="red" text-color="white" />
-            <q-avatar v-if="members.email==null" icon="warning" color="warning" text-color="white" />
-            <q-avatar v-else icon="perm_identity" color="primary" text-color="white" />
+            <q-avatar icon="person_remove" color="brown" text-color="white" />
           </q-item-section>
           <q-item-section>
           <q-item-label>{{members.secondName}} {{members.firstName}}</q-item-label>

@@ -10,7 +10,7 @@
             <q-avatar v-else icon="perm_identity" color="primary" text-color="white" />
           </q-item-section>
           <q-item-section>
-          <q-item-label v-model="openMember">{{members.secondName}} {{members.firstName}}</q-item-label>
+          <q-item-label>{{members.secondName}} {{members.firstName}}</q-item-label>
           <q-item-label caption lines="2">Składka ważna do {{members.contribution.contribution}}</q-item-label>
            <q-item-label caption lines="2">Składka opłacona dnia {{members.contribution.paymentDay}}</q-item-label>
           </q-item-section>
@@ -26,7 +26,7 @@
             "/>
           </q-item-section>
         </template>
-            <q-item><q-btn label="wyświetl" @click="openMember = !openMember"></q-btn></q-item>
+        <q-item><q-btn label="wyświetl" @click="openMember = !openMember"></q-btn></q-item>
 
         <q-card v-if="openMember">
           <q-item  >
@@ -119,8 +119,8 @@
                 <q-item-section>
                   <q-item-label>Przenieś do nieaktywnych</q-item-label>
                   <q-expansion-item label="rozwiń">
-                  <q-item-label v-if="members.active">Czy napewno chcesz przenieść osobę?</q-item-label>
-                <q-item><q-btn label="przenieś" color="red" @click="showloading(), changeActive(members.uuid), reload()"/></q-item>
+                  <q-item-label v-if="!members.weaponPermission.isExist">Czy napewno skreślić z listy?</q-item-label>
+                <q-item><q-btn label="skreśl" color="red" @click="showloading(), erase(members.uuid), reload()"/></q-item>
                   </q-expansion-item>
                 </q-item-section>
           </q-card-section>
@@ -140,7 +140,7 @@
             <q-item-section side top>
             <q-expansion-item label="Zmień numer Dowodu">
                 <q-item><q-input v-model="idcard" label="Numer Dowodu" :dense="dense" /></q-item>
-                <q-item><q-btn label="Aktualizuj" color="primary" @click="showloading(),updateIDCard(members.uuid,idcard),reload()"/></q-item>
+                <q-item><q-btn label="Aktualizuj" color="primary" @click="showloading(),updateIDCard (members.uuid, idcard),reload()"/></q-item>
             </q-expansion-item>
             </q-item-section>
             </q-item-section>
@@ -212,11 +212,80 @@ export default {
         this.timer = 0
       }, 1000)
     },
-    updateMember (uuid, email, phoneNumber, idcard) {
+    getListMembers () {
+      fetch('http://localhost:8080/member/activelist?active=false&adult=false&erase=false', {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(members => {
+          this.members = members
+        })
+    },
+    prolongContribution (uuid) {
+      fetch('http://localhost:8080/contribution/' + uuid, {
+        method: 'PATCH'
+      }).then(response => response.json())
+        .then(members => {
+          this.members = members
+        })
+      this.getListMembers()
+    },
+    getMember (uuid) {
+      fetch('http://localhost:8080/member/' + uuid, {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(members => {
+          this.members = members
+        })
+      this.$router.push('/member/' + uuid)
+    },
+    reload () {
+      window.location.reload()
+    },
+    refreshPage () {
+      this.timer = setInterval(() => {
+        window.location.reload()
+      }, 10000)
+    },
+    addPatent (uuid, patentNumber, patentPistolPermission, patentRiflePermission, patentShotgunPermission) {
+      var data = {
+        patentNumber: patentNumber,
+        pistolPermission: patentPistolPermission,
+        riflePermission: patentRiflePermission,
+        shotgunPermission: patentShotgunPermission
+      }
+      fetch('http://localhost:8080/patent/' + uuid, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => response.json())
+        .then(members => {
+          this.members = members
+        })
+    },
+    addLicense (uuid, licenseNumber, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission) {
+      var data1 = {
+        number: licenseNumber,
+        pistolPermission: licensePistolPermission,
+        riflePermission: licenseRiflePermission,
+        shotgunPermission: licenseShotgunPermission
+      }
+      fetch('http://localhost:8080/license/' + uuid, {
+        method: 'PUT',
+        body: JSON.stringify(data1),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => response.json())
+        .then(members => {
+          this.members = members
+        })
+    },
+    updateMember (uuid, email, phoneNumber) {
       var data = {
         email: email,
-        phoneNumber: phoneNumber,
-        idcard: idcard
+        phoneNumber: phoneNumber
       }
       fetch('http://localhost:8080/member/' + uuid, {
         method: 'PUT',
@@ -263,93 +332,44 @@ export default {
           this.members = members
         })
     },
-    getListMembers () {
-      fetch('http://localhost:8080/member/activelist?active=true&adult=true&erase=false', {
-        method: 'GET'
-      }).then(response => response.json())
-        .then(members => {
-          this.members = members
-        })
-    },
-    prolongContribution (uuid) {
-      fetch('http://localhost:8080/contribution/' + uuid, {
-        method: 'PATCH'
-      }).then(response => response.json())
-        .then(members => {
-          this.members = members
-        })
-      this.getListMembers()
-    },
-    reload () {
-      window.location.reload()
-    },
-    addPatent (uuid, patentNumber, patentPistolPermission, patentRiflePermission, patentShotgunPermission) {
-      var data = {
-        patentNumber: patentNumber,
-        pistolPermission: patentPistolPermission,
-        riflePermission: patentRiflePermission,
-        shotgunPermission: patentShotgunPermission
-      }
-      fetch('http://localhost:8080/patent/' + uuid, {
-        method: 'PUT',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => response.json())
-        .then(members => {
-          this.members = members
-        })
-    },
-    addLicense (uuid, licenseNumber, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission) {
-      var data1 = {
-        number: licenseNumber,
-        pistolPermission: licensePistolPermission,
-        riflePermission: licenseRiflePermission,
-        shotgunPermission: licenseShotgunPermission
-      }
-      fetch('http://localhost:8080/license/' + uuid, {
-        method: 'PUT',
-        body: JSON.stringify(data1),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => response.json())
-        .then(members => {
-          this.members = members
-        })
-    },
-    prolongLicense (uuid) {
-      fetch('http://localhost:8080/license/' + uuid, {
-        method: 'PATCH'
-      }).then(response => response.json())
-        .then(members => {
-          this.members = members
-        })
-    },
-    changeWeaponPermission (uuid, weaponPermissionNumber) {
-      var data = {
-        number: weaponPermissionNumber
-      }
+    changeWeaponPermission (uuid) {
       fetch('http://localhost:8080/member/weapon/' + uuid, {
-        method: 'PUT',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json'
-        }
+        method: 'PATCH'
       }).then(response => response.json())
         .then(members => {
           this.members = members
         })
     },
-    changeActive (uuid) {
-      fetch('http://localhost:8080/member/' + uuid, {
+    erase (uuid) {
+      fetch('http://localhost:8080/member/erase/' + uuid, {
         method: 'PATCH'
       }).then(response => response.json())
         .then(members => {
           this.members = members
         })
     }
+  },
+  addMember (memberFirstName, memberSecondName, memberIDCard, memberPesel, memberPhone, memberEmail, memberAdult) {
+    var data = {
+      firstName: memberFirstName,
+      secondName: memberSecondName,
+      IDCard: memberIDCard,
+      pesel: memberPesel,
+      email: memberEmail,
+      phoneNumber: memberPhone,
+      adult: memberAdult,
+      active: this.active
+    }
+    fetch('http://localhost:8080/member/', {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(response => response.json())
+      .then(member => {
+        this.member = member
+      })
   },
   name: 'members'
 }

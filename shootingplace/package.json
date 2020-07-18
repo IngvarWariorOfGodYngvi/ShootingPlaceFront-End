@@ -1,7 +1,7 @@
 {
   "name": "shootingplace",
   "version": "0.0.1",
-  "description": "A Quasar Framework app",
+  "description": "Strzelnica",
   "productName": "Strzelnica",
   "author": "izebr <i.zebrowski.ul@gmail.com>",
   "private": true,

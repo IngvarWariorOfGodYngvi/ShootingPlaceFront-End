@@ -1,60 +1,165 @@
 <template>
   <q-page padding>
-      <div class="q-pa-md">
-    <q-btn label="Reset" push color="white" text-color="primary" @click="reset" class="q-mb-md" />
-
+    <div>
     <q-stepper
       v-model="step"
-      header-nav
       ref="stepper"
       color="primary"
       animated
     >
       <q-step
         :name="1"
-        title="Select campaign settings"
+        title="Podstawowe dane"
+        caption="Wymagane"
         icon="settings"
-        :done="done1"
+        :done="step > 1"
       >
-        For each ad campaign that you create, you can control how much you're willing to
-        spend on clicks and conversions, which networks and geographical locations you want
-        your ads to show on, and more.
-
-        <q-stepper-navigation>
-          <q-btn @click="() => { done1 = true; step = 2 }" color="primary" label="Continue" />
-        </q-stepper-navigation>
+      <q-card class="row">
+      <q-card-section>
+      <div>
+      <q-item><q-input color="red" v-model="memberFirstName" label="*Imię" :dense="dense" /></q-item>
+      <q-item><q-input color="red" v-model="memberSecondName" label="*Nazwisko" :dense="dense" /></q-item>
+      <q-item><q-input color="red" v-model="memberIDCard" label="*Numer Dowodu" :dense="dense" /></q-item>
+      <q-item><q-input color="red" v-model="memberPesel" label="*Pesel" :dense="dense" /></q-item>
+      <q-item><q-input color="red" v-model="memberPhone" placeholder="same cyfry" label="*Numer telefonu" :dense="dense" /></q-item>
+      <q-item><q-input color="green" v-model="memberEmail" label="email " :dense="dense" /></q-item>
+      <q-item><q-input color="green" v-model="memberLegitimation" label="Numer Legitymacji" :dense="dense" /></q-item>
+      <!-- <q-item><q-input color="green" v-model="memberJoinDate" placeholder="YYYY-MM-DD" label="Data dołączenia do klubu" :dense="dense" /></q-item> -->
+      <q-item><q-item-label>Grupa Młodzieżowa</q-item-label><q-toggle v-model="memberAdult" color="secondary" /><q-item-label>Grupa Dorosła</q-item-label></q-item>
+      <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),addMember(memberLegitimation, memberFirstName,
+      memberSecondName,
+      memberIDCard,
+      memberPesel,
+      memberPhone,
+      memberEmail)"/></q-item>
+      </div>
+      </q-card-section>
+      <q-card-section>
+      <div>
+      <q-item><q-item-label>Imię : {{memberFirstName}}</q-item-label></q-item>
+      <q-item><q-item-label>Nazwisko : {{memberSecondName}}</q-item-label></q-item>
+      <q-item><q-item-label>Numer Dowodu Osobistego : {{memberIDCard}}</q-item-label></q-item>
+      <q-item><q-item-label>Numer PESEL : {{memberPesel}}</q-item-label></q-item>
+      <q-item><q-item-label>Numer Telefonu : +48 {{memberPhone}}</q-item-label></q-item>
+      <q-item><q-item-label>Adres E-mail : {{memberEmail}}</q-item-label></q-item>
+      <q-item><q-item-label>Numer Legitymacji Klubowej : {{memberLegitimation}}</q-item-label></q-item>
+      <q-item><q-item-label>Data Dołączenia Do Klubu : {{memberJoinDate}}</q-item-label></q-item>
+      <q-item><q-item-label v-if="memberAdult&&memberIDCard!=null">Grupa Dorosła</q-item-label></q-item>
+      <q-item><q-item-label v-if="!memberAdult&&memberIDCard!=null">Grupa Młodzieżowa</q-item-label></q-item>
+      </div>
+      </q-card-section>
+      </q-card>
       </q-step>
 
       <q-step
         :name="2"
-        title="Create an ad group"
-        caption="Optional"
+        title="Dane Adresowe"
+        caption="Opcjonalnie"
         icon="create_new_folder"
-        :done="done2"
+        :done="step > 2"
       >
-        An ad group contains one or more ads which target a shared set of keywords.
-
-        <q-stepper-navigation>
-          <q-btn @click="() => { done2 = true; step = 3 }" color="primary" label="Continue" />
-          <q-btn flat @click="step = 1" color="primary" label="Back" class="q-ml-sm" />
-        </q-stepper-navigation>
+      <q-card class="row">
+      <q-card-section>
+      <div>
+      <q-item><q-input v-model="zipCode" label="Miasto" :dense="dense" /></q-item>
+      <q-item><q-input v-model="postOfficeCity" label="Kod Pocztowy" :dense="dense" /></q-item>
+      <q-item><q-input v-model="street" label="Ulica" :dense="dense" /></q-item>
+      <q-item><q-input v-model="streetNumber" label="Numer Ulicy" :dense="dense" /></q-item>
+      <q-item><q-input v-model="flatNumber" label="Numer Mieszkania" :dense="dense"/></q-item>
+      <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),updateAddress(members.uuid, zipCode, postOfficeCity, street, streetNumber, flatNumber)"/></q-item>
+      </div>
+      </q-card-section>
+      <q-card-section>
+      <div>
+      <q-item><q-item-label>Miasto : {{postOfficeCity}}</q-item-label></q-item>
+      <q-item><q-item-label>Kod Pocztowy : {{zipCode}}</q-item-label></q-item>
+      <q-item><q-item-label>Ulica : {{street}}</q-item-label></q-item>
+      <q-item><q-item-label>Numer Ulicy : {{streetNumber}}</q-item-label></q-item>
+      <q-item><q-item-label>Numer Mieszkania : {{flatNumber}}</q-item-label></q-item>
+      </div>
+      </q-card-section>
+      </q-card>
       </q-step>
 
       <q-step
         :name="3"
-        title="Create an ad"
-        icon="add_comment"
-        :done="done3"
+        title="Patent"
+        caption="opcjonalnie"
+        icon="assignment"
+        :done="step > 3"
       >
-        Try out different ad text to see what brings in the most customers, and learn how to
-        enhance your ads using features like ad extensions. If you run into any problems with
-        your ads, find out how to tell if they're running and how to resolve approval issues.
-
-        <q-stepper-navigation>
-          <q-btn color="primary" @click="done3 = true" label="Finish" />
-          <q-btn flat @click="step = 2" color="primary" label="Back" class="q-ml-sm" />
-        </q-stepper-navigation>
+      <q-card class="row">
+      <q-card-section>
+      <div>
+      <q-item><q-input v-model="patentNumber" label="Numer Patentu" :dense="dense"/></q-item>
+      <!-- <q-item><q-input label="Data Nadania" :dense="dense"/></q-item> -->
+      <q-item><q-toggle v-model="patentPistolPermission" label="Pistolet"/></q-item>
+      <q-item><q-toggle v-model="patentRiflePermission" label="Karabin"/></q-item>
+      <q-item><q-toggle v-model="patentShotgunPermission" label="Strzelba"/></q-item>
+      <q-item><q-btn label="Dodaj" color="secondary" @click="showloading()"/></q-item>
+      </div>
+      </q-card-section>
+      <q-card-section>
+      <div>
+      <q-item><q-item-label>Numer Patentu : {{patentNumber}}</q-item-label></q-item>
+      <q-item><q-item-label>Data Nadania : {{}}</q-item-label></q-item>
+      <q-item><q-item-label>Dyscypliny :</q-item-label></q-item>
+      <q-item><q-item-label v-if="patentPistolPermission">P</q-item-label></q-item>
+      <q-item><q-item-label v-if="patentRiflePermission">K</q-item-label></q-item>
+      <q-item><q-item-label v-if="patentShotgunPermission">S</q-item-label></q-item>
+      </div>
+      </q-card-section>
+      </q-card>
       </q-step>
+
+      <q-step
+        :name="4"
+        title="Licencja"
+        caption="opcjonalnie"
+        icon="assignment"
+        :done="step > 4"
+      >
+      <q-card class="row">
+      <q-card-section>
+      <div>
+   <q-item><q-input label="Numer Licencji" :dense="dense"/></q-item>
+      <q-item><q-input label="Ważna do" :dense="dense"/></q-item>
+      <q-item><q-toggle v-model="licensePistolPermission" label="Pistolet"/></q-item>
+      <q-item><q-toggle v-model="licenseRiflePermission" label="Karabin"/></q-item>
+      <q-item><q-toggle v-model="licenseShotgunPermission" label="Strzelba"/></q-item>
+      <q-item><q-btn label="Dodaj" color="secondary" @click="showloading()"/></q-item>
+      </div>
+      </q-card-section>
+      <q-card-section>
+      <div>
+      <q-item><q-item-label>Numer Patentu : {{licenseNumber}}</q-item-label></q-item>
+      <q-item><q-item-label>Data Nadania : {{}}</q-item-label></q-item>
+      <q-item><q-item-label>Dyscypliny :</q-item-label></q-item>
+      <q-item><q-item-label v-if="licensePistolPermission&&patentPistolPermission">P</q-item-label></q-item>
+      <q-item><q-item-label v-if="licenseRiflePermission&&patentRiflePermission">K</q-item-label></q-item>
+      <q-item><q-item-label v-if="licenseShotgunPermission&&patentShotgunPermission">S</q-item-label></q-item>
+      </div>
+      </q-card-section>
+      </q-card>
+      </q-step>
+
+      <q-step
+        :name="5"
+        title="Pozwolenie na Broń"
+        caption="opcjonalnie"
+        icon="assignment"
+      >
+      <q-item><q-item-label>Posiada pozwolenie na Broń?</q-item-label></q-item>
+      <q-item><q-input v-model="weaponPermissionNumber" label="Numer" :dense="dense" /></q-item>
+      </q-step>
+
+      <template v-slot:navigation>
+        <q-stepper-navigation>
+          <!-- v-if="uuid!=null" -->
+          <q-btn  @click="$refs.stepper.next()" color="primary" :label="step === 5 ? 'Zakończ' : 'Przejdź Dalej'" />
+          <q-btn v-if="step > 1" flat color="primary" @click="$refs.stepper.previous()" label="Wróć" class="q-ml-sm" />
+        </q-stepper-navigation>
+      </template>
     </q-stepper>
   </div>
   </q-page>
@@ -64,7 +169,93 @@
 export default {
   data () {
     return {
-      member: []
+      step: 1,
+      number: '',
+      patentNumber: '',
+      licenseNumber: '',
+      validThru: '',
+      member: [],
+      dateOfPosting: null,
+      patentPistolPermission: false,
+      patentRiflePermission: false,
+      patentShotgunPermission: false,
+      licensePistolPermission: false,
+      licenseRiflePermission: false,
+      licenseShotgunPermission: false,
+      weponPermissionNumer: '',
+      isExist: false,
+      memberFirstName: '',
+      memberSecondName: '',
+      memberIDCard: null,
+      memberPesel: '',
+      memberPhone: '',
+      memberEmail: '',
+      memberAdult: true,
+      memberLegitimation: '',
+      memberJoinDate: null,
+      zipCode: null,
+      postOfficeCity: null,
+      street: null,
+      streetNumber: null,
+      flatNumber: null,
+      active: true,
+      uuid: null
+    }
+  },
+  methods: {
+    showloading () {
+      this.$q.loading.show({ message: 'Dzieje się coś ważnego... Poczekaj' })
+      this.timer = setTimeout(() => {
+        this.$q.loading.hide()
+        this.timer = 0
+      }, 1000)
+    },
+    addMember (memberLegitimation, memberFirstName, memberSecondName, memberIDCard, memberPesel, memberPhone, memberEmail, memberAdult) {
+      var data = {
+        legitimationNumber: memberLegitimation,
+        firstName: memberFirstName,
+        secondName: memberSecondName,
+        idcard: memberIDCard,
+        pesel: memberPesel,
+        email: memberEmail,
+        phoneNumber: memberPhone,
+        adult: memberAdult,
+        active: this.active
+        // joinDate: memberJoinDate
+      }
+      fetch('http://localhost:8080/member/', {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.ok) { alert('Witamy w Klubie ' + memberFirstName) }
+        if (!response.ok) { alert('Coś się nie udało - sprzawdź czy dane są wprowadzone') }
+      })
+        .then(uuid => {
+          this.uuid = uuid
+          console.log(this.uuid)
+        })
+    },
+    updateAddress (uuid, zipCode, postOfficeCity, street, streetNumber, flatNumber) {
+      var data = {
+        zipCode: zipCode,
+        postOfficeCity: postOfficeCity,
+        street: street,
+        streetNumber: streetNumber,
+        flatNumber: flatNumber
+      }
+      fetch('http://localhost:8080/address/' + uuid, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => response.json())
+        .then(members => {
+          this.members = members
+        })
     }
   },
   name: 'addMember'

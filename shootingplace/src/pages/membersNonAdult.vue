@@ -5,7 +5,6 @@
       <q-expansion-item v-for="members in members" :key="members.uuid">
         <template v-slot:header>
           <q-item-section avatar>
-            <q-avatar v-if="members.weaponPermission&&!members.license.isValid" icon="warning" color="red" text-color="white" />
             <q-avatar v-if="members.email==null" icon="warning" color="warning" text-color="white" />
             <q-avatar v-else icon="perm_identity" color="primary" text-color="white" />
           </q-item-section>
@@ -62,29 +61,29 @@
               </q-card-section>
               <q-card-section class="col">
               <q-item-section>
-                <q-item-label v-if="members.shootingPatent.patentNumber!=null">Licencja</q-item-label>
-                <q-item-label caption lines="2" v-if="members.shootingPatent.patentNumber!=null">Numer Licencji {{members.license.number}}</q-item-label>
-                <q-item-label caption lines="2" v-if="members.shootingPatent.patentNumber!=null">Ważna do {{members.license.validThru}}</q-item-label>
+                <q-item-label v-if="members.license.number!=null">Licencja</q-item-label>
+                <q-item-label caption lines="2" v-if="members.license.number!=null">Numer Licencji {{members.license.number}}</q-item-label>
+                <q-item-label caption lines="2" v-if="members.license.number!=null">Ważna do {{members.license.validThru}}</q-item-label>
                 <q-item-label v-if="members.license.number!=null">Dyscypliny :</q-item-label>
                 <q-item-label caption lines="2" v-if="members.license.pistolPermission">P</q-item-label>
                 <q-item-label caption lines="2" v-if="members.license.riflePermission">K</q-item-label>
                 <q-item-label caption lines="2" v-if="members.license.shotgunPermission">S</q-item-label>
               </q-item-section>
-              <q-expansion-item v-if="members.shootingPatent.patentNumber!=null&&members.license.number==null" label="DODAJ LICENCJĘ">
+              <q-expansion-item v-if="members.license.number==null" label="DODAJ LICENCJĘ">
                 <q-item><q-input v-if="members.license.number==null" v-model="licenseNumber" label="Numer Licencji - same cyfry" :dense="dense" id="number"/></q-item>
                 <!-- <q-item><q-input v-model="dateOfPosting" label="Przyznany YYYY-MM-DD" :dense="dense" id="day"/></q-item> -->
-                <q-item><q-toggle v-if="members.shootingPatent.pistolPermission" v-model="licensePistolPermission" label="Pistolet"/></q-item>
-                <q-item><q-toggle v-if="members.shootingPatent.riflePermission" v-model="licenseRiflePermission" label="Karabin"/></q-item>
-                <q-item><q-toggle v-if="members.shootingPatent.shotgunPermission" v-model="licenseShotgunPermission" label="Strzelba"/></q-item>
+                <q-item><q-toggle v-if="!members.license.pistolPermission" v-model="licensePistolPermission" label="Pistolet"/></q-item>
+                <q-item><q-toggle v-if="!members.license.riflePermission" v-model="licenseRiflePermission" label="Karabin"/></q-item>
+                <q-item><q-toggle v-if="!members.license.shotgunPermission" v-model="licenseShotgunPermission" label="Strzelba"/></q-item>
                 <q-btn color="secondary" label="Dodaj Licencję" v-if="members.license.number==null" @click="showloading(),addLicense(members.uuid, licenseNumber, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission),reload()"/>
               </q-expansion-item>
               <q-expansion-item v-if="members.license.number!=null&&(
                 !members.license.pistolPermission
                 ||!members.license.riflePermission
                 ||!members.license.shotgunPermission)" label="Aktualizuj Licencję">
-                <q-item><q-toggle v-if="!members.license.pistolPermission&&members.shootingPatent.pistolPermission" v-model="licensePistolPermission" label="Pistolet"/></q-item>
-                <q-item><q-toggle v-if="!members.license.riflePermission&&members.shootingPatent.riflePermission" v-model="licenseRiflePermission" label="Karabin"/></q-item>
-                <q-item><q-toggle v-if="!members.license.shotgunPermission&&members.shootingPatent.shotgunPermission" v-model="licenseShotgunPermission" label="Strzelba"/></q-item>
+                <q-item><q-toggle v-if="!members.license.pistolPermission" v-model="licensePistolPermission" label="Pistolet"/></q-item>
+                <q-item><q-toggle v-if="!members.license.riflePermission" v-model="licenseRiflePermission" label="Karabin"/></q-item>
+                <q-item><q-toggle v-if="!members.license.shotgunPermission" v-model="licenseShotgunPermission" label="Strzelba"/></q-item>
                 <q-btn color="primary" label="Aktualizuj Licencję" @click="showloading(),addLicense(members.uuid, licenseNumber, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission),reload()"/>
               </q-expansion-item>
               <q-item-label v-if="members.license.pistolPermission
@@ -101,12 +100,18 @@
                 </q-item-section>
                 <q-item-section>
                   <q-item-label>Grupa Młodzieżowa</q-item-label>
-                <q-item-label v-if="!members.adult">TAK</q-item-label>
-                <q-item-label v-else>NIE</q-item-label>
-                  <q-item-label v-if="!members.license.isValid&&members.weaponPermission">POSIADA NIE WAŻNĄ LICENCJĘ!!!</q-item-label>
+                  <q-item-label v-if="!members.license.isValid&&members.license.number!=null">POSIADA NIE WAŻNĄ LICENCJĘ!!!</q-item-label>
                   <q-expansion-item label="rozwiń">
-                    <q-item-label v-if="members.license.isValid" >Posiada ważną licencję</q-item-label>
-                <q-item><q-btn label="zmień" color="primary" @click="showloading(),changeAdult(members.uuid),reload()"/></q-item>
+                    <q-item-label v-if="members.license.isValid">Posiada ważną licencję</q-item-label>
+                    <q-item-label >czy przenieść do grupy dorosłych?</q-item-label>
+                <q-item><q-btn label="przenieś" color="warning" @click="showloading(),changeAdult(members.uuid),reload()"/></q-item>
+                  </q-expansion-item>
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>Przenieś do nieaktywnych</q-item-label>
+                  <q-expansion-item label="rozwiń">
+                  <q-item-label v-if="members.active">Czy napewno chcesz przenieść osobę?</q-item-label>
+                <q-item><q-btn label="zmień" color="red" @click="showloading(), changeActive(members.uuid), reload()"/></q-item>
                   </q-expansion-item>
                 </q-item-section>
           </q-card-section>
@@ -114,18 +119,20 @@
         </q-card>
         <q-card>
           <q-item>
-          <q-card-section >
-            <q-item-section>
+          <q-card-section>
+            <q-item-section  class="col">
             <q-item-label>Dane Podstawowe</q-item-label>
-            <q-item-label caption lines="2">Identyfikator {{members.uuid}}</q-item-label>
-            <q-item-label caption lines="2">Imię {{members.firstName}}</q-item-label>
-            <q-item-label caption lines="2">Nazwisko {{members.secondName}}</q-item-label>
-            <q-item-label caption lines="2">Data Zapisu do Klubu {{members.joinDate}}</q-item-label>
-            <q-item-label caption lines="2">Pesel {{members.pesel}}</q-item-label>
+            <q-item-label caption lines="2">Identyfikator : {{members.uuid}}</q-item-label>
+            <q-item-label caption lines="2">Imię : {{members.firstName}}</q-item-label>
+            <q-item-label caption lines="2">Nazwisko : {{members.secondName}}</q-item-label>
+            <q-item-label caption lines="2">Data Zapisu do Klubu : {{members.joinDate}}</q-item-label>
+            <q-item-label caption lines="2">Pesel : {{members.pesel}}</q-item-label>
+            <q-item-label caption lines="2">Numer Dowodu : {{members.idcard}}</q-item-label>
             <q-item-section side top>
-            <q-btn color="primary"
-            label="Aktualizuj dane podstawowe"
-            @click="showloading()"/>
+            <q-expansion-item label="Zmień numer Dowodu">
+                <q-item><q-input v-model="idcard" label="Numer Dowodu" :dense="dense" /></q-item>
+                <q-item><q-btn label="Aktualizuj" color="primary" @click="showloading(),updateIDCard (members.uuid, idcard),reload()"/></q-item>
+            </q-expansion-item>
             </q-item-section>
             </q-item-section>
           </q-card-section>
@@ -138,11 +145,21 @@
             <q-item-label caption lines="2">Miasto {{members.address.postOfficeCity}}</q-item-label>
             <q-item-label caption lines="2">Kod Pocztowy {{members.address.zipCode}}</q-item-label>
             <q-item-label caption lines="2">Ulica {{members.address.street}} {{members.address.streetNumber}}</q-item-label>
-            <q-item-label caption lines="2">Mieszkania {{members.address.flatNumber}}</q-item-label>
+            <q-item-label caption lines="2">Mieszkanie {{members.address.flatNumber}}</q-item-label>
             <q-item-section side top >
-            <q-btn color="primary"
-            label="Aktualizuj dane kontaktowe"
-            @click="showloading()"/>
+            <q-expansion-item label="Aktualizuj Dane Kontaktowe">
+                <q-item><q-input v-model="email" label="e-mail" :dense="dense" /></q-item>
+                <q-item><q-input v-model="phoneNumber" label="numer Telefonu - tylko cyfry" :dense="dense" /></q-item>
+                <q-item><q-input v-model="postOfficeCity" label="Miasto" :dense="dense" /></q-item>
+                <q-item><q-input v-model="zipCode" label="Kod Pocztowy - 00-000" :dense="dense" /></q-item>
+                <q-item><q-input v-model="street" label="Ulica" :dense="dense" /></q-item>
+                <q-item><q-input v-model="streetNumber" label="Numer Ulicy" :dense="dense" /></q-item>
+                <q-item><q-input v-model="flatNumber" label="Numer mieszkania" :dense="dense" /></q-item>
+                <q-item><q-btn label="Aktualizuj" color="primary" @click="showloading(),
+                updateMember(members.uuid, email, phoneNumber),
+                updateAddress(members.uuid, zipCode, postOfficeCity, street, streetNumber, flatNumber),
+                reload()"/></q-item>
+            </q-expansion-item>
             </q-item-section>
             </q-item-section>
           </q-card-section>
@@ -170,7 +187,14 @@ export default {
       licensePistolPermission: false,
       licenseRiflePermission: false,
       licenseShotgunPermission: false,
-      weaponPermission: true
+      weaponPermission: true,
+      email: '',
+      phoneNumber: '',
+      zipCode: '',
+      postOfficeCity: '',
+      street: '',
+      streetNumber: '',
+      flatNumber: ''
     }
   },
   created () {
@@ -184,8 +208,58 @@ export default {
         this.timer = 0
       }, 1000)
     },
+    updateMember (uuid, email, phoneNumber) {
+      var data = {
+        email: email,
+        phoneNumber: phoneNumber
+      }
+      fetch('http://localhost:8080/member/' + uuid, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => response.json())
+        .then(members => {
+          this.members = members
+        })
+    },
+    updateIDCard (uuid, idcard) {
+      var data = {
+        idcard: idcard
+      }
+      fetch('http://localhost:8080/member/' + uuid, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => response.json())
+        .then(members => {
+          this.members = members
+        })
+    },
+    updateAddress (uuid, zipCode, postOfficeCity, street, streetNumber, flatNumber) {
+      var data = {
+        zipCode: zipCode,
+        postOfficeCity: postOfficeCity,
+        street: street,
+        streetNumber: streetNumber,
+        flatNumber: flatNumber
+      }
+      fetch('http://localhost:8080/address/' + uuid, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => response.json())
+        .then(members => {
+          this.members = members
+        })
+    },
     getListMembers () {
-      fetch('http://localhost:8080/member/activelist?active=true&adult=false', {
+      fetch('http://localhost:8080/member/activelist?active=true&adult=false&erase=false', {
         method: 'GET'
       }).then(response => response.json())
         .then(members => {
@@ -242,6 +316,14 @@ export default {
     },
     changeAdult (uuid) {
       fetch('http://localhost:8080/member/adult/' + uuid, {
+        method: 'PATCH'
+      }).then(response => response.json())
+        .then(members => {
+          this.members = members
+        })
+    },
+    changeActive (uuid) {
+      fetch('http://localhost:8080/member/' + uuid, {
         method: 'PATCH'
       }).then(response => response.json())
         .then(members => {

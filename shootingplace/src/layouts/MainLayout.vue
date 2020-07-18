@@ -71,10 +71,16 @@ export default {
           link: 'https://localhost:8081/#/member/nonadult'
         },
         {
-          title: 'Klubowicze Nieaktywni',
+          title: 'Klubowicze Nieaktywni - Grupa Dorosła',
           caption: 'obsługa podstawowa',
           icon: 'person_remove',
-          link: 'https://localhost:8081/#/member/nonactive'
+          link: 'https://localhost:8081/#/member/adultnonactive'
+        },
+        {
+          title: 'Klubowicze Nieaktywni - Grupa Młodzieżowa',
+          caption: 'obsługa podstawowa',
+          icon: 'person_remove',
+          link: 'https://localhost:8081/#/member/nonadultnonactive'
         },
         {
           title: 'Klubowicze Skreśleni z Listy członków',
@@ -87,6 +93,12 @@ export default {
           caption: 'obsługa podstawowa',
           icon: 'add',
           link: 'https://localhost:8081/#/member/addmember'
+        },
+        {
+          title: 'Wyszukaj',
+          caption: 'obsługa podstawowa',
+          icon: 'loupe',
+          link: 'https://localhost:8081/#/member/'
         },
         {
           title: 'Swagger',
