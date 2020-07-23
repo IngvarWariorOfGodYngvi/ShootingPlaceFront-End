@@ -9,7 +9,7 @@
     >
       <q-step
         :name="1"
-        title="Podstawowe dane"
+        title="Podstawoowe dane"
         caption="Wymagane"
         icon="settings"
         :done="step > 1"
@@ -21,10 +21,10 @@
       <q-item><q-input color="red" v-model="memberSecondName" label="*Nazwisko" :dense="dense" /></q-item>
       <q-item><q-input color="red" v-model="memberIDCard" label="*Numer Dowodu" :dense="dense" /></q-item>
       <q-item><q-input color="red" v-model="memberPesel" label="*Pesel" :dense="dense" /></q-item>
-      <q-item><q-input color="red" v-model="memberPhone" placeholder="same cyfry" label="*Numer telefonu" :dense="dense" /></q-item>
+      <q-item><q-input color="red" v-model="memberPhone" label="*Numer telefonu - same cyfry" :dense="dense" /></q-item>
       <q-item><q-input color="green" v-model="memberEmail" label="email " :dense="dense" /></q-item>
       <q-item><q-input color="green" v-model="memberLegitimation" label="Numer Legitymacji" :dense="dense" /></q-item>
-      <!-- <q-item><q-input color="green" v-model="memberJoinDate" placeholder="YYYY-MM-DD" label="Data dołączenia do klubu" :dense="dense" /></q-item> -->
+      <q-item><q-input color="green" v-model="memberJoinDate" label="Data dołączenia do klubu" :dense="dense" /></q-item>
       <q-item><q-item-label>Grupa Młodzieżowa</q-item-label><q-toggle v-model="memberAdult" color="secondary" /><q-item-label>Grupa Dorosła</q-item-label></q-item>
       <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),addMember(memberLegitimation, memberFirstName,
       memberSecondName,
@@ -43,7 +43,6 @@
       <q-item><q-item-label>Numer Telefonu : +48 {{memberPhone}}</q-item-label></q-item>
       <q-item><q-item-label>Adres E-mail : {{memberEmail}}</q-item-label></q-item>
       <q-item><q-item-label>Numer Legitymacji Klubowej : {{memberLegitimation}}</q-item-label></q-item>
-      <q-item><q-item-label>Data Dołączenia Do Klubu : {{memberJoinDate}}</q-item-label></q-item>
       <q-item><q-item-label v-if="memberAdult&&memberIDCard!=null">Grupa Dorosła</q-item-label></q-item>
       <q-item><q-item-label v-if="!memberAdult&&memberIDCard!=null">Grupa Młodzieżowa</q-item-label></q-item>
       </div>
@@ -66,7 +65,7 @@
       <q-item><q-input v-model="street" label="Ulica" :dense="dense" /></q-item>
       <q-item><q-input v-model="streetNumber" label="Numer Ulicy" :dense="dense" /></q-item>
       <q-item><q-input v-model="flatNumber" label="Numer Mieszkania" :dense="dense"/></q-item>
-      <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),updateAddress(members.uuid, zipCode, postOfficeCity, street, streetNumber, flatNumber)"/></q-item>
+      <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),updateAddress(uuid, zipCode, postOfficeCity, street, streetNumber, flatNumber)"/></q-item>
       </div>
       </q-card-section>
       <q-card-section>
@@ -92,7 +91,6 @@
       <q-card-section>
       <div>
       <q-item><q-input v-model="patentNumber" label="Numer Patentu" :dense="dense"/></q-item>
-      <!-- <q-item><q-input label="Data Nadania" :dense="dense"/></q-item> -->
       <q-item><q-toggle v-model="patentPistolPermission" label="Pistolet"/></q-item>
       <q-item><q-toggle v-model="patentRiflePermission" label="Karabin"/></q-item>
       <q-item><q-toggle v-model="patentShotgunPermission" label="Strzelba"/></q-item>
@@ -155,8 +153,7 @@
 
       <template v-slot:navigation>
         <q-stepper-navigation>
-          <!-- v-if="uuid!=null" -->
-          <q-btn  @click="$refs.stepper.next()" color="primary" :label="step === 5 ? 'Zakończ' : 'Przejdź Dalej'" />
+          <q-btn v-if="uuid!=null" @click="$refs.stepper.next()" color="primary" :label="step === 5 ? 'Zakończ' : 'Przejdź Dalej'" />
           <q-btn v-if="step > 1" flat color="primary" @click="$refs.stepper.previous()" label="Wróć" class="q-ml-sm" />
         </q-stepper-navigation>
       </template>
@@ -192,14 +189,15 @@ export default {
       memberEmail: '',
       memberAdult: true,
       memberLegitimation: '',
-      memberJoinDate: null,
+      memberJoinDate: '',
       zipCode: null,
       postOfficeCity: null,
       street: null,
       streetNumber: null,
       flatNumber: null,
       active: true,
-      uuid: null
+      uuid: null,
+      returnAlert: false
     }
   },
   methods: {
@@ -221,7 +219,6 @@ export default {
         phoneNumber: memberPhone,
         adult: memberAdult,
         active: this.active
-        // joinDate: memberJoinDate
       }
       fetch('http://localhost:8080/member/', {
         method: 'POST',
@@ -229,13 +226,32 @@ export default {
         headers: {
           'Content-Type': 'application/json'
         }
-      }).then(response => {
-        if (response.ok) { alert('Witamy w Klubie ' + memberFirstName) }
-        if (!response.ok) { alert('Coś się nie udało - sprzawdź czy dane są wprowadzone') }
-      })
+      }).then(response => response.json())
         .then(uuid => {
           this.uuid = uuid
           console.log(this.uuid)
+          if (uuid != null) { this.returnAlert = true }
+          this.updateJoinDate(uuid, this.memberJoinDate)
+        })
+    },
+    updateJoinDate (uuid, memberJoinDate) {
+      var data = {
+        joinDate: memberJoinDate
+      }
+      fetch('http://localhost:8080/member/' + uuid, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        response.json()
+      })
+        .then(joinDate => {
+          this.joinDate = memberJoinDate
+          console.log(this.memberJoinDate)
+          if (this.returnAlert) { alert('Witamy w klubie') }
+          if (!this.returnAlert) { alert('Coś poszło nie tak - sprawdź czy wszystkie dane są wprowadzone poprawnie') }
         })
     },
     updateAddress (uuid, zipCode, postOfficeCity, street, streetNumber, flatNumber) {

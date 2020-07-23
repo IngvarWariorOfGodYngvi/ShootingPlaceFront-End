@@ -120,7 +120,7 @@
                   <q-item-label>Przenieś do nieaktywnych</q-item-label>
                   <q-expansion-item label="rozwiń">
                   <q-item-label v-if="members.active">Czy napewno chcesz przenieść osobę?</q-item-label>
-                <q-item><q-btn label="przenieś" color="red" @click="showloading(), changeActive(members.uuid), reload()"/></q-item>
+                <q-item><q-btn label="zmień" color="red" @click="showloading(), changeActive(members.uuid), reload()"/></q-item>
                   </q-expansion-item>
                 </q-item-section>
           </q-card-section>
