@@ -1,8 +1,23 @@
 <template>
   <q-page padding>
+    <div>
+      <q-card class="row">
+      <q-item-section class="col">
+      <q-item><q-input v-model="search" placeholder="Nazwisko" label="Wyszukaj po Nazwisku"/></q-item>
+      <q-item><q-btn color="primary" label="Wyszukaj" @click="handleScroll(search)"/></q-item>
+      </q-item-section>
+      <q-item-section class="col">
+      <q-item><q-input v-model="search" placeholder="Numer" label="Wyszukaj po Legitymacji"/></q-item>
+      <q-item><q-btn color="primary" label="Wyszukaj" @click="handleScroll(search)"/></q-item>
+      </q-item-section>
+      <q-item-section side top>
+      <q-item><q-btn color="primary" label="Odświeź" @click="showloading(),reload()"/></q-item>
+      </q-item-section>
+      </q-card>
+    </div>
       <div class="q-pa-md">
-    <q-list bordered class="rounded-borders">
-      <q-expansion-item v-for="members in members" :key="members.uuid">
+    <q-list>
+      <q-expansion-item v-for="members in members" :key="members.uuid" group="somegroup" :id="members.secondName">
         <template v-slot:header>
           <q-item-section avatar>
             <q-avatar icon="person_remove" color="brown" text-color="white" />
@@ -15,7 +30,7 @@
           <q-item-section>
           <q-item-label caption lines="2">Numer dowodu {{members.idcard}}</q-item-label>
           <q-item-label caption lines="2">Data zapisu {{members.joinDate}}</q-item-label>
-           <q-item-label caption lines="2">Numer legitymacji {{members.legitimationNumber}}</q-item-label>
+           <q-item-label caption lines="2" :id="members.legitimationNumber">Numer legitymacji {{members.legitimationNumber}}</q-item-label>
           </q-item-section>
         </template>
 
@@ -45,44 +60,27 @@
                 <q-item-label caption lines="2" v-if="members.license.riflePermission">K</q-item-label>
                 <q-item-label caption lines="2" v-if="members.license.shotgunPermission">S</q-item-label>
               </q-item-section>
-              <q-expansion-item v-if="members.shootingPatent.patentNumber!=null&&members.license.number==null" label="DODAJ LICENCJĘ">
-                <q-item><q-input v-if="members.license.number==null" v-model="licenseNumber" label="Numer Licencji - same cyfry" :dense="dense" id="number"/></q-item>
-                <!-- <q-item><q-input v-model="dateOfPosting" label="Przyznany YYYY-MM-DD" :dense="dense" id="day"/></q-item> -->
-                <q-item><q-toggle v-if="members.shootingPatent.pistolPermission" v-model="licensePistolPermission" label="Pistolet"/></q-item>
-                <q-item><q-toggle v-if="members.shootingPatent.riflePermission" v-model="licenseRiflePermission" label="Karabin"/></q-item>
-                <q-item><q-toggle v-if="members.shootingPatent.shotgunPermission" v-model="licenseShotgunPermission" label="Strzelba"/></q-item>
-                <q-btn color="secondary" label="Dodaj Licencję" v-if="members.license.number==null" @click="showloading(),addLicense(members.uuid, licenseNumber, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission),reload()"/>
-              </q-expansion-item>
-              <q-expansion-item v-if="members.license.number!=null&&(
-                !members.license.pistolPermission
-                ||!members.license.riflePermission
-                ||!members.license.shotgunPermission)" label="Aktualizuj Licencję">
-                <q-item><q-toggle v-if="!members.license.pistolPermission&&members.shootingPatent.pistolPermission" v-model="licensePistolPermission" label="Pistolet"/></q-item>
-                <q-item><q-toggle v-if="!members.license.riflePermission&&members.shootingPatent.riflePermission" v-model="licenseRiflePermission" label="Karabin"/></q-item>
-                <q-item><q-toggle v-if="!members.license.shotgunPermission&&members.shootingPatent.shotgunPermission" v-model="licenseShotgunPermission" label="Strzelba"/></q-item>
-                <q-btn color="primary" label="Aktualizuj Licencję" @click="showloading(),addLicense(members.uuid, licenseNumber, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission),reload()"/>
-              </q-expansion-item>
               <q-item-label v-if="members.license.pistolPermission
                 &&members.license.riflePermission
                 &&members.license.shotgunPermission">Klubowicz Posiada już całą Licencję</q-item-label>
               </q-card-section>
               <q-card-section class="col">
               <q-item-section>
-                <q-item-label >Historia Składek</q-item-label>
-                <q-expansion-item label="rozwiń">
-                <q-item-label v-for="record in members.contribution.history.record" :key="record">{{record}}</q-item-label>
-                <q-item/>
+                <q-expansion-item label="Historia Składek" group="right-card">
+                <q-item v-for="record in members.contribution.history.record" :key="record"><q-item-label>{{record}}</q-item-label></q-item>
                 </q-expansion-item >
                 </q-item-section>
                 <q-item-section>
-                  <q-item-label>Pozwolenie na Broń</q-item-label>
-                <q-item-label v-if="members.weaponPermission">TAK</q-item-label>
-                <q-item-label v-else>NIE</q-item-label>
-                  <q-item-label v-if="!members.license.isValid&&members.weaponPermission">POSIADA NIE WAŻNĄ LICENCJĘ!!!</q-item-label>
-                  <q-expansion-item label="rozwiń">
-                    <q-item-label v-if="members.license.isValid" >Posiada ważną licencję</q-item-label>
-                    <q-item-label v-if="members.erased">Przywróć Klubowicza</q-item-label>
-                <q-item><q-btn label="przywróć" color="primary" @click="showloading(),erase(members.uuid),reload()"/></q-item>
+                  <q-expansion-item label="Pozwolenie na Broń" group="right-card">
+                <q-item v-if="members.weaponPermission.number!=null&&members.weaponPermission.isExist" ><q-item-label>Numer Pozwolenia {{members.weaponPermission.number}}</q-item-label></q-item>
+                <q-item v-if="!members.weaponPermission.isExist"><q-item-label >Nie posiada</q-item-label></q-item>
+                  </q-expansion-item>
+                </q-item-section>
+                <q-item-section>
+                  <q-expansion-item label="Przywróć do Łask Prezesa" group="right-card">
+                  <q-item><q-item-label v-if="members.erased">Czy napewno chcesz Wskrzesić osobę?</q-item-label></q-item>
+                  <q-item><q-item-label v-if="members.erased">Osoba będzie miała status nieaktywny</q-item-label></q-item>
+                <q-item><q-btn label="Przenieś" color="red" @click="showloading(), erase(members.uuid), reload()"/></q-item>
                   </q-expansion-item>
                 </q-item-section>
           </q-card-section>
@@ -121,6 +119,8 @@
 </template>
 
 <script>
+import { scroll } from 'quasar'
+const { getScrollTarget, setScrollPosition } = scroll
 export default {
   data () {
     return {
@@ -129,14 +129,15 @@ export default {
       licenseNumber: '',
       validThru: '',
       members: [],
-      // dateOfPosting: false,
+      dateOfPosting: false,
       patentPistolPermission: false,
       patentRiflePermission: false,
       patentShotgunPermission: false,
       licensePistolPermission: false,
       licenseRiflePermission: false,
       licenseShotgunPermission: false,
-      weaponPermission: true
+      weaponPermission: true,
+      search: ''
     }
   },
   created () {
@@ -149,6 +150,13 @@ export default {
         this.$q.loading.hide()
         this.timer = 0
       }, 1000)
+    },
+    handleScroll (search) {
+      const ele = document.getElementById(search)
+      const target = getScrollTarget(ele)
+      const offset = ele.offsetTop - ele.scrollHeight
+      const duration = 500
+      setScrollPosition(target, offset, duration)
     },
     getListMembers () {
       fetch('http://localhost:8080/member/erased?erased=true', {

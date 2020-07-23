@@ -11,7 +11,8 @@ const routes = [
       { path: '/member/nonadultnonactive', component: () => import('pages/membersNonAdultNonActive.vue') },
       { path: '/member/erased', component: () => import('pages/membersErased.vue') },
       { path: '/member/', component: () => import('pages/member.vue') },
-      { path: '/member/addmember', component: () => import('pages/addMember.vue') }
+      { path: '/member/addmember', component: () => import('pages/addMember.vue') },
+      { path: '/dailyevidence', component: () => import('pages/dailyEvidenceBook.vue') }
     ]
   },
 

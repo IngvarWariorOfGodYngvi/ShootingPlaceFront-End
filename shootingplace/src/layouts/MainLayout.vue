@@ -41,6 +41,9 @@
     <q-page-container>
       <router-view />
     </q-page-container>
+    <q-page-sticky position="bottom-right" :offset="[18, 18]" >
+            <q-btn fab icon="add" color="accent" @click="showloading()"></q-btn>
+          </q-page-sticky>
   </q-layout>
 </template>
 
@@ -95,10 +98,10 @@ export default {
           link: 'https://localhost:8081/#/member/addmember'
         },
         {
-          title: 'Wyszukaj',
+          title: 'Książka pobytu na Strzelnicy - Lista dzienna',
           caption: 'obsługa podstawowa',
-          icon: 'loupe',
-          link: 'https://localhost:8081/#/member/'
+          icon: 'book',
+          link: 'https://localhost:8081/#/dailyevidence/'
         },
         {
           title: 'Swagger',
@@ -110,7 +113,12 @@ export default {
     }
   },
   methods: {
-    setTitile () {
+    showloading () {
+      this.$q.loading.show({ message: 'Dzieje się coś ważnego... Poczekaj' })
+      this.timer = setTimeout(() => {
+        this.$q.loading.hide()
+        this.timer = 0
+      }, 1000)
     }
   }
 }

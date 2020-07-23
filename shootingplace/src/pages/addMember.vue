@@ -17,21 +17,23 @@
       <q-card class="row">
       <q-card-section>
       <div>
-      <q-item><q-input color="red" v-model="memberFirstName" label="*Imię" :dense="dense" /></q-item>
-      <q-item><q-input color="red" v-model="memberSecondName" label="*Nazwisko" :dense="dense" /></q-item>
-      <q-item><q-input color="red" v-model="memberIDCard" label="*Numer Dowodu" :dense="dense" /></q-item>
-      <q-item><q-input color="red" v-model="memberPesel" label="*Pesel" :dense="dense" /></q-item>
-      <q-item><q-input color="red" v-model="memberPhone" label="*Numer telefonu - same cyfry" :dense="dense" /></q-item>
-      <q-item><q-input color="green" v-model="memberEmail" label="email " :dense="dense" /></q-item>
-      <q-item><q-input color="green" v-model="memberLegitimation" label="Numer Legitymacji" :dense="dense" /></q-item>
-      <q-item><q-input color="green" v-model="memberJoinDate" label="Data dołączenia do klubu" :dense="dense" /></q-item>
-      <q-item><q-item-label>Grupa Młodzieżowa</q-item-label><q-toggle v-model="memberAdult" color="secondary" /><q-item-label>Grupa Dorosła</q-item-label></q-item>
+      <q-item><q-input color="red" v-model="memberFirstName" label="*Imię" /></q-item>
+      <q-item><q-input color="red" v-model="memberSecondName" label="*Nazwisko" /></q-item>
+      <q-item><q-input color="red" v-model="memberIDCard" label="*Numer Dowodu" /></q-item>
+      <q-item><q-input color="red" v-model="memberPesel" placeholder="tylko cyfry" label="*Pesel" /></q-item>
+      <q-item><q-input color="red" v-model="memberPhone" placeholder="tylko cyfry" label="*Numer telefonu" /></q-item>
+      <q-item><q-input color="green" v-model="memberEmail" label="email" /></q-item>
+      <q-item><q-input color="green" v-model="memberLegitimation" label="Numer Legitymacji" /></q-item>
+      <q-item><q-input color="green" placeholder="YYYY-MM-DD" v-model="memberJoinDate" label="Data dołączenia do klubu" /></q-item>
+      <q-item><q-radio v-model="memberAdult" :val="true" label="Grupa Dorosła" color="secondary" /></q-item>
+      <q-item><q-radio v-model="memberAdult" :val="false" label="Grupa Młodzieżowa" color="secondary" /></q-item>
       <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),addMember(memberLegitimation, memberFirstName,
       memberSecondName,
       memberIDCard,
       memberPesel,
       memberPhone,
-      memberEmail)"/></q-item>
+      memberEmail,
+      memberAdult)"/></q-item>
       </div>
       </q-card-section>
       <q-card-section>
@@ -43,8 +45,9 @@
       <q-item><q-item-label>Numer Telefonu : +48 {{memberPhone}}</q-item-label></q-item>
       <q-item><q-item-label>Adres E-mail : {{memberEmail}}</q-item-label></q-item>
       <q-item><q-item-label>Numer Legitymacji Klubowej : {{memberLegitimation}}</q-item-label></q-item>
-      <q-item><q-item-label v-if="memberAdult&&memberIDCard!=null">Grupa Dorosła</q-item-label></q-item>
-      <q-item><q-item-label v-if="!memberAdult&&memberIDCard!=null">Grupa Młodzieżowa</q-item-label></q-item>
+      <q-item><q-item-label>Data dołączenia do Klubu : {{memberJoinDate}}</q-item-label></q-item>
+      <q-item v-if="memberAdult&&memberIDCard!=null"><q-item-label >Grupa Dorosła</q-item-label></q-item>
+      <q-item v-if="!memberAdult&&memberIDCard!=null"><q-item-label>Grupa Młodzieżowa</q-item-label></q-item>
       </div>
       </q-card-section>
       </q-card>
@@ -60,21 +63,21 @@
       <q-card class="row">
       <q-card-section>
       <div>
-      <q-item><q-input v-model="zipCode" label="Miasto" :dense="dense" /></q-item>
-      <q-item><q-input v-model="postOfficeCity" label="Kod Pocztowy" :dense="dense" /></q-item>
-      <q-item><q-input v-model="street" label="Ulica" :dense="dense" /></q-item>
-      <q-item><q-input v-model="streetNumber" label="Numer Ulicy" :dense="dense" /></q-item>
-      <q-item><q-input v-model="flatNumber" label="Numer Mieszkania" :dense="dense"/></q-item>
-      <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),updateAddress(uuid, zipCode, postOfficeCity, street, streetNumber, flatNumber)"/></q-item>
+      <q-item><q-input v-model="memberPostOfficeCity" label="Miasto" /></q-item>
+      <q-item><q-input v-model="memberZipCode" placeholder="00-000" label="Kod Pocztowy" /></q-item>
+      <q-item><q-input v-model="memberStreet" label="Ulica" /></q-item>
+      <q-item><q-input v-model="memberStreetNumber" label="Numer Ulicy" /></q-item>
+      <q-item><q-input v-model="memberFlatNumber" label="Numer Mieszkania"/></q-item>
+      <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),updateAddress(uuid, memberPostOfficeCity, memberZipCode, memberStreet, memberStreetNumber, memberFlatNumber)"/></q-item>
       </div>
       </q-card-section>
       <q-card-section>
       <div>
-      <q-item><q-item-label>Miasto : {{postOfficeCity}}</q-item-label></q-item>
-      <q-item><q-item-label>Kod Pocztowy : {{zipCode}}</q-item-label></q-item>
-      <q-item><q-item-label>Ulica : {{street}}</q-item-label></q-item>
-      <q-item><q-item-label>Numer Ulicy : {{streetNumber}}</q-item-label></q-item>
-      <q-item><q-item-label>Numer Mieszkania : {{flatNumber}}</q-item-label></q-item>
+      <q-item><q-item-label>Miasto : {{memberPostOfficeCity}}</q-item-label></q-item>
+      <q-item><q-item-label>Kod Pocztowy : {{memberZipCode}}</q-item-label></q-item>
+      <q-item><q-item-label>Ulica : {{memberStreet}}</q-item-label></q-item>
+      <q-item><q-item-label>Numer Ulicy : {{memberStreetNumber}}</q-item-label></q-item>
+      <q-item><q-item-label>Numer Mieszkania : {{memberFlatNumber}}</q-item-label></q-item>
       </div>
       </q-card-section>
       </q-card>
@@ -90,17 +93,18 @@
       <q-card class="row">
       <q-card-section>
       <div>
-      <q-item><q-input v-model="patentNumber" label="Numer Patentu" :dense="dense"/></q-item>
-      <q-item><q-toggle v-model="patentPistolPermission" label="Pistolet"/></q-item>
-      <q-item><q-toggle v-model="patentRiflePermission" label="Karabin"/></q-item>
-      <q-item><q-toggle v-model="patentShotgunPermission" label="Strzelba"/></q-item>
-      <q-item><q-btn label="Dodaj" color="secondary" @click="showloading()"/></q-item>
+      <q-item><q-input v-model="patentNumber" placeholder="tylko cyfry" label="Numer Patentu"/></q-item>
+      <q-item><q-input v-model="patentDate" placeholder="YYYY-MM-DD" label="Data nadania"/></q-item>
+      <q-item><q-radio v-model="patentPistolPermission" val="true" label="Pistolet"/></q-item>
+      <q-item><q-radio v-model="patentRiflePermission" val="true" label="Karabin"/></q-item>
+      <q-item><q-radio v-model="patentShotgunPermission" val="true" label="Strzelba"/></q-item>
+      <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),addPatent(uuid, patentNumber, patentPistolPermission, patentRiflePermission, patentShotgunPermission)"/></q-item>
       </div>
       </q-card-section>
       <q-card-section>
       <div>
       <q-item><q-item-label>Numer Patentu : {{patentNumber}}</q-item-label></q-item>
-      <q-item><q-item-label>Data Nadania : {{}}</q-item-label></q-item>
+      <q-item><q-item-label>Data Nadania : {{patentDate}}</q-item-label></q-item>
       <q-item><q-item-label>Dyscypliny :</q-item-label></q-item>
       <q-item><q-item-label v-if="patentPistolPermission">P</q-item-label></q-item>
       <q-item><q-item-label v-if="patentRiflePermission">K</q-item-label></q-item>
@@ -119,26 +123,28 @@
       >
       <q-card class="row">
       <q-card-section>
-      <div>
-   <q-item><q-input label="Numer Licencji" :dense="dense"/></q-item>
-      <q-item><q-input label="Ważna do" :dense="dense"/></q-item>
-      <q-item><q-toggle v-model="licensePistolPermission" label="Pistolet"/></q-item>
-      <q-item><q-toggle v-model="licenseRiflePermission" label="Karabin"/></q-item>
-      <q-item><q-toggle v-model="licenseShotgunPermission" label="Strzelba"/></q-item>
-      <q-item><q-btn label="Dodaj" color="secondary" @click="showloading()"/></q-item>
+      <div v-if="(memberAdult&&patentNumber!=null)||!memberAdult">
+      <q-item><q-input v-model="licenseNumber" placeholder="tylko cyfry" label="Numer Licencji"/></q-item>
+      <q-item><q-input v-model="licenseDate" placeholder="YYYY-MM-DD" label="Ważna do"/></q-item>
+      <q-item v-if="patentPistolPermission||!memberAdult"><q-radio v-model="licensePistolPermission" val="true" label="Pistolet"/></q-item>
+      <q-item v-if="patentRiflePermission||!memberAdult"><q-radio  v-model="licenseRiflePermission" val="true" label="Karabin"/></q-item>
+      <q-item v-if="patentShotgunPermission||!memberAdult"><q-radio v-model="licenseShotgunPermission" val="true" label="Strzelba"/></q-item>
+      <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),addLicense(uuid, licenseNumber, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission)"/></q-item>
       </div>
       </q-card-section>
       <q-card-section>
-      <div>
-      <q-item><q-item-label>Numer Patentu : {{licenseNumber}}</q-item-label></q-item>
-      <q-item><q-item-label>Data Nadania : {{}}</q-item-label></q-item>
+      <div v-if="(memberAdult&&patentNumber!=null)||!memberAdult">
+      <q-item><q-item-label>Numer Licencji : {{licenseNumber}}</q-item-label></q-item>
+      <q-item><q-item-label>Data Ważności : {{licenseDate}}</q-item-label></q-item>
       <q-item><q-item-label>Dyscypliny :</q-item-label></q-item>
-      <q-item><q-item-label v-if="licensePistolPermission&&patentPistolPermission">P</q-item-label></q-item>
-      <q-item><q-item-label v-if="licenseRiflePermission&&patentRiflePermission">K</q-item-label></q-item>
-      <q-item><q-item-label v-if="licenseShotgunPermission&&patentShotgunPermission">S</q-item-label></q-item>
+      <q-item v-if="(licensePistolPermission&&patentPistolPermission)||(!memberAdult&licensePistolPermission)"><q-item-label>P</q-item-label></q-item>
+      <q-item v-if="(licenseRiflePermission&&patentRiflePermission)||(!memberAdult&licenseRiflePermission)"><q-item-label>K</q-item-label></q-item>
+      <q-item v-if="(licenseShotgunPermission&&patentShotgunPermission)||(!memberAdult&licenseShotgunPermission)"><q-item-label>S</q-item-label></q-item>
       </div>
       </q-card-section>
       </q-card>
+      <div v-if="(memberAdult&&patentNumber==null)">Licencja - Nie ma tu nic do pokazania
+      </div>
       </q-step>
 
       <q-step
@@ -147,14 +153,20 @@
         caption="opcjonalnie"
         icon="assignment"
       >
-      <q-item><q-item-label>Posiada pozwolenie na Broń?</q-item-label></q-item>
-      <q-item><q-input v-model="weaponPermissionNumber" label="Numer" :dense="dense" /></q-item>
+      <div v-if="(memberAdult&&patentNumber!=null&&licenseNumber!=null)">
+      <q-item><q-item-label>Jeśli posiada pozwolenie wpisz numer</q-item-label></q-item>
+      <q-item><q-input v-model="weaponPermissionNumber" label="Numer" /></q-item>
+      <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),changeWeaponPermission(uuid, weaponPermissionNumber)"/></q-item>
+      </div>
+      <div v-if="(memberAdult&&(patentNumber==null||licenseNumber==null))" >Pozwolenie na broń - Nie ma tu nic do pokazania</div>
       </q-step>
 
       <template v-slot:navigation>
-        <q-stepper-navigation>
-          <q-btn v-if="uuid!=null" @click="$refs.stepper.next()" color="primary" :label="step === 5 ? 'Zakończ' : 'Przejdź Dalej'" />
-          <q-btn v-if="step > 1" flat color="primary" @click="$refs.stepper.previous()" label="Wróć" class="q-ml-sm" />
+        <q-stepper-navigation class="row">
+          <q-item><q-btn v-if="uuid!=null&&uuid!=''" @click="$refs.stepper.next()" color="primary" :label="step === 5 ? 'Zakończ' : 'Przejdź Dalej'" /></q-item>
+          <q-item><q-btn v-if="step > 1" flat color="primary" @click="$refs.stepper.previous()" label="Wróć" /></q-item>
+          <q-item><q-btn v-if="uuid!=null&&uuid!=''" color="secondary" @click="showloading()" label="Drukuj kartę" /></q-item>
+          <q-item-label>{{uuid}}</q-item-label>
         </q-stepper-navigation>
       </template>
     </q-stepper>
@@ -168,33 +180,34 @@ export default {
     return {
       step: 1,
       number: '',
-      patentNumber: '',
-      licenseNumber: '',
       validThru: '',
       member: [],
-      dateOfPosting: null,
+      patentNumber: null,
+      patentDate: null,
       patentPistolPermission: false,
       patentRiflePermission: false,
       patentShotgunPermission: false,
       licensePistolPermission: false,
       licenseRiflePermission: false,
       licenseShotgunPermission: false,
-      weponPermissionNumer: '',
+      licenseNumber: null,
+      licenseDate: null,
+      weaponPermissionNumber: '',
       isExist: false,
       memberFirstName: '',
       memberSecondName: '',
-      memberIDCard: null,
+      memberIDCard: '',
       memberPesel: '',
       memberPhone: '',
       memberEmail: '',
-      memberAdult: true,
+      memberAdult: null,
       memberLegitimation: '',
       memberJoinDate: '',
-      zipCode: null,
-      postOfficeCity: null,
-      street: null,
-      streetNumber: null,
-      flatNumber: null,
+      memberZipCode: null,
+      memberPostOfficeCity: null,
+      memberStreet: null,
+      memberStreetNumber: null,
+      memberFlatNumber: null,
       active: true,
       uuid: null,
       returnAlert: false
@@ -252,15 +265,16 @@ export default {
           console.log(this.memberJoinDate)
           if (this.returnAlert) { alert('Witamy w klubie') }
           if (!this.returnAlert) { alert('Coś poszło nie tak - sprawdź czy wszystkie dane są wprowadzone poprawnie') }
+          this.returnAlert = false
         })
     },
-    updateAddress (uuid, zipCode, postOfficeCity, street, streetNumber, flatNumber) {
+    updateAddress (uuid, memberPostOfficeCity, memberZipCode, memberStreet, memberStreetNumber, memberFlatNumber) {
       var data = {
-        zipCode: zipCode,
-        postOfficeCity: postOfficeCity,
-        street: street,
-        streetNumber: streetNumber,
-        flatNumber: flatNumber
+        zipCode: memberZipCode,
+        postOfficeCity: memberPostOfficeCity,
+        street: memberStreet,
+        streetNumber: memberStreetNumber,
+        flatNumber: memberFlatNumber
       }
       fetch('http://localhost:8080/address/' + uuid, {
         method: 'PUT',
@@ -269,8 +283,108 @@ export default {
           'Content-Type': 'application/json'
         }
       }).then(response => response.json())
-        .then(members => {
-          this.members = members
+        .then(member => {
+          this.member = member
+          alert('Zaktualizowano dane adresowe')
+        })
+    },
+    addPatent (uuid, memberPatentNumber, memberPatentPistolPermission, memberPatentRiflePermission, memberPatentShotgunPermission) {
+      var data = {
+        patentNumber: memberPatentNumber,
+        pistolPermission: memberPatentPistolPermission,
+        riflePermission: memberPatentRiflePermission,
+        shotgunPermission: memberPatentShotgunPermission
+      }
+      fetch('http://localhost:8080/patent/' + uuid, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => response.json())
+        .then(patentNumber => {
+          if (patentNumber != null) { this.returnAlert = true }
+          this.updatedateOfPosting(uuid, this.patentDate)
+        })
+    },
+    updatedateOfPosting (uuid, patentDate) {
+      var data = {
+        dateOfPosting: patentDate
+      }
+      fetch('http://localhost:8080/patent/' + uuid, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => response.json())
+        .then(dateOfPosting => {
+          this.dateOfPosting = patentDate
+          if (this.returnAlert) { alert('Zaktualizowano Patent') }
+          if (!this.returnAlert) {
+            alert('Coś poszło nie tak - sprawdź czy wszystkie dane są wprowadzone poprawnie')
+            this.returnAlert = false
+          }
+          this.returnAlert = false
+        })
+    },
+    addLicense (uuid, licenseNumber, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission) {
+      var data = {
+        number: licenseNumber,
+        pistolPermission: licensePistolPermission,
+        riflePermission: licenseRiflePermission,
+        shotgunPermission: licenseShotgunPermission
+      }
+      fetch('http://localhost:8080/license/' + uuid, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => response.json())
+        .then(licenseNumber => {
+          if (licenseNumber != null) { this.returnAlert = true }
+          this.updateValidThru(uuid, this.patentDate)
+        })
+    },
+    updateValidThru (uuid, licenseDate) {
+      var data = {
+        validThru: licenseDate
+      }
+      fetch('http://localhost:8080/license/' + uuid, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => response.json())
+        .then(validThru => {
+          this.validThru = licenseDate
+          if (this.returnAlert) { alert('Zaktualizowano Licencję') }
+          if (!this.returnAlert) {
+            alert('Coś poszło nie tak - sprawdź czy wszystkie dane są wprowadzone poprawnie')
+            this.returnAlert = false
+          }
+          this.returnAlert = false
+        })
+    },
+    changeWeaponPermission (uuid, weaponPermissionNumber) {
+      var data = {
+        number: weaponPermissionNumber
+      }
+      fetch('http://localhost:8080/member/weapon/' + uuid, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => response.json())
+        .then(member => {
+          this.member = member
+          if (this.patentNumber != null && this.licenseNumber != null) { this.returnAlert = true }
+          if (this.returnAlert) { alert('Dodano pozwolenie na broń') }
+          if (!this.returnAlert) { alert('Coś poszło nie tak - sprawdź czy wszystkie dane są wprowadzone poprawnie') }
+          this.returnAlert = false
         })
     }
   },
