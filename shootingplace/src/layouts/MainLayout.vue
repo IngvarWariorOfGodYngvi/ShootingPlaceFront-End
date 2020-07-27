@@ -68,7 +68,7 @@ export default {
           link: 'https://localhost:8081/#/member/adult'
         },
         {
-          title: 'Temp',
+          title: 'Temp Grupa Powszechna',
           caption: 'Obsługa podstawowa',
           icon: 'perm_identity',
           link: 'https://localhost:8081/#/member/adulttemp'
@@ -80,10 +80,10 @@ export default {
           link: 'https://localhost:8081/#/member/nonadult'
         },
         {
-          title: 'Klubowicze Nieaktywni - Grupa Dorosła',
+          title: 'Temp Klubowicze Nieaktywni - Grupa Powszechna',
           caption: 'obsługa podstawowa',
           icon: 'person_remove',
-          link: 'https://localhost:8081/#/member/adultnonactive'
+          link: 'https://localhost:8081/#/member/adultnonactivetemp'
         },
         {
           title: 'Klubowicze Nieaktywni - Grupa Młodzieżowa',
