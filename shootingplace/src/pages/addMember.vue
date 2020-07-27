@@ -17,14 +17,20 @@
       <q-card class="row">
       <q-card-section>
       <div>
-      <q-item><q-input color="red" v-model="memberFirstName" label="*Imię" /></q-item>
-      <q-item><q-input color="red" v-model="memberSecondName" label="*Nazwisko" /></q-item>
-      <q-item><q-input color="red" v-model="memberIDCard" label="*Numer Dowodu" /></q-item>
-      <q-item><q-input color="red" v-model="memberPesel" placeholder="tylko cyfry" label="*Pesel" /></q-item>
-      <q-item><q-input color="red" v-model="memberPhone" placeholder="tylko cyfry" label="*Numer telefonu" /></q-item>
+        <q-form>
+      <q-item><q-input color="red" v-model="memberFirstName" label="*Imię" filled  lazy-rules
+        :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']" /></q-item>
+      <q-item><q-input color="red" v-model="memberSecondName" label="*Nazwisko" filled  lazy-rules
+        :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']"/></q-item>
+      <q-item><q-input color="red" v-model="memberIDCard" label="*Numer Dowodu" filled hint="XXX000000" placeholder="XXX000000" lazy-rules
+        :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']"/></q-item>
+      <q-item><q-input color="red" v-model="memberPesel" placeholder="tylko cyfry" label="*Pesel" filled  lazy-rules
+        :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']" /></q-item>
+      <q-item><q-input color="red" v-model="memberPhone" placeholder="tylko cyfry" label="*Numer telefonu" filled  lazy-rules
+        :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']"/></q-item>
       <q-item><q-input color="green" v-model="memberEmail" label="email" /></q-item>
       <q-item><q-input color="green" v-model="memberLegitimation" label="Numer Legitymacji" /></q-item>
-      <q-item><q-input color="green" placeholder="YYYY-MM-DD" v-model="memberJoinDate" label="Data dołączenia do klubu" /></q-item>
+      <q-item><q-input color="green" hint="YYYY-MM-DD" placeholder="YYYY-MM-DD" v-model="memberJoinDate" label="Data dołączenia do klubu" /></q-item>
       <q-item><q-radio v-model="memberAdult" :val="true" label="Grupa Dorosła" color="secondary" /></q-item>
       <q-item><q-radio v-model="memberAdult" :val="false" label="Grupa Młodzieżowa" color="secondary" /></q-item>
       <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),addMember(memberLegitimation, memberFirstName,
@@ -34,6 +40,7 @@
       memberPhone,
       memberEmail,
       memberAdult)"/></q-item>
+      </q-form>
       </div>
       </q-card-section>
       <q-card-section>
@@ -93,11 +100,13 @@
       <q-card class="row">
       <q-card-section>
       <div>
-      <q-item><q-input v-model="patentNumber" placeholder="tylko cyfry" label="Numer Patentu"/></q-item>
-      <q-item><q-input v-model="patentDate" placeholder="YYYY-MM-DD" label="Data nadania"/></q-item>
-      <q-item><q-radio v-model="patentPistolPermission" val="true" label="Pistolet"/></q-item>
-      <q-item><q-radio v-model="patentRiflePermission" val="true" label="Karabin"/></q-item>
-      <q-item><q-radio v-model="patentShotgunPermission" val="true" label="Strzelba"/></q-item>
+      <q-item><q-input v-model="patentNumber" hint="tylko cyfry" placeholder="tylko cyfry" label="Numer Patentu" filled  lazy-rules
+        :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']"/></q-item>
+      <q-item><q-input v-model="patentDate" hint="YYYY-MM-DD" placeholder="YYYY-MM-DD" label="Data nadania" filled  lazy-rules
+        :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']"/></q-item>
+      <q-item><q-checkbox v-model="patentPistolPermission"  label="Pistolet"/></q-item>
+      <q-item><q-checkbox v-model="patentRiflePermission"  label="Karabin"/></q-item>
+      <q-item><q-checkbox v-model="patentShotgunPermission"  label="Strzelba"/></q-item>
       <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),addPatent(uuid, patentNumber, patentPistolPermission, patentRiflePermission, patentShotgunPermission)"/></q-item>
       </div>
       </q-card-section>
@@ -124,11 +133,13 @@
       <q-card class="row">
       <q-card-section>
       <div v-if="(memberAdult&&patentNumber!=null)||!memberAdult">
-      <q-item><q-input v-model="licenseNumber" placeholder="tylko cyfry" label="Numer Licencji"/></q-item>
-      <q-item><q-input v-model="licenseDate" placeholder="YYYY-MM-DD" label="Ważna do"/></q-item>
-      <q-item v-if="patentPistolPermission||!memberAdult"><q-radio v-model="licensePistolPermission" val="true" label="Pistolet"/></q-item>
-      <q-item v-if="patentRiflePermission||!memberAdult"><q-radio  v-model="licenseRiflePermission" val="true" label="Karabin"/></q-item>
-      <q-item v-if="patentShotgunPermission||!memberAdult"><q-radio v-model="licenseShotgunPermission" val="true" label="Strzelba"/></q-item>
+      <q-item><q-input v-model="licenseNumber" hint="tylko cyfry" placeholder="tylko cyfry" label="Numer Licencji" filled lazy-rules
+        :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']"/></q-item>
+      <q-item><q-input v-model="licenseDate" hint="YYYY-MM-DD" placeholder="YYYY-MM-DD" label="Ważna do" filled lazy-rules
+        :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']"/></q-item>
+      <q-item v-if="patentPistolPermission||!memberAdult"><q-checkbox v-model="licensePistolPermission"  label="Pistolet"/></q-item>
+      <q-item v-if="patentRiflePermission||!memberAdult"><q-checkbox  v-model="licenseRiflePermission"  label="Karabin"/></q-item>
+      <q-item v-if="patentShotgunPermission||!memberAdult"><q-checkbox v-model="licenseShotgunPermission"  label="Strzelba"/></q-item>
       <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),addLicense(uuid, licenseNumber, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission)"/></q-item>
       </div>
       </q-card-section>
@@ -155,7 +166,8 @@
       >
       <div v-if="(memberAdult&&patentNumber!=null&&licenseNumber!=null)">
       <q-item><q-item-label>Jeśli posiada pozwolenie wpisz numer</q-item-label></q-item>
-      <q-item><q-input v-model="weaponPermissionNumber" label="Numer" /></q-item>
+      <q-item><q-input v-model="weaponPermissionNumber" label="Numer" filled lazy-rules
+        :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']"/></q-item>
       <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),changeWeaponPermission(uuid, weaponPermissionNumber)"/></q-item>
       </div>
       <div v-if="(memberAdult&&(patentNumber==null||licenseNumber==null))" >Pozwolenie na broń - Nie ma tu nic do pokazania</div>
@@ -163,14 +175,80 @@
 
       <template v-slot:navigation>
         <q-stepper-navigation class="row">
-          <q-item><q-btn v-if="uuid!=null&&uuid!=''" @click="$refs.stepper.next()" color="primary" :label="step === 5 ? 'Zakończ' : 'Przejdź Dalej'" /></q-item>
+          <q-item><q-btn v-if="uuid!=null&&uuid!=''" @click="$refs.stepper.next()" color="primary" :label="step === 5 ? 'Zakończono' : 'Przejdź Dalej'" /></q-item>
           <q-item><q-btn v-if="step > 1" flat color="primary" @click="$refs.stepper.previous()" label="Wróć" /></q-item>
           <q-item><q-btn v-if="uuid!=null&&uuid!=''" color="secondary" @click="showloading()" label="Drukuj kartę" /></q-item>
-          <q-item-label>{{uuid}}</q-item-label>
+          <q-item v-if="uuid!=null"><q-item-label>Identyfikator : {{uuid}}</q-item-label></q-item>
         </q-stepper-navigation>
       </template>
     </q-stepper>
   </div>
+  <q-dialog v-model="alert">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Witamy w Klubie</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          Od tej chwili jesteś skazany na przenoszenie szaf z piętra na parter.
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+  <q-dialog v-model="alert1">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Zaktualizowano Adres</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          Już nie mieszkasz w kartonie po bananach.
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+  <q-dialog v-model="alert2">
+      <q-card>
+        <q-card-section v-if="licenseNumber==null">
+          <div class="text-h6">Uprawnienia patentu zostały nadane</div>
+        </q-card-section>
+        <q-card-section v-else>
+          <div class="text-h6">Uprawnienia licencji zostały nadane</div>
+        </q-card-section>
+
+        <q-card-section v-if="licenseNumber==null" class="q-pt-none">
+          Od tej chwili już nie jesteś gołowąsem i coś już umiesz.
+        </q-card-section>
+        <q-card-section v-else class="q-pt-none">
+          Pniesz się do góry w karierze małej mróweczki
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="alert3">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Dodano Pozwolenie na Broń</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          Teraz nie strzaszny Ci już RAMBO, TERMINATOR czy JOHN WICK.
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -178,6 +256,10 @@
 export default {
   data () {
     return {
+      alert: false,
+      alert1: false,
+      alert2: false,
+      alert3: false,
       step: 1,
       number: '',
       validThru: '',
@@ -263,7 +345,7 @@ export default {
         .then(joinDate => {
           this.joinDate = memberJoinDate
           console.log(this.memberJoinDate)
-          if (this.returnAlert) { alert('Witamy w klubie') }
+          if (this.returnAlert) { this.alert = true }
           if (!this.returnAlert) { alert('Coś poszło nie tak - sprawdź czy wszystkie dane są wprowadzone poprawnie') }
           this.returnAlert = false
         })
@@ -285,7 +367,7 @@ export default {
       }).then(response => response.json())
         .then(member => {
           this.member = member
-          alert('Zaktualizowano dane adresowe')
+          this.alert1 = true
         })
     },
     addPatent (uuid, memberPatentNumber, memberPatentPistolPermission, memberPatentRiflePermission, memberPatentShotgunPermission) {
@@ -320,7 +402,7 @@ export default {
       }).then(response => response.json())
         .then(dateOfPosting => {
           this.dateOfPosting = patentDate
-          if (this.returnAlert) { alert('Zaktualizowano Patent') }
+          if (this.returnAlert) { this.alert2 = true }
           if (!this.returnAlert) {
             alert('Coś poszło nie tak - sprawdź czy wszystkie dane są wprowadzone poprawnie')
             this.returnAlert = false
@@ -344,7 +426,7 @@ export default {
       }).then(response => response.json())
         .then(licenseNumber => {
           if (licenseNumber != null) { this.returnAlert = true }
-          this.updateValidThru(uuid, this.patentDate)
+          this.updateValidThru(uuid, this.licenseDate)
         })
     },
     updateValidThru (uuid, licenseDate) {
@@ -360,7 +442,7 @@ export default {
       }).then(response => response.json())
         .then(validThru => {
           this.validThru = licenseDate
-          if (this.returnAlert) { alert('Zaktualizowano Licencję') }
+          if (this.returnAlert) { this.alert2 = true }
           if (!this.returnAlert) {
             alert('Coś poszło nie tak - sprawdź czy wszystkie dane są wprowadzone poprawnie')
             this.returnAlert = false
@@ -379,10 +461,10 @@ export default {
           'Content-Type': 'application/json'
         }
       }).then(response => response.json())
-        .then(member => {
-          this.member = member
+        .then(number => {
+          this.number = weaponPermissionNumber
           if (this.patentNumber != null && this.licenseNumber != null) { this.returnAlert = true }
-          if (this.returnAlert) { alert('Dodano pozwolenie na broń') }
+          if (this.returnAlert) { this.alert3 = true }
           if (!this.returnAlert) { alert('Coś poszło nie tak - sprawdź czy wszystkie dane są wprowadzone poprawnie') }
           this.returnAlert = false
         })

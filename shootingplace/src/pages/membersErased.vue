@@ -80,7 +80,7 @@
                   <q-expansion-item label="Przywróć do Łask Prezesa" group="right-card">
                   <q-item><q-item-label v-if="members.erased">Czy napewno chcesz Wskrzesić osobę?</q-item-label></q-item>
                   <q-item><q-item-label v-if="members.erased">Osoba będzie miała status nieaktywny</q-item-label></q-item>
-                <q-item><q-btn label="Przenieś" color="red" @click="showloading(), erase(members.uuid), reload()"/></q-item>
+                <q-item><q-btn label="Przenieś" color="red" @click="uuid=members.uuid,confirm=true"/></q-item>
                   </q-expansion-item>
                 </q-item-section>
           </q-card-section>
@@ -115,6 +115,19 @@
       </q-expansion-item>
     </q-list>
   </div>
+  <q-dialog v-model="confirm" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <q-avatar icon="add" color="primary"/>
+          <span class="q-ml-sm">Czy na pewno chcesz by człowiek dalej nosił stalowe szafy z piętra na parter?</span>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="anuluj" color="primary" v-close-popup />
+          <q-btn flat label="przywróć" color="primary" v-close-popup @click=" erase(uuid),reload()" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -124,6 +137,8 @@ const { getScrollTarget, setScrollPosition } = scroll
 export default {
   data () {
     return {
+      uuid: null,
+      confirm: false,
       number: '',
       patentNumber: '',
       licenseNumber: '',

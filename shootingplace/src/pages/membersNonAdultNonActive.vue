@@ -21,7 +21,9 @@
         <template v-slot:header>
           <q-item-section avatar>
             <q-avatar v-if="members.weaponPermission.isExist&&!members.license.isValid" icon="warning" color="red" text-color="white" />
-            <q-avatar v-else-if="members.email==''||members.email==null||members.address.zipCode==null||members.address.postOfficeCity==null||members.address.street" icon="warning" color="warning" text-color="white" />
+            <q-avatar v-else-if="(members.email==null||members.email=='')
+            ||(members.address.postOfficeCity===null||members.address.postOfficeCity==='')
+            ||(members.address.street==null||members.address.street=='')" icon="warning" color="warning" text-color="white" />
             <q-avatar v-else icon="perm_identity" color="primary" text-color="white" />
           </q-item-section>
           <q-item-section>
@@ -35,10 +37,10 @@
           <q-item-label caption lines="2" :id="members.legitimationNumber">Numer legitymacji {{members.legitimationNumber}}</q-item-label>
           </q-item-section>
           <q-item-section side top>
-            <q-btn color="primary" label="Dodaj do książki" @click="showloading()"/>
+            <q-btn color="primary" label="Dodaj do książki" @click="uuid=members.uuid,alert=true"/>
           </q-item-section>
           <q-item-section side top>
-            <q-btn color="primary" label="Przedłuż składkę" @click="showloading(),prolongContribution(members.uuid),reload()"/>
+            <q-btn color="primary" label="Przedłuż składkę" @click="uuid=members.uuid,confirm=true"/>
           </q-item-section>
         </template>
 
@@ -78,20 +80,20 @@
                 <q-expansion-item label="Historia Składek" group="right-card">
                 <q-item v-for="record in members.contribution.history.record" :key="record"><q-item-label>{{record}}</q-item-label></q-item>
                 <q-item-section side top>
-            <q-btn color="primary" label="Przedłuż składkę" @click="showloading(),prolongContribution(members.uuid),reload()"/>
-          </q-item-section>
-                </q-expansion-item >
+                <q-btn color="primary" label="Przedłuż składkę" @click="uuid=members.uuid,confirm=true"/>
+                </q-item-section>
+                </q-expansion-item>
                 </q-item-section>
                 <q-item-section>
                   <q-expansion-item label="Przenieś do grupy Dorosłej" group="right-card">
                     <q-item><q-item-label>Zmiana będzie trwała</q-item-label></q-item>
-                <q-item><q-btn label="Przenieś" color="warning" @click="showloading(),changeAdult(members.uuid),reload()"/></q-item>
+                <q-item><q-btn label="Przenieś" color="warning" @click="uuid=members.uuid,confirm2=true"/></q-item>
                   </q-expansion-item>
                 </q-item-section>
                 <q-item-section>
                   <q-expansion-item label="Skreśl z Listy Klubowiczów" group="right-card">
                   <q-item><q-item-label v-if="!members.erased">Czy napewno chcesz skreślić osobę?</q-item-label></q-item>
-                <q-item><q-btn label="Przenieś" color="red" @click="showloading(), erase(members.uuid), reload()"/></q-item>
+                <q-item><q-btn label="Przenieś" color="red" @click="uuid=members.uuid,confirm1=true"/></q-item>
                   </q-expansion-item>
                 </q-item-section>
                 <q-item-section>
@@ -113,9 +115,9 @@
             <q-item-label caption lines="2">Numer Dowodu : {{members.idcard}}</q-item-label>
             <q-item-section side top>
             <q-expansion-item label="Zmień numer Dowodu">
-                <q-item><q-input v-model="memberIdcard" label="Numer Dowodu" placeholder="XXX000000"/></q-item>
+                <q-item><q-input v-model="memberIdcard" hint="XXX000000" label="Numer Dowodu" placeholder="XXX000000"/></q-item>
                 <q-item><q-input v-model="memberSecondName" label="Nazwisko" /></q-item>
-                <q-item><q-btn label="Aktualizuj" color="primary" @click="showloading(),updateIDCardAndName(members.uuid,memberIdcard,memberSecondName),reload()"/></q-item>
+                <q-item><q-btn label="Aktualizuj" color="primary" @click="updateIDCardAndName(members.uuid,memberIdcard,memberSecondName)"/></q-item>
             </q-expansion-item>
             </q-item-section>
             </q-item-section>
@@ -133,16 +135,15 @@
             <q-item-section side top >
             <q-expansion-item label="Aktualizuj Dane Kontaktowe">
                 <q-item><q-input v-model="memberEmail" label="e-mail" /></q-item>
-                <q-item><q-input v-model="memberPhoneNumber" label="Numer Telefonu" placeholder="tylko cyfry" /></q-item>
+                <q-item><q-input v-model="memberPhoneNumber" hint="tylko cyfry" label="Numer Telefonu" placeholder="tylko cyfry" /></q-item>
                 <q-item><q-input v-model="memberPostOfficeCity" label="Miasto" /></q-item>
-                <q-item><q-input v-model="memberZipCode" label="Kod Pocztowy" placeholder="00-000" /></q-item>
+                <q-item><q-input v-model="memberZipCode" hint="00-000" label="Kod Pocztowy" placeholder="00-000" /></q-item>
                 <q-item><q-input v-model="memberStreet" label="Ulica" /></q-item>
                 <q-item><q-input v-model="memberStreetnumber" label="Numer Ulicy" /></q-item>
                 <q-item><q-input v-model="memberFlatNumber" label="Numer mieszkania" /></q-item>
-                <q-item><q-btn label="Aktualizuj" color="primary" @click="showloading(),
-                updateMember(members.uuid, memberEmail, memberPhoneNumber),
-                updateAddress(members.uuid, memberZipCode, memberPostOfficeCity, memberStreet, memberStreetNumber, memberFlatNumber),
-                reload()"/></q-item>
+                <q-item><q-btn label="Aktualizuj" color="primary" @click="updateMember(members.uuid, memberEmail, memberPhoneNumber),
+                updateAddress(members.uuid, memberZipCode, memberPostOfficeCity, memberStreet, memberStreetNumber, memberFlatNumber)
+                "/></q-item>
             </q-expansion-item>
             </q-item-section>
             </q-item-section>
@@ -152,6 +153,100 @@
       </q-expansion-item>
     </q-list>
   </div>
+  <q-dialog v-model="confirm" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <q-avatar icon="add" color="primary"/>
+          <span class="q-ml-sm">Czy przedłużyć składkę?</span>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="anuluj" color="primary" v-close-popup />
+          <q-btn flat label="przedłuż" color="primary" v-close-popup @click="prolongContribution(uuid),reload()" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+<q-dialog v-model="confirm1" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <q-avatar icon="add" color="primary"/>
+          <span class="q-ml-sm">Czy na pewno Skreślić z listy członków?</span>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="anuluj" color="primary" v-close-popup />
+          <q-btn flat label="Skreśl" color="primary" v-close-popup @click="erase(uuid),alert4=true" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+<q-dialog v-model="confirm2" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <q-avatar icon="add" color="primary"/>
+          <span class="q-ml-sm">Czy na pewno przenieść do Grupy dorosłych??</span>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="anuluj" color="primary" v-close-popup />
+          <q-btn flat label="Skreśl" color="primary" v-close-popup @click="changeAdult (uuid),alert1=true" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="alert">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Zapisany do książki pobytu</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup @click="showloading(),addMemberToEvidence(uuid)" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="alert1">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Przeniesiono do Grupy Dorosłej</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup @click="showloading(),reload()" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="alert2">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Zaktualizowano dane podstawowe</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup @click="showloading(),reload()" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="alert3">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Zaktualizowano dane adresowe</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup @click="showloading(),reload()" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="alert4">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Przeniesiono do Skreślonych z listy</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup @click="showloading(),reload()" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -161,6 +256,15 @@ const { getScrollTarget, setScrollPosition } = scroll
 export default {
   data () {
     return {
+      uuid: null,
+      alert: false,
+      alert1: false,
+      alert2: false,
+      alert3: false,
+      alert4: false,
+      confirm: false,
+      confirm1: false,
+      confirm2: false,
       number: '',
       patentNumber: '',
       licenseNumber: '',
@@ -205,10 +309,23 @@ export default {
       const duration = 500
       setScrollPosition(target, offset, duration)
     },
-    updateMember (uuid, email, phoneNumber) {
+    addMemberToEvidence (uuid) {
+      fetch('http://localhost:8080/evidence/' + uuid, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => response.json())
+        .then(members => {
+          this.members = members
+          this.reload()
+        })
+    },
+    updateMember (uuid, email, phoneNumber, idcard) {
       var data = {
         email: email,
-        phoneNumber: phoneNumber
+        phoneNumber: phoneNumber,
+        idcard: idcard
       }
       fetch('http://localhost:8080/member/' + uuid, {
         method: 'PUT',
@@ -235,15 +352,16 @@ export default {
       }).then(response => response.json())
         .then(members => {
           this.members = members
+          this.alert4 = true
         })
     },
-    updateAddress (uuid, zipCode, postOfficeCity, street, streetNumber, flatNumber) {
+    updateAddress (uuid, memberZipCode, memberPostOfficeCity, memberStreet, memberStreetNumber, memberFlatNumber) {
       var data = {
-        zipCode: zipCode,
-        postOfficeCity: postOfficeCity,
-        street: street,
-        streetNumber: streetNumber,
-        flatNumber: flatNumber
+        zipCode: memberZipCode,
+        postOfficeCity: memberPostOfficeCity,
+        street: memberStreet,
+        streetNumber: memberStreetNumber,
+        flatNumber: memberFlatNumber
       }
       fetch('http://localhost:8080/address/' + uuid, {
         method: 'PUT',
@@ -252,8 +370,9 @@ export default {
           'Content-Type': 'application/json'
         }
       }).then(response => response.json())
-        .then(members => {
-          this.members = members
+        .then(address => {
+          this.address = address
+          this.alert5 = true
         })
     },
     getListMembers () {
@@ -278,14 +397,6 @@ export default {
     },
     changeAdult (uuid) {
       fetch('http://localhost:8080/member/adult/' + uuid, {
-        method: 'PATCH'
-      }).then(response => response.json())
-        .then(members => {
-          this.members = members
-        })
-    },
-    changeActive (uuid) {
-      fetch('http://localhost:8080/member/' + uuid, {
         method: 'PATCH'
       }).then(response => response.json())
         .then(members => {

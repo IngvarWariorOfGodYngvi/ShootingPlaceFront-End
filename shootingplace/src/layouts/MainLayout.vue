@@ -68,6 +68,12 @@ export default {
           link: 'https://localhost:8081/#/member/adult'
         },
         {
+          title: 'Temp',
+          caption: 'Obsługa podstawowa',
+          icon: 'perm_identity',
+          link: 'https://localhost:8081/#/member/adulttemp'
+        },
+        {
           title: 'Klubowicze - Grupa Młodzieżowa',
           caption: 'obsługa podstawowa',
           icon: 'perm_identity',
@@ -102,6 +108,12 @@ export default {
           caption: 'obsługa podstawowa',
           icon: 'book',
           link: 'https://localhost:8081/#/dailyevidence/'
+        },
+        {
+          title: 'Lista wydawania amunicji',
+          caption: 'obsługa podstawowa',
+          icon: 'book',
+          link: 'https://localhost:8081/#/ammolist'
         },
         {
           title: 'Swagger',
