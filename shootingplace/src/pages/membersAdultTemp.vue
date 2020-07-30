@@ -108,17 +108,21 @@
               </q-expansion-item>
               </q-card-section>
               <q-card-section class="col">
-                <q-item-section v-if="(members.memberPermissions.shootingLeaderNumber!=null&&members.memberPermissions.shootingLeaderNumber!='')
-                ||(members.memberPermissions.instructorNumber!=null||members.memberPermissions.instructorNumber!='')
-                ||(members.memberPermissions.arbiterNumber!=null&&members.memberPermissions.arbiterNumber!='')">
-                <q-item><q-item-label>Informacje o Uprawnieniach</q-item-label></q-item>
+                <q-item-section>
+                <q-item v-if="(members.memberPermissions.instructorNumber!=null&&members.memberPermissions.instructorNumber!='')
+                ||(members.memberPermissions.shootingLeaderNumber!=null&&members.memberPermissions.shootingLeaderNumber!='')
+                ||(members.memberPermissions.arbiterNumber!=null&&members.memberPermissions.arbiterNumber!='')
+                ||(members.weaponPermission.number!=null&&members.weaponPermission.isExist)
+                ||members.shootingPatent.patentNumber!=null"><q-item-label>Informacje o Uprawnieniach</q-item-label></q-item>
+                  <q-item-label v-if="(members.weaponPermission.number!=null&&members.weaponPermission.isExist)">Numer Pozwolenia {{members.weaponPermission.number}}</q-item-label>
                   <q-item-label v-if="(members.memberPermissions.shootingLeaderNumber!=null&&members.memberPermissions.shootingLeaderNumber!='')" caption lines="2">Prowadzący Strzelanie {{members.memberPermissions.shootingLeaderNumber}}</q-item-label>
-                 <q-item-label v-if="(members.memberPermissions.instructorNumber!=null&&members.memberPermissions.instructorNumber!='')" caption lines="2">Instruktor {{members.memberPermissions.instructorNumber}}</q-item-label>
-                 <q-item-label v-if="(members.memberPermissions.arbiterNumber!=null&&members.memberPermissions.arbiterNumber!='')" caption lines="2">Sędzia</q-item-label>
+                  <q-item-label v-if="(members.memberPermissions.instructorNumber!=null&&members.memberPermissions.instructorNumber!='')" caption lines="2">Instruktor {{members.memberPermissions.instructorNumber}}</q-item-label>
+                  <q-item-label v-if="(members.memberPermissions.arbiterNumber!=null&&members.memberPermissions.arbiterNumber!='')" caption lines="2">Sędzia</q-item-label>
                   <q-item-label v-if="(members.memberPermissions.arbiterNumber!=null&&members.memberPermissions.arbiterNumber!='')" caption lines="2">numer {{members.memberPermissions.arbiterNumber}}</q-item-label>
-                 <q-item-label v-if="(members.memberPermissions.arbiterNumber!=null&&members.memberPermissions.arbiterNumber!='')" caption lines="2">{{members.memberPermissions.arbiterClass}}</q-item-label>
+                  <q-item-label v-if="(members.memberPermissions.arbiterNumber!=null&&members.memberPermissions.arbiterNumber!='')" caption lines="2">{{members.memberPermissions.arbiterClass}}</q-item-label>
                   <q-item-label v-if="(members.memberPermissions.arbiterNumber!=null&&members.memberPermissions.arbiterNumber!='')" caption lines="2">Ważna do {{members.memberPermissions.arbiterPermissionValidThru}}</q-item-label>
                   <q-item-label v-if="members.shootingPatent.patentNumber!=null" caption lines="2" >Numer Patentu {{members.shootingPatent.patentNumber}}</q-item-label>
+                  <q-item-label v-if="members.weaponPermission.number!=null&&members.weaponPermission.isExist">Numer Pozwolenia {{members.weaponPermission.number}}</q-item-label>
                   <q-item-label v-if="members.weaponPermission.number!=null&&members.weaponPermission.isExist">Numer Pozwolenia {{members.weaponPermission.number}}</q-item-label>
                  </q-item-section>
                 <q-expansion-item label="Opcje Dodatkowe">
@@ -152,7 +156,7 @@
                 <q-item v-if="!members.shootingPatent.pistolPermission"><q-checkbox v-model="patentPistolPermission" label="Pistolet"/></q-item>
                 <q-item v-if="!members.shootingPatent.riflePermission"><q-checkbox v-model="patentRiflePermission" label="Karabin"/></q-item>
                 <q-item v-if="!members.shootingPatent.shotgunPermission"><q-checkbox v-model="patentShotgunPermission" label="Strzelba"/></q-item>
-                <q-btn color="primary" label="Aktualizuj Patent" @click="addPatent(members.uuid, patentNumber, patentPistolPermission, patentRiflePermission, patentShotgunPermission)"/>
+                <q-btn color="secondary" label="Aktualizuj Patent" @click="addPatent(members.uuid, patentNumber, patentPistolPermission, patentRiflePermission, patentShotgunPermission)"/>
               </q-expansion-item>
               <q-item v-if="members.shootingPatent.pistolPermission
                 &&members.shootingPatent.riflePermission
@@ -160,13 +164,14 @@
                 </q-expansion-item >
                 </q-item-section>
                   <q-expansion-item label="Pozwolenie na Broń" group="right-card">
-                <q-item v-if="members.weaponPermission.number!=null&&members.weaponPermission.isExist" ><q-item-label>Numer Pozwolenia {{members.weaponPermission.number}}</q-item-label></q-item>                <q-item v-if="!members.license.isValid&&members.weaponPermission.isExist"><q-item-label >POSIADA NIE WAŻNĄ LICENCJĘ!!!</q-item-label></q-item>
+                <q-item v-if="members.weaponPermission.number!=null&&members.weaponPermission.isExist" ><q-item-label>Numer Pozwolenia {{members.weaponPermission.number}}</q-item-label></q-item>
+                <q-item v-if="!members.license.isValid&&members.weaponPermission.isExist"><q-item-label >POSIADA NIE WAŻNĄ LICENCJĘ!!!</q-item-label></q-item>
                 <q-item v-if="members.license.isValid&&members.weaponPermission.isExist"><q-item-label>Posiada ważną licencję</q-item-label></q-item>
                 <q-item v-if="members.weaponPermission.number==null||!members.weaponPermission.isExist"><q-input v-model="weaponPermissionNumber" label="Numer pozwolenia"/></q-item>
                 <q-item v-if="members.weaponPermission.number==null"><q-item-label  v-model="isExist">Dodaj pozwolenie</q-item-label></q-item>
                 <q-item v-if="members.weaponPermission.isExist"><q-item-label >Usuń pozwolenie</q-item-label></q-item>
-                <q-item v-if="(!members.weaponPermission.isExist)"><q-btn label="Dodaj" color="primary" @click="changeWeaponPermission(members.uuid, weaponPermissionNumber, isExist)"/></q-item>
-                <q-item v-if="(members.weaponPermission.number!=null) && (members.weaponPermission.isExist)"><q-btn label="Usuń" color="primary" @click="uuid=members.uuid,eraseWeapon=true"/></q-item>
+                <q-item v-if="(!members.weaponPermission.isExist)"><q-btn label="Dodaj" color="secondary" @click="changeWeaponPermission(members.uuid, weaponPermissionNumber, isExist)"/></q-item>
+                <q-item v-if="(members.weaponPermission.number!=null) && (members.weaponPermission.isExist)"><q-btn label="Usuń" color="secondary" @click="uuid=members.uuid,eraseWeapon=true"/></q-item>
                 </q-expansion-item>
                 <q-expansion-item label="Dodatkowe uprawnienia" group="right-card">
                     <q-expansion-item v-if="members.memberPermissions.shootingLeaderNumber==null" label="Prowadzący strzelanie" group="qualifications">
@@ -181,14 +186,21 @@
                     </q-expansion-item>
                     <q-expansion-item label="Sędzia" group="qualifications">
                     <q-item v-if="members.memberPermissions.arbiterNumber!=null"><q-item-label>{{members.memberPermissions.arbiterNumber}}</q-item-label></q-item>
-                    <q-item><q-input v-model="permissionsArbiterNumber" label="Numer uprawnień" /></q-item>
+                    <q-item v-if="members.memberPermissions.arbiterNumber==null||members.memberPermissions.arbiterNumber==''"><q-input  v-model="permissionsArbiterNumber" label="Numer uprawnień" /></q-item>
                     <q-item><q-input v-model="permissionsArbiterPermissionValidThru" hint="YYYY-MM-DD" placeholder="YYYY-MM-DD" label="Data ważności" /></q-item>
-                    <q-item><q-radio v-model="ordinal" :val="1" label="Klasa 3" color="secondary" /></q-item>
-                    <q-item><q-radio v-model="ordinal" :val="2" label="Klasa 2" color="secondary" /></q-item>
-                    <q-item><q-radio v-model="ordinal" :val="3" label="Klasa 1" color="secondary" /></q-item>
-                    <q-item><q-radio v-model="ordinal" :val="4" label="Klasa Państwowa" color="secondary" /></q-item>
-                    <q-item><q-radio v-model="ordinal" :val="5" label="Klasa Międzynarodowa" color="secondary" /></q-item>
-                    <q-item><q-btn label="Dodaj" color="secondary" @click="uuid=members.uuid,arbiterConfirm=true"/></q-item>
+                    <q-item v-if="members.memberPermissions.arbiterNumber!=null"><q-btn color="secondary" label="Przedłuż" @click="uuid=members.uuid,arbiterProlongConfirm=true"/></q-item>
+                    <q-item v-if="members.memberPermissions.arbiterNumber==null"><q-radio v-model="ordinal" :val="1" label="Klasa 3" color="secondary" /></q-item>
+                    <q-item v-if="members.memberPermissions.arbiterNumber==null"><q-radio v-model="ordinal" :val="1" label="Klasa 2" color="secondary" /></q-item>
+                    <q-item v-if="members.memberPermissions.arbiterNumber==null"><q-radio v-model="ordinal" :val="1" label="Klasa 1" color="secondary" /></q-item>
+                    <q-item v-if="members.memberPermissions.arbiterNumber==null"><q-radio v-model="ordinal" :val="1" label="Klasa Państwowa" color="secondary" /></q-item>
+                    <q-item v-if="members.memberPermissions.arbiterNumber==null"><q-radio v-model="ordinal" :val="1" label="Klasa Międzynarodowa" color="secondary" /></q-item>
+                    <q-item v-if="members.memberPermissions.arbiterNumber!=null&&members.memberPermissions.arbiterClass!='Klasa 3'&&members.memberPermissions.arbiterClass=='Brak'"><q-radio v-model="ordinal" :val="1" label="Klasa 3" color="secondary" /></q-item>
+                    <q-item v-if="members.memberPermissions.arbiterNumber!=null&&members.memberPermissions.arbiterClass!='Klasa 2'&&members.memberPermissions.arbiterClass=='Klasa 3'"><q-radio v-model="ordinal" :val="2" label="Klasa 2" color="secondary" /></q-item>
+                    <q-item v-if="members.memberPermissions.arbiterNumber!=null&&members.memberPermissions.arbiterClass!='Klasa 1'&&members.memberPermissions.arbiterClass=='Klasa 2'"><q-radio v-model="ordinal" :val="3" label="Klasa 1" color="secondary" /></q-item>
+                    <q-item v-if="members.memberPermissions.arbiterNumber!=null&&members.memberPermissions.arbiterClass!='Klasa Państwowa'&&members.memberPermissions.arbiterClass=='Klasa 1'"><q-radio v-model="ordinal" :val="4" label="Klasa Państwowa" color="secondary" /></q-item>
+                    <q-item v-if="members.memberPermissions.arbiterNumber!=null&&members.memberPermissions.arbiterClass!='Klasa Międzynarodowa'&&members.memberPermissions.arbiterClass=='Klasa Państwowa'"><q-radio v-model="ordinal" :val="5" label="Klasa Międzynarodowa" color="secondary" /></q-item>
+                    <q-item v-if="members.memberPermissions.arbiterNumber!=null"><q-btn color="secondary" label="Podnieś klasę" @click="uuid=members.uuid,arbiterUpdateClassConfirm=true"/></q-item>
+                    <q-item v-if="members.memberPermissions.arbiterNumber==null||members.memberPermissions.arbiterNumber==''"><q-btn label="Dodaj" color="secondary" @click="uuid=members.uuid,arbiterConfirm=true"/></q-item>
                     </q-expansion-item>
                 </q-expansion-item>
                 <q-expansion-item label="Przenieś do nieaktywnych" group="right-card">
@@ -351,6 +363,32 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
+<q-dialog v-model="arbiterProlongConfirm" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <q-avatar icon="add" color="primary"/>
+          <span class="q-ml-sm">Czy napewno chcesz przedłużyć licencję Sędziego?</span>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="anuluj" color="primary" v-close-popup />
+          <q-btn flat label="Przedłuż" color="primary" v-close-popup @click="updateMemberPermissions(uuid, permissionsArbiterPermissionValidThru),value3=true" />
+        </q-card-actions>
+      </q-card>
+</q-dialog>
+<q-dialog v-model="arbiterUpdateClassConfirm" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <q-avatar icon="add" color="primary"/>
+          <span class="q-ml-sm">Czy napewno chcesz podnieść klasę licencji Sędziego?</span>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="anuluj" color="primary" v-close-popup />
+          <q-btn flat label="podnieś" color="primary" v-close-popup @click="updateMemberPermissions(uuid),value4=true" />
+        </q-card-actions>
+      </q-card>
+</q-dialog>
     <q-dialog v-model="alert">
       <q-card>
         <q-card-section>
@@ -461,6 +499,28 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <q-dialog v-model="arbiterProlongAlert">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Przedłużono datę ważności licencji Sędziego</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup @click="showloading(),reload()" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="arbiterUpdateClassAlert">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Podniesiono klasę licencji Sędziego</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup @click="showloading(),reload()" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -475,7 +535,11 @@ export default {
       value: false,
       value1: false,
       value2: false,
+      value3: false,
+      value4: false,
       arbiterAlert: false,
+      arbiterProlongAlert: false,
+      arbiterUpdateClassAlert: false,
       contributionRecord: '',
       HistoryContributionRecord: null,
       alert: false,
@@ -494,6 +558,8 @@ export default {
       instructorConfirm: false,
       shootingLeaderConfirm: false,
       arbiterConfirm: false,
+      arbiterProlongConfirm: false,
+      arbiterUpdateClassConfirm: false,
       number: '',
       patentNumber: '',
       licenseNumber: '',
@@ -785,15 +851,21 @@ export default {
         body: JSON.stringify(data)
       }).then(response => {
         response.json()
-      })
-        .then(members => {
-          this.members = members
+        if (response.ok) {
           if (this.value) { this.instructorAlert = true }
           if (this.value1) { this.shootingLeaderAlert = true }
           if (this.value2) { this.arbiterAlert = true }
+          if (this.value3) { this.arbiterProlongAlert = true }
+          if (this.value4) { this.arbiterUpdateClassAlert = true }
+        }
+      })
+        .then(members => {
+          this.members = members
           this.value = false
           this.value1 = false
           this.value2 = false
+          this.value3 = false
+          this.value4 = false
           console.log('prowadzący ' + this.permissionsShootingLeaderNumber)
           console.log('instruktor ' + this.permissionsInstructorNumber)
           console.log('sędzia ' + this.permissionsArbiterNumber)
