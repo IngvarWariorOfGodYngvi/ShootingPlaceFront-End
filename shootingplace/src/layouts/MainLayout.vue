@@ -28,7 +28,7 @@
       <q-list>
         <q-item-label
           header
-        ><q-item class="flex flex-center" clickable tag="a" target="_self" href="https://localhost:8081/#/" width="max">Strona Główna</q-item>
+        ><q-item class="flex flex-center" clickable tag="a" target="_self" href="https://shootingplacetest.herokuapp.com//#/" width="max">Strona Główna</q-item>
         </q-item-label>
         <EssentialLink
           v-for="link in essentialLinks"
@@ -65,55 +65,55 @@ export default {
           title: 'Klubowicze - Grupa Dorosła',
           caption: 'Obsługa podstawowa',
           icon: 'perm_identity',
-          link: 'https://localhost:8081/#/member/adult'
+          link: 'https://shootingplacetest.herokuapp.com//#/member/adult'
         },
         {
           title: 'Temp Grupa Powszechna',
           caption: 'Obsługa podstawowa',
           icon: 'perm_identity',
-          link: 'https://localhost:8081/#/member/adulttemp'
+          link: 'https://shootingplacetest.herokuapp.com//#/member/adulttemp'
         },
         {
           title: 'Klubowicze - Grupa Młodzieżowa',
           caption: 'obsługa podstawowa',
           icon: 'perm_identity',
-          link: 'https://localhost:8081/#/member/nonadult'
+          link: 'https://shootingplacetest.herokuapp.com//#/member/nonadult'
         },
         {
           title: 'Temp Klubowicze Nieaktywni - Grupa Powszechna',
           caption: 'obsługa podstawowa',
           icon: 'person_remove',
-          link: 'https://localhost:8081/#/member/adultnonactivetemp'
+          link: 'https://shootingplacetest.herokuapp.com//#/member/adultnonactivetemp'
         },
         {
           title: 'Klubowicze Nieaktywni - Grupa Młodzieżowa',
           caption: 'obsługa podstawowa',
           icon: 'person_remove',
-          link: 'https://localhost:8081/#/member/nonadultnonactive'
+          link: 'https://shootingplacetest.herokuapp.com//#/member/nonadultnonactive'
         },
         {
           title: 'Klubowicze Skreśleni z Listy członków',
           caption: 'obsługa podstawowa',
           icon: 'person_remove',
-          link: 'https://localhost:8081/#/member/erased'
+          link: 'https://shootingplacetest.herokuapp.com//#/member/erased'
         },
         {
           title: 'Dodaj nowego Klubowicza',
           caption: 'obsługa podstawowa',
           icon: 'add',
-          link: 'https://localhost:8081/#/member/addmember'
+          link: 'https://shootingplacetest.herokuapp.com//#/member/addmember'
         },
         {
           title: 'Książka pobytu na Strzelnicy - Lista dzienna',
           caption: 'obsługa podstawowa',
           icon: 'book',
-          link: 'https://localhost:8081/#/dailyevidence/'
+          link: 'https://shootingplacetest.herokuapp.com//#/dailyevidence/'
         },
         {
           title: 'Lista wydawania amunicji',
           caption: 'obsługa podstawowa',
           icon: 'book',
-          link: 'https://localhost:8081/#/ammolist'
+          link: 'https://shootingplacetest.herokuapp.com//#/ammolist'
         },
         {
           title: 'Swagger',
