@@ -28,7 +28,7 @@
       <q-list>
         <q-item-label
           header
-        ><q-item class="flex flex-center" clickable tag="a" target="_self" href="https://shootingplacetest.herokuapp.com//#/" width="max">Strona Główna</q-item>
+        ><q-item class="flex flex-center" clickable tag="a" target="_self" href="https://localhost:8081/#/" width="max">Strona Główna</q-item>
         </q-item-label>
         <EssentialLink
           v-for="link in essentialLinks"
@@ -77,43 +77,43 @@ export default {
           title: 'Klubowicze - Grupa Młodzieżowa',
           caption: 'obsługa podstawowa',
           icon: 'perm_identity',
-          link: 'https://shootingplacetest.herokuapp.com//#/member/nonadult'
+          link: 'https://localhost:8081/#/member/nonadult'
         },
         {
           title: 'Temp Klubowicze Nieaktywni - Grupa Powszechna',
           caption: 'obsługa podstawowa',
           icon: 'person_remove',
-          link: 'https://shootingplacetest.herokuapp.com//#/member/adultnonactivetemp'
+          link: 'https://localhost:8081/#/member/adultnonactivetemp'
         },
         {
           title: 'Klubowicze Nieaktywni - Grupa Młodzieżowa',
           caption: 'obsługa podstawowa',
           icon: 'person_remove',
-          link: 'https://shootingplacetest.herokuapp.com//#/member/nonadultnonactive'
+          link: 'https://localhost:8081/#/member/nonadultnonactive'
         },
         {
           title: 'Klubowicze Skreśleni z Listy członków',
           caption: 'obsługa podstawowa',
           icon: 'person_remove',
-          link: 'https://shootingplacetest.herokuapp.com//#/member/erased'
+          link: 'https://localhost:8081/#/member/erased'
         },
         {
           title: 'Dodaj nowego Klubowicza',
           caption: 'obsługa podstawowa',
           icon: 'add',
-          link: 'https://shootingplacetest.herokuapp.com//#/member/addmember'
+          link: 'https://localhost:8081/#/member/addmember'
         },
         {
           title: 'Książka pobytu na Strzelnicy - Lista dzienna',
           caption: 'obsługa podstawowa',
           icon: 'book',
-          link: 'https://shootingplacetest.herokuapp.com//#/dailyevidence/'
+          link: 'https://localhost:8081/#/dailyevidence/'
         },
         {
           title: 'Lista wydawania amunicji',
           caption: 'obsługa podstawowa',
           icon: 'book',
-          link: 'https://shootingplacetest.herokuapp.com//#/ammolist'
+          link: 'https://localhost:8081/#/ammolist'
         },
         {
           title: 'Swagger',
