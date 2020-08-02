@@ -42,7 +42,7 @@
       <router-view />
     </q-page-container>
     <q-page-sticky position="bottom-right" :offset="[18, 18]" >
-            <q-btn fab icon="add" color="accent" @click="showloading()"></q-btn>
+            <q-btn fab icon="add" color="accent" @click="showloading(), redirect()"></q-btn>
           </q-page-sticky>
   </q-layout>
 </template>
@@ -62,46 +62,22 @@ export default {
       leftDrawerOpen: false,
       essentialLinks: [
         {
-          title: 'Klubowicze - Grupa Dorosła',
+          title: 'Lista Klubowiczów',
           caption: 'Obsługa podstawowa',
           icon: 'perm_identity',
-          link: 'https://shootingplacetest.herokuapp.com//#/member/adult'
-        },
-        {
-          title: 'Temp Grupa Powszechna',
-          caption: 'Obsługa podstawowa',
-          icon: 'perm_identity',
-          link: 'https://shootingplacetest.herokuapp.com//#/member/adulttemp'
-        },
-        {
-          title: 'Klubowicze - Grupa Młodzieżowa',
-          caption: 'obsługa podstawowa',
-          icon: 'perm_identity',
-          link: 'https://localhost:8081/#/member/nonadult'
-        },
-        {
-          title: 'Temp Klubowicze Nieaktywni - Grupa Powszechna',
-          caption: 'obsługa podstawowa',
-          icon: 'person_remove',
-          link: 'https://localhost:8081/#/member/adultnonactivetemp'
-        },
-        {
-          title: 'Klubowicze Nieaktywni - Grupa Młodzieżowa',
-          caption: 'obsługa podstawowa',
-          icon: 'person_remove',
-          link: 'https://localhost:8081/#/member/nonadultnonactive'
+          link: 'https://localhost:8081/#/member/lista'
         },
         {
           title: 'Klubowicze Skreśleni z Listy członków',
           caption: 'obsługa podstawowa',
           icon: 'person_remove',
-          link: 'https://localhost:8081/#/member/erased'
+          link: 'https://localhost:8081/#/member/usunieci'
         },
         {
           title: 'Dodaj nowego Klubowicza',
           caption: 'obsługa podstawowa',
           icon: 'add',
-          link: 'https://localhost:8081/#/member/addmember'
+          link: 'https://localhost:8081/#/member/dodawanie'
         },
         {
           title: 'Książka pobytu na Strzelnicy - Lista dzienna',
@@ -114,6 +90,12 @@ export default {
           caption: 'obsługa podstawowa',
           icon: 'book',
           link: 'https://localhost:8081/#/ammolist'
+        },
+        {
+          title: 'Lista zawodów',
+          caption: 'obsługa podstawowa',
+          icon: 'book',
+          link: 'https://localhost:8081/#/competition'
         },
         {
           title: 'Swagger',
@@ -131,6 +113,9 @@ export default {
         this.$q.loading.hide()
         this.timer = 0
       }, 1000)
+    },
+    redirect () {
+      window.location.href = 'https://localhost:8081/#/member/dodawanie'
     }
   }
 }

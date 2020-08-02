@@ -9,7 +9,7 @@
     >
       <q-step
         :name="1"
-        title="Podstawoowe dane"
+        title="Podstawowe dane"
         caption="Wymagane"
         icon="settings"
         :done="step > 1"
@@ -97,7 +97,7 @@
         icon="assignment"
         :done="step > 3"
       >
-      <q-card class="row">
+      <q-card class="row" v-if="memberAdult">
       <q-card-section>
       <div>
       <q-item><q-input v-model="patentNumber" hint="tylko cyfry" placeholder="tylko cyfry" label="Numer Patentu" filled  lazy-rules
@@ -121,6 +121,8 @@
       </div>
       </q-card-section>
       </q-card>
+      <div v-if="!memberAdult">Patent - Nie ma tu nic do pokazania
+      </div>
       </q-step>
 
       <q-step
@@ -130,9 +132,9 @@
         icon="assignment"
         :done="step > 4"
       >
-      <q-card class="row">
+      <q-card class="row" v-if="(memberAdult&&patentNumber!=null)||!memberAdult">
       <q-card-section>
-      <div v-if="(memberAdult&&patentNumber!=null)||!memberAdult">
+      <div >
       <q-item><q-input v-model="licenseNumber" hint="tylko cyfry" placeholder="tylko cyfry" label="Numer Licencji" filled lazy-rules
         :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']"/></q-item>
       <q-item><q-input v-model="licenseDate" hint="YYYY-MM-DD" placeholder="YYYY-MM-DD" label="Ważna do" filled lazy-rules
@@ -163,19 +165,70 @@
         title="Pozwolenie na Broń"
         caption="opcjonalnie"
         icon="assignment"
+        :done="step > 5"
       >
       <div v-if="(memberAdult&&patentNumber!=null&&licenseNumber!=null)">
-      <q-item><q-item-label>Jeśli posiada pozwolenie wpisz numer</q-item-label></q-item>
+      <q-item><q-item-label>Jeśli posiada pozwolenie - wpisz numer</q-item-label></q-item>
       <q-item><q-input v-model="weaponPermissionNumber" label="Numer" filled lazy-rules
         :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']"/></q-item>
       <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),changeWeaponPermission(uuid, weaponPermissionNumber)"/></q-item>
       </div>
-      <div v-if="(memberAdult&&(patentNumber==null||licenseNumber==null))" >Pozwolenie na broń - Nie ma tu nic do pokazania</div>
+      <div v-if="(memberAdult&&(patentNumber==null||licenseNumber==null)||!memberAdult)" >Pozwolenie na broń - Nie ma tu nic do pokazania</div>
+      </q-step>
+      <q-step
+        :name="6"
+        title="Prowadzący Strzelanie"
+        caption="opcjonalnie"
+        icon="assignment"
+        :done="step > 6"
+      >
+      <div v-if="memberAdult">
+      <q-item><q-item-label>Jeśli posiada uprawnienia - wpisz numer</q-item-label></q-item>
+      <q-item><q-input v-model="permissionsShootingLeaderNumber" label="Numer" filled lazy-rules
+        :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']"/></q-item>
+      <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),updateMemberPermissions(uuid, permissionsShootingLeaderNumber),value=true"/></q-item>
+      </div>
+      <div v-if="!memberAdult" >Prowadzący strzelanie - Nie ma tu nic do pokazania</div>
+      </q-step>
+      <q-step
+        :name="7"
+        title="Instruktor"
+        caption="opcjonalnie"
+        icon="assignment"
+        :done="step > 7"
+      >
+      <div v-if="memberAdult">
+      <q-item><q-item-label>Jeśli posiada uprawnienia instruktora - wpisz numer</q-item-label></q-item>
+      <q-item><q-input v-model="permissionsInstructorNumber" label="Numer" filled lazy-rules
+        :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']"/></q-item>
+      <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),updateMemberPermissions(uuid, permissionsInstructorNumber), value1=true"/></q-item>
+      </div>
+      <div v-if="!memberAdult" >Instruktor - Nie ma tu nic do pokazania</div>
+      </q-step>
+      <q-step
+        :name="8"
+        title="Sędzia"
+        caption="opcjonalnie"
+        icon="assignment"
+      >
+      <div v-if="memberAdult">
+      <q-item><q-item-label>Jeśli posiada Licencję Sędziego - uzupełnij dane</q-item-label></q-item>
+        <q-item><q-input v-model="permissionsArbiterNumber" filled label="Numer uprawnień" /></q-item>
+        <q-item><q-input v-model="permissionsArbiterPermissionValidThru" filled hint="YYYY-MM-DD" placeholder="YYYY-MM-DD" label="Data ważności" /></q-item>
+        <q-item><q-radio v-model="ordinal" :val="1" label="Klasa 3" color="secondary" /></q-item>
+        <q-item><q-radio v-model="ordinal" :val="2" label="Klasa 2" color="secondary" /></q-item>
+        <q-item><q-radio v-model="ordinal" :val="3" label="Klasa 1" color="secondary" /></q-item>
+        <q-item><q-radio v-model="ordinal" :val="4" label="Klasa Państwowa" color="secondary" /></q-item>
+        <q-item><q-radio v-model="ordinal" :val="5" label="Klasa Międzynarodowa" color="secondary" /></q-item>
+      <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),updateMemberPermissions(uuid, permissionsArbiterNumber,permissionsArbiterPermissionValidThru, ordinal), value2=true"/></q-item>
+      </div>
+      <div v-if="!memberAdult">Sędzia - Nie ma tu nic do pokazania</div>
       </q-step>
 
-      <template v-slot:navigation>
-        <q-stepper-navigation class="row">
-          <q-item><q-btn v-if="uuid!=null&&uuid!=''" @click="$refs.stepper.next()" color="primary" :label="step === 5 ? 'Zakończono' : 'Przejdź Dalej'" /></q-item>
+      <template v-slot:navigation  >
+        <q-stepper-navigation class="flex flex">
+          <q-item v-if="step<8" ><q-btn @click="$refs.stepper.next()" color="primary" :label="step === 8 ? 'Zakończono' : 'Przejdź Dalej'" /></q-item>
+          <q-item v-if="step==8" ><q-btn @click="redirect()" color="primary" label="Zakończ" /></q-item>
           <q-item><q-btn v-if="step > 1" flat color="primary" @click="$refs.stepper.previous()" label="Wróć" /></q-item>
           <q-item><q-btn v-if="uuid!=null&&uuid!=''" color="secondary" @click="showloading()" label="Drukuj kartę" /></q-item>
           <q-item v-if="uuid!=null"><q-item-label>Identyfikator : {{uuid}}</q-item-label></q-item>
@@ -183,7 +236,7 @@
       </template>
     </q-stepper>
   </div>
-  <q-dialog v-model="alert">
+  <q-dialog v-model="memberAlert">
       <q-card>
         <q-card-section>
           <div class="text-h6">Witamy w Klubie</div>
@@ -198,7 +251,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-  <q-dialog v-model="alert1">
+  <q-dialog v-model="addressAlert">
       <q-card>
         <q-card-section>
           <div class="text-h6">Zaktualizowano Adres</div>
@@ -213,7 +266,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-  <q-dialog v-model="alert2">
+  <q-dialog v-model="licenseAndPatentAlert">
       <q-card>
         <q-card-section v-if="licenseNumber==null">
           <div class="text-h6">Uprawnienia patentu zostały nadane</div>
@@ -234,7 +287,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="alert3">
+  <q-dialog v-model="weaponAlert">
       <q-card>
         <q-card-section>
           <div class="text-h6">Dodano Pozwolenie na Broń</div>
@@ -249,6 +302,66 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+  <q-dialog v-model="instructorAlert">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Dodano Uprawnienia Instruktora</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          Możesz już szkolić ludzi takich jak RAMBO.
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+  <q-dialog v-model="shootingLeaderAlert">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Dodano Uprawnienia Prowadzącego Strzelanie</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          Możesz już nadzorować wszystkich podczas strzelania z armat.
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+  <q-dialog v-model="arbiterAlert">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Dodano Licencję Sędziego</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          Od dzisiaj wystawiasz oceny takim goścom jak RAMBO.
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+  <q-dialog v-model="failAlert">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Coś poszło nie tak</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          Upewnij się, że wszystkie wymagane pola są uzupełnione a wszystkie dane są podane prawidłowo
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -256,10 +369,21 @@
 export default {
   data () {
     return {
-      alert: false,
-      alert1: false,
-      alert2: false,
-      alert3: false,
+      value: false,
+      value1: false,
+      value2: false,
+      instructorAlert: false,
+      shootingLeaderAlert: false,
+      arbiterAlert: false,
+      failAlert: false,
+      memberAlert: false,
+      addressAlert: false,
+      licenseAndPatentAlert: false,
+      weaponAlert: false,
+      permissionsShootingLeaderNumber: null,
+      permissionsInstructorNumber: null,
+      permissionsArbiterNumber: null,
+      permissionsArbiterPermissionValidThru: null,
       step: 1,
       number: '',
       validThru: '',
@@ -292,10 +416,14 @@ export default {
       memberFlatNumber: null,
       active: true,
       uuid: null,
+      ordinal: '',
       returnAlert: false
     }
   },
   methods: {
+    redirect () {
+      window.location.href = 'https://localhost:8081/#/member/lista'
+    },
     showloading () {
       this.$q.loading.show({ message: 'Dzieje się coś ważnego... Poczekaj' })
       this.timer = setTimeout(() => {
@@ -345,8 +473,8 @@ export default {
         .then(joinDate => {
           this.joinDate = memberJoinDate
           console.log(this.memberJoinDate)
-          if (this.returnAlert) { this.alert = true }
-          if (!this.returnAlert) { alert('Coś poszło nie tak - sprawdź czy wszystkie dane są wprowadzone poprawnie') }
+          if (this.returnAlert) { this.memberAlert = true }
+          if (!this.returnAlert) { this.failAlert = true }
           this.returnAlert = false
         })
     },
@@ -367,7 +495,7 @@ export default {
       }).then(response => response.json())
         .then(member => {
           this.member = member
-          this.alert1 = true
+          this.addressAlert = true
         })
     },
     addPatent (uuid, memberPatentNumber, memberPatentPistolPermission, memberPatentRiflePermission, memberPatentShotgunPermission) {
@@ -402,7 +530,7 @@ export default {
       }).then(response => response.json())
         .then(dateOfPosting => {
           this.dateOfPosting = patentDate
-          if (this.returnAlert) { this.alert2 = true }
+          if (this.returnAlert) { this.licenseAndPatentAlert = true }
           if (!this.returnAlert) {
             alert('Coś poszło nie tak - sprawdź czy wszystkie dane są wprowadzone poprawnie')
             this.returnAlert = false
@@ -442,7 +570,7 @@ export default {
       }).then(response => response.json())
         .then(validThru => {
           this.validThru = licenseDate
-          if (this.returnAlert) { this.alert2 = true }
+          if (this.returnAlert) { this.licenseAndPatentAlert = true }
           if (!this.returnAlert) {
             alert('Coś poszło nie tak - sprawdź czy wszystkie dane są wprowadzone poprawnie')
             this.returnAlert = false
@@ -464,9 +592,40 @@ export default {
         .then(number => {
           this.number = weaponPermissionNumber
           if (this.patentNumber != null && this.licenseNumber != null) { this.returnAlert = true }
-          if (this.returnAlert) { this.alert3 = true }
+          if (this.returnAlert) { this.weaponAlert = true }
           if (!this.returnAlert) { alert('Coś poszło nie tak - sprawdź czy wszystkie dane są wprowadzone poprawnie') }
           this.returnAlert = false
+        })
+    },
+    updateMemberPermissions (uuid, permissionsShootingLeaderNumber, permissionsInstructorNumber, permissionsArbiterNumber, permissionsArbiterPermissionValidThru) {
+      var data = {
+        shootingLeaderNumber: this.permissionsShootingLeaderNumber,
+        instructorNumber: this.permissionsInstructorNumber,
+        arbiterNumber: this.permissionsArbiterNumber,
+        arbiterPermissionValidThru: this.permissionsArbiterPermissionValidThru
+      }
+      fetch('http://localhost:8080/permissions/' + uuid + '?ordinal=' + this.ordinal, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      }).then(response => {
+        response.json()
+        if (response.ok) {
+          if (this.value) { this.shootingLeaderAlert = true }
+          if (this.value1) { this.instructorAlert = true }
+          if (this.value2) { this.arbiterAlert = true }
+        }
+      })
+        .then(members => {
+          this.members = members
+          this.value = false
+          this.value1 = false
+          this.value2 = false
+          this.permissionsShootingLeaderNumber = null
+          this.permissionsShootingLeaderNumber = null
+          this.permissionsArbiterNumber = null
         })
     }
   },
