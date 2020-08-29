@@ -49,7 +49,7 @@
       <q-item><q-item-label>Nazwisko : {{memberSecondName}}</q-item-label></q-item>
       <q-item><q-item-label>Numer Dowodu Osobistego : {{memberIDCard}}</q-item-label></q-item>
       <q-item><q-item-label>Numer PESEL : {{memberPesel}}</q-item-label></q-item>
-      <q-item><q-item-label>Numer Telefonu : +48 {{memberPhone}}</q-item-label></q-item>
+      <q-item><q-item-label>Numer Telefonu :{{memberPhone}}</q-item-label></q-item>
       <q-item><q-item-label>Adres E-mail : {{memberEmail}}</q-item-label></q-item>
       <q-item><q-item-label>Numer Legitymacji Klubowej : {{memberLegitimation}}</q-item-label></q-item>
       <q-item><q-item-label>Data dołączenia do Klubu : {{memberJoinDate}}</q-item-label></q-item>
@@ -104,9 +104,9 @@
         :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']"/></q-item>
       <q-item><q-input v-model="patentDate" hint="YYYY-MM-DD" placeholder="YYYY-MM-DD" label="Data nadania" filled  lazy-rules
         :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']"/></q-item>
-      <q-item><q-checkbox v-model="patentPistolPermission"  label="Pistolet"/></q-item>
-      <q-item><q-checkbox v-model="patentRiflePermission"  label="Karabin"/></q-item>
-      <q-item><q-checkbox v-model="patentShotgunPermission"  label="Strzelba"/></q-item>
+      <q-item><q-checkbox v-model="patentPistolPermission" label="Pistolet"/></q-item>
+      <q-item><q-checkbox v-model="patentRiflePermission" label="Karabin"/></q-item>
+      <q-item><q-checkbox v-model="patentShotgunPermission" label="Strzelba"/></q-item>
       <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),addPatent(uuid, patentNumber, patentPistolPermission, patentRiflePermission, patentShotgunPermission)"/></q-item>
       </div>
       </q-card-section>
@@ -227,10 +227,11 @@
 
       <template v-slot:navigation  >
         <q-stepper-navigation class="flex flex">
-          <q-item v-if="step<8" ><q-btn @click="$refs.stepper.next()" color="primary" :label="step === 8 ? 'Zakończono' : 'Przejdź Dalej'" /></q-item>
+          <q-item v-if="step<8&&uuid!=null" ><q-btn @click="$refs.stepper.next()" color="primary" :label="step === 8 ? 'Zakończono' : 'Przejdź Dalej'" /></q-item>
           <q-item v-if="step==8" ><q-btn @click="redirect()" color="primary" label="Zakończ" /></q-item>
           <q-item><q-btn v-if="step > 1" flat color="primary" @click="$refs.stepper.previous()" label="Wróć" /></q-item>
           <q-item><q-btn v-if="uuid!=null&&uuid!=''" color="secondary" @click="showloading()" label="Drukuj kartę" /></q-item>
+          <q-item><q-btn v-if="uuid!=null&&uuid!=''" color="secondary" @click="showloading()" label="Potwierdzenie opłacenia składki" /></q-item>
           <q-item v-if="uuid!=null"><q-item-label>Identyfikator : {{uuid}}</q-item-label></q-item>
         </q-stepper-navigation>
       </template>
@@ -366,9 +367,15 @@
 </template>
 
 <script >
+
+import Vue from 'vue'
+import axios from 'axios'
+Vue.prototype.$axios = axios
+
 export default {
   data () {
     return {
+      fileuuid: null,
       value: false,
       value1: false,
       value2: false,
@@ -627,6 +634,20 @@ export default {
           this.permissionsShootingLeaderNumber = null
           this.permissionsArbiterNumber = null
         })
+    },
+    getContributionPDF () {
+      axios({
+        url: 'http://localhost:8080/files/downloadContribution/' + this.fileuuid,
+        method: 'GET',
+        responseType: 'blob'
+      }).then(response => {
+        var fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        var fileLink = document.createElement('a')
+        fileLink.href = fileURL
+        fileLink.setAttribute('download', 'Składka_' + this.memberFirstName + '_' + this.memberSecondName + '.pdf')
+        document.body.appendChild(fileLink)
+        fileLink.click()
+      })
     }
   },
   name: 'addMember'

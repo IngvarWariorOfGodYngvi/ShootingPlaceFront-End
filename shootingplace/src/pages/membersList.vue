@@ -47,9 +47,6 @@
           <q-item-label caption lines="2" :id="members.legitimationNumber">Numer Legitymacji {{members.legitimationNumber}}</q-item-label>
           </q-item-section>
           <q-item-section side top>
-            <q-btn color="primary" label="Dodaj do książki" @click="uuid=members.uuid,alert=true"/>
-          </q-item-section>
-          <q-item-section side top>
             <q-btn color="primary" label="Przedłuż składkę" @click="uuid=members.uuid,contribution=true"/>
           </q-item-section>
         </template>
@@ -134,9 +131,9 @@
                   <q-item-label v-if="members.shootingPatent.patentNumber!=null" caption lines="2" >Numer Patentu {{members.shootingPatent.patentNumber}}</q-item-label>
                   <q-item-label v-if="members.weaponPermission.number!=null&&members.weaponPermission.isExist">Numer Pozwolenia {{members.weaponPermission.number}}</q-item-label>
                  </q-item-section>
-                <q-expansion-item label="Opcje Dodatkowe">
+                <q-expansion-item label="Opcje Dodatkowe"  group="right">
               <q-item-section class="text-justify">
-                <q-expansion-item v-if="members.adult" label="Patent" group="right">
+                <q-expansion-item v-if="members.adult" label="Patent" group="right-card">
                 <q-item-section v-if="members.shootingPatent.patentNumber!=null" >
                 <q-item-label >Patent</q-item-label>
                 <q-item-label caption lines="2" >Numer Patentu {{members.shootingPatent.patentNumber}}</q-item-label>
@@ -199,10 +196,10 @@
                     <q-item><q-input v-model="permissionsArbiterPermissionValidThru" hint="YYYY-MM-DD" placeholder="YYYY-MM-DD" label="Data ważności" /></q-item>
                     <q-item v-if="members.memberPermissions.arbiterNumber!=null"><q-btn color="secondary" label="Przedłuż" @click="uuid=members.uuid,arbiterProlongConfirm=true"/></q-item>
                     <q-item v-if="members.memberPermissions.arbiterNumber==null"><q-radio v-model="ordinal" :val="1" label="Klasa 3" color="secondary" /></q-item>
-                    <q-item v-if="members.memberPermissions.arbiterNumber==null"><q-radio v-model="ordinal" :val="1" label="Klasa 2" color="secondary" /></q-item>
-                    <q-item v-if="members.memberPermissions.arbiterNumber==null"><q-radio v-model="ordinal" :val="1" label="Klasa 1" color="secondary" /></q-item>
-                    <q-item v-if="members.memberPermissions.arbiterNumber==null"><q-radio v-model="ordinal" :val="1" label="Klasa Państwowa" color="secondary" /></q-item>
-                    <q-item v-if="members.memberPermissions.arbiterNumber==null"><q-radio v-model="ordinal" :val="1" label="Klasa Międzynarodowa" color="secondary" /></q-item>
+                    <q-item v-if="members.memberPermissions.arbiterNumber==null"><q-radio v-model="ordinal" :val="2" label="Klasa 2" color="secondary" /></q-item>
+                    <q-item v-if="members.memberPermissions.arbiterNumber==null"><q-radio v-model="ordinal" :val="3" label="Klasa 1" color="secondary" /></q-item>
+                    <q-item v-if="members.memberPermissions.arbiterNumber==null"><q-radio v-model="ordinal" :val="4" label="Klasa Państwowa" color="secondary" /></q-item>
+                    <q-item v-if="members.memberPermissions.arbiterNumber==null"><q-radio v-model="ordinal" :val="5" label="Klasa Międzynarodowa" color="secondary" /></q-item>
                     <q-item v-if="members.memberPermissions.arbiterNumber!=null&&members.memberPermissions.arbiterClass!='Klasa 3'&&members.memberPermissions.arbiterClass=='Brak'"><q-radio v-model="ordinal" :val="1" label="Klasa 3" color="secondary" /></q-item>
                     <q-item v-if="members.memberPermissions.arbiterNumber!=null&&members.memberPermissions.arbiterClass!='Klasa 2'&&members.memberPermissions.arbiterClass=='Klasa 3'"><q-radio v-model="ordinal" :val="2" label="Klasa 2" color="secondary" /></q-item>
                     <q-item v-if="members.memberPermissions.arbiterNumber!=null&&members.memberPermissions.arbiterClass!='Klasa 1'&&members.memberPermissions.arbiterClass=='Klasa 2'"><q-radio v-model="ordinal" :val="3" label="Klasa 1" color="secondary" /></q-item>
@@ -281,8 +278,8 @@
           </q-card-section>
           <q-card-section>
             <q-item-section>
-                <q-item><q-btn label="Pobierz kartę Członkowską" color="secondary"/></q-item>
-                <q-item><q-btn label="Pobierz ostatnie potwierdzenie składki" color="secondary"/></q-item>
+                <q-item><q-btn label="Pobierz kartę Członkowską" color="secondary" @click="uuid=members.uuid,name=members.firstName,name2=members.secondName,getPersonalCardPDF ()"/></q-item>
+                <q-item><q-btn label="Pobierz ostatnie potwierdzenie składki" color="secondary" @click="uuid=members.uuid,name=members.firstName,name2=members.secondName,contributionDownloadConfirm=true"/></q-item>
             </q-item-section>
           </q-card-section>
           </q-item>
@@ -474,14 +471,15 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="alert">
+<q-dialog v-model="contributionDownloadConfirm" persistent>
       <q-card>
-        <q-card-section>
-          <div class="text-h6">Zapisany do książki pobytu</div>
+        <q-card-section class="row items-center">
+          <span class="q-ml-sm">Czy napewno chcesz pobrać potwierdzenie składki?</span>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup @click="showloading(),addMemberToEvidence(uuid)" />
+          <q-btn flat label="anuluj" color="primary" v-close-popup />
+          <q-btn flat label="Pobierz" color="primary" v-close-popup @click="getContributionPDF(),contributionConfirmDownloadAlert=true" />
         </q-card-actions>
       </q-card>
 </q-dialog>
@@ -506,7 +504,7 @@
           <q-btn flat label="OK" color="primary" v-close-popup @click="showloading(),getListMembers()" />
         </q-card-actions>
       </q-card>
-    </q-dialog>
+</q-dialog>
 <q-dialog v-model="patentAlert">
       <q-card>
         <q-card-section>
@@ -528,7 +526,7 @@
           <q-btn flat label="OK" color="primary" v-close-popup @click="showloading(),getListMembers()" />
         </q-card-actions>
       </q-card>
-    </q-dialog>
+</q-dialog>
 <q-dialog v-model="weapon">
       <q-card>
         <q-card-section>
@@ -650,6 +648,17 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
+<q-dialog v-model="contributionConfirmDownloadAlert">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Potwierdzenie Składki zostało pobrane</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+</q-dialog>
   </q-page>
 </template>
 
@@ -657,10 +666,15 @@
 
 import { scroll } from 'quasar'
 const { getScrollTarget, setScrollPosition } = scroll
+import Vue from 'vue'
+import axios from 'axios'
+Vue.prototype.$axios = axios
 
 export default {
   data () {
     return {
+      name: null,
+      name2: null,
       active: true,
       adult: true,
       value: false,
@@ -672,11 +686,14 @@ export default {
       arbiterProlongAlert: false,
       arbiterUpdateClassAlert: false,
       changAdultConfirm: false,
+      changeAdultAlert: false,
       eraseAlert: false,
       eraseConfirm: false,
       contributionRecord: '',
       basicDataConfirm: false,
       contributionAlert: false,
+      contributionDownloadConfirm: false,
+      contributionConfirmDownloadAlert: false,
       addressConfirm: false,
       HistoryContributionRecord: null,
       contributionRecordConfirm: false,
@@ -764,18 +781,6 @@ export default {
       const offset = ele.offsetTop - ele.scrollHeight
       const duration = 500
       setScrollPosition(target, offset, duration)
-    },
-    addMemberToEvidence (uuid) {
-      fetch('http://localhost:8080/evidence/' + uuid, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => response.json())
-        .then(members => {
-          this.members = members
-          this.getListMembers()
-        })
     },
     addHistoryContributionRecord (uuid, date) {
       fetch('http://localhost:8080/contribution/history' + uuid + '?date=' + date, {
@@ -867,6 +872,34 @@ export default {
           this.members = members
         })
       this.getListMembers()
+    },
+    getContributionPDF () {
+      axios({
+        url: 'http://localhost:8080/files/downloadContribution/' + this.uuid,
+        method: 'GET',
+        responseType: 'blob'
+      }).then(response => {
+        var fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        var fileLink = document.createElement('a')
+        fileLink.href = fileURL
+        fileLink.setAttribute('download', 'Składka_' + this.name + '_' + this.name2 + '.pdf')
+        document.body.appendChild(fileLink)
+        fileLink.click()
+      })
+    },
+    getPersonalCardPDF () {
+      axios({
+        url: 'http://localhost:8080/files/downloadPersonalCard/' + this.uuid,
+        method: 'GET',
+        responseType: 'blob'
+      }).then(response => {
+        var fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        var fileLink = document.createElement('a')
+        fileLink.href = fileURL
+        fileLink.setAttribute('download', 'Karta_Członkowska_' + this.name + '_' + this.name2 + '.pdf')
+        document.body.appendChild(fileLink)
+        fileLink.click()
+      })
     },
     addPatent (uuid, patentNumber, patentPistolPermission, patentRiflePermission, patentShotgunPermission) {
       var data = {
@@ -1045,7 +1078,7 @@ export default {
       }).then(response => response.json())
         .then(members => {
           this.members = members
-          this.changeActiveAlert = true
+          this.changeAdultAlert = true
         })
     }
   },

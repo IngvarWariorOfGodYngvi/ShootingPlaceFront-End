@@ -98,6 +98,12 @@ export default {
           link: 'https://localhost:8081/#/competition'
         },
         {
+          title: 'Utwórz nowe  zawody',
+          caption: 'obsługa podstawowa',
+          icon: 'add',
+          link: 'https://localhost:8081/#/newcompetition'
+        },
+        {
           title: 'Swagger',
           caption: 'Dostępne metody kontrolerów',
           icon: 'code',
