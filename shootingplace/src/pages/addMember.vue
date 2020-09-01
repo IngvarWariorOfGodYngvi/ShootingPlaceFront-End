@@ -75,7 +75,7 @@
       <q-item><q-input v-model="memberStreet" label="Ulica" /></q-item>
       <q-item><q-input v-model="memberStreetNumber" label="Numer Ulicy" /></q-item>
       <q-item><q-input v-model="memberFlatNumber" label="Numer Mieszkania"/></q-item>
-      <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),updateAddress(uuid, memberPostOfficeCity, memberZipCode, memberStreet, memberStreetNumber, memberFlatNumber)"/></q-item>
+      <q-item><q-btn label="Dodaj" color="secondary" @click="addressAlert=true,showloading(),updateAddress(uuid, memberPostOfficeCity, memberZipCode, memberStreet, memberStreetNumber, memberFlatNumber)"/></q-item>
       </div>
       </q-card-section>
       <q-card-section>
@@ -230,14 +230,38 @@
           <q-item v-if="step<8&&uuid!=null" ><q-btn @click="$refs.stepper.next()" color="primary" :label="step === 8 ? 'Zakończono' : 'Przejdź Dalej'" /></q-item>
           <q-item v-if="step==8" ><q-btn @click="redirect()" color="primary" label="Zakończ" /></q-item>
           <q-item><q-btn v-if="step > 1" flat color="primary" @click="$refs.stepper.previous()" label="Wróć" /></q-item>
-          <q-item><q-btn v-if="uuid!=null&&uuid!=''" color="secondary" @click="showloading()" label="Drukuj kartę" /></q-item>
-          <q-item><q-btn v-if="uuid!=null&&uuid!=''" color="secondary" @click="showloading()" label="Potwierdzenie opłacenia składki" /></q-item>
+          <q-item><q-btn v-if="uuid!=null&&uuid!=''" color="secondary" @click="personalCardDownloadConfirm=true" label="Drukuj kartę" /></q-item>
+          <q-item><q-btn v-if="uuid!=null&&uuid!=''" color="secondary" @click="contributionDownloadConfirm=true" label="Potwierdzenie opłacenia składki" /></q-item>
           <q-item v-if="uuid!=null"><q-item-label>Identyfikator : {{uuid}}</q-item-label></q-item>
         </q-stepper-navigation>
       </template>
     </q-stepper>
   </div>
-  <q-dialog v-model="memberAlert">
+<q-dialog v-model="contributionDownloadConfirm" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <span class="text-h6">Czy napewno chcesz pobrać potwierdzenie składki?</span>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="anuluj" color="primary" v-close-popup />
+          <q-btn flat label="Pobierz" color="primary" v-close-popup @click="getContributionPDF(),contributionConfirmDownloadAlert=true" />
+        </q-card-actions>
+      </q-card>
+</q-dialog>
+<q-dialog v-model="personalCardDownloadConfirm" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <span class="text-h6">Czy napewno chcesz pobrać kartę Klubowicza?</span>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="anuluj" color="primary" v-close-popup />
+          <q-btn flat label="Pobierz" color="primary" v-close-popup @click="getPersonalCardPDF(),personalCardDownloadAlert=true" />
+        </q-card-actions>
+      </q-card>
+</q-dialog>
+<q-dialog v-model="memberAlert">
       <q-card>
         <q-card-section>
           <div class="text-h6">Witamy w Klubie</div>
@@ -251,8 +275,8 @@
           <q-btn flat label="OK" color="primary" v-close-popup />
         </q-card-actions>
       </q-card>
-    </q-dialog>
-  <q-dialog v-model="addressAlert">
+</q-dialog>
+<q-dialog v-model="addressAlert">
       <q-card>
         <q-card-section>
           <div class="text-h6">Zaktualizowano Adres</div>
@@ -266,8 +290,8 @@
           <q-btn flat label="OK" color="primary" v-close-popup />
         </q-card-actions>
       </q-card>
-    </q-dialog>
-  <q-dialog v-model="licenseAndPatentAlert">
+</q-dialog>
+<q-dialog v-model="licenseAndPatentAlert">
       <q-card>
         <q-card-section v-if="licenseNumber==null">
           <div class="text-h6">Uprawnienia patentu zostały nadane</div>
@@ -287,8 +311,8 @@
           <q-btn flat label="OK" color="primary" v-close-popup />
         </q-card-actions>
       </q-card>
-    </q-dialog>
-  <q-dialog v-model="weaponAlert">
+</q-dialog>
+<q-dialog v-model="weaponAlert">
       <q-card>
         <q-card-section>
           <div class="text-h6">Dodano Pozwolenie na Broń</div>
@@ -302,8 +326,8 @@
           <q-btn flat label="OK" color="primary" v-close-popup />
         </q-card-actions>
       </q-card>
-    </q-dialog>
-  <q-dialog v-model="instructorAlert">
+</q-dialog>
+<q-dialog v-model="instructorAlert">
       <q-card>
         <q-card-section>
           <div class="text-h6">Dodano Uprawnienia Instruktora</div>
@@ -317,8 +341,8 @@
           <q-btn flat label="OK" color="primary" v-close-popup />
         </q-card-actions>
       </q-card>
-    </q-dialog>
-  <q-dialog v-model="shootingLeaderAlert">
+</q-dialog>
+<q-dialog v-model="shootingLeaderAlert">
       <q-card>
         <q-card-section>
           <div class="text-h6">Dodano Uprawnienia Prowadzącego Strzelanie</div>
@@ -332,8 +356,8 @@
           <q-btn flat label="OK" color="primary" v-close-popup />
         </q-card-actions>
       </q-card>
-    </q-dialog>
-  <q-dialog v-model="arbiterAlert">
+</q-dialog>
+<q-dialog v-model="arbiterAlert">
       <q-card>
         <q-card-section>
           <div class="text-h6">Dodano Licencję Sędziego</div>
@@ -347,8 +371,30 @@
           <q-btn flat label="OK" color="primary" v-close-popup />
         </q-card-actions>
       </q-card>
-    </q-dialog>
-  <q-dialog v-model="failAlert">
+</q-dialog>
+<q-dialog v-model="contributionConfirmDownloadAlert">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Potwierdzenie Składki zostało pobrane</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+</q-dialog>
+<q-dialog v-model="personalCardDownloadAlert">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Pobrano kartę Klubowicza</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+</q-dialog>
+<q-dialog v-model="failAlert">
       <q-card>
         <q-card-section>
           <div class="text-h6">Coś poszło nie tak</div>
@@ -362,7 +408,7 @@
           <q-btn flat label="OK" color="primary" v-close-popup />
         </q-card-actions>
       </q-card>
-    </q-dialog>
+</q-dialog>
   </q-page>
 </template>
 
@@ -391,6 +437,10 @@ export default {
       permissionsInstructorNumber: null,
       permissionsArbiterNumber: null,
       permissionsArbiterPermissionValidThru: null,
+      contributionDownloadConfirm: false,
+      contributionConfirmDownloadAlert: false,
+      personalCardDownloadConfirm: false,
+      personalCardDownloadAlert: false,
       step: 1,
       number: '',
       validThru: '',
@@ -502,7 +552,6 @@ export default {
       }).then(response => response.json())
         .then(member => {
           this.member = member
-          this.addressAlert = true
         })
     },
     addPatent (uuid, memberPatentNumber, memberPatentPistolPermission, memberPatentRiflePermission, memberPatentShotgunPermission) {
@@ -637,7 +686,7 @@ export default {
     },
     getContributionPDF () {
       axios({
-        url: 'http://localhost:8080/files/downloadContribution/' + this.fileuuid,
+        url: 'http://localhost:8080/files/downloadContribution/' + this.uuid,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
@@ -645,6 +694,20 @@ export default {
         var fileLink = document.createElement('a')
         fileLink.href = fileURL
         fileLink.setAttribute('download', 'Składka_' + this.memberFirstName + '_' + this.memberSecondName + '.pdf')
+        document.body.appendChild(fileLink)
+        fileLink.click()
+      })
+    },
+    getPersonalCardPDF () {
+      axios({
+        url: 'http://localhost:8080/files/downloadPersonalCard/' + this.uuid,
+        method: 'GET',
+        responseType: 'blob'
+      }).then(response => {
+        var fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        var fileLink = document.createElement('a')
+        fileLink.href = fileURL
+        fileLink.setAttribute('download', 'Karta_Członkowska_' + this.memberFirstName + '_' + this.memberSecondName + '.pdf')
         document.body.appendChild(fileLink)
         fileLink.click()
       })

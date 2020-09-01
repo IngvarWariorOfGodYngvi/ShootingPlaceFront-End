@@ -92,22 +92,22 @@ export default {
           link: 'https://localhost:8081/#/ammolist'
         },
         {
+          title: 'Utwórz nowe zawody',
+          caption: 'obsługa dodatkowa',
+          icon: 'add',
+          link: 'https://localhost:8081/#/newcompetition'
+        },
+        {
           title: 'Lista zawodów',
           caption: 'obsługa podstawowa',
           icon: 'book',
           link: 'https://localhost:8081/#/competition'
         },
         {
-          title: 'Utwórz nowe  zawody',
-          caption: 'obsługa podstawowa',
+          title: 'Lista Chętnych na patent',
+          caption: 'obsługa dodatkowa',
           icon: 'add',
-          link: 'https://localhost:8081/#/newcompetition'
-        },
-        {
-          title: 'Swagger',
-          caption: 'Dostępne metody kontrolerów',
-          icon: 'code',
-          link: 'http://localhost:8080/swagger-ui.html'
+          link: 'https://localhost:8081/#/patentWilling'
         }
       ]
     }

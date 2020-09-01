@@ -23,16 +23,16 @@
           <q-item-section v-if="tournaments.open">
         <q-item><q-item-label>Zmień nazwę zawodów</q-item-label></q-item>
         <q-item><q-input v-model="tournamentName" filled label="Zmień nazwę"/></q-item>
-        <q-item><q-btn label="zmień" @click="uuid=tournaments.uuid,tournamentConfirm=true"/></q-item>
+        <q-item><q-btn label="zmień" color="primary" @click="uuid=tournaments.uuid,tournamentConfirm=true"/></q-item>
         <q-item><q-item-label>Zmień datę zawodów</q-item-label></q-item>
         <q-item><q-input v-model="tournamentDate" filled placeholder="YYYY-MM-DD" hint="YYYY-MM-DD" label="Zmień datę"/></q-item>
-        <q-item><q-btn label="zmień" @click="uuid=tournaments.uuid,tournamentDateConfirm=true"/></q-item>
+        <q-item><q-btn label="zmień" color="primary" @click="uuid=tournaments.uuid,tournamentDateConfirm=true"/></q-item>
         <q-item><q-item-label>Dodaj Sędziego Głównego zawodów</q-item-label></q-item>
         <q-item><q-input v-model="memberArbiterLegitimation" filled placeholder="Numer Legitymacji" hint="Numer Legitymacji" label="Sędzia Główny"/></q-item>
-        <q-item><q-btn label="dodaj" @click="uuid=tournaments.uuid,tournamentMainArbiterConfirm=true"/></q-item>
+        <q-item><q-btn label="dodaj" color="primary" @click="uuid=tournaments.uuid,tournamentMainArbiterConfirm=true"/></q-item>
         <q-item><q-item-label>Dodaj Sędziego Komisji RTS zawodów</q-item-label></q-item>
         <q-item><q-input v-model="memberArbiterLegitimationRTS" filled placeholder="Numer Legitymacji" hint="Numer Legitymacji" label="Przewodniczący RTS"/></q-item>
-        <q-item><q-btn label="dodaj" @click="uuid=tournaments.uuid,tournamentRTSArbiterConfirm=true"/></q-item>
+        <q-item><q-btn label="dodaj" color="primary" @click="uuid=tournaments.uuid,tournamentRTSArbiterConfirm=true"/></q-item>
           </q-item-section>
       </q-item-section>
       </q-card-section>
@@ -41,7 +41,7 @@
         <q-item-label>Dodaj Klubowicza</q-item-label>
         <q-item v-for="competitionList in tournaments.competitionList" :key="competitionList.uuid" ><q-checkbox :label="competitionList.name" v-model="val[competitionList.name]"/></q-item>
         <q-item><q-input v-model="memberLegitimation" filled label="Numer Legitymacji Klubowej"/></q-item>
-        <q-item><q-btn label="Dodaj" @click="uuid=tournaments.uuid,addMemberConfirm=true"/></q-item>
+        <q-item><q-btn label="Dodaj" color="primary" @click="uuid=tournaments.uuid,addMemberConfirm=true"/></q-item>
       </q-item-section>
         </q-card-section>
         <q-card-section>

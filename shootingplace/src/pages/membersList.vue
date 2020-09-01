@@ -278,7 +278,7 @@
           </q-card-section>
           <q-card-section>
             <q-item-section>
-                <q-item><q-btn label="Pobierz kartę Członkowską" color="secondary" @click="uuid=members.uuid,name=members.firstName,name2=members.secondName,getPersonalCardPDF ()"/></q-item>
+                <q-item><q-btn label="Pobierz kartę Członkowską" color="secondary" @click="uuid=members.uuid,name=members.firstName,name2=members.secondName,personalCardDownloadConfirm=true"/></q-item>
                 <q-item><q-btn label="Pobierz ostatnie potwierdzenie składki" color="secondary" @click="uuid=members.uuid,name=members.firstName,name2=members.secondName,contributionDownloadConfirm=true"/></q-item>
             </q-item-section>
           </q-card-section>
@@ -324,7 +324,7 @@
 
         <q-card-actions align="right">
           <q-btn flat label="anuluj" color="primary" v-close-popup />
-          <q-btn flat label="przedłuż" color="primary" v-close-popup @click="updateIDCardAndName(uuid,memberIdcard,memberSecondName),basicDataAlert=true" />
+          <q-btn flat label="zmień" color="primary" v-close-popup @click="updateIDCardAndName(uuid,memberIdcard,memberSecondName),basicDataAlert=true" />
         </q-card-actions>
       </q-card>
 </q-dialog>
@@ -483,6 +483,18 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
+<q-dialog v-model="personalCardDownloadConfirm" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <span class="q-ml-sm">Czy napewno chcesz pobrać kartę Klubowicza?</span>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="anuluj" color="primary" v-close-popup />
+          <q-btn flat label="Pobierz" color="primary" v-close-popup @click="getPersonalCardPDF(),personalCardDownloadAlert=true" />
+        </q-card-actions>
+      </q-card>
+</q-dialog>
 <q-dialog v-model="instructorAlert">
       <q-card>
         <q-card-section>
@@ -611,7 +623,7 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup @click="showloading(),getListMembers()" />
+          <q-btn flat label="Pobierz Potwierdzenie" color="primary" v-close-popup @click="getContributionPDF(),showloading(),getListMembers()" />
         </q-card-actions>
       </q-card>
 </q-dialog>
@@ -659,6 +671,17 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
+<q-dialog v-model="personalCardDownloadAlert">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Pobrano kartę Klubowicza</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+</q-dialog>
   </q-page>
 </template>
 
@@ -694,6 +717,8 @@ export default {
       contributionAlert: false,
       contributionDownloadConfirm: false,
       contributionConfirmDownloadAlert: false,
+      personalCardDownloadConfirm: false,
+      personalCardDownloadAlert: false,
       addressConfirm: false,
       HistoryContributionRecord: null,
       contributionRecordConfirm: false,

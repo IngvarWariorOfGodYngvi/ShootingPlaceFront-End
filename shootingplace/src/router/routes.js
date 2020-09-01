@@ -11,7 +11,8 @@ const routes = [
       { path: '/ammolist', component: () => import('pages/ammolist.vue') },
       { path: '/dailyevidence', component: () => import('pages/dailyEvidenceBook.vue') },
       { path: '/competition', component: () => import('pages/tournamentList.vue') },
-      { path: '/newcompetition', component: () => import('pages/addTournament.vue') }
+      { path: '/newcompetition', component: () => import('pages/addTournament.vue') },
+      { path: '/patentWilling', component: () => import('pages/patentWilling.vue') }
     ]
   },
 
