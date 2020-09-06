@@ -60,7 +60,7 @@
       </q-card>
       </q-step>
 
-      <q-step
+      <q-step v-if="uuid==null"
         :name="2"
         title="Dane Adresowe"
         caption="Opcjonalnie"
@@ -90,7 +90,7 @@
       </q-card>
       </q-step>
 
-      <q-step
+      <q-step v-if="memberAdult"
         :name="3"
         title="Patent"
         caption="opcjonalnie"
@@ -125,7 +125,7 @@
       </div>
       </q-step>
 
-      <q-step
+      <q-step v-if="step==3&&patentNumber!=null"
         :name="4"
         title="Licencja"
         caption="opcjonalnie"
@@ -160,7 +160,7 @@
       </div>
       </q-step>
 
-      <q-step
+      <q-step v-if="memberAdult"
         :name="5"
         title="Pozwolenie na Broń"
         caption="opcjonalnie"
@@ -175,7 +175,7 @@
       </div>
       <div v-if="(memberAdult&&(patentNumber==null||licenseNumber==null)||!memberAdult)" >Pozwolenie na broń - Nie ma tu nic do pokazania</div>
       </q-step>
-      <q-step
+      <q-step v-if="memberAdult"
         :name="6"
         title="Prowadzący Strzelanie"
         caption="opcjonalnie"
@@ -190,7 +190,7 @@
       </div>
       <div v-if="!memberAdult" >Prowadzący strzelanie - Nie ma tu nic do pokazania</div>
       </q-step>
-      <q-step
+      <q-step v-if="memberAdult"
         :name="7"
         title="Instruktor"
         caption="opcjonalnie"
@@ -205,7 +205,7 @@
       </div>
       <div v-if="!memberAdult" >Instruktor - Nie ma tu nic do pokazania</div>
       </q-step>
-      <q-step
+      <q-step v-if="memberAdult"
         :name="8"
         title="Sędzia"
         caption="opcjonalnie"

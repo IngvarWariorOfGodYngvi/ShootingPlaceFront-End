@@ -104,6 +104,12 @@ export default {
           link: 'https://localhost:8081/#/competition'
         },
         {
+          title: 'Lista Osób z uprawnieniami',
+          caption: 'obsługa dodatkowa',
+          icon: 'book',
+          link: 'https://localhost:8081/#/memberwithpermission'
+        },
+        {
           title: 'Lista Chętnych na patent',
           caption: 'obsługa dodatkowa',
           icon: 'add',
