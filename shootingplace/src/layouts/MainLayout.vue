@@ -12,7 +12,7 @@
         />
 
         <q-toolbar-title >
-          <div id="title">Program </div>
+          <div id="title">{{programName}} </div>
         </q-toolbar-title>
 
         <div><q-item clickable v-ripple><q-avatar color="secondary" text-color="white" icon="perm_identity" /></q-item></div>
@@ -42,8 +42,12 @@
       <router-view />
     </q-page-container>
     <q-page-sticky position="bottom-right" :offset="[18, 18]" >
-            <q-btn fab icon="add" color="accent" @click="showloading(), redirect()"></q-btn>
-          </q-page-sticky>
+      <q-btn fab icon="add" color="accent" @click="showloading(), redirect()">
+      <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 10]">
+          <strong>Dodaj Klubowicza</strong>
+        </q-tooltip>
+    </q-btn>
+    </q-page-sticky>
   </q-layout>
 </template>
 
@@ -68,13 +72,13 @@ export default {
           link: 'https://localhost:8081/#/member/lista'
         },
         {
-          title: 'Klubowicze Skreśleni z Listy członków',
+          title: 'Klubowicze Skreśleni',
           caption: 'obsługa podstawowa',
           icon: 'person_remove',
           link: 'https://localhost:8081/#/member/usunieci'
         },
         {
-          title: 'Dodaj nowego Klubowicza',
+          title: 'Dodaj Nowego Klubowicza',
           caption: 'obsługa podstawowa',
           icon: 'add',
           link: 'https://localhost:8081/#/member/dodawanie'
@@ -86,7 +90,7 @@ export default {
           link: 'https://localhost:8081/#/dailyevidence/'
         },
         {
-          title: 'Lista wydawania amunicji',
+          title: 'Lista Amunicyjna',
           caption: 'obsługa podstawowa',
           icon: 'book',
           link: 'https://localhost:8081/#/ammolist'
@@ -98,7 +102,7 @@ export default {
           link: 'https://localhost:8081/#/newcompetition'
         },
         {
-          title: 'Lista zawodów',
+          title: 'Lista Zawodów',
           caption: 'obsługa podstawowa',
           icon: 'book',
           link: 'https://localhost:8081/#/competition'
@@ -115,7 +119,8 @@ export default {
           icon: 'add',
           link: 'https://localhost:8081/#/patentWilling'
         }
-      ]
+      ],
+      programName: 'Program'
     }
   },
   methods: {

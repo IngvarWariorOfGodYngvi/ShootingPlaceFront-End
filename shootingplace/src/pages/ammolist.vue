@@ -1,17 +1,111 @@
 <template>
-  <q-page padding class="q-pa-md">
-      <q-item>Tutaj będzie lista wydawania amunicji</q-item>
-      <q-item>Narazie muszę poważnie przemyśleć jak to w ogóle zbudować</q-item>
+  <q-page padding>
+    <div>
+    <q-item-section>
+      <h6>Data listy {{ammoList.date}}</h6>
+      <q-item><q-input hint="Data : YYYY-MM-DD" label="DATA" placeholder="YYYY-MM-DD"></q-input></q-item>
+      <q-item><q-btn label="zmień datę" color="primary"></q-btn></q-item>
+    </q-item-section>
+    <div v-for="caliberList in ammoList.caliberList" :key="caliberList.uuid" class="row">
+    <q-card v-if="caliberList.ammoUsed!=null"  class="col">
+      <q-card-section>
+        <q-item-section>
+          <q-item><h6>Kaliber {{caliberList.name}}</h6></q-item>
+          <q-item-section>
+            <q-item v-for="members in caliberList.members" :key="members.uuid">{{members.secondName}} {{members.firstName}} leg. {{members.legitimationNumber}}</q-item>
+          </q-item-section>
+        </q-item-section>
+      </q-card-section>
+    </q-card>
+    <q-card v-if="caliberList.ammoUsed!=null">
+      <q-card-section>
+        <q-item-section>
+          <q-item>Ilość</q-item>
+          <q-item v-for="ammoUsed in caliberList.ammoUsed" :key="ammoUsed">{{ammoUsed}} szt.</q-item>
+        </q-item-section>
+      </q-card-section>
+      <q-item>suma : {{caliberList.quantity}} szt.</q-item>
+    </q-card>
+    <!-- <q-item v-for="caliberList in ammoList.caliberList" :key="caliberList.uuid" class="row"></q-item> -->
+    </div>
+    <div>
+      <q-item>
+        <q-btn label="wydrukuj" color="primary" @click="uuid=ammoList.uuid,ammunitionListConfirm=true"></q-btn>
+      </q-item>
+    </div>
+    </div>
+<q-dialog v-model="ammunitionListConfirm" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <span class="q-ml-sm">Czy pobrać kartę rozliczenia aunicji?</span>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="anuluj" color="primary" v-close-popup />
+          <q-btn flat label="Pobierz" color="primary" v-close-popup @click="getAmmoListPDF(),ammunitionListAlert=true" />
+        </q-card-actions>
+      </q-card>
+</q-dialog>
+<q-dialog v-model="ammunitionListAlert">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Pobrano kartę Klubowicza</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+</q-dialog>
   </q-page>
 </template>
 
 <script>
+
+import Vue from 'vue'
+import axios from 'axios'
+Vue.prototype.$axios = axios
+
 export default {
   data () {
-    return {}
+    return {
+      uuid: null,
+      ammunitionListAlert: false,
+      ammunitionListConfirm: false,
+      ammoList: [],
+      inc: 0
+    }
   },
-  created () {},
-  methods: {},
+  created () {
+    this.getAmmoData()
+  },
+  methods: {
+    getAmmoData () {
+      fetch('http://localhost:8080/ammoEvidence/', {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(ammoList => {
+          this.ammoList = ammoList
+        })
+    },
+    increment () {
+      this.inc++
+    },
+    getAmmoListPDF () {
+      axios({
+        url: 'http://localhost:8080/files//downloadAmmunitionList/' + this.uuid,
+        method: 'GET',
+        responseType: 'blob'
+      }).then(response => {
+        var fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        var fileLink = document.createElement('a')
+        fileLink.href = fileURL
+        fileLink.setAttribute('download', 'Lista_Rozliczenia_Amunicji.pdf')
+        document.body.appendChild(fileLink)
+        fileLink.click()
+      })
+    }
+  },
   name: 'EvidenceBook'
 }
 </script>

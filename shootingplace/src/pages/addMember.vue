@@ -30,7 +30,19 @@
         :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']"/></q-item>
       <q-item><q-input color="green" v-model="memberEmail" label="email" /></q-item>
       <q-item><q-input color="green" v-model="memberLegitimation" label="Numer Legitymacji" /></q-item>
-      <q-item><q-input color="green" hint="YYYY-MM-DD" placeholder="YYYY-MM-DD" v-model="memberJoinDate" label="Data dołączenia do klubu" /></q-item>
+      <q-item><q-input filled v-model="memberJoinDate" mask="date" :rules="['date']" label="Wybierz datę" hint="użyj kalendarza">
+                          <template v-slot:append>
+                            <q-icon name="event" class="cursor-pointer">
+                              <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                                <q-date v-model="memberJoinDate">
+                                  <div class="row items-center justify-end">
+                                    <q-btn v-close-popup label="Zamknij" color="primary" flat />
+                                  </div>
+                                </q-date>
+                              </q-popup-proxy>
+                            </q-icon>
+                          </template>
+                        </q-input></q-item>
       <q-item><q-radio v-model="memberAdult" :val="true" label="Grupa Dorosła" color="secondary" /></q-item>
       <q-item><q-radio v-model="memberAdult" :val="false" label="Grupa Młodzieżowa" color="secondary" /></q-item>
       <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),addMember(memberLegitimation, memberFirstName,
@@ -60,7 +72,7 @@
       </q-card>
       </q-step>
 
-      <q-step v-if="uuid==null"
+      <q-step v-if="uuid!=null"
         :name="2"
         title="Dane Adresowe"
         caption="Opcjonalnie"
@@ -90,20 +102,31 @@
       </q-card>
       </q-step>
 
-      <q-step v-if="memberAdult"
+      <q-step v-if="memberAdultConfirm"
         :name="3"
         title="Patent"
         caption="opcjonalnie"
         icon="assignment"
         :done="step > 3"
       >
-      <q-card class="row" v-if="memberAdult">
+      <q-card class="row" v-if="memberAdultConfirm">
       <q-card-section>
       <div>
       <q-item><q-input v-model="patentNumber" hint="tylko cyfry" placeholder="tylko cyfry" label="Numer Patentu" filled  lazy-rules
         :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']"/></q-item>
-      <q-item><q-input v-model="patentDate" hint="YYYY-MM-DD" placeholder="YYYY-MM-DD" label="Data nadania" filled  lazy-rules
-        :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']"/></q-item>
+      <q-item><q-input filled v-model="patentDate" mask="date" :rules="['date']" label="Wybierz datę" hint="użyj kalendarza">
+                        <template v-slot:append>
+                          <q-icon name="event" class="cursor-pointer">
+                            <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                              <q-date v-model="patentDate">
+                                <div class="row items-center justify-end">
+                                  <q-btn v-close-popup label="Zamknij" color="primary" flat />
+                                </div>
+                              </q-date>
+                            </q-popup-proxy>
+                          </q-icon>
+                        </template>
+                      </q-input></q-item>
       <q-item><q-checkbox v-model="patentPistolPermission" label="Pistolet"/></q-item>
       <q-item><q-checkbox v-model="patentRiflePermission" label="Karabin"/></q-item>
       <q-item><q-checkbox v-model="patentShotgunPermission" label="Strzelba"/></q-item>
@@ -125,28 +148,41 @@
       </div>
       </q-step>
 
-      <q-step v-if="step==3&&patentNumber!=null"
+      <q-step v-if="!memberAdultConfirm||patentNumberConfirm!=null"
         :name="4"
         title="Licencja"
         caption="opcjonalnie"
         icon="assignment"
         :done="step > 4"
       >
-      <q-card class="row" v-if="(memberAdult&&patentNumber!=null)||!memberAdult">
+      <q-card class="row" v-if="(memberAdultConfirm&&patentNumber!=null)||!memberAdultConfirm">
       <q-card-section>
       <div >
       <q-item><q-input v-model="licenseNumber" hint="tylko cyfry" placeholder="tylko cyfry" label="Numer Licencji" filled lazy-rules
         :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']"/></q-item>
       <q-item><q-input v-model="licenseDate" hint="YYYY-MM-DD" placeholder="YYYY-MM-DD" label="Ważna do" filled lazy-rules
         :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']"/></q-item>
-      <q-item v-if="patentPistolPermission||!memberAdult"><q-checkbox v-model="licensePistolPermission"  label="Pistolet"/></q-item>
-      <q-item v-if="patentRiflePermission||!memberAdult"><q-checkbox  v-model="licenseRiflePermission"  label="Karabin"/></q-item>
-      <q-item v-if="patentShotgunPermission||!memberAdult"><q-checkbox v-model="licenseShotgunPermission"  label="Strzelba"/></q-item>
+      <q-item><q-input filled v-model="licenseDate" mask="date" :rules="['date']" label="Wybierz datę" hint="użyj kalendarza">
+                      <template v-slot:append>
+                        <q-icon name="event" class="cursor-pointer">
+                          <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                            <q-date v-model="licenseDate">
+                              <div class="row items-center justify-end">
+                                <q-btn v-close-popup label="Zamknij" color="primary" flat />
+                              </div>
+                            </q-date>
+                          </q-popup-proxy>
+                        </q-icon>
+                      </template>
+                    </q-input></q-item>
+      <q-item v-if="patentPistolPermission||!memberAdultConfirm"><q-checkbox v-model="licensePistolPermission"  label="Pistolet"/></q-item>
+      <q-item v-if="patentRiflePermission||!memberAdultConfirm"><q-checkbox  v-model="licenseRiflePermission"  label="Karabin"/></q-item>
+      <q-item v-if="patentShotgunPermission||!memberAdultConfirm"><q-checkbox v-model="licenseShotgunPermission"  label="Strzelba"/></q-item>
       <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),addLicense(uuid, licenseNumber, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission)"/></q-item>
       </div>
       </q-card-section>
       <q-card-section>
-      <div v-if="(memberAdult&&patentNumber!=null)||!memberAdult">
+      <div v-if="(memberAdultConfirm&&patentNumber!=null)||!memberAdultConfirm">
       <q-item><q-item-label>Numer Licencji : {{licenseNumber}}</q-item-label></q-item>
       <q-item><q-item-label>Data Ważności : {{licenseDate}}</q-item-label></q-item>
       <q-item><q-item-label>Dyscypliny :</q-item-label></q-item>
@@ -156,65 +192,78 @@
       </div>
       </q-card-section>
       </q-card>
-      <div v-if="(memberAdult&&patentNumber==null)">Licencja - Nie ma tu nic do pokazania
+      <div v-if="(memberAdultConfirm&&patentNumberConfirm==true)">Licencja - Nie ma tu nic do pokazania
       </div>
       </q-step>
 
-      <q-step v-if="memberAdult"
+      <q-step v-else-if="memberAdultConfirm"
         :name="5"
         title="Pozwolenie na Broń"
         caption="opcjonalnie"
         icon="assignment"
         :done="step > 5"
       >
-      <div v-if="(memberAdult&&patentNumber!=null&&licenseNumber!=null)">
+      <div v-if="(memberAdultConfirm&&patentNumberConfirm==true&&licenseNumber!=null)">
       <q-item><q-item-label>Jeśli posiada pozwolenie - wpisz numer</q-item-label></q-item>
       <q-item><q-input v-model="weaponPermissionNumber" label="Numer" filled lazy-rules
         :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']"/></q-item>
       <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),changeWeaponPermission(uuid, weaponPermissionNumber)"/></q-item>
       </div>
-      <div v-if="(memberAdult&&(patentNumber==null||licenseNumber==null)||!memberAdult)" >Pozwolenie na broń - Nie ma tu nic do pokazania</div>
+      <div v-if="(memberAdultConfirm&&(patentNumber==null||licenseNumber==null)||!memberAdultConfirm)" >Pozwolenie na broń - Nie ma tu nic do pokazania</div>
       </q-step>
-      <q-step v-if="memberAdult"
+      <q-step v-if="memberAdultConfirm"
         :name="6"
         title="Prowadzący Strzelanie"
         caption="opcjonalnie"
         icon="assignment"
         :done="step > 6"
       >
-      <div v-if="memberAdult">
+      <div v-if="memberAdultConfirm">
       <q-item><q-item-label>Jeśli posiada uprawnienia - wpisz numer</q-item-label></q-item>
       <q-item><q-input v-model="permissionsShootingLeaderNumber" label="Numer" filled lazy-rules
         :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']"/></q-item>
       <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),updateMemberPermissions(uuid, permissionsShootingLeaderNumber),value=true"/></q-item>
       </div>
-      <div v-if="!memberAdult" >Prowadzący strzelanie - Nie ma tu nic do pokazania</div>
+      <div v-if="!memberAdultConfirm" >Prowadzący strzelanie - Nie ma tu nic do pokazania</div>
       </q-step>
-      <q-step v-if="memberAdult"
+      <q-step v-if="memberAdultConfirm"
         :name="7"
         title="Instruktor"
         caption="opcjonalnie"
         icon="assignment"
         :done="step > 7"
       >
-      <div v-if="memberAdult">
+      <div v-if="memberAdultConfirm">
       <q-item><q-item-label>Jeśli posiada uprawnienia instruktora - wpisz numer</q-item-label></q-item>
       <q-item><q-input v-model="permissionsInstructorNumber" label="Numer" filled lazy-rules
         :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']"/></q-item>
       <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),updateMemberPermissions(uuid, permissionsInstructorNumber), value1=true"/></q-item>
       </div>
-      <div v-if="!memberAdult" >Instruktor - Nie ma tu nic do pokazania</div>
+      <div v-if="!memberAdultConfirm" >Instruktor - Nie ma tu nic do pokazania</div>
       </q-step>
-      <q-step v-if="memberAdult"
+      <q-step v-if="memberAdultConfirm"
         :name="8"
         title="Sędzia"
         caption="opcjonalnie"
         icon="assignment"
       >
-      <div v-if="memberAdult">
+      <div v-if="memberAdultConfirm">
       <q-item><q-item-label>Jeśli posiada Licencję Sędziego - uzupełnij dane</q-item-label></q-item>
         <q-item><q-input v-model="permissionsArbiterNumber" filled label="Numer uprawnień" /></q-item>
         <q-item><q-input v-model="permissionsArbiterPermissionValidThru" filled hint="YYYY-MM-DD" placeholder="YYYY-MM-DD" label="Data ważności" /></q-item>
+        <q-item><q-input filled v-model="permissionsArbiterPermissionValidThru" mask="date" :rules="['date']" label="Wybierz datę" hint="użyj kalendarza">
+                          <template v-slot:append>
+                            <q-icon name="event" class="cursor-pointer">
+                              <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                                <q-date v-model="permissionsArbiterPermissionValidThru">
+                                  <div class="row items-center justify-end">
+                                    <q-btn v-close-popup label="Zamknij" color="primary" flat />
+                                  </div>
+                                </q-date>
+                              </q-popup-proxy>
+                            </q-icon>
+                          </template>
+                        </q-input></q-item>
         <q-item><q-radio v-model="ordinal" :val="1" label="Klasa 3" color="secondary" /></q-item>
         <q-item><q-radio v-model="ordinal" :val="2" label="Klasa 2" color="secondary" /></q-item>
         <q-item><q-radio v-model="ordinal" :val="3" label="Klasa 1" color="secondary" /></q-item>
@@ -222,14 +271,14 @@
         <q-item><q-radio v-model="ordinal" :val="5" label="Klasa Międzynarodowa" color="secondary" /></q-item>
       <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),updateMemberPermissions(uuid, permissionsArbiterNumber,permissionsArbiterPermissionValidThru, ordinal), value2=true"/></q-item>
       </div>
-      <div v-if="!memberAdult">Sędzia - Nie ma tu nic do pokazania</div>
+      <div v-if="!memberAdultConfirm">Sędzia - Nie ma tu nic do pokazania</div>
       </q-step>
 
       <template v-slot:navigation  >
         <q-stepper-navigation class="flex flex">
-          <q-item v-if="step<8&&uuid!=null" ><q-btn @click="$refs.stepper.next()" color="primary" :label="step === 8 ? 'Zakończono' : 'Przejdź Dalej'" /></q-item>
-          <q-item v-if="step==8" ><q-btn @click="redirect()" color="primary" label="Zakończ" /></q-item>
+          <q-item v-if="(step<8&&uuid!=null)||(!memberAdultConfirm&&step<3)"><q-btn @click="$refs.stepper.next()" color="primary" :label="step === 8 ? 'Zakończono' : 'Przejdź Dalej'" /></q-item>
           <q-item><q-btn v-if="step > 1" flat color="primary" @click="$refs.stepper.previous()" label="Wróć" /></q-item>
+          <q-item><q-btn v-if="step > 1" @click="redirect()" color="primary" label="Zakończ" /></q-item>
           <q-item><q-btn v-if="uuid!=null&&uuid!=''" color="secondary" @click="personalCardDownloadConfirm=true" label="Drukuj kartę" /></q-item>
           <q-item><q-btn v-if="uuid!=null&&uuid!=''" color="secondary" @click="contributionDownloadConfirm=true" label="Potwierdzenie opłacenia składki" /></q-item>
           <q-item v-if="uuid!=null"><q-item-label>Identyfikator : {{uuid}}</q-item-label></q-item>
@@ -436,7 +485,7 @@ export default {
       permissionsShootingLeaderNumber: null,
       permissionsInstructorNumber: null,
       permissionsArbiterNumber: null,
-      permissionsArbiterPermissionValidThru: null,
+      permissionsArbiterPermissionValidThru: '',
       contributionDownloadConfirm: false,
       contributionConfirmDownloadAlert: false,
       personalCardDownloadConfirm: false,
@@ -446,7 +495,8 @@ export default {
       validThru: '',
       member: [],
       patentNumber: null,
-      patentDate: null,
+      patentNumberConfirm: false,
+      patentDate: '',
       patentPistolPermission: false,
       patentRiflePermission: false,
       patentShotgunPermission: false,
@@ -454,7 +504,7 @@ export default {
       licenseRiflePermission: false,
       licenseShotgunPermission: false,
       licenseNumber: null,
-      licenseDate: null,
+      licenseDate: '',
       weaponPermissionNumber: '',
       isExist: false,
       memberFirstName: '',
@@ -464,6 +514,7 @@ export default {
       memberPhone: '',
       memberEmail: '',
       memberAdult: null,
+      memberAdultConfirm: null,
       memberLegitimation: '',
       memberJoinDate: '',
       memberZipCode: null,
@@ -512,11 +563,12 @@ export default {
           console.log(this.uuid)
           if (uuid != null) { this.returnAlert = true }
           this.updateJoinDate(uuid, this.memberJoinDate)
+          this.memberAdultConfirm = this.adult
         })
     },
     updateJoinDate (uuid, memberJoinDate) {
       var data = {
-        joinDate: memberJoinDate
+        joinDate: memberJoinDate.replace(/\//gi, '-')
       }
       fetch('http://localhost:8080/member/' + uuid, {
         method: 'PUT',
@@ -571,11 +623,12 @@ export default {
         .then(patentNumber => {
           if (patentNumber != null) { this.returnAlert = true }
           this.updatedateOfPosting(uuid, this.patentDate)
+          this.patentNumberConfirm = true
         })
     },
     updatedateOfPosting (uuid, patentDate) {
       var data = {
-        dateOfPosting: patentDate
+        dateOfPosting: patentDate.replace(/\//gi, '-')
       }
       fetch('http://localhost:8080/patent/' + uuid, {
         method: 'PUT',
@@ -625,7 +678,7 @@ export default {
         }
       }).then(response => response.json())
         .then(validThru => {
-          this.validThru = licenseDate
+          this.validThru = licenseDate.replace(/\//gi, '-')
           if (this.returnAlert) { this.licenseAndPatentAlert = true }
           if (!this.returnAlert) {
             alert('Coś poszło nie tak - sprawdź czy wszystkie dane są wprowadzone poprawnie')
@@ -658,7 +711,7 @@ export default {
         shootingLeaderNumber: this.permissionsShootingLeaderNumber,
         instructorNumber: this.permissionsInstructorNumber,
         arbiterNumber: this.permissionsArbiterNumber,
-        arbiterPermissionValidThru: this.permissionsArbiterPermissionValidThru
+        arbiterPermissionValidThru: this.permissionsArbiterPermissionValidThru.replace(/\//gi, '-')
       }
       fetch('http://localhost:8080/permissions/' + uuid + '?ordinal=' + this.ordinal, {
         method: 'PUT',
