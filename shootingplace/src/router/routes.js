@@ -12,7 +12,6 @@ const routes = [
       { path: '/dailyevidence', component: () => import('pages/dailyEvidenceBook.vue') },
       { path: '/competition', component: () => import('pages/tournamentList.vue') },
       { path: '/memberwithpermission', component: () => import('pages/memberWithPermission.vue') },
-      { path: '/newcompetition', component: () => import('pages/addTournament.vue') },
       { path: '/patentWilling', component: () => import('pages/patentWilling.vue') }
     ]
   },

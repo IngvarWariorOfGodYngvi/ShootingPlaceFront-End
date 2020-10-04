@@ -1,6 +1,28 @@
 <template>
   <q-page padding>
     <div>
+      <q-card>
+        <q-item>
+          <q-btn label="dodawanie za pomocą pliku xls" color="primary" @click="addingByXlsFile=true"></q-btn>
+          <q-dialog v-model="addingByXlsFile">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Dodawanie wielu klubowiczów za pomocą pliku excel</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          Funkcja jeszcze nie działa ale będzie udostępniona w przyszłości
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+</q-dialog>
+        </q-item>
+        </q-card>
+    </div>
+    <div>
     <q-stepper
       v-model="step"
       ref="stepper"
@@ -22,14 +44,14 @@
         :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']" /></q-item>
       <q-item><q-input color="red" v-model="memberSecondName" label="*Nazwisko" filled  lazy-rules
         :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']"/></q-item>
-      <q-item><q-input color="red" v-model="memberIDCard" label="*Numer Dowodu" filled hint="XXX000000" placeholder="XXX000000" lazy-rules
+      <q-item><q-input color="red" v-model="memberIDCard" label="*Numer Dowodu" filled hint="XXX000000" placeholder="XXX000000" mask="AAA######" lazy-rules
         :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']"/></q-item>
-      <q-item><q-input color="red" v-model="memberPesel" placeholder="tylko cyfry" label="*Pesel" filled  lazy-rules
+      <q-item><q-input color="red" v-model="memberPesel" placeholder="tylko cyfry" label="*Pesel" mask="###########" filled  lazy-rules
         :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']" /></q-item>
-      <q-item><q-input color="red" v-model="memberPhone" placeholder="tylko cyfry" label="*Numer telefonu" filled  lazy-rules
+      <q-item><q-input color="red" v-model="memberPhone" placeholder="tylko cyfry" label="*Numer telefonu" mask="#########" filled  lazy-rules
         :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']"/></q-item>
-      <q-item><q-input color="green" v-model="memberEmail" label="email" /></q-item>
-      <q-item><q-input color="green" v-model="memberLegitimation" label="Numer Legitymacji" /></q-item>
+      <q-item><q-input filled color="green" v-model="memberEmail" label="email" /></q-item>
+      <q-item><q-input filled color="green" v-model="memberLegitimation" label="Numer Legitymacji" /></q-item>
       <q-item><q-input filled v-model="memberJoinDate" mask="date" :rules="['date']" label="Wybierz datę" hint="użyj kalendarza">
                           <template v-slot:append>
                             <q-icon name="event" class="cursor-pointer">
@@ -83,7 +105,7 @@
       <q-card-section>
       <div>
       <q-item><q-input v-model="memberPostOfficeCity" label="Miasto" /></q-item>
-      <q-item><q-input v-model="memberZipCode" placeholder="00-000" label="Kod Pocztowy" /></q-item>
+      <q-item><q-input v-model="memberZipCode" placeholder="00-000" label="Kod Pocztowy" mask="##-###" /></q-item>
       <q-item><q-input v-model="memberStreet" label="Ulica" /></q-item>
       <q-item><q-input v-model="memberStreetNumber" label="Numer Ulicy" /></q-item>
       <q-item><q-input v-model="memberFlatNumber" label="Numer Mieszkania"/></q-item>
@@ -148,7 +170,7 @@
       </div>
       </q-step>
 
-      <q-step v-if="!memberAdultConfirm||patentNumberConfirm!=null"
+      <q-step v-if="(memberAdultConfirm!=null)||patentNumberConfirm!=null"
         :name="4"
         title="Licencja"
         caption="opcjonalnie"
@@ -160,9 +182,7 @@
       <div >
       <q-item><q-input v-model="licenseNumber" hint="tylko cyfry" placeholder="tylko cyfry" label="Numer Licencji" filled lazy-rules
         :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']"/></q-item>
-      <q-item><q-input v-model="licenseDate" hint="YYYY-MM-DD" placeholder="YYYY-MM-DD" label="Ważna do" filled lazy-rules
-        :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']"/></q-item>
-      <q-item><q-input filled v-model="licenseDate" mask="date" :rules="['date']" label="Wybierz datę" hint="użyj kalendarza">
+      <q-item><q-input filled v-model="licenseDate" mask="date" :rules="['date']" label="Ważna do" hint="użyj kalendarza">
                       <template v-slot:append>
                         <q-icon name="event" class="cursor-pointer">
                           <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -276,7 +296,7 @@
 
       <template v-slot:navigation  >
         <q-stepper-navigation class="flex flex">
-          <q-item v-if="(step<8&&uuid!=null)||(!memberAdultConfirm&&step<3)"><q-btn @click="$refs.stepper.next()" color="primary" :label="step === 8 ? 'Zakończono' : 'Przejdź Dalej'" /></q-item>
+          <q-item v-if="(step<8&&uuid!=null)"><q-btn @click="$refs.stepper.next()" color="primary" :label="step === 8 ? 'Zakończono' : 'Przejdź Dalej'" /></q-item>
           <q-item><q-btn v-if="step > 1" flat color="primary" @click="$refs.stepper.previous()" label="Wróć" /></q-item>
           <q-item><q-btn v-if="step > 1" @click="redirect()" color="primary" label="Zakończ" /></q-item>
           <q-item><q-btn v-if="uuid!=null&&uuid!=''" color="secondary" @click="personalCardDownloadConfirm=true" label="Drukuj kartę" /></q-item>
@@ -525,7 +545,8 @@ export default {
       active: true,
       uuid: null,
       ordinal: '',
-      returnAlert: false
+      returnAlert: false,
+      addingByXlsFile: false
     }
   },
   methods: {
@@ -563,7 +584,7 @@ export default {
           console.log(this.uuid)
           if (uuid != null) { this.returnAlert = true }
           this.updateJoinDate(uuid, this.memberJoinDate)
-          this.memberAdultConfirm = this.adult
+          this.memberAdultConfirm = this.memberAdult
         })
     },
     updateJoinDate (uuid, memberJoinDate) {

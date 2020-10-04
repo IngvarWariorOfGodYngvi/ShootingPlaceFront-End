@@ -219,6 +219,8 @@ export default {
       licenseNumber: '',
       validThru: '',
       members: [],
+      resurectAlert: false,
+      resurectConfirm: false,
       patentDate: null,
       patentPistolPermission: false,
       patentRiflePermission: false,

@@ -96,12 +96,6 @@ export default {
           link: 'https://localhost:8081/#/ammolist'
         },
         {
-          title: 'Utwórz nowe zawody',
-          caption: 'obsługa dodatkowa',
-          icon: 'add',
-          link: 'https://localhost:8081/#/newcompetition'
-        },
-        {
           title: 'Lista Zawodów',
           caption: 'obsługa podstawowa',
           icon: 'book',

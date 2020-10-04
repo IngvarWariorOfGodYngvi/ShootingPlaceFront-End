@@ -3,7 +3,19 @@
     <div>
     <q-item-section>
       <h6>Data listy {{ammoList.date}}</h6>
-      <q-item><q-input hint="Data : YYYY-MM-DD" label="DATA" placeholder="YYYY-MM-DD"></q-input></q-item>
+      <q-item><q-input filled v-model="listDate" mask="date" label="Wybierz datę" hint="użyj kalendarza">
+                  <template v-slot:append>
+                    <q-icon name="event" class="cursor-pointer">
+                      <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                        <q-date v-model="listDate">
+                          <div class="row items-center justify-end">
+                            <q-btn v-close-popup label="Zamknij" color="primary" flat />
+                          </div>
+                        </q-date>
+                      </q-popup-proxy>
+                    </q-icon>
+                  </template>
+                </q-input></q-item>
       <q-item><q-btn label="zmień datę" color="primary"></q-btn></q-item>
     </q-item-section>
     <div v-for="caliberList in ammoList.caliberList" :key="caliberList.uuid" class="row">
@@ -20,7 +32,7 @@
     <q-card v-if="caliberList.ammoUsed!=null">
       <q-card-section>
         <q-item-section>
-          <q-item>Ilość</q-item>
+          <q-item><h6>Ilość</h6></q-item>
           <q-item v-for="ammoUsed in caliberList.ammoUsed" :key="ammoUsed">{{ammoUsed}} szt.</q-item>
         </q-item-section>
       </q-card-section>
@@ -37,7 +49,7 @@
 <q-dialog v-model="ammunitionListConfirm" persistent>
       <q-card>
         <q-card-section class="row items-center">
-          <span class="q-ml-sm">Czy pobrać kartę rozliczenia aunicji?</span>
+          <span class="q-ml-sm">Czy pobrać kartę rozliczenia aunicji? .replace(/\//gi, '-')</span>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -49,7 +61,7 @@
 <q-dialog v-model="ammunitionListAlert">
       <q-card>
         <q-card-section>
-          <div class="text-h6">Pobrano kartę Klubowicza</div>
+          <div class="text-h6">Pobrano listę</div>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -71,6 +83,7 @@ export default {
     return {
       uuid: null,
       ammunitionListAlert: false,
+      listDate: null,
       ammunitionListConfirm: false,
       ammoList: [],
       inc: 0
