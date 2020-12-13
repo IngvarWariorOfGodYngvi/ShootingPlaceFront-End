@@ -9,7 +9,7 @@
       <q-item-section class="col">
       </q-item-section>
       <q-item-section side top>
-      <q-item><q-btn color="primary" label="Wybierz" @click="showloading(),getListMembers()"/></q-item>
+      <q-item><q-btn v-model="btn" color="primary" label="Wybierz" @click="showloading(),getListMembers()"/></q-item>
       </q-item-section>
       </q-card>
     </div>
@@ -42,14 +42,16 @@
     </div>
   <div class="q-pa-md">
     <q-list>
-      <q-expansion-item v-for="members in members" :key="members.uuid" group="somegroup" :id="members.secondName">
+      <q-expansion-item style="border-radius: 30px" class="bg-light grey" rounded v-for="members in members" :key="members.uuid" group="somegroup" :id="members.secondName">
         <template v-slot:header>
           <q-item-section avatar>
             <q-badge v-if="(members.address.postOfficeCity===null||members.address.postOfficeCity==='')
-            ||(members.address.street==null||members.address.street=='')" transparent align="middle" color="orange">Brak Adresu</q-badge>
-            <q-badge v-if="members.weaponPermission.isExist&&!members.license.isValid" transparent align="middle" color="red">Jest Broń i Brak Licencji</q-badge>
-            <q-badge v-if="(members.email==null||members.email=='')" transparent align="middle" color="yellow">Brak E-mail</q-badge>
+            ||(members.address.street==null||members.address.street=='')" transparent align="middle" color="orange" text-color="black">Brak Adresu</q-badge>
+            <q-badge v-if="members.weaponPermission.isExist&&!members.license.isValid" transparent align="middle" color="red" text-color="black">Jest Broń i Brak Licencji</q-badge>
+            <q-badge v-if="(members.email==null||members.email=='')" transparent align="middle" color="yellow" text-color="black">Brak E-mail</q-badge>
+            <q-badge v-if="members.license.number!=null&&!members.license.isValid" transparent align="middle" color="yellow" text-color="black">Brak aktualnej licencji</q-badge>
             <q-avatar v-if="members.weaponPermission.isExist&&!members.license.isValid" icon="warning" color="red" text-color="white"/>
+            <q-avatar v-if="members.license.number!=null&&!members.license.isValid" icon="warning" color="yellow" text-color="white"/>
             <q-avatar v-else-if="(members.email==null||members.email=='')
             ||(members.address.postOfficeCity===null||members.address.postOfficeCity==='')
             ||(members.address.street==null||members.address.street=='')" icon="warning" color="warning" text-color="white" />
@@ -70,34 +72,61 @@
           </q-item-section>
         </template>
 
-        <q-card>
+        <q-card bordered>
           <q-item>
               <q-card-section class="col">
                   <q-item><q-item-label>Historia Składek</q-item-label></q-item>
                   <q-item-section side top>
                 <q-item><q-btn color="primary" label="Przedłuż składkę" @click="uuid=members.uuid,name=members.firstName,name2=members.secondName,contribution=true"/></q-item>
-                <q-item><q-input filled v-model="historyContributionRecord" mask="date" label="Wybierz datę" hint="użyj kalendarza">
-                          <template v-slot:append>
-                            <q-icon name="event" class="cursor-pointer">
-                              <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                                <q-date v-model="historyContributionRecord">
-                                  <div class="row items-center justify-end">
-                                    <q-btn v-close-popup label="Zamknij" color="primary" flat />
-                                  </div>
-                                </q-date>
-                              </q-popup-proxy>
-                            </q-icon>
-                          </template>
-                        </q-input></q-item>
-                <q-item><q-btn color="primary" label="Dodaj rekord w historii" @click="uuid=members.uuid,contributionRecordConfirm=true"/></q-item>
+                <q-item><q-btn color="primary" label="Przejżyj historię" @click="uuid=members.uuid,contributionRecordConfirm=true"/></q-item>
+                <q-dialog v-model="contributionRecordConfirm" persistent>
+                  <div>
+                      <q-card>
+                        <q-card-section class="col items-center">
+                          <p><span class="q-ml-sm">Możesz dodać ręcznie składkę</span></p>
+                          <p><span class="q-ml-sm"> PAMIĘTAJ !!!</span></p>
+                          <p><span class="q-ml-sm">Nie można dodawać składek z przyszłości</span></p>
+                          <q-card-actions align="right">
+                            <q-item>
+                                        <q-input filled v-model="historyContributionRecord" mask="date" label="Wybierz datę" hint="użyj kalendarza">
+                                          <template v-slot:append>
+                                            <q-icon name="event" class="cursor-pointer">
+                                              <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                                                <q-date v-model="historyContributionRecord">
+                                                  <div class="row items-center justify-end">
+                                                    <q-btn v-close-popup label="Zamknij" color="primary" flat />
+                                                  </div>
+                                                </q-date>
+                                              </q-popup-proxy>
+                                            </q-icon>
+                                          </template>
+                                        </q-input>
+                          </q-item>
+                            <q-btn flat label="Dodaj rekord" color="primary" @click="addHistoryContributionRecord (uuid, historyContributionRecord),showloading(),getListMembers()" />
+                          </q-card-actions>
+                        </q-card-section>
+                        <q-card>
+                          <q-scroll-area :thumb-style="thumbStyle" :bar-style="barStyle" style="height: 250px; max-width: 400px;">
+                          <div class="q-pa-xs">
+                           <q-item-section>
+                          <div v-for="contributionList in members.history.contributionList" :key="contributionList" class="col">
+                          <q-item>
+                          <q-item>Opłacona dnia {{contributionList.date}}</q-item>
+                          <q-item>Przyjmujący : {{contributionList.recipient}}</q-item>
+                          <q-item>notka: {{contributionList.note}}</q-item>
+                          </q-item>
+                          </div></q-item-section>
+                          </div>
+                          </q-scroll-area>
+                        </q-card>
+
+                        <q-card-actions align="right">
+                          <q-btn flat label="zamknij" color="primary" v-close-popup />
+                        </q-card-actions>
+                      </q-card>
+                  </div>
+                </q-dialog>
                 </q-item-section>
-                  <q-scroll-area :thumb-style="thumbStyle" :bar-style="barStyle" style="height: 230px; max-width: 300px;">
-                <div class="q-pa-xs">
-                 <q-item-section>
-                <q-item v-for="contributionRecord in members.history.contributionRecord" :key="contributionRecord"><q-item-label>Opłacona dnia {{contributionRecord}}</q-item-label></q-item>
-                </q-item-section>
-                 </div>
-                 </q-scroll-area>
               </q-card-section>
               <q-card-section class="col">
               <q-item-section v-if="!members.license.number!=null||members.adult">
@@ -278,9 +307,13 @@
                 <q-item><q-btn label="Przenieś" color="red" @click="uuid=members.uuid,changAdultConfirm=true"/></q-item>
 </q-expansion-item>
 </q-expansion-item>
-<q-expansion-item v-if="!members.active" label="Skreśl z listy członków" group="right-right-card">
+<q-expansion-item v-if="!members.active" label="Skreśl z listy członków" group="right-right-card" class="bg-red">
                 <q-item class="bg-red" ><q-item-label>Czy napewno chcesz usunąć osobę?</q-item-label></q-item>
                 <q-item class="bg-red" ><q-btn label="Usuń" color="red" @click="uuid=members.uuid,eraseConfirm=true"/></q-item>
+</q-expansion-item>
+<q-expansion-item v-if="!members.active" label="Przywróć członka klubu" group="right-right-card">
+                <q-item ><q-item-label>Czy napewno chcesz przywrócić osobę?</q-item-label></q-item>
+                <q-item ><q-btn label="Przywróć" color="red" @click="uuid=members.uuid,backConfirm=true"/></q-item>
 </q-expansion-item>
 <q-expansion-item label="Historia startów" group="right-card">
               <q-item><q-btn label="wyświetl daty zawodów" color="primary" @click="showStartsHistory=true"></q-btn></q-item>
@@ -321,7 +354,7 @@
           </q-card-section>
           </q-item>
         </q-card>
-        <q-card>
+        <q-card bordered class="bg-grey-2">
           <q-item>
           <q-card-section>
             <q-item-section class="col">
@@ -436,22 +469,6 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="contributionRecordConfirm" persistent>
-  <div>
-      <q-card>
-        <q-card-section class="col items-center">
-          <span class="q-ml-sm">Czy dodać składkę w historii składek?</span>
-          <p><span><h6>PAMIĘTAJ</h6></span></p>
-          <span class="q-ml-sm">Nie można dodawać składek z przyszłości</span>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="anuluj" color="primary" v-close-popup />
-          <q-btn flat label="Dodaj" color="primary" v-close-popup @click="addHistoryContributionRecord (uuid, historyContributionRecord)" />
-        </q-card-actions>
-      </q-card>
-  </div>
-</q-dialog>
 <q-dialog v-model="licenseConfirm" persistent>
   <div>
       <q-card>
@@ -520,7 +537,7 @@
 
         <q-card-actions align="right">
           <q-btn flat label="anuluj" color="primary" v-close-popup />
-          <q-btn flat label="przenieś" color="primary" v-close-popup @click="changeActive(uuid)" />
+          <q-btn flat label="przenieś" color="primary" v-close-popup @click="changeActive(uuid),deactivateAlert=true" />
         </q-card-actions>
       </q-card>
 </q-dialog>
@@ -546,7 +563,7 @@
 
         <q-card-actions align="right">
           <q-btn flat label="anuluj" color="primary" v-close-popup />
-          <q-btn flat label="Tak" color="primary" v-close-popup @click="addLicenseHistoryPayment (uuid)" />
+          <q-btn flat label="Tak" color="primary" v-close-popup @click="addLicenseHistoryPayment (uuid),showloading(),getListMembers()" />
         </q-card-actions>
       </q-card>
 </q-dialog>
@@ -625,6 +642,19 @@
         <q-card-actions align="right">
           <q-btn flat label="anuluj" color="white" v-close-popup />
           <q-btn flat label="usuń" color="white" v-close-popup @click="erase(uuid),eraseAlert=true" />
+        </q-card-actions>
+      </q-card>
+</q-dialog>
+<q-dialog v-model="backConfirm" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <q-avatar icon="warning"/>
+          <span class="q-ml-sm">Czy napewno chcesz przywrócić Klubowicza?</span>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="anuluj" color="primary" v-close-popup />
+          <q-btn flat label="przywróć" color="primary" v-close-popup @click="changeActive (uuid),backAlert=true" />
         </q-card-actions>
       </q-card>
 </q-dialog>
@@ -825,7 +855,7 @@
 <q-dialog v-model="deactivateAlert">
       <q-card>
         <q-card-section>
-          <div class="text-h6">Przeniesiono do nieaktywnych</div>
+          <div class="text-h6">Przeniesiono</div>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -892,6 +922,17 @@
       <q-card>
         <q-card-section>
           <div class="text-h6">Klubowicz został skreślony z listy klubowiczów</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup @click="showloading(),getListMembers()" />
+        </q-card-actions>
+      </q-card>
+</q-dialog>
+<q-dialog v-model="backAlert">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Klubowicz został przywrócony</div>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -984,7 +1025,9 @@ export default {
       changAdultConfirm: false,
       changeAdultAlert: false,
       eraseAlert: false,
+      backAlert: false,
       eraseConfirm: false,
+      backConfirm: false,
       contributionRecord: '',
       basicDataConfirm: false,
       basicDataConfirm1: false,
@@ -1068,6 +1111,7 @@ export default {
       memberAdultConfirm: null,
       showStartsHistory: false,
       showJudgesHistory: false,
+      btn: false,
       search: '',
       finder: '',
       address: [],
@@ -1344,6 +1388,7 @@ export default {
           this.licenseRiflePermission = false
           this.licenseShotgunPermission = false
         })
+      this.getListMembers()
     },
     addLicenseHistoryPayment (uuid) {
       fetch('http://localhost:8080/license/history' + uuid, {
@@ -1382,7 +1427,6 @@ export default {
       }).then(response => response.json())
         .then(members => {
           this.members = members
-          this.deactivateAlert = true
         })
     },
     updateMemberPermissions (uuid, permissionsShootingLeaderNumber, permissionsInstructorNumber, permissionsArbiterNumber, permissionsArbiterPermissionValidThru) {

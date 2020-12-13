@@ -283,7 +283,7 @@ export default {
       setScrollPosition(target, offset, duration)
     },
     getListMembers () {
-      fetch('http://localhost:8080/member/erased?erased=true', {
+      fetch('http://localhost:8080/member/erased', {
         method: 'GET'
       }).then(response => response.json())
         .then(members => {

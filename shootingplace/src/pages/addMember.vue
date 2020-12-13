@@ -5,7 +5,7 @@
         <q-item>
           <q-btn label="dodawanie za pomocą pliku xls" color="primary" @click="addingByXlsFile=true"></q-btn>
           <q-dialog v-model="addingByXlsFile">
-      <q-card>
+      <!-- <q-card>
         <q-card-section>
           <div class="text-h6">Dodawanie wielu klubowiczów za pomocą pliku excel</div>
         </q-card-section>
@@ -17,7 +17,7 @@
         <q-card-actions align="right">
           <q-btn flat label="OK" color="primary" v-close-popup />
         </q-card-actions>
-      </q-card>
+      </q-card> -->
 </q-dialog>
         </q-item>
         </q-card>
@@ -40,15 +40,15 @@
       <q-card-section>
       <div>
         <q-form>
-      <q-item><q-input color="red" v-model="memberFirstName" label="*Imię" filled  lazy-rules
+      <q-item><q-input color="red" v-model="memberFirstName" label="*Imię" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123)" filled  lazy-rules
         :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']" /></q-item>
-      <q-item><q-input color="red" v-model="memberSecondName" label="*Nazwisko" filled  lazy-rules
+      <q-item><q-input color="red" v-model="memberSecondName" label="*Nazwisko" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123)" filled  lazy-rules
         :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']"/></q-item>
-      <q-item><q-input color="red" v-model="memberIDCard" label="*Numer Dowodu" filled hint="XXX000000" placeholder="XXX000000" mask="AAA######" lazy-rules
+      <q-item><q-input color="red" v-model="memberIDCard" label="*Numer Dowodu" filled hint="XXX000000" placeholder="XXX000000" mask="AAA ######" lazy-rules
         :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']"/></q-item>
       <q-item><q-input color="red" v-model="memberPesel" placeholder="tylko cyfry" label="*Pesel" mask="###########" filled  lazy-rules
         :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']" /></q-item>
-      <q-item><q-input color="red" v-model="memberPhone" placeholder="tylko cyfry" label="*Numer telefonu" mask="#########" filled  lazy-rules
+      <q-item><q-input color="red" v-model="memberPhone" placeholder="tylko cyfry" label="*Numer telefonu" mask="### ### ###" filled  lazy-rules
         :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']"/></q-item>
       <q-item><q-input filled color="green" v-model="memberEmail" label="email" /></q-item>
       <q-item><q-input filled color="green" v-model="memberLegitimation" label="Numer Legitymacji" /></q-item>
@@ -83,7 +83,7 @@
       <q-item><q-item-label>Nazwisko : {{memberSecondName}}</q-item-label></q-item>
       <q-item><q-item-label>Numer Dowodu Osobistego : {{memberIDCard}}</q-item-label></q-item>
       <q-item><q-item-label>Numer PESEL : {{memberPesel}}</q-item-label></q-item>
-      <q-item><q-item-label>Numer Telefonu :{{memberPhone}}</q-item-label></q-item>
+      <q-item><q-item-label>Numer Telefonu : +48 {{memberPhone}}</q-item-label></q-item>
       <q-item><q-item-label>Adres E-mail : {{memberEmail}}</q-item-label></q-item>
       <q-item><q-item-label>Numer Legitymacji Klubowej : {{memberLegitimation}}</q-item-label></q-item>
       <q-item><q-item-label>Data dołączenia do Klubu : {{memberJoinDate}}</q-item-label></q-item>
@@ -296,11 +296,11 @@
 
       <template v-slot:navigation  >
         <q-stepper-navigation class="flex flex">
-          <q-item v-if="(step<8&&uuid!=null)"><q-btn @click="$refs.stepper.next()" color="primary" :label="step === 8 ? 'Zakończono' : 'Przejdź Dalej'" /></q-item>
+          <q-item v-if="(step<8&&(uuid!=null&&uuid!='' && !uuid.includes('Uwaga!')))"><q-btn @click="$refs.stepper.next()" color="primary" :label="step === 8 ? 'Zakończono' : 'Przejdź Dalej'" /></q-item>
           <q-item><q-btn v-if="step > 1" flat color="primary" @click="$refs.stepper.previous()" label="Wróć" /></q-item>
           <q-item><q-btn v-if="step > 1" @click="redirect()" color="primary" label="Zakończ" /></q-item>
-          <q-item><q-btn v-if="uuid!=null&&uuid!=''" color="secondary" @click="personalCardDownloadConfirm=true" label="Drukuj kartę" /></q-item>
-          <q-item><q-btn v-if="uuid!=null&&uuid!=''" color="secondary" @click="contributionDownloadConfirm=true" label="Potwierdzenie opłacenia składki" /></q-item>
+          <q-item><q-btn v-if="uuid!=null&&uuid!='' && !uuid.includes('Uwaga!')" color="secondary" @click="personalCardDownloadConfirm=true" label="Drukuj kartę" /></q-item>
+          <q-item><q-btn v-if="uuid!=null&&uuid!='' && !uuid.includes('Uwaga!')" color="secondary" @click="contributionDownloadConfirm=true" label="Potwierdzenie opłacenia składki" /></q-item>
           <q-item v-if="uuid!=null"><q-item-label>Identyfikator : {{uuid}}</q-item-label></q-item>
         </q-stepper-navigation>
       </template>
@@ -514,6 +514,7 @@ export default {
       number: '',
       validThru: '',
       member: [],
+      response: null,
       patentNumber: null,
       patentNumberConfirm: false,
       patentDate: '',
@@ -570,7 +571,7 @@ export default {
         email: memberEmail,
         phoneNumber: memberPhone,
         adult: memberAdult,
-        active: this.active
+        joinDate: this.memberJoinDate.replace(/\//gi, '-')
       }
       fetch('http://localhost:8080/member/', {
         method: 'POST',
@@ -578,36 +579,58 @@ export default {
         headers: {
           'Content-Type': 'application/json'
         }
-      }).then(response => response.json())
-        .then(uuid => {
-          this.uuid = uuid
-          console.log(this.uuid)
-          if (uuid != null) { this.returnAlert = true }
-          this.updateJoinDate(uuid, this.memberJoinDate)
-          this.memberAdultConfirm = this.memberAdult
-        })
-    },
-    updateJoinDate (uuid, memberJoinDate) {
-      var data = {
-        joinDate: memberJoinDate.replace(/\//gi, '-')
-      }
-      fetch('http://localhost:8080/member/' + uuid, {
-        method: 'PUT',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json'
-        }
       }).then(response => {
-        response.json()
+        if (response.status === 400) {
+          response.json().then(
+            response => {
+              this.uuid = response
+              if (response.message === '') {
+                this.uuid = 'Uwaga! Nie można wysyłać pustego formularza'
+              }
+              this.failAlert = true
+            })
+        }
+        if (response.status === 201) {
+          response.json().then(
+            response => {
+              this.uuid = response
+              this.memberAdultConfirm = this.memberAdult
+              this.memberAlert = true
+            }
+          )
+        }
       })
-        .then(joinDate => {
-          this.joinDate = memberJoinDate
-          console.log(this.memberJoinDate)
-          if (this.returnAlert) { this.memberAlert = true }
-          if (!this.returnAlert) { this.failAlert = true }
-          this.returnAlert = false
-        })
+      // .then(response => {
+      //   this.uuid = response
+      //   if (JSON.stringify(response.status) === 400) {
+      //     alert(JSON.stringify(response.status))
+      //     alert(JSON.stringify(response.message))
+      //     // if (response.message === '') {
+      //     //   this.uuid = 'Uwaga! Nie można wysyłać pustego formularza'
+      //     // } else {
+      //     alert(response.message)
+      //     this.uuid = response.message
+      //     // }
+      //     this.failAlert = true
+      //   // } else {
+      //   //   this.memberAdultConfirm = this.memberAdult
+      //   //   this.memberAlert = true
+      //   }
+      // }
+      // )
     },
+    // updateJoinDate (uuid, memberJoinDate) {
+    //   fetch('http://localhost:8080/member/date/' + uuid + '?date=' + memberJoinDate.replace(/\//gi, '-'), {
+    //     method: 'PUT',
+    //     headers: {
+    //       'Content-Type': 'application/json'
+    //     }
+    //   })
+    //     .then(response => {
+    //       if (response.ok) { this.memberAlert = true }
+    //       if (response.status !== 200) { this.failAlert = true }
+    //     })
+    // },
     updateAddress (uuid, memberPostOfficeCity, memberZipCode, memberStreet, memberStreetNumber, memberFlatNumber) {
       var data = {
         zipCode: memberZipCode,
