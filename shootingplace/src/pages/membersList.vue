@@ -1243,7 +1243,7 @@ export default {
         })
     },
     getMembersNames () {
-      fetch('http://localhost:8080/member/getMembersNames', {
+      fetch('http://localhost:8080/member/getMembersNames?active=' + this.active + '&adult=' + this.adult + '&erase=false', {
         method: 'GET'
       }).then(response => response.json())
         .then(filters => {
@@ -1424,10 +1424,7 @@ export default {
     changeActive (uuid) {
       fetch('http://localhost:8080/member/' + uuid, {
         method: 'PATCH'
-      }).then(response => response.json())
-        .then(members => {
-          this.members = members
-        })
+      })
     },
     updateMemberPermissions (uuid, permissionsShootingLeaderNumber, permissionsInstructorNumber, permissionsArbiterNumber, permissionsArbiterPermissionValidThru) {
       var data = {
