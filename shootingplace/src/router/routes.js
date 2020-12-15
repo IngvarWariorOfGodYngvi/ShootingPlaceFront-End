@@ -9,7 +9,6 @@ const routes = [
       { path: '/member/usunieci', component: () => import('pages/membersErased.vue') },
       { path: '/member/dodawanie', component: () => import('pages/addMember.vue') },
       { path: '/ammolist', component: () => import('pages/ammolist.vue') },
-      { path: '/dailyevidence', component: () => import('pages/dailyEvidenceBook.vue') },
       { path: '/competition', component: () => import('pages/tournamentList.vue') },
       { path: '/memberwithpermission', component: () => import('pages/memberWithPermission.vue') },
       { path: '/patentWilling', component: () => import('pages/patentWilling.vue') }

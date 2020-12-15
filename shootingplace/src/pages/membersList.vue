@@ -257,20 +257,20 @@
                 <q-item v-if="(members.weaponPermission.number!=null) && (members.weaponPermission.isExist)&&active"><q-btn label="Usuń" color="secondary" @click="uuid=members.uuid,eraseWeapon=true"/></q-item>
 </q-expansion-item>
 <q-expansion-item v-if="members.adult&&active" label="Dodatkowe uprawnienia" group="right-right-card">
-<q-expansion-item v-if="members.memberPermissions.shootingLeaderNumber==null" label="Prowadzący strzelanie" group="qualifications">
+<q-expansion-item v-if="members.memberPermissions.shootingLeaderNumber==null" label="Prowadzący strzelanie" group="qualifications" class="bg-grey-3">
                     <q-item v-if="members.memberPermissions.shootingLeaderNumber!=null"><q-item-label>numer uprawnień {{members.memberPermissions.shootingLeaderNumber}}</q-item-label></q-item>
                     <q-item v-if="members.memberPermissions.shootingLeaderNumber==null"><q-input v-model="permissionsShootingLeaderNumber" label="numer uprawnienia"/></q-item>
                     <q-item v-if="members.memberPermissions.shootingLeaderNumber==null"><q-btn label="Dodaj" color="secondary" @click="uuid=members.uuid,shootingLeaderConfirm=true"/></q-item>
 </q-expansion-item>
-<q-expansion-item v-if="members.memberPermissions.instructorNumber==null" label="Instruktor" group="qualifications">
+<q-expansion-item v-if="members.memberPermissions.instructorNumber==null" label="Instruktor" group="qualifications" class="bg-grey-3">
                       <q-item v-if="members.memberPermissions.instructorNumber!=null"><q-item-label>{{members.memberPermissions.instructorNumber}}</q-item-label></q-item>
                       <q-item v-if="members.memberPermissions.instructorNumber==null"><q-input v-model="permissionsInstructorNumber" label="Numer uprawnień" /></q-item>
                       <q-item v-if="members.memberPermissions.instructorNumber==null"><q-btn label="Dodaj" color="secondary" @click="uuid=members.uuid,instructorConfirm=true"/></q-item>
 </q-expansion-item>
-<q-expansion-item label="Sędzia" group="qualifications">
+<q-expansion-item label="Sędzia" group="qualifications" class="bg-grey-3">
                     <q-item v-if="members.memberPermissions.arbiterNumber!=null"><q-item-label>{{members.memberPermissions.arbiterNumber}}</q-item-label></q-item>
                     <q-item v-if="members.memberPermissions.arbiterNumber==null||members.memberPermissions.arbiterNumber==''"><q-input  v-model="permissionsArbiterNumber" label="Numer uprawnień" /></q-item>
-                    <q-item><q-input filled v-model="permissionsArbiterPermissionValidThru" mask="date" label="Ważne do:" hint="użyj kalendarza">
+                    <q-item><q-input filled v-model="permissionsArbiterPermissionValidThru" mask="####/12/31" label="Ważne do:" hint="użyj kalendarza">
                           <template v-slot:append>
                             <q-icon name="event" class="cursor-pointer">
                               <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -316,20 +316,13 @@
                 <q-item ><q-btn label="Przywróć" color="red" @click="uuid=members.uuid,backConfirm=true"/></q-item>
 </q-expansion-item>
 <q-expansion-item label="Historia startów" group="right-card">
-              <q-item><q-btn label="wyświetl daty zawodów" color="primary" @click="showStartsHistory=true"></q-btn></q-item>
-<q-dialog v-model="showStartsHistory">
+  <q-expansion-item label="Podejrzyj daty startów" class="bg-grey-3">
       <q-card>
         <q-card-section>
-          <q-scroll-area :thumb-style="thumbStyle" :bar-style="barStyle" style="height: 300px; width: 300px;">
-              <q-item v-for="competitionHistory in members.history.competitionHistory" :key="competitionHistory"><q-item-label>{{competitionHistory.name}} {{competitionHistory.date}} {{competitionHistory.discipline}}</q-item-label></q-item>
-          </q-scroll-area>
+              <q-item v-for="competitionHistory in members.history.competitionHistory" :key="competitionHistory"><q-item-label>{{competitionHistory.name}} {{competitionHistory.date}} {{competitionHistory.discipline}} {{competitionHistory.uuid}}</q-item-label></q-item>
         </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="zamknij" color="primary" v-close-popup/>
-        </q-card-actions>
       </q-card>
-</q-dialog>
+  </q-expansion-item>
               <q-item><q-item-label>LICZNIK STARTÓW</q-item-label></q-item>
               <q-item><q-item-label>PISTOLET - KARABIN - STRZELBA</q-item-label></q-item>
               <q-item><q-item-label>{{members.history.pistolCounter}} - {{members.history.rifleCounter}} - {{members.history.shotgunCounter}}</q-item-label></q-item>
@@ -350,7 +343,6 @@
       </q-card>
 </q-dialog>
 </q-expansion-item>
-
           </q-card-section>
           </q-item>
         </q-card>
@@ -633,7 +625,7 @@
       </q-card>
 </q-dialog>
 <q-dialog v-model="eraseConfirm" persistent>
-      <q-card  class="bg-red">
+      <q-card class="bg-red">
         <q-card-section class="row items-center">
           <q-avatar icon="warning"/>
           <span class="q-ml-sm">Czy napewno chcesz usunąć Klubowicza z listy członków klubu?</span>

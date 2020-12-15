@@ -1,20 +1,45 @@
 <template>
   <q-page padding class="q-pa-md">
-    <div>
-      <q-card>
+      <q-card class="row">
         <q-card-section>
-          <q-item-section>
-            <div class="col">
               <q-btn
                 color="primary"
                 label="dodaj zawody"
                 @click="addNewTournament = true"
               ></q-btn>
-            </div>
-          </q-item-section>
+        </q-card-section>
+        <q-card-section>
+              <q-btn
+                color="secondary"
+                label="dodaj nową konkurencję"
+                @click="createNewCompetiton = true"
+              ></q-btn>
+            <q-dialog v-model="createNewCompetiton" persistent>
+            <q-card>
+              <q-card-section class="row items-center">
+                <q-item-section>
+                  <q-item-label><b>Dodaj nową Konkurencję</b></q-item-label>
+                  <q-label>Utworzenie nowej konkurencji da możliwość wybrania jej podczas kolejnych zawodów </q-label>
+                  <div> Wybierz Dyscyplinę :
+                  <q-radio v-model="choice" :val="'Pistolet'" label="Pistolet"></q-radio>
+                  <q-radio v-model="choice" :val="'Karabin'" label="Karabin"></q-radio>
+                  <q-radio v-model="choice" :val="'Strzelba'" label="Strzelba"></q-radio>
+                  </div>
+                  <div class="row"><q-label> Wpisz nazwę : </q-label>
+                    <q-label> {{choice}} {{competitionName}}</q-label>
+                  </div>
+                    <q-input v-model="competitionName" label="nazwa zawodów">
+                    </q-input>
+                </q-item-section>
+              </q-card-section>
+              <q-card-actions align="right">
+                <q-btn flat label="zamknij" color="primary" v-close-popup @click="competitionName = '', choice = null" />
+                <q-btn label="utwórz" color="primary" v-close-popup @click="createCompetition()"/>
+              </q-card-actions>
+            </q-card>
+          </q-dialog>
         </q-card-section>
       </q-card>
-    </div>
     <q-list bordered>
       <q-expansion-item v-for="tournaments in tournaments" :key="tournaments.uuid" group="tournaments">
         <template v-slot:header class="row">
@@ -130,17 +155,19 @@
                     </q-item>
                   </template>
                 </q-select>
-                <q-btn v-if="tournaments.open" label="Dodaj" @click="(competitionUUID = competitionsList.uuid),(addMemberConfirm = true)"></q-btn>
+                <div class="row">
+                  <q-item><q-btn v-if="tournaments.open" label="Dodaj do listy" @click="(competitionUUID = competitionsList.uuid),(addMemberConfirm = true)"></q-btn></q-item>
+                  <q-item><q-btn v-if="tournaments.open" label="Usuń z listy" @click="(competitionUUID = competitionsList.uuid),removeFromList=true"></q-btn></q-item>
+                </div>
                 </q-card-section>
                 <q-card-section>
                   <q-item><q-item-label>Lista Startujących</q-item-label></q-item>
                   <q-item class="row" v-for="uuid in competitionsList.membersList" :key="uuid">
                   <ol>{{uuid.secondName}} {{uuid.firstName}}</ol>
-                  <q-item><q-btn label="wydaj amunicję" @click="ammo=true"></q-btn></q-item>
-                  <q-dialog v-model="ammo">
+                  <q-dialog v-model="removeFromList">
                     <q-card>
                       <q-card-section>
-                        <div class="text-h6">wydaj amunicję zawodnikowi</div>
+                        <div class="text-h6">Usunąć zawodnika z listy startujących w konkurencji?</div>
                       </q-card-section>
                       <!-- <q-item-section>
                       <q-item class="col" v-for="ammo in members.personalEvidence.ammo" :key="ammo" >{{ammo}}</q-item>
@@ -148,7 +175,7 @@
 
                       <q-card-actions align="right">
                         <q-btn flat label="anuluj" color="primary" v-close-popup />
-                        <q-btn flat label="wydaj" color="primary" v-close-popup @click="showloading()"/>
+                        <q-btn label="usuń" color="warning" v-close-popup @click="removeMemberFromCompetition(competitionUUID, finder),removeMemberAlert = true,finder = null"/>
                       </q-card-actions>
                     </q-card>
                   </q-dialog>
@@ -380,6 +407,23 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <q-dialog v-model="removeMemberAlert">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Usunięto Klubowicza z listy</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn
+            flat
+            label="OK"
+            color="primary"
+            v-close-popup
+            @click="showloading(), getListTournaments(), getcompetitions()"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
     <q-dialog v-model="addArbiterAlert">
       <q-card>
         <q-card-section>
@@ -414,6 +458,34 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <q-dialog v-model="newCompetitionAlert">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Dodano nową konkurencję</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn
+            flat
+            label="OK"
+            color="primary"
+            v-close-popup
+            @click="showloading(), getcompetitions()"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="failure">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Nie można dodać konkurencji bo taka konkurencja już istnieje.</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup/>
+        </q-card-actions>
+      </q-card>
+</q-dialog>
   </q-page>
 </template>
 
@@ -433,11 +505,17 @@ export default {
       addMemberConfirm: false,
       addNewTournament: false,
       addMemberAlert: false,
+      removeMemberAlert: false,
       addArbiterAlert: false,
       addCompetitionConfirmbtn: false,
       addArbitersConfirmbtn: false,
       addCompetitionConfirm: false,
       addCompetitionAlert: false,
+      newCompetitionAlert: false,
+      createNewCompetiton: false,
+      competitionName: null,
+      failure: false,
+      choice: '',
       tournaments: [],
       competitions: [],
       filters: [],
@@ -450,7 +528,7 @@ export default {
       countArbiter: null,
       otherArbiter: null,
       competitionRadio: '',
-      ammo: false
+      removeFromList: false
     }
   },
   created () {
@@ -476,7 +554,7 @@ export default {
       }, 1000)
     },
     getMembersNames () {
-      fetch('http://localhost:8080/member/getMembersNames', {
+      fetch('http://localhost:8080/member/getMembersNames?active=true&adult=true&erase=false', {
         method: 'GET'
       }).then(response => response.json())
         .then(filters => {
@@ -484,7 +562,7 @@ export default {
         })
     },
     getMembersNameswithPermissions () {
-      fetch('http://localhost:8080/member/getMembersWithPermissions?arbiter=true', {
+      fetch('http://localhost:8080/member/getArbiters', {
         method: 'GET'
       }).then(response => response.json())
         .then(filtersPermission => {
@@ -504,6 +582,28 @@ export default {
           'Content-Type': 'application/json'
         }
       }).then(response => response.json())
+    },
+    createCompetition () {
+      var data = {
+        name: this.choice + ' ' + this.competitionName
+      }
+      fetch('http://localhost:8080/competition/', {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 201) {
+          this.competitionName = ''
+          this.choice = null
+          this.newCompetitionAlert = true
+        } else {
+          this.failure = true
+          this.competitionName = ''
+          this.choice = null
+        }
+      })
     },
     getcompetitions () {
       fetch('http://localhost:8080/competition/', {
@@ -536,6 +636,16 @@ export default {
       const memberUUID = word[2]
       fetch('http://localhost:8080/competitionMembersList/addMember?competitionUUID=' + uuid + '&memberUUID=' + memberUUID, {
         method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => response.json())
+    },
+    removeMemberFromCompetition (uuid, finder) {
+      const word = finder.split(' ')
+      const memberUUID = word[2]
+      fetch('http://localhost:8080/competitionMembersList/removeMember?competitionUUID=' + uuid + '&memberUUID=' + memberUUID, {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         }

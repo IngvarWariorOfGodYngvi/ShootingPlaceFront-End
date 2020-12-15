@@ -84,12 +84,6 @@ export default {
           link: 'https://localhost:8081/#/member/dodawanie'
         },
         {
-          title: 'Książka pobytu na Strzelnicy - Lista dzienna',
-          caption: 'obsługa podstawowa',
-          icon: 'book',
-          link: 'https://localhost:8081/#/dailyevidence/'
-        },
-        {
           title: 'Lista Amunicyjna',
           caption: 'obsługa podstawowa',
           icon: 'book',
