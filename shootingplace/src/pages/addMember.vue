@@ -600,37 +600,7 @@ export default {
           )
         }
       })
-      // .then(response => {
-      //   this.uuid = response
-      //   if (JSON.stringify(response.status) === 400) {
-      //     alert(JSON.stringify(response.status))
-      //     alert(JSON.stringify(response.message))
-      //     // if (response.message === '') {
-      //     //   this.uuid = 'Uwaga! Nie można wysyłać pustego formularza'
-      //     // } else {
-      //     alert(response.message)
-      //     this.uuid = response.message
-      //     // }
-      //     this.failAlert = true
-      //   // } else {
-      //   //   this.memberAdultConfirm = this.memberAdult
-      //   //   this.memberAlert = true
-      //   }
-      // }
-      // )
     },
-    // updateJoinDate (uuid, memberJoinDate) {
-    //   fetch('http://localhost:8080/member/date/' + uuid + '?date=' + memberJoinDate.replace(/\//gi, '-'), {
-    //     method: 'PUT',
-    //     headers: {
-    //       'Content-Type': 'application/json'
-    //     }
-    //   })
-    //     .then(response => {
-    //       if (response.ok) { this.memberAlert = true }
-    //       if (response.status !== 200) { this.failAlert = true }
-    //     })
-    // },
     updateAddress (uuid, memberPostOfficeCity, memberZipCode, memberStreet, memberStreetNumber, memberFlatNumber) {
       var data = {
         zipCode: memberZipCode,

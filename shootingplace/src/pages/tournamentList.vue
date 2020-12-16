@@ -14,7 +14,7 @@
                 label="dodaj nową konkurencję"
                 @click="createNewCompetiton = true"
               ></q-btn>
-            <q-dialog v-model="createNewCompetiton" persistent>
+          <q-dialog v-model="createNewCompetiton" persistent>
             <q-card>
               <q-card-section class="row items-center">
                 <q-item-section>
@@ -41,24 +41,56 @@
         </q-card-section>
       </q-card>
     <q-list bordered>
-      <q-expansion-item v-for="tournaments in tournaments" :key="tournaments.uuid" group="tournaments">
+      <q-expansion-item v-for="tournaments in tournaments" :key="tournaments.uuid" group="tournaments" class="bg-grey-3">
         <template v-slot:header class="row">
           <q-item-section>
             <q-item-label
-              >{{ tournaments.name }} {{ tournaments.date }}</q-item-label
+              >{{ tournaments.name }} {{ tournaments.date }} {{tournaments.uuid}}</q-item-label
             >
           </q-item-section>
-          <q-item-section side top>
-            <q-item v-if="tournaments.open"><q-btn color="warning" label="Zamknij zawody" @click="(uuid = tournaments.uuid), (tournamentCloseConfirm = true) "/></q-item>
-            <q-item v-if="!tournaments.open"><q-item-label>Zawody dą już zamknięte</q-item-label></q-item>
+          <q-item-section side top >
+            <div class="row">
+              <q-item v-if="tournaments.open"><q-btn color="primary" label="Aktualizuj" @click="(uuid = tournaments.uuid), (tournamentUpdateConfirm = true) "/></q-item>
+              <q-item v-if="tournaments.open"><q-btn color="warning" label="Zamknij zawody" @click="(uuid = tournaments.uuid), (tournamentCloseConfirm = true) "/></q-item>
+              <q-item v-if="!tournaments.open"><q-item-label>Zawody zamknięte</q-item-label></q-item>
+              <q-dialog v-model="tournamentUpdateConfirm" persistent>
+                  <q-card>
+                    <q-card-section class="col items-center">
+                      <q-item><q-input v-model="tournamentName" hint="nazwa" label="Nowa nazwa zawodów" filled /></q-item>
+                      <q-item><q-input filled v-model="tournamentDate" mask="####/##/##" :rules="['date']" label="Wybierz datę" hint="użyj kalendarza">
+                                      <template v-slot:append>
+                                        <q-icon name="event" class="cursor-pointer">
+                                          <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                                            <q-date v-model="tournamentDate">
+                                              <div class="row items-center justify-end">
+                                                <q-btn v-close-popup label="Zamknij" color="primary" flat />
+                                              </div>
+                                            </q-date>
+                                          </q-popup-proxy>
+                                        </q-icon>
+                                      </template>
+                                    </q-input></q-item>
+                    </q-card-section>
+                    <q-card-actions align="right">
+                      <q-btn flat label="anuluj" color="primary" v-close-popup />
+                      <q-btn flat label="aktualizuj" color="primary" v-close-popup @click="tournamentConfirm = true"/>
+                    </q-card-actions>
+                  </q-card>
+              </q-dialog>
+            </div>
           </q-item-section>
         </template>
-        <div>
-          <q-item v-if="tournaments.mainArbiter!=null"><q-item-label>Sędzia Główny Zawodów {{tournaments.mainArbiter.firstName}} {{tournaments.mainArbiter.secondName}}</q-item-label></q-item>
-          <q-item v-if="tournaments.commissionRTSArbiter!=null"><q-item-label>Sędzia Obliczeniowy {{tournaments.commissionRTSArbiter.firstName}} {{tournaments.commissionRTSArbiter.secondName}}</q-item-label></q-item>
-          <q-item v-for="arbiters in tournaments.arbitersList" :key="arbiters"><q-item-label>Sędzia dodatkowy {{arbiters.firstName}} {{arbiters.secondName}}</q-item-label></q-item>
+        <div class="bg-grey-3">
+          <q-expansion-item label="Sędziowie" class="bg-grey-2">
+            <div class="bg-grey-1">
+              <q-item v-if="tournaments.open"><q-btn label="dodaj sędziów" @click="(uuid = tournaments.uuid),addArbitersConfirmbtn = true"></q-btn></q-item>
+              <q-item v-if="tournaments.mainArbiter!=null"><q-item-label>Sędzia Główny Zawodów : {{tournaments.mainArbiter.firstName}} {{tournaments.mainArbiter.secondName}}</q-item-label></q-item>
+              <q-item v-if="tournaments.commissionRTSArbiter!=null"><q-item-label>Sędzia Obliczeniowy : {{tournaments.commissionRTSArbiter.firstName}} {{tournaments.commissionRTSArbiter.secondName}}</q-item-label></q-item>
+              <q-item v-for="arbiters in tournaments.arbitersList" :key="arbiters"><q-item-label>Sędzia Pomocniczy : {{arbiters.firstName}} {{arbiters.secondName}}</q-item-label></q-item>
+            </div>
+          </q-expansion-item>
         </div>
-        <div class="row">
+        <div class="row bg-grey-2">
         <q-item v-if="tournaments.open"><q-btn label="dodaj konkurencje" @click="(uuid = tournaments.uuid),addCompetitionConfirmbtn = true"></q-btn></q-item>
           <q-dialog v-model="addCompetitionConfirmbtn" persistent>
             <q-card>
@@ -87,13 +119,12 @@
               </q-card-actions>
             </q-card>
           </q-dialog>
-        <q-item v-if="tournaments.open"><q-btn label="ustaw sędziów" @click="(uuid = tournaments.uuid),mainArbiter = null,countArbiter = null,addArbitersConfirmbtn = true"></q-btn></q-item>
         <q-dialog v-model="addArbitersConfirmbtn" persistent>
             <q-card>
               <q-card-section class="row items-center">
                 <q-item-section>
           <q-item><q-item-label>Sędzia Główny</q-item-label></q-item>
-          <q-item><q-select filled v-model="mainArbiter" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filterMp" style="width: 250px; padding-bottom: 32px" label="Nazwisko">
+          <q-item><q-select filled v-model="mainArbiter" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filterMp" style="width: 350px; padding-bottom: 32px" label="Nazwisko">
                   <template v-slot:no-option>
                     <q-item>
                       <q-item-section class="text-grey">
@@ -102,8 +133,9 @@
                     </q-item>
                   </template>
                 </q-select></q-item>
+                <q-item v-if="mainArbiter!=null"><q-btn label="Dodaj" color="primary" @click="addMainArbiterToTournament(),addArbiterAlert=true"/></q-item>
           <q-item><q-item-label>Sędzia Komisji</q-item-label></q-item>
-          <q-item><q-select filled v-model="countArbiter" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filterMp" style="width: 250px; padding-bottom: 32px" label="Nazwisko">
+          <q-item><q-select filled v-model="countArbiter" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filterMp" style="width: 350px; padding-bottom: 32px" label="Nazwisko">
                   <template v-slot:no-option>
                     <q-item>
                       <q-item-section class="text-grey">
@@ -112,8 +144,9 @@
                     </q-item>
                   </template>
                 </q-select></q-item>
+                <q-item v-if="countArbiter!=null"><q-btn label="Dodaj" color="primary" @click="addRTSArbiterToTournament(),addArbiterAlert=true"/></q-item>
           <q-item><q-item-label>Pozostali sędziowie</q-item-label></q-item>
-          <q-item><q-select filled v-model="otherArbiter" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filterMp" style="width: 250px; padding-bottom: 32px" label="Nazwisko">
+          <q-item><q-select filled v-model="otherArbiter" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filterMp" style="width: 350px; padding-bottom: 32px" label="Nazwisko">
                   <template v-slot:no-option>
                     <q-item>
                       <q-item-section class="text-grey">
@@ -122,27 +155,23 @@
                     </q-item>
                   </template>
                 </q-select></q-item>
+                  <div class="row">
+                  <q-item v-if="otherArbiter!=null"><q-btn label="usuń sędziego pomocniczego" color="primary" v-close-popup @click="removeArbiter()"/></q-item>
+                  <q-item v-if="otherArbiter!=null"><q-btn  label="Dodaj" color="primary" @click="addOtherArbiterToTournament(),addArbiterAlert=true"/></q-item>
+                  </div>
                 </q-item-section>
               </q-card-section>
 
               <q-card-actions align="right">
                 <q-btn flat label="zamknij" color="primary" v-close-popup @click="mainArbiter=null,countArbiter=null,otherArbiter=null"/>
-                <q-btn v-if="mainArbiter!=null||countArbiter!=null||otherArbiter!=null" flat label="Dodaj" color="primary" v-close-popup @click="addArbitersToTournament(),
-                (addArbiterAlert = true),
-                (finder = null),
-                mainArbiter=null,
-                countArbiter=null,
-                otherArbiter=null
-            "
-          />
               </q-card-actions>
             </q-card>
           </q-dialog>
-                  <q-item v-if="tournaments.open"><q-btn label="generuj plik"></q-btn></q-item>
+                  <q-item v-if="!tournaments.open"><q-btn label="generuj plik"></q-btn></q-item>
           </div>
-        <q-card>
+        <q-card >
           <q-card-section class="col">
-            <q-item><q-item-label>Konkurencje</q-item-label></q-item>
+            <q-item class="bg-grey-2"><q-item-label class="text-h6">Konkurencje</q-item-label></q-item>
               <div v-for="competitionsList in tournaments.competitionsList" :key="competitionsList" class="row">
                 <q-card-section>
                 <q-item><q-item-label>{{ competitionsList.name }}</q-item-label></q-item>
@@ -156,12 +185,12 @@
                   </template>
                 </q-select>
                 <div class="row">
-                  <q-item><q-btn v-if="tournaments.open" label="Dodaj do listy" @click="(competitionUUID = competitionsList.uuid),(addMemberConfirm = true)"></q-btn></q-item>
                   <q-item><q-btn v-if="tournaments.open" label="Usuń z listy" @click="(competitionUUID = competitionsList.uuid),removeFromList=true"></q-btn></q-item>
+                  <q-item><q-btn v-if="tournaments.open" label="Dodaj do listy" @click="(competitionUUID = competitionsList.uuid),(addMemberConfirm = true)"></q-btn></q-item>
                 </div>
                 </q-card-section>
                 <q-card-section>
-                  <q-item><q-item-label>Lista Startujących</q-item-label></q-item>
+                  <q-expansion-item label="Lista osób startujących" default-opened>
                   <q-item class="row" v-for="uuid in competitionsList.membersList" :key="uuid">
                   <ol>{{uuid.secondName}} {{uuid.firstName}}</ol>
                   <q-dialog v-model="removeFromList">
@@ -180,6 +209,7 @@
                     </q-card>
                   </q-dialog>
                   </q-item>
+                  </q-expansion-item>
                 </q-card-section>
               </div>
           </q-card-section>
@@ -190,7 +220,7 @@
       <q-card>
         <q-card-section class="row items-center">
           <q-avatar icon="add" color="primary" />
-          <span class="q-ml-sm">Czy zmienić nazwę zawodów?</span>
+          <span class="q-ml-sm">Czy zaktualizować zawody?</span>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -200,31 +230,24 @@
             label="Zmień"
             color="primary"
             v-close-popup
-            @click="
-              updateTournament(uuid, tournamentName), (tournamentAlert = true)
-            "
+            @click="updateTournament()"
           />
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="tournamentDateConfirm" persistent>
+    <q-dialog v-model="tournamentUpdated" persistent>
       <q-card>
         <q-card-section class="row items-center">
-          <q-avatar icon="add" color="primary" />
-          <span class="q-ml-sm">Czy zmienić datę zawodów?</span>
+          <span class="q-ml-sm">Zaktualizowano</span>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat label="anuluj" color="primary" v-close-popup />
           <q-btn
             flat
-            label="Zmień"
+            label="OK"
             color="primary"
             v-close-popup
-            @click="
-              updateTournament(uuid, tournamentDate),
-                (tournamentDateAlert = true)
-            "
+            @click="showloading(), getListTournaments()"
           />
         </q-card-actions>
       </q-card>
@@ -285,11 +308,7 @@
             label="Dodaj"
             color="primary"
             v-close-popup
-            @click="
-              addCompetitonToTournament(),
-                (addCompetitionAlert = true),
-                (finder = null)
-            "
+            @click="addCompetitonToTournament()"
           />
         </q-card-actions>
       </q-card>
@@ -356,23 +375,6 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="tournamentDateAlert">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Zmieniono datę zawodów</div>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn
-            flat
-            label="OK"
-            color="primary"
-            v-close-popup
-            @click="showloading(), getListTournaments()"
-          />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
     <q-dialog v-model="tournamentCloseAlert">
       <q-card>
         <q-card-section>
@@ -424,6 +426,22 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <q-dialog v-model="removeArbiterAlert">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Usunięto sędziego z listy</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn
+            flat
+            label="OK"
+            color="primary"
+            v-close-popup
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
     <q-dialog v-model="addArbiterAlert">
       <q-card>
         <q-card-section>
@@ -436,7 +454,6 @@
             label="OK"
             color="primary"
             v-close-popup
-            @click="showloading(), getListTournaments()"
           />
         </q-card-actions>
       </q-card>
@@ -444,7 +461,7 @@
     <q-dialog v-model="addCompetitionAlert">
       <q-card>
         <q-card-section>
-          <div class="text-h6">Dodano konkurencję</div>
+          <div class="text-h6">Dodano konkurencję do zawodów</div>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -485,7 +502,29 @@
           <q-btn flat label="OK" color="primary" v-close-popup/>
         </q-card-actions>
       </q-card>
-</q-dialog>
+    </q-dialog>
+    <q-dialog v-model="dataFail">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Sprawdź poprawność danych</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="arbiterFailure">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Nie można dodać Sędziego.</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -498,14 +537,15 @@ export default {
       uuid: null,
       tournamentConfirm: false,
       tournamentAlert: false,
-      tournamentDateConfirm: false,
-      tournamentDateAlert: false,
       tournamentCloseConfirm: false,
       tournamentCloseAlert: false,
+      tournamentUpdateConfirm: false,
+      tournamentUpdated: false,
       addMemberConfirm: false,
       addNewTournament: false,
       addMemberAlert: false,
       removeMemberAlert: false,
+      removeArbiterAlert: false,
       addArbiterAlert: false,
       addCompetitionConfirmbtn: false,
       addArbitersConfirmbtn: false,
@@ -515,6 +555,8 @@ export default {
       createNewCompetiton: false,
       competitionName: null,
       failure: false,
+      dataFail: false,
+      arbiterFailure: false,
       choice: '',
       tournaments: [],
       competitions: [],
@@ -613,23 +655,24 @@ export default {
           this.competitions = competitions
         })
     },
-    updateTournament (uuid, name, date) {
+    updateTournament () {
       var data = {
         name: this.tournamentName,
         date: this.tournamentDate.replace(/\//gi, '-')
       }
-      fetch('http://localhost:8080/tournament/' + uuid, {
+      fetch('http://localhost:8080/tournament/' + this.uuid, {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {
           'Content-Type': 'application/json'
         }
-      }).then(response => response.json())
-        .then(tournaments => {
-          this.tournaments = tournaments
+      }).then(response => {
+        if (response.status === 200) {
           this.tournamentName = ''
           this.tournamentDate = ''
-        })
+          this.tournamentUpdated = true
+        }
+      })
     },
     addMemberToCompetition (uuid, finder) {
       const word = finder.split(' ')
@@ -652,19 +695,21 @@ export default {
       }).then(response => response.json())
     },
     addCompetitonToTournament () {
-      console.log(this.uuid)
       if (this.competitionRadio != null && this.competitionRadio !== '') {
-        fetch('http://localhost:8080/tournament/addCompetition' + this.uuid + '?competitionUUID=' + this.competitionRadio, {
+        fetch('http://localhost:8080/tournament/addCompetition/' + this.uuid + '?competitionUUID=' + this.competitionRadio, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
           }
-        }).then(response => response.json())
-          .then(tournaments => {
-            this.tournaments = tournaments
-          })
+        }).then(response => {
+          if (response.status === 200) {
+            response.json().then(
+              this.addCompetitionAlert = true
+            )
+          } else { this.failure = true }
+        })
       } else {
-        alert('nie wskazano czegoś')
+        this.dataFail = true
       }
     },
     closeTournament (uuid) {
@@ -673,54 +718,82 @@ export default {
         headers: {
           'Content-Type': 'application/json'
         }
-      }).then(response => response.json())
-        .then(tournaments => {
-          this.tournaments = tournaments
-        })
+      }).then(response => {
+        if (response.status === 200) {
+          response.json().then(
+            this.tournamentCloseAlert = true
+          )
+        }
+      })
     },
-    addArbitersToTournament () {
-      if (this.mainArbiter !== null) {
-        const mainArbiterWord = this.mainArbiter.split(' ')
-        const mainArbiterUUID = mainArbiterWord[4]
-        fetch('http://localhost:8080/tournament/addMainArbiter/' + this.uuid + '?memberUUID=' + mainArbiterUUID, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }).then(response => response.json())
-          .then(tournaments => {
-            this.tournaments = tournaments
-            this.mainArbiter = null
-          })
-      }
-      if (this.countArbiter !== null) {
-        const countArbiterWord = this.countArbiter.split(' ')
-        const countArbiterUUID = countArbiterWord[4]
-        fetch('http://localhost:8080/tournament/addRTSArbiter/' + this.uuid + '?memberUUID=' + countArbiterUUID, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }).then(response => response.json())
-          .then(tournaments => {
-            this.tournaments = tournaments
-            this.countArbiter = null
-          })
-      }
-      if (this.otherArbiter !== null) {
-        const otherArbiterWord = this.otherArbiter.split(' ')
-        const otherArbiterUUID = otherArbiterWord[4]
-        fetch('http://localhost:8080/tournament/addOthersArbiters/' + this.uuid + '?memberUUID=' + otherArbiterUUID, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }).then(response => response.json())
-          .then(tournaments => {
-            this.tournaments = tournaments
-            this.otherArbiter = null
-          })
-      }
+    removeArbiter () {
+      const otherArbiterWord = this.otherArbiter.split(' ')
+      const otherArbiterUUID = otherArbiterWord[2]
+      fetch('http://localhost:8080/tournament/removeArbiter/' + this.uuid + '?memberUUID=' + otherArbiterUUID, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          response.json().then(
+            this.removeArbiterAlert = true,
+            this.showloading(),
+            this.getListTournaments()
+          )
+        } else { this.arbiterFailure = true }
+      })
+    },
+    addMainArbiterToTournament () {
+      const mainArbiterWord = this.mainArbiter.split(' ')
+      const mainArbiterUUID = mainArbiterWord[2]
+      fetch('http://localhost:8080/tournament/addMainArbiter/' + this.uuid + '?memberUUID=' + mainArbiterUUID, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          response.json().then(
+          )
+        } else { this.arbiterFailure = true }
+      })
+      this.showloading()
+      this.getListTournaments()
+    },
+    addRTSArbiterToTournament () {
+      const countArbiterWord = this.countArbiter.split(' ')
+      const countArbiterUUID = countArbiterWord[2]
+      fetch('http://localhost:8080/tournament/addRTSArbiter/' + this.uuid + '?memberUUID=' + countArbiterUUID, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          response.json().then(
+          )
+        } else { this.arbiterFailure = true }
+      })
+      this.showloading()
+      this.getListTournaments()
+    },
+    addOtherArbiterToTournament () {
+      const otherArbiterWord = this.otherArbiter.split(' ')
+      const otherArbiterUUID = otherArbiterWord[2]
+      fetch('http://localhost:8080/tournament/addOthersArbiters/' + this.uuid + '?memberUUID=' + otherArbiterUUID, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          response.json().then(
+          )
+        } else { this.arbiterFailure = true }
+      })
+      this.showloading()
+      this.getListTournaments()
     },
     filterFn (val, update) {
       if (val === '') {
