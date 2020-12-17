@@ -80,8 +80,8 @@
                       <div class="self-center col full-width no-outline" tabindex="0">Historia Składek</div>
                     </template>
                   </q-field>
-                  <q-item><q-btn color="primary" label="Przedłuż składkę" @click="uuid=members.uuid,name=members.firstName,name2=members.secondName,contribution=true"/></q-item>
-                  <q-item><q-btn color="primary" label="Dodaj rekord" @click="uuid=members.uuid,name=members.firstName,name2=members.secondName,contributionRecordConfirm=true"/></q-item>
+                  <div><q-btn class="full-width" color="primary" label="Przedłuż składkę" @click="uuid=members.uuid,name=members.firstName,name2=members.secondName,contribution=true"/></div>
+                  <div><q-btn class="full-width text-blue" color="white" label="Dodaj rekord" @click="uuid=members.uuid,name=members.firstName,name2=members.secondName,contributionRecordConfirm=true"/></div>
                 <q-dialog v-model="contributionRecordConfirm">
                   <div>
                     <q-card>
@@ -422,8 +422,8 @@
           </q-card-section>
           <q-card-section>
             <q-item-section>
-                <q-item><q-btn label="Pobierz kartę Członkowską" color="secondary" @click="uuid=members.uuid,name=members.firstName,name2=members.secondName,personalCardDownloadConfirm=true"/></q-item>
-                <q-item><q-btn label="Pobierz ostatnie potwierdzenie składki" color="secondary" @click="uuid=members.uuid,name=members.firstName,name2=members.secondName,contributionDownloadConfirm=true"/></q-item>
+                <q-item><q-btn class="full-width" label="Pobierz kartę Członkowską" color="secondary" @click="uuid=members.uuid,name=members.firstName,name2=members.secondName,personalCardDownloadConfirm=true"/></q-item>
+                <q-item><q-btn class="full-width" label="Pobierz ostatnie potwierdzenie składki" color="secondary" @click="uuid=members.uuid,name=members.firstName,name2=members.secondName,contributionDownloadConfirm=true"/></q-item>
             </q-item-section>
           </q-card-section>
           </q-item>
