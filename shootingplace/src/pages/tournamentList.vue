@@ -41,11 +41,11 @@
         </q-card-section>
       </q-card>
     <q-list bordered>
-      <q-expansion-item v-for="tournaments in tournaments" :key="tournaments.uuid" group="tournaments" class="bg-grey-3">
+      <q-expansion-item expand-separator v-for="tournaments in tournaments" :key="tournaments.uuid" group="tournaments" class="bg-grey-3 text-h6">
         <template v-slot:header class="row">
           <q-item-section>
             <q-item-label
-              >{{ tournaments.name }} {{ tournaments.date }} {{tournaments.uuid}}</q-item-label
+              >{{ tournaments.name }} {{ tournaments.date }}</q-item-label
             >
           </q-item-section>
           <q-item-section side top >
@@ -81,16 +81,47 @@
           </q-item-section>
         </template>
         <div class="bg-grey-3">
-          <q-expansion-item label="Sędziowie" class="bg-grey-2">
+          <q-expansion-item expand-separator group="tournament-ads" label="Sędziowie" class="bg-grey-2">
             <div class="bg-grey-1">
+              <q-item v-if="tournaments.mainArbiter==null && tournaments.commissionRTSArbiter==null && tournaments.arbitersList.lenght<1">
+                <q-field class="col" standout stack-label>
+                  <template v-slot:control>
+                    <div class="self-center col full-width no-outline" tabindex="0">Lista sędziów jest pusta</div>
+                  </template>
+                </q-field>
+              </q-item>
               <q-item v-if="tournaments.open"><q-btn label="dodaj sędziów" @click="(uuid = tournaments.uuid),addArbitersConfirmbtn = true"></q-btn></q-item>
-              <q-item v-if="tournaments.mainArbiter!=null"><q-item-label>Sędzia Główny Zawodów : {{tournaments.mainArbiter.firstName}} {{tournaments.mainArbiter.secondName}}</q-item-label></q-item>
-              <q-item v-if="tournaments.commissionRTSArbiter!=null"><q-item-label>Sędzia Obliczeniowy : {{tournaments.commissionRTSArbiter.firstName}} {{tournaments.commissionRTSArbiter.secondName}}</q-item-label></q-item>
-              <q-item v-for="arbiters in tournaments.arbitersList" :key="arbiters"><q-item-label>Sędzia Pomocniczy : {{arbiters.firstName}} {{arbiters.secondName}}</q-item-label></q-item>
+              <q-item v-if="tournaments.mainArbiter!=null">
+                <q-field class="col" standout stack-label label="Sędzia Główny Zawodów">
+                  <template v-slot:control>
+                    <div class="self-center col full-width no-outline" tabindex="0">{{tournaments.mainArbiter.firstName}} {{tournaments.mainArbiter.secondName}}</div>
+                  </template>
+                </q-field>
+              </q-item>
+              <q-item v-if="tournaments.commissionRTSArbiter!=null">
+                <q-field class="col" standout stack-label label="Sędzia Obliczeniowy">
+                  <template v-slot:control>
+                    <div class="self-center col full-width no-outline" tabindex="0">{{tournaments.commissionRTSArbiter.firstName}} {{tournaments.commissionRTSArbiter.secondName}}</div>
+                  </template>
+                </q-field>
+              </q-item>
+              <div class="col" v-if="tournaments.commissionRTSArbiter!=null">
+                <q-item v-for="arbiters in tournaments.arbitersList" :key="arbiters">
+                <q-item-section>
+                <q-field standout stack-label label="Sędzia Pomocniczy">
+                  <template v-slot:control>
+                    <div class="self-center full-width no-outline" tabindex="0">{{arbiters.firstName}} {{arbiters.secondName}}</div>
+                  </template>
+                </q-field>
+                </q-item-section>
+                </q-item>
+              </div>
             </div>
           </q-expansion-item>
         </div>
-        <div class="row bg-grey-2">
+        <q-card >
+            <q-expansion-item expand-separator group="tournament-ads" class="text-h6" label="Konkurencje">
+                      <div class="row bg-grey-2">
         <q-item v-if="tournaments.open"><q-btn label="dodaj konkurencje" @click="(uuid = tournaments.uuid),addCompetitionConfirmbtn = true"></q-btn></q-item>
           <q-dialog v-model="addCompetitionConfirmbtn" persistent>
             <q-card>
@@ -167,15 +198,17 @@
               </q-card-actions>
             </q-card>
           </q-dialog>
-                  <q-item v-if="!tournaments.open"><q-btn label="generuj plik"></q-btn></q-item>
+            <q-item v-if="!tournaments.open"><q-btn label="generuj plik"></q-btn></q-item>
           </div>
-        <q-card >
-          <q-card-section class="col">
-            <q-item class="bg-grey-2"><q-item-label class="text-h6">Konkurencje</q-item-label></q-item>
-              <div v-for="competitionsList in tournaments.competitionsList" :key="competitionsList" class="row">
+              <q-expansion-item expand-separator group="tournament-competition" v-for="competitionsList in tournaments.competitionsList" :key="competitionsList" class="full-width" :label="competitionsList.name">
+                <div class="row">
                 <q-card-section>
-                <q-item><q-item-label>{{ competitionsList.name }}</q-item-label></q-item>
-                <q-select v-if="tournaments.open" filled v-model="finder" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filterFn" style="width: 250px; padding-bottom: 32px" label="Nazwisko">
+                  <q-field class="col" standout stack-label>
+                    <template v-slot:control>
+                      <div class="text-h6 self-center col full-width no-outline" tabindex="0">{{ competitionsList.name }}</div>
+                    </template>
+                  </q-field>
+                <q-select v-if="tournaments.open" filled v-model="finder" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filterFn" label="Dodaj osobę">
                   <template v-slot:no-option>
                     <q-item>
                       <q-item-section class="text-grey">
@@ -191,8 +224,8 @@
                 </q-card-section>
                 <q-card-section>
                   <q-expansion-item label="Lista osób startujących" default-opened>
-                  <q-item class="row" v-for="uuid in competitionsList.membersList" :key="uuid">
-                  <ol>{{uuid.secondName}} {{uuid.firstName}}</ol>
+                  <div class="row text-body2" v-for="membersList in competitionsList.membersList" :key="membersList">
+                  <ol>{{membersList.secondName}} {{membersList.firstName}}</ol>
                   <q-dialog v-model="removeFromList">
                     <q-card>
                       <q-card-section>
@@ -208,11 +241,12 @@
                       </q-card-actions>
                     </q-card>
                   </q-dialog>
-                  </q-item>
+                  </div>
                   </q-expansion-item>
                 </q-card-section>
-              </div>
-          </q-card-section>
+                </div>
+              </q-expansion-item>
+              </q-expansion-item>
         </q-card>
       </q-expansion-item>
     </q-list>
@@ -287,7 +321,6 @@
             v-close-popup
             @click="
               addMemberToCompetition(competitionUUID, finder),
-                (addMemberAlert = true),
                 (finder = null)
             "
           />
@@ -503,6 +536,17 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <q-dialog v-model="memberFailure">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Nie można dodać Zawodnika bo już znajduje się w konkurencji.</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
     <q-dialog v-model="dataFail">
       <q-card>
         <q-card-section>
@@ -555,6 +599,7 @@ export default {
       createNewCompetiton: false,
       competitionName: null,
       failure: false,
+      memberFailure: false,
       dataFail: false,
       arbiterFailure: false,
       choice: '',
@@ -682,7 +727,12 @@ export default {
         headers: {
           'Content-Type': 'application/json'
         }
-      }).then(response => response.json())
+      }).then(response => {
+        if (response.status === 200) {
+          this.addMemberAlert = true
+          response.json()
+        } else { this.memberFailure = true }
+      })
     },
     removeMemberFromCompetition (uuid, finder) {
       const word = finder.split(' ')

@@ -14,9 +14,9 @@
       </q-card>
     </div>
     <div>
-      <q-card class="row">
-      <q-item-section class="col">
-      <q-item><q-select
+      <q-card>
+        <q-card-section class="flex">
+      <q-select
         filled
         v-model="finder"
         use-input
@@ -35,14 +35,18 @@
             </q-item-section>
           </q-item>
         </template>
-      </q-select></q-item>
-      <q-item><q-btn color="primary" label="Wyszukaj" @click="handleScroll(finder),finder = null"/></q-item>
-      </q-item-section>
+      </q-select>
+      <div>
+        <q-item>
+          <q-btn color="primary" label="Wyszukaj" @click="handleScroll(finder),finder = null"/>
+        </q-item>
+      </div>
+      </q-card-section>
       </q-card>
     </div>
   <div class="q-pa-md">
     <q-list>
-      <q-expansion-item style="border-radius: 30px" class="bg-light grey" rounded v-for="members in members" :key="members.uuid" group="somegroup" :id="members.secondName">
+      <q-expansion-item expand-separator style="border-radius: 30px" class="bg-light grey" rounded v-for="members in members" :key="members.uuid" group="somegroup" :id="members.secondName">
         <template v-slot:header>
           <q-item-section avatar>
             <q-badge v-if="(members.address.postOfficeCity===null||members.address.postOfficeCity==='')
@@ -59,78 +63,82 @@
           </q-item-section>
           <q-item-section>
           <q-item-label>{{members.secondName}} {{members.firstName}}</q-item-label>
-          <q-item-label caption lines="2">Składka ważna do {{members.contribution.contribution}}</q-item-label>
-           <q-item-label caption lines="2">Składka opłacona dnia {{members.contribution.paymentDay}}</q-item-label>
+          <q-item-label v-if="members.history.contributionList.length > 0" caption lines="2">Składka ważna do {{members.history.contributionList[0].validThru}}</q-item-label>
+          <q-item-label v-if="members.history.contributionList.length > 0" caption lines="2">Składka opłacona dnia {{members.history.contributionList[0].paymentDay}}</q-item-label>
           </q-item-section>
           <q-item-section>
           <q-item-label caption lines="2">Numer PESEL {{members.pesel}}</q-item-label>
           <q-item-label caption lines="2">Data Zapisu {{members.joinDate}}</q-item-label>
           <q-item-label caption lines="2" :id="members.legitimationNumber">Numer Legitymacji {{members.legitimationNumber}}</q-item-label>
           </q-item-section>
-          <q-item-section side top>
-            <q-btn color="primary" label="Przedłuż składkę" @click="uuid=members.uuid,name=members.firstName,name2=members.secondName,contribution=true"/>
-          </q-item-section>
         </template>
 
-        <q-card bordered>
-          <q-item>
-              <q-card-section class="col-3 items-center">
-                  <q-item><q-item-label>Historia Składek</q-item-label></q-item>
-                  <q-item-section side top>
-                <q-item><q-btn color="primary" label="Przedłuż składkę" @click="uuid=members.uuid,name=members.firstName,name2=members.secondName,contribution=true"/></q-item>
-                <q-item><q-btn color="primary" label="Przejżyj historię" @click="uuid=members.uuid,contributionRecordConfirm=true"/></q-item>
-                <q-dialog v-model="contributionRecordConfirm" persistent>
+        <q-card bordered class="row">
+              <q-card-section class="col-4">
+                  <q-field class="col" standout stack-label>
+                    <template v-slot:control>
+                      <div class="self-center col full-width no-outline" tabindex="0">Historia Składek</div>
+                    </template>
+                  </q-field>
+                  <q-item><q-btn color="primary" label="Przedłuż składkę" @click="uuid=members.uuid,name=members.firstName,name2=members.secondName,contribution=true"/></q-item>
+                  <q-item><q-btn color="primary" label="Dodaj rekord" @click="uuid=members.uuid,name=members.firstName,name2=members.secondName,contributionRecordConfirm=true"/></q-item>
+                <q-dialog v-model="contributionRecordConfirm">
                   <div>
-                      <q-card>
-                        <q-card-section class="col items-center">
-                          <p><span class="q-ml-sm">Możesz dodać ręcznie składkę</span></p>
-                          <p><span class="q-ml-sm"> PAMIĘTAJ !!!</span></p>
-                          <p><span class="q-ml-sm">Nie można dodawać składek z przyszłości</span></p>
+                    <q-card>
+                      <q-card-section class="col items-center">
+                        <p><span class="q-ml-sm">Możesz dodać ręcznie składkę</span></p>
+                        <p><span class="q-ml-sm"> PAMIĘTAJ !!!</span></p>
+                        <p><span class="q-ml-sm">Nie można dodawać składek z przyszłości</span></p>
                           <q-card-actions align="right">
                             <q-item>
-                                        <q-input filled v-model="historyContributionRecord" mask="date" label="Wybierz datę" hint="użyj kalendarza">
-                                          <template v-slot:append>
-                                            <q-icon name="event" class="cursor-pointer">
-                                              <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                                                <q-date v-model="historyContributionRecord">
-                                                  <div class="row items-center justify-end">
-                                                    <q-btn v-close-popup label="Zamknij" color="primary" flat />
-                                                  </div>
-                                                </q-date>
-                                              </q-popup-proxy>
-                                            </q-icon>
-                                          </template>
-                                        </q-input>
-                          </q-item>
-                            <q-btn flat label="Dodaj rekord" color="primary" @click="addHistoryContributionRecord (uuid, historyContributionRecord),showloading(),getListMembers()" />
+                              <q-input filled v-model="historyContributionRecord" mask="####/##/##" label="Wybierz datę" hint="użyj kalendarza">
+                                <template v-slot:append>
+                                  <q-icon name="event" class="cursor-pointer">
+                                    <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                                      <q-date v-model="historyContributionRecord">
+                                        <div class="row items-center justify-end">
+                                          <q-btn v-close-popup label="Zamknij" color="primary" flat />
+                                        </div>
+                                      </q-date>
+                                    </q-popup-proxy>
+                                  </q-icon>
+                                </template>
+                              </q-input>
+                            </q-item>
                           </q-card-actions>
-                        </q-card-section>
-                        <q-card>
-                          <q-scroll-area :thumb-style="thumbStyle" :bar-style="barStyle" style="height: 250px; max-width: 400px;">
-                          <div class="q-pa-xs">
-                           <q-item-section>
-                          <div v-for="contributionList in members.history.contributionList" :key="contributionList" class="col">
-                          <q-item>
-                          <q-item>Opłacona dnia {{contributionList.date}}</q-item>
-                          <q-item>Przyjmujący : {{contributionList.recipient}}</q-item>
-                          <q-item>notka: {{contributionList.note}}</q-item>
-                          </q-item>
-                          </div></q-item-section>
-                          </div>
-                          </q-scroll-area>
-                        </q-card>
-
-                        <q-card-actions align="right">
-                          <q-btn flat label="zamknij" color="primary" v-close-popup />
-                        </q-card-actions>
-                      </q-card>
+                          <q-card-actions align="right">
+                            <q-btn flat label="zamknij" color="primary" v-close-popup />
+                            <q-btn flat label="Dodaj rekord" color="primary" v-close-popup @click="addHistoryContributionRecord (uuid, historyContributionRecord),showloading(),getListMembers()" />
+                          </q-card-actions>
+                      </q-card-section>
+                    </q-card>
                   </div>
                 </q-dialog>
-                </q-item-section>
+                  <q-expansion-item class="bg-grey-2 full-width q-pa-none" label="Daty składek">
+                    <q-scroll-area class="full-width q-pa-none" style="height: 200px;">
+                          <div v-for="contributionList in members.history.contributionList" :key="contributionList" class="row">
+                              <q-field class="col" standout label="Opłacona dnia" stack-label>
+                                <template v-slot:control>
+                                  <div class="self-center col full-width no-outline" tabindex="0">{{contributionList.paymentDay}}</div>
+                                </template>
+                              </q-field>
+                              <q-field class="col" standout label="Ważna do" stack-label>
+                                <template v-slot:control>
+                                  <div class="self-center col full-width no-outline" tabindex="1">{{contributionList.validThru}}</div>
+                                </template>
+                              </q-field>
+                                  <q-btn label="usuń" @click="uuid = members.uuid,contributionUUID = contributionList.uuid,removeContributionRecord(uuid,contributionUUID)"></q-btn>
+                          </div>
+                    </q-scroll-area>
+                  </q-expansion-item>
               </q-card-section>
               <q-card-section class="col-3 items-center">
               <q-item-section v-if="!members.license.number!=null||members.adult">
-                <q-item><q-item-label >Licencja</q-item-label></q-item>
+                <q-field class="col" standout stack-label>
+                    <template v-slot:control>
+                      <div class="self-center col full-width no-outline" tabindex="0">Licencja</div>
+                    </template>
+                  </q-field>
                 <q-item-label caption lines="2">Numer Licencji {{members.license.number}}</q-item-label>
                 <q-item-label caption lines="2">Ważna do {{members.license.validThru}}</q-item-label>
                 <q-item-label >Dyscypliny :</q-item-label>
@@ -184,7 +192,7 @@
                 noDomesticStarts=true"></q-btn>
            </q-item>
               </q-card-section>
-              <q-card-section class="col-6 items-center">
+              <q-card-section class="col-5 items-center">
                 <q-item-section v-if="(members.memberPermissions.instructorNumber!=null&&members.memberPermissions.instructorNumber!='')
                 ||(members.memberPermissions.shootingLeaderNumber!=null&&members.memberPermissions.shootingLeaderNumber!='')
                 ||(members.memberPermissions.arbiterNumber!=null&&members.memberPermissions.arbiterNumber!='')
@@ -314,56 +322,72 @@
                 <q-item ><q-btn label="Przywróć" color="red" @click="uuid=members.uuid,backConfirm=true"/></q-item>
 </q-expansion-item>
 <q-expansion-item label="Historia startów" group="right-card" class="bg-grey-3">
-  <q-expansion-item label="Podejrzyj daty startów" class="bg-white">
-      <q-card class="self-center full-width">
-        <q-card-section class="self-center full-width">
-              <q-item v-for="competitionHistory in members.history.competitionHistory" :key="competitionHistory">
-                <q-field standout label="Nazwa" stack-label>
+  <q-expansion-item label="Daty startów" class="bg-white q-pa-none">
+    <q-scroll-area class="full-width q-pa-none" style="height: 200px;">
+              <div class="row" v-for="competitionHistory in members.history.competitionHistory" :key="competitionHistory">
+                <q-field class="col" standout label="Nazwa" stack-label>
                   <template v-slot:control>
                     <div class="self-center full-width no-outline" tabindex="0">{{competitionHistory.name}}</div>
                   </template>
                 </q-field>
-                <q-field standout label="Data" stack-label>
+                <q-field class="col-3" standout label="Data" stack-label>
                   <template v-slot:control>
                     <div class="self-center full-width no-outline" tabindex="1">{{competitionHistory.date}}</div>
                   </template>
                 </q-field>
-                <q-field standout label="Konkurencja" stack-label>
+                <q-field class="col" standout label="Konkurencja" stack-label>
                   <template v-slot:control>
                     <div class="self-center full-width no-outline" tabindex="2"> {{competitionHistory.discipline}} </div>
                   </template>
                 </q-field>
-              </q-item>
-        </q-card-section>
-      </q-card>
+              </div>
+    </q-scroll-area>
   </q-expansion-item >
             <div class="bg-white">
-              <q-item><q-item-label>LICZNIK STARTÓW</q-item-label></q-item>
-              <q-item><q-item-label>PISTOLET - KARABIN - STRZELBA</q-item-label></q-item>
-              <q-item><q-item-label>{{members.history.pistolCounter}} - {{members.history.rifleCounter}} - {{members.history.shotgunCounter}}</q-item-label></q-item>
+              <q-field class="col" standout stack-label>
+                  <template v-slot:control>
+                    <div class="self-center full-width no-outline" tabindex="0">Licznik startów</div>
+                  </template>
+                </q-field>
+              <div class="row">
+                <q-field class="col" standout label="Pistolet" stack-label>
+                  <template v-slot:control>
+                    <div class="self-center full-width no-outline" tabindex="0">{{members.history.pistolCounter}}</div>
+                  </template>
+                </q-field>
+                <q-field class="col" standout label="Karabin" stack-label>
+                  <template v-slot:control>
+                    <div class="self-center full-width no-outline" tabindex="1">{{members.history.rifleCounter}}</div>
+                  </template>
+                </q-field>
+                <q-field class="col" standout label="Strzelba" stack-label>
+                  <template v-slot:control>
+                    <div class="self-center full-width no-outline" tabindex="2"> {{members.history.shotgunCounter}} </div>
+                  </template>
+                </q-field>
+              </div>
             </div>
 </q-expansion-item>
 <q-expansion-item v-if="members.memberPermissions.arbiterNumber!=null" label="Historia sędziowania" group="right-card" class="bg-grey-3">
-              <q-item v-for="judgingHistory in members.history.judgingHistory" :key="judgingHistory">
-                <q-field standout label="Nazwa" stack-label>
+              <div class="row" v-for="judgingHistory in members.history.judgingHistory" :key="judgingHistory">
+                <q-field class="col" standout label="Nazwa" stack-label>
                   <template v-slot:control>
                     <div class="self-center full-width no-outline" tabindex="0">{{judgingHistory.name}}</div>
                   </template>
                 </q-field>
-                <q-field standout label="Data" stack-label>
+                <q-field class="col-3" standout label="Data" stack-label>
                   <template v-slot:control>
                     <div class="self-center full-width no-outline" tabindex="1">{{judgingHistory.date}}</div>
                   </template>
                 </q-field>
-                <q-field standout label="Funkcja" stack-label>
+                <q-field class="col" standout label="Funkcja" stack-label>
                   <template v-slot:control>
                     <div class="self-center full-width no-outline" tabindex="2"> {{judgingHistory.function}} </div>
                   </template>
                 </q-field>
-              </q-item>
+              </div>
 </q-expansion-item>
           </q-card-section>
-          </q-item>
         </q-card>
         <q-card bordered class="bg-grey-2">
           <q-item>
@@ -914,7 +938,7 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat label="Pobierz Potwierdzenie" color="primary" v-close-popup @click="getContributionPDF(),showloading(),getListMembers()" />
+          <q-btn flat label="Pobierz Potwierdzenie" color="primary" v-close-popup @click="getContributionPDF()" />
         </q-card-actions>
       </q-card>
 </q-dialog>
@@ -926,6 +950,17 @@
 
         <q-card-actions align="right">
           <q-btn flat label="OK" color="primary" v-close-popup @click="showloading(),getListMembers()" />
+        </q-card-actions>
+      </q-card>
+</q-dialog>
+<q-dialog v-model="contributionRemoveRecordAlert">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Rekord w historii został usunięty</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup  />
         </q-card-actions>
       </q-card>
 </q-dialog>
@@ -1053,6 +1088,8 @@ export default {
       contributionRecordConfirm: false,
       contributionRecordConfirm1: false,
       contributionRecordAlert: false,
+      contributionRemoveRecordAlert: false,
+      contributionUUID: '',
       addAmmoConfirm: false,
       addAmmoAlert: false,
       alert: false,
@@ -1170,17 +1207,36 @@ export default {
       setScrollPosition(target, offset, duration)
     },
     addHistoryContributionRecord (uuid, date) {
-      fetch('http://localhost:8080/contribution/history' + uuid + '?date=' + date.replace(this.dateVar, '-'), {
-        method: 'PUT',
+      fetch('http://localhost:8080/contribution/history/' + uuid + '?date=' + date.replace(/\//gi, '-'), {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         }
-      }).then(response => response.json())
-        .then(members => {
-          this.members = members
-          this.contributionRecordAlert = true
-          this.historyContributionRecord = Date.now
-        })
+      }).then(response => {
+        if (response.status === 200) {
+          response.json().then(members => {
+            this.members = members
+            this.contributionRecordAlert = true
+            this.historyContributionRecord = Date.now
+          })
+        } else { this.failure = true }
+      })
+    },
+    removeContributionRecord (uuid, contributionUUID) {
+      fetch('http://localhost:8080/contribution/remove/' + uuid + '?contributionUUID=' + contributionUUID, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          response.json().then(
+            this.contributionRemoveRecordAlert = true
+          )
+        } else { this.failure = true }
+      })
+      this.showloading()
+      this.getListMembers()
     },
     updateMember (uuid, email, phoneNumber) {
       var data = {
@@ -1280,10 +1336,13 @@ export default {
     prolongContribution (uuid) {
       fetch('http://localhost:8080/contribution/' + uuid, {
         method: 'PATCH'
-      }).then(response => response.json())
-        .then(members => {
-          this.members = members
-        })
+      }).then(response => {
+        if (response.status === 200) {
+
+        }
+        response.json()
+      })
+      this.showloading()
       this.getListMembers()
     },
     getContributionPDF () {
