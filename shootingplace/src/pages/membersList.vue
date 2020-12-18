@@ -135,18 +135,36 @@
               <q-card-section class="col-3 items-center">
               <q-item-section v-if="!members.license.number!=null||members.adult">
                 <q-field class="col" standout stack-label>
-                    <template v-slot:control>
-                      <div class="self-center col full-width no-outline" tabindex="0">Licencja</div>
-                    </template>
-                  </q-field>
+                  <template v-slot:control>
+                    <div class="self-center col full-width no-outline" tabindex="0">Licencja</div>
+                  </template>
+                </q-field>
                 <q-item-label caption lines="2">Numer Licencji {{members.license.number}}</q-item-label>
                 <q-item-label caption lines="2">Ważna do {{members.license.validThru}}</q-item-label>
-                <q-item-label >Dyscypliny :</q-item-label>
-                <q-item-label caption lines="2" v-if="members.license.pistolPermission">P</q-item-label>
+                <q-field class="col" standout stack-label>
+                  <template v-slot:control>
+                    <div class="self-center col full-width no-outline" tabindex="0">Dyscypliny</div>
+                  </template>
+                </q-field>
+                <div class="row">
+                  <q-field v-if="members.license.pistolPermission" class="col" standout stack-label>
+                    <template v-slot:control>
+                      <div class="self-center col full-width no-outline" tabindex="0">Pistolet</div>
+                    </template>
+                  </q-field>
+                  <q-field v-if="members.license.riflePermission" class="col" standout stack-label>
+                    <template v-slot:control>
+                      <div class="self-center col full-width no-outline" tabindex="0">Karabin</div>
+                    </template>
+                  </q-field>
+                  <q-field v-if="members.license.shotgunPermission" class="col" standout stack-label>
+                    <template v-slot:control>
+                      <div class="self-center col full-width no-outline" tabindex="0">Strzelba</div>
+                    </template>
+                  </q-field>
+                </div>
                 <q-item-label caption lines="2" v-if="!members.license.pistolPermission&&members.history.licenseHistory[ 0 ]=='Pistolet'">P Kiedyś posiadał licencję</q-item-label>
-                <q-item-label caption lines="2" v-if="members.license.riflePermission">K</q-item-label>
                 <q-item-label caption lines="2" v-if="!members.license.riflePermission&&members.history.licenseHistory[ 1 ]=='Karabin'">K Kiedyś posiadał licencję</q-item-label>
-                <q-item-label caption lines="2" v-if="members.license.shotgunPermission">S</q-item-label>
                 <q-item-label caption lines="2" v-if="!members.license.shotgunPermission&&members.history.licenseHistory[ 2 ]=='Strzelba'">S Kiedyś posiadał licencję</q-item-label>
               </q-item-section>
               <q-item v-if="(members.shootingPatent.patentNumber!=null&&members.license.number==null)||!members.adult">
@@ -219,7 +237,7 @@
                   </q-item-section>
                   </div>
                   <div v-if="members.active" class="col">
-                  <q-item><q-input  v-model="quantity" placeholder="Tylko cyfry" label="Ilość Amunicji"></q-input></q-item>
+                  <q-item><q-input  v-model="quantity" placeholder="Tylko cyfry" onkeypress="return (event.charCode > 47 && event.charCode < 58)" label="Ilość Amunicji"></q-input></q-item>
                   <q-item><q-btn color="primary" label="dodaj" @click="uuid=members.uuid,addAmmoConfirm=true"></q-btn></q-item>
                   </div>
                   </div>
@@ -509,7 +527,7 @@
       <q-card>
         <q-item>Dodaj licencję</q-item>
         <q-card-section class="col items-center">
-          <q-item><q-input v-model="licenseNumber" label="Numer Licencji" hint="tylko cyfry" placeholder="tylko cyfry" filled lazy-rules
+          <q-item><q-input v-model="licenseNumber" label="Numer Licencji" onkeypress="return (event.charCode > 47 && event.charCode < 58)" hint="tylko cyfry" placeholder="tylko cyfry" filled lazy-rules
                 :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']"/></q-item>
                 <q-item v-if="(patentPistolPermission1||!memberAdultConfirm)"><q-checkbox v-model="licensePistolPermission" label="Pistolet"/></q-item>
                 <q-item v-if="(patentRiflePermission1||!memberAdultConfirm)"><q-checkbox  v-model="licenseRiflePermission" label="Karabin"/></q-item>
@@ -745,7 +763,7 @@
 <q-dialog v-model="patentConfirm" persistent>
       <q-card>
         <q-card-section class="row items-center">
-          <q-item><q-input v-model="patentNumber" hint="tylko cyfry" onkeypress="return (event.charCode > 47 && event.charCode < 58)" placeholder="tylko cyfry" label="Numer Patentu" filled /></q-item>
+          <q-item><q-input v-model="patentNumber" hint="tylko cyfry" mask="#####/AAA/##/####" placeholder="tylko cyfry" label="Numer Patentu" filled /></q-item>
           <q-item><q-input filled v-model="patentDate" mask="####/##/##" :rules="['date']" label="Wybierz datę" hint="użyj kalendarza">
                           <template v-slot:append>
                             <q-icon name="event" class="cursor-pointer">
@@ -850,7 +868,7 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup @click="showloading(),getListMembers()" />
+          <q-btn flat label="OK" color="primary" v-close-popup/>
         </q-card-actions>
       </q-card>
 </q-dialog>
@@ -1386,10 +1404,14 @@ export default {
         headers: {
           'Content-Type': 'application/json'
         }
-      }).then(response => response.json())
-        .then(members => {
-          this.updatedateOfPosting(uuid, this.patentDate)
-        })
+      }).then(response => {
+        if (response.status === 200) {
+          this.licenseAlert = true
+          response.json().then(members => {
+            this.updatedateOfPosting(uuid, this.patentDate)
+          })
+        } else { this.failure = true }
+      })
     },
     updatedateOfPosting (uuid, patentDate) {
       var data = {
@@ -1401,17 +1423,23 @@ export default {
         headers: {
           'Content-Type': 'application/json'
         }
-      }).then(response => response.json())
-        .then(dateOfPosting => {
-          console.log(uuid)
-          this.dateOfPosting = patentDate
-          this.patentAlert = true
-          this.patentNumber = null
-          this.patentPistolPermission = false
-          this.patentRiflePermission = false
-          this.patentShotgunPermission = false
-          this.patentDate = null
-        })
+      }).then(response => {
+        if (response.status === 200) {
+          this.licenseAlert = true
+          response.json().then(members => {
+            this.members = members
+            this.dateOfPosting = patentDate
+            this.patentAlert = true
+            this.patentNumber = null
+            this.patentPistolPermission = false
+            this.patentRiflePermission = false
+            this.patentShotgunPermission = false
+            this.patentDate = null
+          })
+        } else { this.failure = true }
+      })
+      this.showloading()
+      this.getListMembers()
     },
     addLicense (uuid, licenseNumber, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission) {
       var data1 = {
@@ -1426,15 +1454,20 @@ export default {
         headers: {
           'Content-Type': 'application/json'
         }
-      }).then(response => response.json())
-        .then(members => {
-          this.members = members
+      }).then(response => {
+        if (response.status === 200) {
           this.licenseAlert = true
-          this.licenseNumber = ''
-          this.licensePistolPermission = false
-          this.licenseRiflePermission = false
-          this.licenseShotgunPermission = false
-        })
+          response.json().then(members => {
+            this.members = members
+            this.licenseNumber = ''
+            this.licensePistolPermission = false
+            this.licenseRiflePermission = false
+            this.licenseShotgunPermission = false
+          })
+        } else { this.failure = true }
+      })
+      this.showloading()
+      this.getListMembers()
     },
     prolongLicense (uuid, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission) {
       var data = {
@@ -1449,30 +1482,35 @@ export default {
           'Content-Type': 'application/json'
         }
       }).then(response => {
-        response.json()
-      })
-        .then(members => {
-          this.members = members
+        if (response.status === 200) {
           this.licenseAlert = true
-          this.licensePistolPermission = false
-          this.licenseRiflePermission = false
-          this.licenseShotgunPermission = false
-        })
+          response.json().then(members => {
+            this.members = members
+            this.licensePistolPermission = false
+            this.licenseRiflePermission = false
+            this.licenseShotgunPermission = false
+          })
+        } else { this.failure = true }
+      })
+      this.showloading()
       this.getListMembers()
     },
     addLicenseHistoryPayment (uuid) {
-      fetch('http://localhost:8080/license/history' + uuid, {
+      fetch('http://localhost:8080/license/history/' + uuid, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         }
       }).then(response => {
-        response.json()
-      })
-        .then(members => {
-          this.members = members
+        if (response.status === 200) {
           this.licenseAlert = true
-        })
+          response.json().then(members => {
+            this.members = members
+          })
+        } else { this.failure = true }
+      })
+      this.showloading()
+      this.getListMembers()
     },
     changeWeaponPermission (uuid, weaponPermissionNumber) {
       var data = {
