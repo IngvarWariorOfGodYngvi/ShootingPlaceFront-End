@@ -65,17 +65,17 @@ export default {
     return {
       leftDrawerOpen: false,
       essentialLinks: [
+        // {
+        //   title: 'Lista Klubowiczów',
+        //   caption: 'Obsługa podstawowa',
+        //   icon: 'perm_identity',
+        //   link: 'https://localhost:8081/#/member/lista'
+        // },
         {
           title: 'Lista Klubowiczów',
           caption: 'Obsługa podstawowa',
           icon: 'perm_identity',
-          link: 'https://localhost:8081/#/member/lista'
-        },
-        {
-          title: 'Klubowicze Skreśleni',
-          caption: 'obsługa podstawowa',
-          icon: 'person_remove',
-          link: 'https://localhost:8081/#/member/usunieci'
+          link: 'https://localhost:8081/#/member'
         },
         {
           title: 'Dodaj Nowego Klubowicza',

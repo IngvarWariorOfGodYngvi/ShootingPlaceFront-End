@@ -164,7 +164,7 @@
                     </q-item>
                   </template>
                 </q-select></q-item>
-                <q-item v-if="mainArbiter!=null"><q-btn label="Dodaj" color="primary" @click="addMainArbiterToTournament(),addArbiterAlert=true"/></q-item>
+                <q-item v-if="mainArbiter!=null"><q-btn label="Dodaj" color="primary" @click="addMainArbiterToTournament()"/></q-item>
           <q-item><q-item-label>Sędzia Komisji</q-item-label></q-item>
           <q-item><q-select filled v-model="countArbiter" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filterMp" style="width: 350px; padding-bottom: 32px" label="Nazwisko">
                   <template v-slot:no-option>
@@ -175,7 +175,7 @@
                     </q-item>
                   </template>
                 </q-select></q-item>
-                <q-item v-if="countArbiter!=null"><q-btn label="Dodaj" color="primary" @click="addRTSArbiterToTournament(),addArbiterAlert=true"/></q-item>
+                <q-item v-if="countArbiter!=null"><q-btn label="Dodaj" color="primary" @click="addRTSArbiterToTournament()"/></q-item>
           <q-item><q-item-label>Pozostali sędziowie</q-item-label></q-item>
           <q-item><q-select filled v-model="otherArbiter" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filterMp" style="width: 350px; padding-bottom: 32px" label="Nazwisko">
                   <template v-slot:no-option>
@@ -188,7 +188,7 @@
                 </q-select></q-item>
                   <div class="row">
                   <q-item v-if="otherArbiter!=null"><q-btn label="usuń sędziego pomocniczego" color="primary" v-close-popup @click="removeArbiter()"/></q-item>
-                  <q-item v-if="otherArbiter!=null"><q-btn  label="Dodaj" color="primary" @click="addOtherArbiterToTournament(),addArbiterAlert=true"/></q-item>
+                  <q-item v-if="otherArbiter!=null"><q-btn  label="Dodaj" color="primary" @click="addOtherArbiterToTournament()"/></q-item>
                   </div>
                 </q-item-section>
               </q-card-section>
@@ -208,7 +208,7 @@
                       <div class="text-h6 self-center col full-width no-outline" tabindex="0">{{ competitionsList.name }}</div>
                     </template>
                   </q-field>
-                <q-select v-if="tournaments.open" filled v-model="finder" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filterFn" label="Dodaj osobę">
+                <q-select v-if="tournaments.open" filled v-model="memberName" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filterFn" label="Dodaj osobę">
                   <template v-slot:no-option>
                     <q-item>
                       <q-item-section class="text-grey">
@@ -237,7 +237,7 @@
 
                       <q-card-actions align="right">
                         <q-btn flat label="anuluj" color="primary" v-close-popup />
-                        <q-btn label="usuń" color="warning" v-close-popup @click="removeMemberFromCompetition(competitionUUID, finder),removeMemberAlert = true,finder = null"/>
+                        <q-btn label="usuń" color="warning" v-close-popup @click="removeMemberFromCompetition(competitionUUID, finder),finder = null"/>
                       </q-card-actions>
                     </q-card>
                   </q-dialog>
@@ -281,7 +281,6 @@
             label="OK"
             color="primary"
             v-close-popup
-            @click="showloading(), getListTournaments()"
           />
         </q-card-actions>
       </q-card>
@@ -300,7 +299,7 @@
             flat
             label="Zamknij"
             v-close-popup
-            @click="closeTournament(uuid), (tournamentCloseAlert = true)"
+            @click="closeTournament(uuid)"
           />
         </q-card-actions>
       </q-card>
@@ -387,7 +386,7 @@
 
         <q-card-actions align="right">
           <q-btn flat label="anuluj" color="primary" v-close-popup />
-          <q-btn flat label="Dodaj" color="primary" @click=" createNewTournament(tournamentName,tournamentDate),tournamentAlert=true" v-close-popup />
+          <q-btn flat label="Dodaj" color="primary" v-close-popup @click=" createNewTournament(tournamentName,tournamentDate)" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -403,7 +402,7 @@
             label="OK"
             color="primary"
             v-close-popup
-            @click="showloading(), getListTournaments()"
+            showloading(), getListTournaments()
           />
         </q-card-actions>
       </q-card>
@@ -420,7 +419,6 @@
             label="OK"
             color="primary"
             v-close-popup
-            @click="showloading(), getListTournaments()"
           />
         </q-card-actions>
       </q-card>
@@ -436,9 +434,7 @@
             flat
             label="OK"
             color="primary"
-            v-close-popup
-            @click="showloading(), getListTournaments(), getcompetitions()"
-          />
+            v-close-popup/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -503,7 +499,6 @@
             label="OK"
             color="primary"
             v-close-popup
-            @click="showloading(), getListTournaments(), getcompetitions()"
           />
         </q-card-actions>
       </q-card>
@@ -520,7 +515,6 @@
             label="OK"
             color="primary"
             v-close-popup
-            @click="showloading(), getcompetitions()"
           />
         </q-card-actions>
       </q-card>
@@ -615,7 +609,8 @@ export default {
       countArbiter: null,
       otherArbiter: null,
       competitionRadio: '',
-      removeFromList: false
+      removeFromList: false,
+      memberName: null
     }
   },
   created () {
@@ -631,6 +626,14 @@ export default {
       }).then(response => response.json())
         .then(tournaments => {
           this.tournaments = tournaments
+        })
+    },
+    getcompetitions () {
+      fetch('http://localhost:8080/competition/', {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(competitions => {
+          this.competitions = competitions
         })
     },
     showloading () {
@@ -668,7 +671,13 @@ export default {
         headers: {
           'Content-Type': 'application/json'
         }
-      }).then(response => response.json())
+      }).then(response => {
+        if (response.status === 201) {
+          this.tournamentAlert = true
+          this.showloading()
+          this.getListTournaments()
+        }
+      })
     },
     createCompetition () {
       var data = {
@@ -682,23 +691,16 @@ export default {
         }
       }).then(response => {
         if (response.status === 201) {
+          this.newCompetitionAlert = true
           this.competitionName = ''
           this.choice = null
-          this.newCompetitionAlert = true
+          this.showloading()
+          this.getListTournaments()
+          this.getcompetitions()
         } else {
           this.failure = true
-          this.competitionName = ''
-          this.choice = null
         }
       })
-    },
-    getcompetitions () {
-      fetch('http://localhost:8080/competition/', {
-        method: 'GET'
-      }).then(response => response.json())
-        .then(competitions => {
-          this.competitions = competitions
-        })
     },
     updateTournament () {
       var data = {
@@ -716,13 +718,16 @@ export default {
           this.tournamentName = ''
           this.tournamentDate = ''
           this.tournamentUpdated = true
+          this.showloading()
+          this.getListTournaments()
         }
       })
     },
     addMemberToCompetition (uuid, finder) {
-      const word = finder.split(' ')
-      const memberUUID = word[2]
-      fetch('http://localhost:8080/competitionMembersList/addMember?competitionUUID=' + uuid + '&memberUUID=' + memberUUID, {
+      const memberNameWord = this.memberName.split(' ')
+      var legNumber = memberNameWord.length
+      const memberNameUUID = memberNameWord[legNumber - 1]
+      fetch('http://localhost:8080/competitionMembersList/addMember?competitionUUID=' + uuid + '&legitimationNumber=' + memberNameUUID, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -730,19 +735,25 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           this.addMemberAlert = true
-          response.json()
+          this.showloading()
+          this.getListTournaments()
         } else { this.memberFailure = true }
       })
     },
     removeMemberFromCompetition (uuid, finder) {
-      const word = finder.split(' ')
-      const memberUUID = word[2]
-      fetch('http://localhost:8080/competitionMembersList/removeMember?competitionUUID=' + uuid + '&memberUUID=' + memberUUID, {
+      const memberNameWord = this.memberName.split(' ')
+      var legNumber = memberNameWord.length
+      const memberNameUUID = memberNameWord[legNumber - 1]
+      fetch('http://localhost:8080/competitionMembersList/removeMember?competitionUUID=' + uuid + '&legitimationNumber=' + memberNameUUID, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         }
-      }).then(response => response.json())
+      }).then(response => {
+        if (response.status === 200) {
+          this.removeMemberAlert = true
+        } else { this.memberFailure = true }
+      })
     },
     addCompetitonToTournament () {
       if (this.competitionRadio != null && this.competitionRadio !== '') {
@@ -753,9 +764,10 @@ export default {
           }
         }).then(response => {
           if (response.status === 200) {
-            response.json().then(
-              this.addCompetitionAlert = true
-            )
+            this.addCompetitionAlert = true
+            this.showloading()
+            this.getListTournaments()
+            this.getcompetitions()
           } else { this.failure = true }
         })
       } else {
@@ -770,9 +782,9 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
-            this.tournamentCloseAlert = true
-          )
+          this.tournamentCloseAlert = true
+          this.showloading()
+          this.getListTournaments()
         }
       })
     },
@@ -804,12 +816,11 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
-          )
+          this.addArbiterAlert = true
+          this.showloading()
+          this.getListTournaments()
         } else { this.arbiterFailure = true }
       })
-      this.showloading()
-      this.getListTournaments()
     },
     addRTSArbiterToTournament () {
       const countArbiterWord = this.countArbiter.split(' ')
@@ -821,16 +832,18 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
-          )
+          this.addArbiterAlert = true
+          this.showloading()
+          this.getListTournaments()
         } else { this.arbiterFailure = true }
       })
-      this.showloading()
-      this.getListTournaments()
     },
     addOtherArbiterToTournament () {
       const otherArbiterWord = this.otherArbiter.split(' ')
       const otherArbiterUUID = otherArbiterWord[2]
+      // const memberNameWord = this.memberName.split(' ')
+      // var legNumber = memberNameWord.length
+      // const memberNameUUID = memberNameWord[legNumber - 1]
       fetch('http://localhost:8080/tournament/addOthersArbiters/' + this.uuid + '?memberUUID=' + otherArbiterUUID, {
         method: 'PUT',
         headers: {
@@ -838,12 +851,11 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
-          )
+          this.addArbiterAlert = true
+          this.showloading()
+          this.getListTournaments()
         } else { this.arbiterFailure = true }
       })
-      this.showloading()
-      this.getListTournaments()
     },
     filterFn (val, update) {
       if (val === '') {

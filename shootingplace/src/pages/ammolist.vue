@@ -1,67 +1,89 @@
 <template>
-  <q-page padding>
-    <div>
-    <q-item-section>
-      <h6>Data listy {{ammoList.date}}</h6>
-      <q-item><q-input filled v-model="listDate" mask="date" label="Wybierz datę" hint="użyj kalendarza">
-                  <template v-slot:append>
-                    <q-icon name="event" class="cursor-pointer">
-                      <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                        <q-date v-model="listDate">
-                          <div class="row items-center justify-end">
-                            <q-btn v-close-popup label="Zamknij" color="primary" flat />
-                          </div>
-                        </q-date>
-                      </q-popup-proxy>
-                    </q-icon>
-                  </template>
-                </q-input></q-item>
-      <q-item><q-btn label="zmień datę" color="primary"></q-btn></q-item>
-    </q-item-section>
-    <div v-for="caliberList in ammoList.caliberList" :key="caliberList.uuid" class="row">
-    <q-card v-if="caliberList.ammoUsed!=null"  class="col">
-      <q-card-section>
-        <q-item-section>
-          <q-item><h6>Kaliber {{caliberList.name}}</h6></q-item>
+  <q-page padding class="row">
+    <q-card class="col-10">
+      <div class="text-h5 text-bold" v-if="ammoList.length < 1">
+        <q-item>
           <q-item-section>
-            <q-item v-for="members in caliberList.members" :key="members.uuid">{{members.secondName}} {{members.firstName}} leg. {{members.legitimationNumber}}</q-item>
+            Brak aktywnej listy amunicji
           </q-item-section>
+        </q-item>
+      </div>
+    <div v-if="ammoList.length >= 1" class="col">
+      <q-item class="col">
+        <q-item-section class="text-h5 text-bold">
+          Lista Amunicji {{ammoList[0].date}} numer {{ammoList[0].number}}
         </q-item-section>
-      </q-card-section>
-    </q-card>
-    <q-card v-if="caliberList.ammoUsed!=null">
-      <q-card-section>
-        <q-item-section>
-          <q-item><h6>Ilość</h6></q-item>
-          <q-item v-for="ammoUsed in caliberList.ammoUsed" :key="ammoUsed">{{ammoUsed}} szt.</q-item>
-        </q-item-section>
-      </q-card-section>
-      <q-item>suma : {{caliberList.quantity}} szt.</q-item>
-    </q-card>
-    <!-- <q-item v-for="caliberList in ammoList.caliberList" :key="caliberList.uuid" class="row"></q-item> -->
-    </div>
-    <div>
-      <q-item>
-        <q-btn label="wydrukuj" color="primary" @click="uuid=ammoList.uuid,ammunitionListConfirm=true"></q-btn>
+      <q-item-section side top>
+      <q-btn color="primary" label="Zamknij listę" @click="uuid=ammoList[0].uuid,showloading(),closeEvidence (),getAmmoData(),getCLosedEvidence()"/>
+      </q-item-section>
+      <q-item-section v-if="Date.now!=ammoList[0].date" side top>
+      <q-btn color="primary" label="Zamknij listę" @click="uuid=ammoList[0].uuid,showloading(),closeEvidence (),getAmmoData(),getCLosedEvidence()"/>
+      </q-item-section>
+      <q-item-section side top>
+      <q-btn color="primary" label="Pobierz listę" @click=" date = ammoList[0].date,uuid=ammoList[0].uuid,showloading(),getAmmoListPDF(),getAmmoData(),getCLosedEvidence()"/>
+      </q-item-section>
       </q-item>
+      <div v-for="(ammoList, uuid) in ammoList" :key="uuid">
+            <div v-for="(ammoInEvidenceEntityList,uuid) in ammoList.ammoInEvidenceEntityList" :key="uuid">
+              <q-item>
+                <q-item-label class="text-h6">
+                  kaliber{{ammoInEvidenceEntityList.caliberName}}
+                </q-item-label>
+              </q-item>
+                <div class="col">
+                  <div class="row" v-for="(ammoUsedToEvidenceEntityList,uuid) in ammoInEvidenceEntityList.ammoUsedToEvidenceEntityList" :key="uuid">
+                    <q-field color="black" class="col-10" standout label="osoba" stack-label>
+                      <template v-sloc:control>
+                        <div class="row">{{ammoUsedToEvidenceEntityList.memberEntity.secondName}} {{ammoUsedToEvidenceEntityList.memberEntity.firstName}}</div>
+                      </template>
+                    </q-field>
+                    <q-field class="col-2" standout label="ilość" stack-label>
+                      <template v-slot:control>
+                        <div class="row">{{ammoUsedToEvidenceEntityList.counter}}</div>
+                      </template>
+                    </q-field>
+                  </div>
+                  <div class="row reverse">
+                    <q-field class="col-2 bg-grey-4" standout label="suma" stack-label>
+                      <template v-slot:control>
+                        <div>{{ammoInEvidenceEntityList.quantity}}</div>
+                      </template>
+                    </q-field>
+                  </div>
+                </div>
+            </div>
+      </div>
     </div>
-    </div>
-<q-dialog v-model="ammunitionListConfirm" persistent>
-      <q-card>
-        <q-card-section class="row items-center">
-          <span class="q-ml-sm">Czy pobrać kartę rozliczenia aunicji? .replace(/\//gi, '-')</span>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="anuluj" color="primary" v-close-popup />
-          <q-btn flat label="Pobierz" color="primary" v-close-popup @click="getAmmoListPDF(),ammunitionListAlert=true" />
-        </q-card-actions>
-      </q-card>
-</q-dialog>
+    </q-card>
+    <q-card class="col-2">
+      <div>
+        <q-item>
+          <q-item-label class="text-h5 text-bold">
+            Zamknięte listy
+          </q-item-label>
+        </q-item>
+        <div v-for="(ammoListClose,id) in ammoListClose" :key="id">
+          <q-item>
+            <q-btn :label="ammoListClose.date" @click="date = ammoListClose.date,uuid= ammoListClose.evidenceUUID,getAmmoListPDF()"></q-btn>
+          </q-item>
+        </div>
+      </div>
+    </q-card>
 <q-dialog v-model="ammunitionListAlert">
       <q-card>
         <q-card-section>
-          <div class="text-h6">Pobrano listę</div>
+          <div class="text-h6">Pobrano listę {{date}}</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+</q-dialog>
+<q-dialog v-model="fail">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Wystąpił jakiś problem</div>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -84,41 +106,67 @@ export default {
       uuid: null,
       ammunitionListAlert: false,
       listDate: null,
-      ammunitionListConfirm: false,
       ammoList: [],
-      inc: 0
+      ammoListClose: [],
+      date: '',
+      fail: false
     }
   },
   created () {
     this.getAmmoData()
+    this.getCLosedEvidence()
   },
   methods: {
+    showloading () {
+      this.$q.loading.show({ message: 'Dzieje się coś ważnego... Poczekaj' })
+      this.timer = setTimeout(() => {
+        this.$q.loading.hide()
+        this.timer = 0
+      }, 1000)
+    },
     getAmmoData () {
-      fetch('http://localhost:8080/ammoEvidence/', {
+      fetch('http://localhost:8080/ammoEvidence/evidence?state=true', {
         method: 'GET'
-      }).then(response => response.json())
-        .then(ammoList => {
+      }).then(response => {
+        response.json().then(ammoList => {
           this.ammoList = ammoList
         })
+      })
     },
-    increment () {
-      this.inc++
+    getCLosedEvidence () {
+      fetch('http://localhost:8080/ammoEvidence/closedEvidences', {
+        method: 'GET'
+      }).then(response => {
+        response.json().then(ammoListClose => {
+          this.ammoListClose = ammoListClose
+        })
+      })
+    },
+    closeEvidence () {
+      fetch('http://localhost:8080/ammoEvidence/ammo?evidenceUUID=' + this.uuid, {
+        method: 'PATCH'
+      }).then(response => {
+        if (response.status === 200) {
+          this.getAmmoData()
+          this.getCLosedEvidence()
+        } else { this.fail = true }
+      })
     },
     getAmmoListPDF () {
       axios({
-        url: 'http://localhost:8080/files//downloadAmmunitionList/' + this.uuid,
+        url: 'http://localhost:8080/files/downloadAmmunitionList/' + this.uuid,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
+        this.ammunitionListAlert = true
         var fileURL = window.URL.createObjectURL(new Blob([response.data]))
         var fileLink = document.createElement('a')
         fileLink.href = fileURL
-        fileLink.setAttribute('download', 'Lista_Rozliczenia_Amunicji.pdf')
+        fileLink.setAttribute('download', 'Lista_Rozliczenia_Amunicji_' + this.date + '.pdf')
         document.body.appendChild(fileLink)
         fileLink.click()
       })
     }
-  },
-  name: 'EvidenceBook'
+  }
 }
 </script>

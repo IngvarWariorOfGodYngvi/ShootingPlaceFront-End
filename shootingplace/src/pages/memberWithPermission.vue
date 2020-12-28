@@ -8,43 +8,64 @@
       <q-item-section class="col">
       </q-item-section>
       <q-item-section side top>
-      <q-item><q-btn color="primary" label="Wybierz" @click="showloading(),getListMembers()"/></q-item>
       </q-item-section>
       </q-card>
     </div>
-  <div class="q-pa-md">
-    <q-list>
-      <q-item v-for="members in members" :key="members.uuid" group="somegroup" :id="members.secondName">
+  <div>
+      <div v-for="members in members" :key="members.uuid">
         <q-card v-if="(shootingLeader&&members.memberPermissions.shootingLeaderNumber!=null)
-          ||(arbiter&&members.memberPermissions.arbiterNumber)||(instructor&&members.memberPermissions.instructorNumber)" class="col">
-          <q-card-section>
+          ||(arbiter&&members.memberPermissions.arbiterNumber)||(instructor&&members.memberPermissions.instructorNumber)" class="row">
+          <q-card-section class="col-4">
             <q-item-section>
-                <q-item>{{members.secondName}} {{members.firstName}}</q-item>
+              <q-field v-if="shootingLeader&&members.memberPermissions.shootingLeaderNumber!=null" class="col" label="Nazwisko i imię" standout stack-label>
+                <template v-slot:control>
+                  <div class="self-center col full-width no-outline" tabindex="0">{{members.secondName}} {{members.firstName}}</div>
+                </template>
+              </q-field>
+            </q-item-section>
+          </q-card-section>
+          <q-card-section v-if="(shootingLeader&&members.memberPermissions.shootingLeaderNumber!=null)
+          ||(arbiter&&members.memberPermissions.arbiterNumber!=null)||(instructor&&members.memberPermissions.instructorNumber!=null)" class="col-6">
+            <q-item-section>
+              <q-field v-if="shootingLeader&&members.memberPermissions.shootingLeaderNumber!=null" class="col" label="Numer Uprawnień Prowadzącego" standout stack-label>
+                <template v-slot:control>
+                  <div class="self-center col full-width no-outline" tabindex="0">{{members.memberPermissions.shootingLeaderNumber}}</div>
+                </template>
+              </q-field>
+              <q-field v-if="instructor&&members.memberPermissions.instructorNumber!=null" class="col" label="Numer Uprawnień Instruktorskich" standout stack-label>
+                <template v-slot:control>
+                  <div class="self-center col full-width no-outline" tabindex="0">{{members.memberPermissions.instructorNumber}}</div>
+                </template>
+              </q-field>
+              <q-field v-if="arbiter&&members.memberPermissions.arbiterNumber!=null" class="col" label="Uprawnienia sędziowskie" standout stack-label>
+                <template v-slot:control>
+                  <q-field class="col" label="Numer" standout stack-label>
+                    <template v-slot:control>
+                      <div class="self-center col full-width no-outline" tabindex="0">{{members.memberPermissions.arbiterNumber}}</div>
+                    </template>
+                  </q-field>
+                  <q-field class="col" label="Klasa" standout stack-label>
+                    <template v-slot:control>
+                      <div class="self-center col full-width no-outline" tabindex="0">{{members.memberPermissions.arbiterClass}}</div>
+                    </template>
+                  </q-field>
+                  <q-field class="col" label="Ważne do" standout stack-label>
+                    <template v-slot:control>
+                      <div class="self-center col full-width no-outline" tabindex="0">{{members.memberPermissions.arbiterPermissionValidThru}}</div>
+                    </template>
+                  </q-field>
+                </template>
+              </q-field>
+            </q-item-section>
+          </q-card-section>
+          <q-card-section v-if="(shootingLeader&&members.memberPermissions.shootingLeaderNumber!=null)
+          ||(arbiter&&members.memberPermissions.arbiterNumber)||(instructor&&members.memberPermissions.instructorNumber)" class="col-2">
+            <q-item-section>
+                <q-item><q-btn label="Pobierz kartę Członkowską" @click="uuid=members.uuid,name=members.firstName,name2=members.secondName,personalCardDownloadConfirm=true"/></q-item>
             </q-item-section>
           </q-card-section>
           </q-card>
-        <q-card v-if="(shootingLeader&&members.memberPermissions.shootingLeaderNumber!=null)
-          ||(arbiter&&members.memberPermissions.arbiterNumber!=null)||(instructor&&members.memberPermissions.instructorNumber!=null)" class="col">
-          <q-card-section>
-            <q-item-section>
-                <q-item v-if="shootingLeader&&members.memberPermissions.shootingLeaderNumber!=null">Numer Uprawnień Prowadzącego : {{members.memberPermissions.shootingLeaderNumber}}</q-item>
-                <q-item v-if="arbiter&&members.memberPermissions.arbiterNumber!=null">Numer Licejcji Sędziowskiej {{members.memberPermissions.arbiterNumber}}</q-item>
-                <q-item v-if="arbiter&&members.memberPermissions.arbiterNumber!=null">{{members.memberPermissions.arbiterClass}}</q-item>
-                <q-item v-if="arbiter&&members.memberPermissions.arbiterNumber!=null">{{members.memberPermissions.arbiterPermissionValidThru}}</q-item>
-                <q-item v-if="instructor&&members.memberPermissions.instructorNumber!=null">Numer Uprawnień Instruktorskich {{members.memberPermissions.instructorNumber}}</q-item>
-            </q-item-section>
-          </q-card-section>
-          </q-card>
-        <q-card v-if="(shootingLeader&&members.memberPermissions.shootingLeaderNumber!=null)
-          ||(arbiter&&members.memberPermissions.arbiterNumber)||(instructor&&members.memberPermissions.instructorNumber)">
-          <q-card-section>
-            <q-item-section>
-                <q-item><q-btn label="Pobierz kartę Członkowską" color="secondary" @click="uuid=members.uuid,name=members.firstName,name2=members.secondName,personalCardDownloadConfirm=true"/></q-item>
-            </q-item-section>
-          </q-card-section>
-          </q-card>
-      </q-item>
-    </q-list>
+      </div>
   </div>
 <q-dialog v-model="personalCardDownloadConfirm" persistent>
       <q-card>
