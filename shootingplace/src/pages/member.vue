@@ -307,11 +307,8 @@
                   </div>
                   <div class="row">
                   <q-item-section v-if="member.active" class="full-width">
-                    <!--  -->
                       <q-radio v-model="caliberUUID" v-for="(calibers,uuid) in calibers" :key="uuid" :val="calibers.uuid">
                         <q-field borderless style="full-width">
-                          <!--  -->
-                          <!--  -->
                          <template v-slot:control>
                           <div class="full-width">{{calibers.name}}</div>
                          </template>
@@ -329,7 +326,7 @@
                   </q-item-section>
                   </div>
                   <div v-if="member.active" class="row">
-                  <q-input ref="search" filled class="full-width col" v-model="quantity" placeholder="Tylko cyfry" onkeypress="return (event.charCode > 44 && event.charCode < 58)" label="Ilość Amunicji"></q-input>
+                  <q-input @keypress.enter="uuid=member.uuid, addAmmoConfirm=true" v-temp ref="search" filled class="full-width col" v-model="quantity" placeholder="Tylko cyfry" onkeypress="return (event.charCode > 44 && event.charCode < 58)" label="Ilość Amunicji"></q-input>
                   <q-btn class="full-width col" color="primary" label="wydaj amunicję" @click="uuid=member.uuid, addAmmoConfirm=true"></q-btn>
                   </div>
                 </div>
@@ -1162,6 +1159,9 @@ const stringOptions = []
 import Vue from 'vue'
 import axios from 'axios'
 Vue.prototype.$axios = axios
+Vue.directive('temp', function (el) {
+  el.focus()
+})
 
 export default {
   data () {

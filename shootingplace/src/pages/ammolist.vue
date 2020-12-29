@@ -16,9 +16,6 @@
       <q-item-section side top>
       <q-btn color="primary" label="Zamknij listę" @click="uuid=ammoList[0].uuid,showloading(),closeEvidence (),getAmmoData(),getCLosedEvidence()"/>
       </q-item-section>
-      <q-item-section v-if="Date.now!=ammoList[0].date" side top>
-      <q-btn color="primary" label="Zamknij listę" @click="uuid=ammoList[0].uuid,showloading(),closeEvidence (),getAmmoData(),getCLosedEvidence()"/>
-      </q-item-section>
       <q-item-section side top>
       <q-btn color="primary" label="Pobierz listę" @click=" date = ammoList[0].date,uuid=ammoList[0].uuid,showloading(),getAmmoListPDF(),getAmmoData(),getCLosedEvidence()"/>
       </q-item-section>

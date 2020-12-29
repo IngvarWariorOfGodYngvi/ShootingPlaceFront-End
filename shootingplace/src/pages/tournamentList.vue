@@ -14,242 +14,252 @@
                 label="dodaj nową konkurencję"
                 @click="createNewCompetiton = true"
               ></q-btn>
-          <q-dialog v-model="createNewCompetiton" persistent>
-            <q-card>
-              <q-card-section class="row items-center">
-                <q-item-section>
-                  <q-item-label><b>Dodaj nową Konkurencję</b></q-item-label>
-                  <q-label>Utworzenie nowej konkurencji da możliwość wybrania jej podczas kolejnych zawodów </q-label>
-                  <div> Wybierz Dyscyplinę :
-                  <q-radio v-model="choice" :val="'Pistolet'" label="Pistolet"></q-radio>
-                  <q-radio v-model="choice" :val="'Karabin'" label="Karabin"></q-radio>
-                  <q-radio v-model="choice" :val="'Strzelba'" label="Strzelba"></q-radio>
-                  </div>
-                  <div class="row"><q-label> Wpisz nazwę : </q-label>
-                    <q-label> {{choice}} {{competitionName}}</q-label>
-                  </div>
-                    <q-input v-model="competitionName" label="nazwa zawodów">
-                    </q-input>
-                </q-item-section>
-              </q-card-section>
-              <q-card-actions align="right">
-                <q-btn flat label="zamknij" color="primary" v-close-popup @click="competitionName = '', choice = null" />
-                <q-btn label="utwórz" color="primary" v-close-popup @click="createCompetition()"/>
-              </q-card-actions>
-            </q-card>
-          </q-dialog>
         </q-card-section>
       </q-card>
-    <q-list bordered>
-      <q-expansion-item expand-separator v-for="tournaments in tournaments" :key="tournaments.uuid" group="tournaments" class="bg-grey-3 text-h6">
-        <template v-slot:header class="row">
+      <div class="row">
+      <q-card class="col-10">
+      <div v-for="(tournaments,uuid) in tournaments" :key="uuid" class="row bg-grey-2 text-h6">
+        <div class="col-6">
           <q-item-section>
-            <q-item-label
-              >{{ tournaments.name }} {{ tournaments.date }}</q-item-label
-            >
+            <q-item>
+              {{ tournaments.name }} {{ tournaments.date }}
+            </q-item>
           </q-item-section>
-          <q-item-section side top >
-            <div class="row">
-              <q-item v-if="tournaments.open"><q-btn color="primary" label="Aktualizuj" @click="(uuid = tournaments.uuid), (tournamentUpdateConfirm = true) "/></q-item>
-              <q-item v-if="tournaments.open"><q-btn color="warning" label="Zamknij zawody" @click="(uuid = tournaments.uuid), (tournamentCloseConfirm = true) "/></q-item>
+        </div>
+        <div class="col-3">
+          <q-item><q-btn color="white" class="text-black full-width" v-if="tournaments.open" label="dodaj sędziów" @click="tournamentUUID = tournaments.uuid,addArbitersConfirmbtn = true"></q-btn></q-item>
+          <q-item v-if="tournaments.open"><q-btn color="white" class="text-black full-width" label="dodaj konkurencje" @click="tournamentUUID = tournaments.uuid,addCompetitionConfirmbtn = true"></q-btn></q-item>
+    <q-dialog v-model="addCompetitionConfirmbtn" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <q-item-section v-if="tournaments.open">
+            <q-item-label>Dodaj Konkurencje</q-item-label>
+            <q-item
+              v-for="(competitions,uuid) in competitions" :key="uuid"
+              ><q-radio
+                :label="competitions.name"
+                :val="competitions.uuid"
+                v-model="competitionRadio"
+            /></q-item>
+            <q-item
+              ><q-btn
+                label="Dodaj konkurencję"
+                color="primary"
+                @click="(addCompetitionConfirm = true)"
+            /></q-item>
+          </q-item-section>
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="zamknij" color="primary" v-close-popup @click="competitionRadio=''"/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+        </div>
+        <div class="col-3">
+              <q-item v-if="tournaments.open"><q-btn class="full-width" color="primary" label="Aktualizuj" @click="(tournamentUUID = tournaments.uuid), (tournamentUpdateConfirm = true) "/></q-item>
+              <q-item v-if="tournaments.open"><q-btn class="full-width" color="warning" label="Zamknij zawody" @click="tournamentUUID = tournaments.uuid, (tournamentCloseConfirm = true) "/></q-item>
               <q-item v-if="!tournaments.open"><q-item-label>Zawody zamknięte</q-item-label></q-item>
-              <q-dialog v-model="tournamentUpdateConfirm" persistent>
-                  <q-card>
-                    <q-card-section class="col items-center">
-                      <q-item><q-input v-model="tournamentName" hint="nazwa" label="Nowa nazwa zawodów" filled /></q-item>
-                      <q-item><q-input filled v-model="tournamentDate" mask="####/##/##" :rules="['date']" label="Wybierz datę" hint="użyj kalendarza">
-                                      <template v-slot:append>
-                                        <q-icon name="event" class="cursor-pointer">
-                                          <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                                            <q-date v-model="tournamentDate">
-                                              <div class="row items-center justify-end">
-                                                <q-btn v-close-popup label="Zamknij" color="primary" flat />
-                                              </div>
-                                            </q-date>
-                                          </q-popup-proxy>
-                                        </q-icon>
-                                      </template>
-                                    </q-input></q-item>
-                    </q-card-section>
-                    <q-card-actions align="right">
-                      <q-btn flat label="anuluj" color="primary" v-close-popup />
-                      <q-btn flat label="aktualizuj" color="primary" v-close-popup @click="tournamentConfirm = true"/>
-                    </q-card-actions>
-                  </q-card>
-              </q-dialog>
-            </div>
-          </q-item-section>
-        </template>
-        <div class="bg-grey-3">
-          <q-expansion-item expand-separator group="tournament-ads" label="Sędziowie" class="bg-grey-2">
-            <div class="bg-grey-1">
-              <q-item v-if="tournaments.mainArbiter==null && tournaments.commissionRTSArbiter==null && tournaments.arbitersList.lenght<1">
-                <q-field class="col" standout stack-label>
+        </div>
+            <div class="full-width row bg-grey-1">
+              <div class="col">
+                <q-field v-if="tournaments.mainArbiter!=null" class="col" standout stack-label label="Sędzia Główny Zawodów">
                   <template v-slot:control>
-                    <div class="self-center col full-width no-outline" tabindex="0">Lista sędziów jest pusta</div>
+                    <div class="self-center col full-width no-outline" tabindex="0">{{tournaments.mainArbiter.firstName}} {{tournaments.mainArbiter.secondName}} {{tournaments.mainArbiter.memberPermissions.arbiterClass}}</div>
                   </template>
                 </q-field>
-              </q-item>
-              <q-item v-if="tournaments.open"><q-btn label="dodaj sędziów" @click="(uuid = tournaments.uuid),addArbitersConfirmbtn = true"></q-btn></q-item>
-              <q-item v-if="tournaments.mainArbiter!=null">
-                <q-field class="col" standout stack-label label="Sędzia Główny Zawodów">
+                <q-field v-if="tournaments.commissionRTSArbiter!=null" class="col" standout stack-label label="Sędzia Obliczeniowy">
                   <template v-slot:control>
-                    <div class="self-center col full-width no-outline" tabindex="0">{{tournaments.mainArbiter.firstName}} {{tournaments.mainArbiter.secondName}}</div>
+                    <div class="self-center col full-width no-outline" tabindex="0">{{tournaments.commissionRTSArbiter.firstName}} {{tournaments.commissionRTSArbiter.secondName}} {{tournaments.mainArbiter.memberPermissions.arbiterClass}}</div>
                   </template>
                 </q-field>
-              </q-item>
-              <q-item v-if="tournaments.commissionRTSArbiter!=null">
-                <q-field class="col" standout stack-label label="Sędzia Obliczeniowy">
-                  <template v-slot:control>
-                    <div class="self-center col full-width no-outline" tabindex="0">{{tournaments.commissionRTSArbiter.firstName}} {{tournaments.commissionRTSArbiter.secondName}}</div>
-                  </template>
-                </q-field>
-              </q-item>
+              </div>
               <div class="col" v-if="tournaments.commissionRTSArbiter!=null">
-                <q-item v-for="arbiters in tournaments.arbitersList" :key="arbiters">
-                <q-item-section>
-                <q-field standout stack-label label="Sędzia Pomocniczy">
+                <q-field standout stack-label>
                   <template v-slot:control>
-                    <div class="self-center full-width no-outline" tabindex="0">{{arbiters.firstName}} {{arbiters.secondName}}</div>
+                    <div class="self-center full-width no-outline" tabindex="0">Lista sędziów pomocniczych</div>
                   </template>
                 </q-field>
-                </q-item-section>
-                </q-item>
+                <q-field v-for="(arbiters,uuid) in tournaments.arbitersList" :key="uuid" standout stack-label label="Sędzia Pomocniczy">
+                  <template v-slot:control>
+                    <div class="self-center full-width no-outline" tabindex="0">{{arbiters.firstName}} {{arbiters.secondName}} {{arbiters.memberPermissions.arbiterClass}}</div>
+                  </template>
+                </q-field>
               </div>
             </div>
-          </q-expansion-item>
-        </div>
-        <q-card >
-            <q-expansion-item expand-separator group="tournament-ads" class="text-h6" label="Konkurencje">
-                      <div class="row bg-grey-2">
-        <q-item v-if="tournaments.open"><q-btn label="dodaj konkurencje" @click="(uuid = tournaments.uuid),addCompetitionConfirmbtn = true"></q-btn></q-item>
-          <q-dialog v-model="addCompetitionConfirmbtn" persistent>
-            <q-card>
-              <q-card-section class="row items-center">
-                <q-item-section v-if="tournaments.open">
-                  <q-item-label>Dodaj Konkurencje</q-item-label>
-                  <q-item
-                    v-for="competitions in competitions"
-                    :key="competitions.uuid"
-                    ><q-radio
-                      :label="competitions.name"
-                      :val="competitions.uuid"
-                      v-model="competitionRadio"
-                  /></q-item>
-                  <q-item
-                    ><q-btn
-                      label="Dodaj konkurencję"
-                      color="primary"
-                      @click="(addCompetitionConfirm = true)"
-                  /></q-item>
-                </q-item-section>
-              </q-card-section>
-
-              <q-card-actions align="right">
-                <q-btn flat label="zamknij" color="primary" v-close-popup @click="competitionRadio=''"/>
-              </q-card-actions>
-            </q-card>
-          </q-dialog>
-        <q-dialog v-model="addArbitersConfirmbtn" persistent>
-            <q-card>
-              <q-card-section class="row items-center">
-                <q-item-section>
-          <q-item><q-item-label>Sędzia Główny</q-item-label></q-item>
-          <q-item><q-select filled v-model="mainArbiter" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filterMp" style="width: 350px; padding-bottom: 32px" label="Nazwisko">
-                  <template v-slot:no-option>
-                    <q-item>
-                      <q-item-section class="text-grey">
-                        No results
-                      </q-item-section>
-                    </q-item>
-                  </template>
-                </q-select></q-item>
-                <q-item v-if="mainArbiter!=null"><q-btn label="Dodaj" color="primary" @click="addMainArbiterToTournament()"/></q-item>
-          <q-item><q-item-label>Sędzia Komisji</q-item-label></q-item>
-          <q-item><q-select filled v-model="countArbiter" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filterMp" style="width: 350px; padding-bottom: 32px" label="Nazwisko">
-                  <template v-slot:no-option>
-                    <q-item>
-                      <q-item-section class="text-grey">
-                        No results
-                      </q-item-section>
-                    </q-item>
-                  </template>
-                </q-select></q-item>
-                <q-item v-if="countArbiter!=null"><q-btn label="Dodaj" color="primary" @click="addRTSArbiterToTournament()"/></q-item>
-          <q-item><q-item-label>Pozostali sędziowie</q-item-label></q-item>
-          <q-item><q-select filled v-model="otherArbiter" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filterMp" style="width: 350px; padding-bottom: 32px" label="Nazwisko">
-                  <template v-slot:no-option>
-                    <q-item>
-                      <q-item-section class="text-grey">
-                        No results
-                      </q-item-section>
-                    </q-item>
-                  </template>
-                </q-select></q-item>
-                  <div class="row">
-                  <q-item v-if="otherArbiter!=null"><q-btn label="usuń sędziego pomocniczego" color="primary" v-close-popup @click="removeArbiter()"/></q-item>
-                  <q-item v-if="otherArbiter!=null"><q-btn  label="Dodaj" color="primary" @click="addOtherArbiterToTournament()"/></q-item>
-                  </div>
-                </q-item-section>
-              </q-card-section>
-
-              <q-card-actions align="right">
-                <q-btn flat label="zamknij" color="primary" v-close-popup @click="mainArbiter=null,countArbiter=null,otherArbiter=null"/>
-              </q-card-actions>
-            </q-card>
-          </q-dialog>
-            <q-item v-if="!tournaments.open"><q-btn label="generuj plik"></q-btn></q-item>
-          </div>
-              <q-expansion-item expand-separator group="tournament-competition" v-for="competitionsList in tournaments.competitionsList" :key="competitionsList" class="full-width" :label="competitionsList.name">
+        <q-card class="full-width">
+              <q-expansion-item expand-separator group="tournament-competition" v-for="(competitionsList,uuid) in tournaments.competitionsList" :key="uuid" :label="competitionsList.name">
                 <div class="row">
-                <q-card-section>
+                <q-card-section class="col-4">
                   <q-field class="col" standout stack-label>
                     <template v-slot:control>
                       <div class="text-h6 self-center col full-width no-outline" tabindex="0">{{ competitionsList.name }}</div>
                     </template>
                   </q-field>
-                <q-select v-if="tournaments.open" filled v-model="memberName" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filterFn" label="Dodaj osobę">
+                <q-select v-if="tournaments.open" filled v-model="memberName" use-input hide-selected fill-input input-debounce="0" :options="options" @input="otherName='0 0'" @filter="filterFn" label="Dodaj osobę z klubu">
                   <template v-slot:no-option>
                     <q-item>
                       <q-item-section class="text-grey">
-                        No results
+                        Brak wyników
                       </q-item-section>
                     </q-item>
                   </template>
                 </q-select>
+                <q-select v-if="tournaments.open" filled v-model="otherName" use-input hide-selected fill-input input-debounce="0" :options="options" @input="memberName='0 0'" @filter="filterOther" label="Dodaj osobę spoza klubu">
+                  <template v-slot:no-option>
+                    <q-btn class="full-width" color="primary" label="dodaj nową osobę" @click="addNewOtherPerson = true"/>
+                  </template>
+                </q-select>
                 <div class="row">
-                  <q-item><q-btn v-if="tournaments.open" label="Usuń z listy" @click="(competitionUUID = competitionsList.uuid),removeFromList=true"></q-btn></q-item>
-                  <q-item><q-btn v-if="tournaments.open" label="Dodaj do listy" @click="(competitionUUID = competitionsList.uuid),(addMemberConfirm = true)"></q-btn></q-item>
+                  <q-btn class="col" v-if="tournaments.open" label="Usuń z listy" @click="(competitionUUID = competitionsList.uuid),removeFromList=true"></q-btn>
+                  <q-btn class="col" v-if="tournaments.open" label="Dodaj do listy" @click="(competitionUUID = competitionsList.uuid),(addMemberConfirm = true)"></q-btn>
                 </div>
                 </q-card-section>
-                <q-card-section>
-                  <q-expansion-item label="Lista osób startujących" default-opened>
-                  <div class="row text-body2" v-for="membersList in competitionsList.membersList" :key="membersList">
-                  <ol>{{membersList.secondName}} {{membersList.firstName}}</ol>
-                  <q-dialog v-model="removeFromList">
-                    <q-card>
-                      <q-card-section>
-                        <div class="text-h6">Usunąć zawodnika z listy startujących w konkurencji?</div>
-                      </q-card-section>
-                      <!-- <q-item-section>
-                      <q-item class="col" v-for="ammo in members.personalEvidence.ammo" :key="ammo" >{{ammo}}</q-item>
-                      </q-item-section> -->
-
-                      <q-card-actions align="right">
-                        <q-btn flat label="anuluj" color="primary" v-close-popup />
-                        <q-btn label="usuń" color="warning" v-close-popup @click="removeMemberFromCompetition(competitionUUID, finder),finder = null"/>
-                      </q-card-actions>
-                    </q-card>
-                  </q-dialog>
+                <q-card-section class="col-8">
+                  <q-expansion-item class="full-width" label="Lista osób startujących" default-opened>
+                  <div class="text-body2" v-for="(scoreList,uuid) in competitionsList.scoreList" :key="uuid">
+                    <div class="row">
+                    <q-field class="col-8" standout stack-label>
+                      <template v-slot:control>
+                        <div v-if="scoreList.otherPersonEntity == null" class="self-center full-width col no-outline" tabindex="0">{{scoreList.member.secondName}} {{scoreList.member.firstName}} {{scoreList.member.legitimationNumber}}</div>
+                        <div v-if="scoreList.member == null" class="self-center full-width col no-outline" tabindex="0">{{scoreList.otherPersonEntity.secondName}} {{scoreList.otherPersonEntity.firstName}} {{scoreList.otherPersonEntity.id}}</div>
+                      </template>
+                    </q-field>
+                    <q-field class="col-2" standout label="Wynik" stack-label>
+                      <template v-slot:control>
+                        <div class="self-center full-width col no-outline" tabindex="0">{{scoreList.score}}</div>
+                      </template>
+                    </q-field>
+                    <q-input onkeypress="return (event.charCode > 47 && event.charCode < 58)" filled class="col-2" v-model="scoreLabel" v-on:keyup.enter="onEnter(scoreList.uuid)" label="Wprowadź"/>
+                    </div>
                   </div>
                   </q-expansion-item>
                 </q-card-section>
                 </div>
               </q-expansion-item>
-              </q-expansion-item>
         </q-card>
-      </q-expansion-item>
-    </q-list>
+      </div>
+      </q-card>
+    <q-card class="col-2">
+      <div>
+        <q-item>
+          <q-item-label class="text-h5 text-bold">
+            Zamknięte Zawody
+          </q-item-label>
+        </q-item>
+        <div v-for="(tournamentsClosed,id) in tournamentsClosed" :key="id">
+          <q-item>
+            <q-btn :label="tournamentsClosed.date" @click="date = ammoListClose.date,uuid= ammoListClose.evidenceUUID,getAmmoListPDF()"></q-btn>
+          </q-item>
+        </div>
+      </div>
+    </q-card>
+    </div>
+    <q-dialog v-model="createNewCompetiton" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <q-item-section>
+            <q-item-label><b>Dodaj nową Konkurencję</b></q-item-label>
+            <q-label>Utworzenie nowej konkurencji da możliwość wybrania jej podczas kolejnych zawodów </q-label>
+            <div> Wybierz Dyscyplinę :
+            <q-radio v-model="choice" :val="'Pistolet'" label="Pistolet"></q-radio>
+            <q-radio v-model="choice" :val="'Karabin'" label="Karabin"></q-radio>
+            <q-radio v-model="choice" :val="'Strzelba'" label="Strzelba"></q-radio>
+            </div>
+            <div class="row"><q-label> Wpisz nazwę : </q-label>
+              <q-label> {{choice}} {{competitionName}}</q-label>
+            </div>
+              <q-input v-model="competitionName" label="nazwa zawodów">
+              </q-input>
+          </q-item-section>
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="zamknij" color="primary" v-close-popup @click="competitionName = '', choice = null" />
+          <q-btn label="utwórz" color="primary" v-close-popup @click="createCompetition()"/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="tournamentUpdateConfirm" persistent>
+        <q-card>
+          <q-card-section class="col items-center">
+            <q-item><q-input v-model="tournamentName" hint="nazwa" label="Nowa nazwa zawodów" filled /></q-item>
+            <q-item><q-input filled v-model="tournamentDate" mask="####/##/##" :rules="['date']" label="Wybierz datę" hint="użyj kalendarza">
+                            <template v-slot:append>
+                              <q-icon name="event" class="cursor-pointer">
+                                <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                                  <q-date v-model="tournamentDate">
+                                    <div class="row items-center justify-end">
+                                      <q-btn v-close-popup label="Zamknij" color="primary" flat />
+                                    </div>
+                                  </q-date>
+                                </q-popup-proxy>
+                              </q-icon>
+                            </template>
+                          </q-input></q-item>
+          </q-card-section>
+          <q-card-actions align="right">
+            <q-btn flat label="anuluj" color="primary" v-close-popup />
+            <q-btn flat label="aktualizuj" color="primary" v-close-popup @click="tournamentConfirm = true"/>
+          </q-card-actions>
+        </q-card>
+    </q-dialog>
+    <q-dialog v-model="addArbitersConfirmbtn" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <q-item-section>
+    <q-item><q-item-label>Sędzia Główny</q-item-label></q-item>
+    <q-item><q-select filled v-model="mainArbiter" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filterMp" style="width: 350px; padding-bottom: 32px" label="Nazwisko">
+            <template v-slot:no-option>
+              <q-item>
+                <q-item-section class="text-grey">
+                  No results
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select></q-item>
+          <q-item v-if="mainArbiter!=null"><q-btn label="Dodaj" color="primary" @click="addMainArbiterToTournament()"/></q-item>
+    <q-item><q-item-label>Sędzia Komisji</q-item-label></q-item>
+    <q-item><q-select filled v-model="countArbiter" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filterMp" style="width: 350px; padding-bottom: 32px" label="Nazwisko">
+            <template v-slot:no-option>
+              <q-item>
+                <q-item-section class="text-grey">
+                  No results
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select></q-item>
+          <q-item v-if="countArbiter!=null"><q-btn label="Dodaj" color="primary" @click="addRTSArbiterToTournament()"/></q-item>
+    <q-item><q-item-label>Pozostali sędziowie</q-item-label></q-item>
+    <q-item><q-select filled v-model="otherArbiter" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filterMp" style="width: 350px; padding-bottom: 32px" label="Nazwisko">
+            <template v-slot:no-option>
+              <q-item>
+                <q-item-section class="text-grey">
+                  No results
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select></q-item>
+            <div class="row">
+            <q-item v-if="otherArbiter!=null"><q-btn  label="Dodaj" color="primary" @click="addOtherArbiterToTournament()"/></q-item>
+            <q-item v-if="otherArbiter!=null"><q-btn label="usuń sędziego pomocniczego" color="primary" @click="removeArbiter()"/></q-item>
+            </div>
+          </q-item-section>
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="zamknij" color="primary" v-close-popup @click="mainArbiter=null,countArbiter=null,otherArbiter=null"/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="removeFromList">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Usunąć zawodnika z listy startujących w konkurencji?</div>
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="anuluj" color="primary" v-close-popup />
+          <q-btn label="usuń" color="warning" v-close-popup @click="removeMemberFromCompetition(competitionUUID, finder),finder = null"/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
     <q-dialog v-model="tournamentConfirm" persistent>
       <q-card>
         <q-card-section class="row items-center">
@@ -299,7 +309,7 @@
             flat
             label="Zamknij"
             v-close-popup
-            @click="closeTournament(uuid)"
+            @click="closeTournament()"
           />
         </q-card-actions>
       </q-card>
@@ -563,6 +573,21 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <q-dialog v-model="addNewOtherPerson">
+      <q-card class="full-width">
+        <q-card-section>
+          <div class="text-h6">Dodawanie nowej osoby spoza klubu</div>
+          <q-item><q-input class="full-width" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled v-model="otherFirstName" label="Imię"/></q-item>
+          <q-item><q-input class="full-width" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled v-model="otherSecondName" label="Nazwisko"/></q-item>
+          <q-item><q-input class="full-width" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled v-model="clubName" label="Nazwa Klubu"/></q-item>
+          <q-item><q-btn label="Zapisz do bazy" v-close-popup @click="addOtherPerson ()" color="primary"/></q-item>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Zamknij" color="primary" v-close-popup @click="otherFirstName=null,otherSecondName=null,clubName=null"/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -573,6 +598,7 @@ export default {
     return {
       val: [],
       uuid: null,
+      tournamentUUID: null,
       tournamentConfirm: false,
       tournamentAlert: false,
       tournamentCloseConfirm: false,
@@ -601,6 +627,8 @@ export default {
       competitions: [],
       filters: [],
       filtersPermission: [],
+      filtersOther: [],
+      tournamentsClosed: [],
       tournamentName: '',
       tournamentDate: '',
       options: stringOptions,
@@ -610,14 +638,26 @@ export default {
       otherArbiter: null,
       competitionRadio: '',
       removeFromList: false,
-      memberName: null
+      memberName: null,
+      otherName: null,
+      score: null,
+      scoreLabel: null,
+      addNewOtherPerson: false,
+      otherFirstName: null,
+      otherSecondName: null,
+      clubName: null
     }
   },
   created () {
     this.getListTournaments()
     this.getcompetitions()
+    this.getCLosedTournaments()
+    this.getOther()
   },
   methods: {
+    onEnter (scoreUUID) {
+      this.setScore(scoreUUID, this.scoreLabel)
+    },
     getListTournaments () {
       this.getMembersNames()
       this.getMembersNameswithPermissions()
@@ -658,6 +698,31 @@ export default {
         .then(filtersPermission => {
           this.filtersPermission = filtersPermission
         })
+    },
+    getOther () {
+      fetch('http://localhost:8080/other/', {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(filtersOther => {
+          this.filtersOther = filtersOther
+        })
+    },
+    addOtherPerson () {
+      var person = {
+        firstName: this.otherFirstName,
+        secondName: this.otherSecondName
+      }
+      fetch('http://localhost:8080/other?club=' + this.clubName, {
+        method: 'POST',
+        body: JSON.stringify(person),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 201) {
+          this.getOther()
+        } else { this.failure = true }
+      })
     },
     createNewTournament (name, date) {
       var data = {
@@ -723,11 +788,14 @@ export default {
         }
       })
     },
-    addMemberToCompetition (uuid, finder) {
+    addMemberToCompetition (uuid) {
       const memberNameWord = this.memberName.split(' ')
       var legNumber = memberNameWord.length
       const memberNameUUID = memberNameWord[legNumber - 1]
-      fetch('http://localhost:8080/competitionMembersList/addMember?competitionUUID=' + uuid + '&legitimationNumber=' + memberNameUUID, {
+      const otherNameWord = this.otherName.split(' ')
+      var idNumber = otherNameWord.length
+      const otherNameID = otherNameWord[idNumber - 1]
+      fetch('http://localhost:8080/competitionMembersList/addMember?competitionUUID=' + uuid + '&legitimationNumber=' + memberNameUUID + '&otherPerson=' + otherNameID, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -737,14 +805,17 @@ export default {
           this.addMemberAlert = true
           this.showloading()
           this.getListTournaments()
-        } else { this.memberFailure = true }
+        } else { this.dataFail = true }
       })
     },
     removeMemberFromCompetition (uuid, finder) {
       const memberNameWord = this.memberName.split(' ')
       var legNumber = memberNameWord.length
       const memberNameUUID = memberNameWord[legNumber - 1]
-      fetch('http://localhost:8080/competitionMembersList/removeMember?competitionUUID=' + uuid + '&legitimationNumber=' + memberNameUUID, {
+      const otherNameWord = this.otherName.split(' ')
+      var idNumber = otherNameWord.length
+      const otherNameID = otherNameWord[idNumber - 1]
+      fetch('http://localhost:8080/competitionMembersList/removeMember?competitionUUID=' + uuid + '&legitimationNumber=' + memberNameUUID + '&otherPerson=' + otherNameID, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -752,12 +823,12 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           this.removeMemberAlert = true
-        } else { this.memberFailure = true }
+        } else { this.dataFail = true }
       })
     },
     addCompetitonToTournament () {
       if (this.competitionRadio != null && this.competitionRadio !== '') {
-        fetch('http://localhost:8080/tournament/addCompetition/' + this.uuid + '?competitionUUID=' + this.competitionRadio, {
+        fetch('http://localhost:8080/tournament/addCompetition/' + this.tournamentUUID + '?competitionUUID=' + this.competitionRadio, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
@@ -774,8 +845,21 @@ export default {
         this.dataFail = true
       }
     },
-    closeTournament (uuid) {
-      fetch('http://localhost:8080/tournament/' + uuid, {
+    setScore (scoreUUID, score) {
+      fetch('http://localhost:8080/competition?scoreUUID=' + scoreUUID + '&score=' + score.replace(/,/gi, '.'), {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          this.scoreLabel = null
+          this.getListTournaments()
+        } else { this.failure = true }
+      })
+    },
+    closeTournament () {
+      fetch('http://localhost:8080/tournament/' + this.tournamentUUID, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -785,13 +869,24 @@ export default {
           this.tournamentCloseAlert = true
           this.showloading()
           this.getListTournaments()
+          this.getCLosedTournaments()
         }
+      })
+    },
+    getCLosedTournaments () {
+      fetch('http://localhost:8080/tournament/closedList', {
+        method: 'GET'
+      }).then(response => {
+        response.json().then(tournamentsClosed => {
+          this.tournamentsClosed = tournamentsClosed
+        })
       })
     },
     removeArbiter () {
       const otherArbiterWord = this.otherArbiter.split(' ')
-      const otherArbiterUUID = otherArbiterWord[2]
-      fetch('http://localhost:8080/tournament/removeArbiter/' + this.uuid + '?memberUUID=' + otherArbiterUUID, {
+      var legNumber = otherArbiterWord.length
+      const otherArbiterUUID = otherArbiterWord[legNumber - 1]
+      fetch('http://localhost:8080/tournament/removeArbiter/' + this.tournamentUUID + '?number=' + otherArbiterUUID, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -800,6 +895,7 @@ export default {
         if (response.status === 200) {
           response.json().then(
             this.removeArbiterAlert = true,
+            this.otherArbiter = null,
             this.showloading(),
             this.getListTournaments()
           )
@@ -808,8 +904,9 @@ export default {
     },
     addMainArbiterToTournament () {
       const mainArbiterWord = this.mainArbiter.split(' ')
-      const mainArbiterUUID = mainArbiterWord[2]
-      fetch('http://localhost:8080/tournament/addMainArbiter/' + this.uuid + '?memberUUID=' + mainArbiterUUID, {
+      var legNumber = mainArbiterWord.length
+      const mainArbiterUUID = mainArbiterWord[legNumber - 1]
+      fetch('http://localhost:8080/tournament/addMainArbiter/' + this.tournamentUUID + '?number=' + mainArbiterUUID, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -817,6 +914,7 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           this.addArbiterAlert = true
+          this.mainArbiter = null
           this.showloading()
           this.getListTournaments()
         } else { this.arbiterFailure = true }
@@ -824,8 +922,9 @@ export default {
     },
     addRTSArbiterToTournament () {
       const countArbiterWord = this.countArbiter.split(' ')
-      const countArbiterUUID = countArbiterWord[2]
-      fetch('http://localhost:8080/tournament/addRTSArbiter/' + this.uuid + '?memberUUID=' + countArbiterUUID, {
+      var legNumber = countArbiterWord.length
+      const countArbiterUUID = countArbiterWord[legNumber - 1]
+      fetch('http://localhost:8080/tournament/addRTSArbiter/' + this.tournamentUUID + '?number=' + countArbiterUUID, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -833,6 +932,7 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           this.addArbiterAlert = true
+          this.countArbiter = null
           this.showloading()
           this.getListTournaments()
         } else { this.arbiterFailure = true }
@@ -840,11 +940,9 @@ export default {
     },
     addOtherArbiterToTournament () {
       const otherArbiterWord = this.otherArbiter.split(' ')
-      const otherArbiterUUID = otherArbiterWord[2]
-      // const memberNameWord = this.memberName.split(' ')
-      // var legNumber = memberNameWord.length
-      // const memberNameUUID = memberNameWord[legNumber - 1]
-      fetch('http://localhost:8080/tournament/addOthersArbiters/' + this.uuid + '?memberUUID=' + otherArbiterUUID, {
+      var legNumber = otherArbiterWord.length
+      const otherArbiterUUID = otherArbiterWord[legNumber - 1]
+      fetch('http://localhost:8080/tournament/addOthersArbiters/' + this.tournamentUUID + '?number=' + otherArbiterUUID, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -852,6 +950,7 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           this.addArbiterAlert = true
+          this.otherArbiter = null
           this.showloading()
           this.getListTournaments()
         } else { this.arbiterFailure = true }
@@ -883,6 +982,20 @@ export default {
       update(() => {
         const needle = val.toLowerCase()
         this.options = this.filtersPermission.filter(v => v.toLowerCase().indexOf(needle) > -1)
+      })
+    },
+    filterOther (val, update) {
+      if (val === '') {
+        update(() => {
+          const needle = val.toLowerCase()
+          this.options = this.filtersOther.filter(v => v.toLowerCase().indexOf(needle) > -1)
+        })
+        return
+      }
+
+      update(() => {
+        const needle = val.toLowerCase()
+        this.options = this.filtersOther.filter(v => v.toLowerCase().indexOf(needle) > -1)
       })
     }
   },

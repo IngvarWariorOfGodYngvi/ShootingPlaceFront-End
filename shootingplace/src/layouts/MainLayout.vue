@@ -81,7 +81,7 @@ export default {
           title: 'Dodaj Nowego Klubowicza',
           caption: 'obsługa podstawowa',
           icon: 'add',
-          link: 'https://localhost:8081/#/member/dodawanie'
+          link: 'https://localhost:8081/#/member/adding'
         },
         {
           title: 'Lista Amunicyjna',
@@ -100,12 +100,6 @@ export default {
           caption: 'obsługa dodatkowa',
           icon: 'book',
           link: 'https://localhost:8081/#/memberwithpermission'
-        },
-        {
-          title: 'Lista Chętnych na patent',
-          caption: 'obsługa dodatkowa',
-          icon: 'add',
-          link: 'https://localhost:8081/#/patentWilling'
         }
       ],
       programName: 'Program'
