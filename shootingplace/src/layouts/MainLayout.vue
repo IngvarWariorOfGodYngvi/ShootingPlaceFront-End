@@ -23,7 +23,8 @@
       v-model="leftDrawerOpen"
       show-if-above
       bordered
-      content-class="bg-grey-1"
+      content-class="bg-grey-2"
+      style="width: 50px"
     >
       <q-list>
         <q-item-label
@@ -65,12 +66,6 @@ export default {
     return {
       leftDrawerOpen: false,
       essentialLinks: [
-        // {
-        //   title: 'Lista Klubowiczów',
-        //   caption: 'Obsługa podstawowa',
-        //   icon: 'perm_identity',
-        //   link: 'https://localhost:8081/#/member/lista'
-        // },
         {
           title: 'Lista Klubowiczów',
           caption: 'Obsługa podstawowa',

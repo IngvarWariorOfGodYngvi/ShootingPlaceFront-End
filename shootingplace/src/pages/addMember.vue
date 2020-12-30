@@ -22,8 +22,8 @@
       <q-item><q-input class="full-width" color="red" v-model="memberSecondName" label="*Nazwisko" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 45" filled/></q-item>
       <q-item><q-input class="full-width" color="red" v-model="memberIDCard" label="*Numer Dowodu" filled placeholder="XXX 000000" mask="AAA ######"/></q-item>
       <q-item><q-input class="full-width" color="red" v-model="memberPesel" placeholder="tylko cyfry" label="*Pesel" mask="###########" filled/></q-item>
-      <q-item><q-input class="full-width" color="red" v-model="memberPhone" placeholder="tylko cyfry" label="*Numer telefonu" mask="### ### ###" filled/></q-item>
-      <q-item><q-input class="full-width" filled color="green" v-model="memberEmail" label="email" /></q-item>
+      <q-item><q-input class="full-width" color="red" type="tel" v-model="memberPhone" placeholder="tylko cyfry" label="*Numer telefonu" mask="### ### ###" filled/></q-item>
+      <q-item><q-input class="full-width" filled color="green" type="email" v-model="memberEmail" label="email" /></q-item>
       <q-item><q-input class="full-width" filled color="green" v-model="memberLegitimation" label="Numer Legitymacji" /></q-item>
       <q-item><q-input class="full-width" filled v-model="memberJoinDate" mask="####/##/##" :rules="['date']" label="Wybierz datę" hint="użyj kalendarza">
                           <template v-slot:append>

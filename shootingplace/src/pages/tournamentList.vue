@@ -11,7 +11,7 @@
         <q-card-section>
               <q-btn
                 color="secondary"
-                label="dodaj nową konkurencję"
+                label="Kreator konkurencji"
                 @click="createNewCompetiton = true"
               ></q-btn>
         </q-card-section>
@@ -56,7 +56,7 @@
     </q-dialog>
         </div>
         <div class="col-3">
-              <q-item v-if="tournaments.open"><q-btn class="full-width" color="primary" label="Aktualizuj" @click="(tournamentUUID = tournaments.uuid), (tournamentUpdateConfirm = true) "/></q-item>
+              <q-item v-if="tournaments.open"><q-btn class="full-width" color="primary" label="Aktualizuj" @click="tournamentUUID = tournaments.uuid, (tournamentUpdateConfirm = true) "/></q-item>
               <q-item v-if="tournaments.open"><q-btn class="full-width" color="warning" label="Zamknij zawody" @click="tournamentUUID = tournaments.uuid, (tournamentCloseConfirm = true) "/></q-item>
               <q-item v-if="!tournaments.open"><q-item-label>Zawody zamknięte</q-item-label></q-item>
         </div>
@@ -89,7 +89,7 @@
         <q-card class="full-width">
               <q-expansion-item expand-separator group="tournament-competition" v-for="(competitionsList,uuid) in tournaments.competitionsList" :key="uuid" :label="competitionsList.name">
                 <div class="row">
-                <q-card-section class="col-4">
+                <q-card-section class="col-3">
                   <q-field class="col" standout stack-label>
                     <template v-slot:control>
                       <div class="text-h6 self-center col full-width no-outline" tabindex="0">{{ competitionsList.name }}</div>
@@ -114,22 +114,43 @@
                   <q-btn class="col" v-if="tournaments.open" label="Dodaj do listy" @click="(competitionUUID = competitionsList.uuid),(addMemberConfirm = true)"></q-btn>
                 </div>
                 </q-card-section>
-                <q-card-section class="col-8">
+                <q-card-section class="col-9">
                   <q-expansion-item class="full-width" label="Lista osób startujących" default-opened>
                   <div class="text-body2" v-for="(scoreList,uuid) in competitionsList.scoreList" :key="uuid">
                     <div class="row">
-                    <q-field class="col-8" standout stack-label>
+                    <q-field class="col-4" standout stack-label>
                       <template v-slot:control>
-                        <div v-if="scoreList.otherPersonEntity == null" class="self-center full-width col no-outline" tabindex="0">{{scoreList.member.secondName}} {{scoreList.member.firstName}} {{scoreList.member.legitimationNumber}}</div>
-                        <div v-if="scoreList.member == null" class="self-center full-width col no-outline" tabindex="0">{{scoreList.otherPersonEntity.secondName}} {{scoreList.otherPersonEntity.firstName}} {{scoreList.otherPersonEntity.id}}</div>
+                        <div v-if="scoreList.otherPersonEntity == null" class="self-center full-width col no-outline" tabindex="0">{{scoreList.member.secondName}} {{scoreList.member.firstName}} {{scoreList.member.club.name}}</div>
+                        <div v-if="scoreList.member == null" class="self-center full-width col no-outline" tabindex="0">{{scoreList.otherPersonEntity.secondName}} {{scoreList.otherPersonEntity.firstName}} Klub: {{scoreList.otherPersonEntity.club.name}}</div>
                       </template>
                     </q-field>
-                    <q-field class="col-2" standout label="Wynik" stack-label>
+                    <q-input class="col-1" stack-label onkeypress="return (event.charCode > 47 && event.charCode < 58)" filled v-model="innerTen" label="10W"/>
+                    <q-input class="col-1" stack-label onkeypress="return (event.charCode > 47 && event.charCode < 58)" filled v-model="outerTen" label="10Z"/>
+                    <q-input color="black" @keypress.enter="scoreUUID = scoreList.uuid, onEnter(scoreUUID)" class="box col-2" stack-label onkeypress="return (event.charCode > 47 && event.charCode < 58)" filled v-model="scoreLabel" label="wprowadź wynik"/>
+                    <!--  -->
+                    <!--  -->
+                    <!--  -->
+                    <!--  -->
+                    <q-btn class="col-1" icon="send" @click="setScore(scoreList.uuid,scoreLabel,innerTen,outerTen)"/>
+                    <!--  -->
+                    <!--  -->
+                    <!--  -->
+                    <!--  -->
+                    <q-field class="box col-1" standout label="Wynik" stack-label>
                       <template v-slot:control>
                         <div class="self-center full-width col no-outline" tabindex="0">{{scoreList.score}}</div>
                       </template>
                     </q-field>
-                    <q-input onkeypress="return (event.charCode > 47 && event.charCode < 58)" filled class="col-2" v-model="scoreLabel" v-on:keyup.enter="onEnter(scoreList.uuid)" label="Wprowadź"/>
+                    <q-field class="box col-1" standout label="10W" stack-label>
+                      <template v-slot:control>
+                        <div class="self-center full-width col no-outline" tabindex="0">{{scoreList.innerTen}}</div>
+                      </template>
+                    </q-field>
+                    <q-field class="box col-1" standout label="10Z" stack-label>
+                      <template v-slot:control>
+                        <div class="self-center full-width col no-outline" tabindex="0">{{scoreList.outerTen}}</div>
+                      </template>
+                    </q-field>
                     </div>
                   </div>
                   </q-expansion-item>
@@ -158,22 +179,58 @@
       <q-card>
         <q-card-section class="row items-center">
           <q-item-section>
-            <q-item-label><b>Dodaj nową Konkurencję</b></q-item-label>
+            <q-item-label class="text-h4 text-bold">Kreator Konkurencji</q-item-label>
             <q-label>Utworzenie nowej konkurencji da możliwość wybrania jej podczas kolejnych zawodów </q-label>
-            <div> Wybierz Dyscyplinę :
-            <q-radio v-model="choice" :val="'Pistolet'" label="Pistolet"></q-radio>
-            <q-radio v-model="choice" :val="'Karabin'" label="Karabin"></q-radio>
-            <q-radio v-model="choice" :val="'Strzelba'" label="Strzelba"></q-radio>
+            <div class="row bg-grey-1">
+              <q-radio class="col" color="orange" @input="meters = false" v-model="choice" :val="'10'" label="10m"></q-radio>
+              <q-radio class="col" color="orange" @input="meters = false" v-model="choice" :val="'25'" label="25m"></q-radio>
+              <q-radio class="col" color="orange" @input="meters = false" v-model="choice" :val="'50'" label="50m"></q-radio>
+              <q-checkbox class="col" color="orange" @input="choice = ''" v-model="meters" :val="false" label="inne"></q-checkbox>
+              <q-item class="col"><q-input onkeypress="return (event.charCode > 44 && event.charCode < 58)" class="bg-grey-4 center justify" filled v-if="meters" style="width: 100px" v-model="choice" stack-label label="ilość metrów"></q-input></q-item>
             </div>
-            <div class="row"><q-label> Wpisz nazwę : </q-label>
-              <q-label> {{choice}} {{competitionName}}</q-label>
+            <div class="row bg-grey-2">
+              <q-radio class="col" color="orange" @input="choice2 = '', choice3 = '', choice4 = '', choice5 = '', choice6 = '', choice7 = '', choice8 = '', choice9 = '' " v-model="choice1" :val="'Pistolet'" label="Pistolet"></q-radio>
+              <q-radio class="col" color="orange" @input="choice2 = '', choice3 = '', choice4 = '', choice5 = '', choice6 = '', choice7 = '', choice8 = '', choice9 = '' " v-model="choice1" :val="'Karabin'" label="Karabin"></q-radio>
+              <q-radio class="col" color="orange" @input="choice2 = '', choice3 = '', choice4 = '', choice5 = '', choice6 = '', choice7 = '', choice8 = '', choice9 = '' " v-model="choice1" :val="'Strzelba'" label="Strzelba"></q-radio>
             </div>
-              <q-input v-model="competitionName" label="nazwa zawodów">
-              </q-input>
+            <div class="col bg-grey-2">
+              <q-checkbox class="row" v-if="choice1 == 'Strzelba' " :val="''" true-value="maszynowa" false-value="" color="orange" v-model="choice2" label="maszynowa"></q-checkbox>
+              <q-checkbox class="row" v-else :val="''" true-value="maszynowy" false-value="" color="orange" v-model="choice2" label="maszynowy"></q-checkbox>
+              <q-checkbox class="row" v-if="choice1 == 'Strzelba' " :val="''" true-value="dynamiczna"  false-value="" color="orange" v-model="choice3" label="dynamiczna"></q-checkbox>
+              <q-checkbox class="row" v-else :val="''" true-value="dynamiczny" false-value="" color="orange" v-model="choice3" label="dynamiczny"></q-checkbox>
+              <q-checkbox class="row" @input="choice9 = ''" v-if="choice1 == 'Strzelba' " :val="''" true-value="sportowa" false-value="" color="orange" v-model="choice5" label="sportowa"></q-checkbox>
+              <q-checkbox class="row" @input="choice9 = ''" v-else :val="''" true-value="sportowy" false-value="" color="orange" v-model="choice5" label="sportowy"></q-checkbox>
+              <q-checkbox class="row" v-if="choice1 == 'Strzelba' " :val="''" true-value="dowolna" false-value="" color="orange" v-model="choice6" label="dowolna"></q-checkbox>
+              <q-checkbox class="row" v-else :val="''" true-value="dowolny" false-value="" color="orange" v-model="choice6" label="dowolny"></q-checkbox>
+              <q-checkbox class="row" @input="choice9 = ''" v-if="choice1 == 'Strzelba' " :val="''" true-value="pneumatyczna" false-value="" color="orange" v-model="choice7" label="pneumatyczna"></q-checkbox>
+              <q-checkbox class="row" @input="choice9 = ''" v-else :val="''" true-value="pneumatyczny" false-value="" color="orange" v-model="choice7" label="pneumatyczny"></q-checkbox>
+              <q-checkbox class="row" v-if="choice1 == 'Strzelba' " :val="''" true-value="statyczna" false-value="" color="orange" v-model="choice8" label="statyczna"></q-checkbox>
+              <q-checkbox class="row" v-else :val="''" true-value="statyczny" false-value="" color="orange" v-model="choice8" label="statyczny"></q-checkbox>
+            </div>
+            <div class="row bg-grey-3">
+              <q-radio class="col" v-if="!choice7 && choice1 != 'Strzelba' && !choice5" color="orange" v-model="choice9" :val="'centralnego zapłonu'" label="centralnego zapłonu"></q-radio>
+              <q-radio class="col" v-if="!choice7 && choice1 != 'Strzelba'" color="orange" v-model="choice9" :val="'bocznego zapłonu'" label="bocznego zapłonu"></q-radio>
+            </div>
+            <div class="row bg-grey-4">
+              <q-radio class="row" color="orange" @input="quantity = false" v-model="choice10" :val="'5'" label="5 strzałów"></q-radio>
+              <q-radio class="row" color="orange" @input="quantity = false" v-model="choice10" :val="'7'" label="7 strzałów"></q-radio>
+              <q-radio class="row" color="orange" @input="quantity = false" v-model="choice10" :val="'10'" label="10 strzałów"></q-radio>
+              <q-radio class="row" color="orange" @input="quantity = false" v-model="choice10" :val="'15'" label="15 strzałów"></q-radio>
+              <q-radio class="row" color="orange" @input="quantity = false" v-model="choice10" :val="'20'" label="20 strzałów"></q-radio>
+              <q-checkbox class="row" color="orange" @input="choice10 = ''" v-model="quantity" :val="false" label="niestandardowe"></q-checkbox>
+              <q-item class="row"><q-input onkeypress="return (event.charCode > 44 && event.charCode < 58)" class="full-width bg-grey-4 center justify" filled v-if="quantity" style="width: 100px" v-model="choice10" stack-label label="ilość strzałów"></q-input></q-item>
+            </div>
+            <div class="row bg-grey-5">
+              <q-radio color="orange" v-model="choice11" :val="'OPEN'" label="OPEN"></q-radio>
+              <q-radio color="orange" v-model="choice11" :val="'Młodzieżowa'" label="Młodzieżowa"></q-radio>
+            </div>
+            <div class="row"><q-label class="text-h6">Nazwa konkurencji : </q-label>
+              <q-label class="text-h6"> {{choice + 'm'}} {{choice1}} {{choice2}} {{choice3}} {{choice4}} {{choice5}} {{choice6}} {{choice7}} {{choice8}} {{choice9}} {{choice10  + ' strzałów'}} {{choice11}}</q-label>
+            </div>
           </q-item-section>
         </q-card-section>
         <q-card-actions align="right">
-          <q-btn flat label="zamknij" color="primary" v-close-popup @click="competitionName = '', choice = null" />
+          <q-btn flat label="zamknij" color="primary" v-close-popup/>
           <q-btn label="utwórz" color="primary" v-close-popup @click="createCompetition()"/>
         </q-card-actions>
       </q-card>
@@ -590,7 +647,14 @@
     </q-dialog>
   </q-page>
 </template>
-
+<style>
+  .box:focus-within{
+    background-color: #9b9b9b;
+  }
+  .box:hover{
+    background-color: #b17f7f;
+  }
+</style>
 <script>
 const stringOptions = []
 export default {
@@ -623,6 +687,17 @@ export default {
       dataFail: false,
       arbiterFailure: false,
       choice: '',
+      choice1: '',
+      choice2: '',
+      choice3: '',
+      choice4: '',
+      choice5: '',
+      choice6: '',
+      choice7: '',
+      choice8: '',
+      choice9: '',
+      choice10: '',
+      choice11: '',
       tournaments: [],
       competitions: [],
       filters: [],
@@ -645,7 +720,11 @@ export default {
       addNewOtherPerson: false,
       otherFirstName: null,
       otherSecondName: null,
-      clubName: null
+      clubName: null,
+      innerTen: null,
+      outerTen: null,
+      meters: false,
+      quantity: false
     }
   },
   created () {
@@ -656,7 +735,7 @@ export default {
   },
   methods: {
     onEnter (scoreUUID) {
-      this.setScore(scoreUUID, this.scoreLabel)
+      this.setScore(scoreUUID, this.scoreLabel, this.innerTen, this.outerTen)
     },
     getListTournaments () {
       this.getMembersNames()
@@ -746,7 +825,7 @@ export default {
     },
     createCompetition () {
       var data = {
-        name: this.choice + ' ' + this.competitionName
+        name: this.choice1 + ' ' + this.competitionName
       }
       fetch('http://localhost:8080/competition/', {
         method: 'POST',
@@ -758,7 +837,7 @@ export default {
         if (response.status === 201) {
           this.newCompetitionAlert = true
           this.competitionName = ''
-          this.choice = null
+          this.choice1 = null
           this.showloading()
           this.getListTournaments()
           this.getcompetitions()
@@ -772,7 +851,7 @@ export default {
         name: this.tournamentName,
         date: this.tournamentDate.replace(/\//gi, '-')
       }
-      fetch('http://localhost:8080/tournament/' + this.uuid, {
+      fetch('http://localhost:8080/tournament/' + this.tournamentUUID, {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {
@@ -845,8 +924,14 @@ export default {
         this.dataFail = true
       }
     },
-    setScore (scoreUUID, score) {
-      fetch('http://localhost:8080/competition?scoreUUID=' + scoreUUID + '&score=' + score.replace(/,/gi, '.'), {
+    setScore (scoreUUID, score, innerTen, outerTen) {
+      if (this.innerTen === null) {
+        innerTen = '0'
+      }
+      if (this.outerTen === null) {
+        outerTen = '0'
+      }
+      fetch('http://localhost:8080/competition?scoreUUID=' + scoreUUID + '&score=' + parseFloat(score.replace(/,/gi, '.')) + '&innerTen=' + parseFloat(innerTen.replace(/,/gi, '.')) + '&outerTen=' + parseFloat(outerTen.replace(/,/gi, '.')), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -854,8 +939,10 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           this.scoreLabel = null
+          this.innerTen = null
+          this.outerTen = null
           this.getListTournaments()
-        } else { this.failure = true }
+        } else { this.dataFail = true }
       })
     },
     closeTournament () {
