@@ -15,7 +15,7 @@
           <div id="title">{{programName}} </div>
         </q-toolbar-title>
 
-        <div><q-item clickable v-ripple><q-avatar color="secondary" text-color="white" icon="perm_identity" /></q-item></div>
+        <div><q-avatar clickable v-ripple color="secondary" text-color="white" icon="perm_identity" /></div>
       </q-toolbar>
     </q-header>
 
@@ -29,7 +29,7 @@
       <q-list>
         <q-item-label
           header
-        ><q-item class="flex flex-center" clickable tag="a" target="_self" href="https://localhost:8081/#/" width="max">Strona Główna</q-item>
+        ><q-item class="flex flex-center" clickable tag="a" target="_self" href="https://localhost:8081/#/" width="max"><q-field class="full-width" standout><template v-slot:control><div class="fit flex flex-center text-center non-selectable q-pa-md">Strona główna</div></template></q-field></q-item>
         </q-item-label>
         <EssentialLink
           v-for="link in essentialLinks"
@@ -109,7 +109,7 @@ export default {
       }, 1000)
     },
     redirect () {
-      window.location.href = 'https://localhost:8081/#/member/dodawanie'
+      window.location.href = 'https://localhost:8081/#/member/adding'
     }
   }
 }

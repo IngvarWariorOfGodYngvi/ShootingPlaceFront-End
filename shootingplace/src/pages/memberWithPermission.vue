@@ -15,9 +15,10 @@
       <div v-for="members in members" :key="members.uuid">
         <q-card v-if="(shootingLeader&&members.memberPermissions.shootingLeaderNumber!=null)
           ||(arbiter&&members.memberPermissions.arbiterNumber)||(instructor&&members.memberPermissions.instructorNumber)" class="row">
-          <q-card-section class="col-4">
+          <q-card-section class="col">
             <q-item-section>
-              <q-field v-if="shootingLeader&&members.memberPermissions.shootingLeaderNumber!=null" class="col" label="Nazwisko i imię" standout stack-label>
+              <q-field v-if="shootingLeader&&members.memberPermissions.shootingLeaderNumber!=null
+          ||(arbiter&&members.memberPermissions.arbiterNumber)||(instructor&&members.memberPermissions.instructorNumber)" class="col" label="Nazwisko i imię" standout stack-label>
                 <template v-slot:control>
                   <div class="self-center col full-width no-outline" tabindex="0">{{members.secondName}} {{members.firstName}}</div>
                 </template>
@@ -25,7 +26,7 @@
             </q-item-section>
           </q-card-section>
           <q-card-section v-if="(shootingLeader&&members.memberPermissions.shootingLeaderNumber!=null)
-          ||(arbiter&&members.memberPermissions.arbiterNumber!=null)||(instructor&&members.memberPermissions.instructorNumber!=null)" class="col-6">
+          ||(arbiter&&members.memberPermissions.arbiterNumber!=null)||(instructor&&members.memberPermissions.instructorNumber!=null)" class="col">
             <q-item-section>
               <q-field v-if="shootingLeader&&members.memberPermissions.shootingLeaderNumber!=null" class="col" label="Numer Uprawnień Prowadzącego" standout stack-label>
                 <template v-slot:control>
@@ -56,12 +57,6 @@
                   </q-field>
                 </template>
               </q-field>
-            </q-item-section>
-          </q-card-section>
-          <q-card-section v-if="(shootingLeader&&members.memberPermissions.shootingLeaderNumber!=null)
-          ||(arbiter&&members.memberPermissions.arbiterNumber)||(instructor&&members.memberPermissions.instructorNumber)" class="col-2">
-            <q-item-section>
-                <q-item><q-btn label="Pobierz kartę Członkowską" @click="uuid=members.uuid,name=members.firstName,name2=members.secondName,personalCardDownloadConfirm=true"/></q-item>
             </q-item-section>
           </q-card-section>
           </q-card>

@@ -8,7 +8,7 @@
       <q-card class="row">
         <div class="col-5">
           <q-item>
-            <q-select filled v-model="memberName" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filter" @input="getMember(filter)" class="full-width" style="padding-bottom: 32px" label="Nazwisko - Imię - nr Leg">
+            <q-select filled v-model="memberName" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filter" @input="getMember(filter)" class="full-width" label="Nazwisko - Imię - nr Leg">
                   <template v-slot:no-option>
                     <q-item>
                       <q-item-section class="text-grey">
@@ -34,14 +34,14 @@
       <div v-if="member!=null">
             <q-card bordered class="row">
           <q-card-section avatar class="col-1">
-            <div class="row">
+            <div>
               <q-tooltip class="row" anchor="top middle" self="bottom middle" :offset="[12, 12]">
                 <q-badge v-if="(member.address.postOfficeCity===null||member.address.postOfficeCity==='')
                 ||(member.address.street==null||member.address.street=='')" transparent align="middle" color="orange" text-color="black">Brak Adresu</q-badge>
                 <q-badge v-if="member.weaponPermission.exist&&!member.license.valid" transparent align="middle" color="red" text-color="black">Jest Broń i Brak Licencji</q-badge>
                 <q-badge v-if="(member.email==null||member.email=='')" transparent align="middle" color="yellow" text-color="black">Brak E-mail</q-badge>
                 <q-badge v-if="(member.license.number!=null)&&(member.license.valid == false)" transparent align="middle" color="yellow" text-color="black">Brak aktualnej licencji</q-badge>
-                <q-badge v-else>Brak Uwag</q-badge>
+                <!-- <q-badge v-else>Brak Uwag</q-badge> -->
               </q-tooltip>
             <q-avatar v-if="member.weaponPermission.exist&&!member.license.valid" icon="warning" color="red" text-color="white"/>
             <q-avatar v-if="member.license.number!=null&&!member.license.valid" icon="warning" color="yellow" text-color="white"/>
@@ -62,7 +62,7 @@
           <q-item-label caption lines="2">Data Zapisu {{member.joinDate}}</q-item-label>
           </q-card-section>
           <q-card-section class="col-4">
-            <div v-if="member.erasedReason!=null">
+            <div v-if="member.erased">
           <q-item-label>Podstawa skreślenia z listy Klubowiczów</q-item-label>
           <q-item-label caption lines="2">{{member.erasedReason}}</q-item-label>
             </div>
@@ -327,7 +327,7 @@
                   </div>
                   <div v-if="member.active" class="row">
                   <q-input @keypress.enter="uuid=member.uuid, addAmmoConfirm=true" v-temp ref="search" filled class="full-width col" v-model="quantity" placeholder="Tylko cyfry" onkeypress="return (event.charCode > 44 && event.charCode < 58)" label="Ilość Amunicji"></q-input>
-                  <q-btn class="full-width col" color="primary" label="wydaj amunicję" @click="uuid=member.uuid, addAmmoConfirm=true"></q-btn>
+                  <q-btn class="full-width col" color="primary" label="wydaj amunicję" @click="uuid=member.legitimationNumber, addAmmoConfirm=true"></q-btn>
                   </div>
                 </div>
 </q-expansion-item>
@@ -1360,6 +1360,9 @@ export default {
           this.contributionRemoveRecordAlert = true
           this.showloading()
           this.getMember(uuid)
+          if (this.member.history.contributionList.length < 1) {
+            this.reload()
+          }
         } else { this.failure = true }
       })
     },
@@ -1460,7 +1463,7 @@ export default {
         })
     },
     addMemberAndAmmoToCaliber () {
-      fetch('http://localhost:8080/ammoEvidence/ammo?caliberUUID=' + this.caliberUUID + '&memberUUID=' + this.uuid + '&counter=' + this.quantity, {
+      fetch('http://localhost:8080/ammoEvidence/ammo?caliberUUID=' + this.caliberUUID + '&legitimationNumber=' + this.uuid + '&counter=' + this.quantity + '&otherID=0', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
