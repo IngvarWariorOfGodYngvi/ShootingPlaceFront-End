@@ -94,11 +94,6 @@
 <q-dialog v-model="addAmmo">
   <div class="bg-white">
     <div class="row">
-      <q-select class="col" filled v-model="otherName" use-input hide-selected fill-input input-debounce="0" :options="options" @input="memberName='0 0'" @filter="filterOther" label="Dodaj osobę spoza klubu">
-        <template v-slot:no-option>
-          <q-btn class="full-width" color="primary" label="dodaj nową osobę" @click="addNewOtherPerson = true"/>
-        </template>
-      </q-select>
       <q-select class="col" filled v-model="memberName" use-input hide-selected fill-input input-debounce="0" :options="options" @input="otherName='0 0'" @filter="filterFn" label="Dodaj osobę z klubu">
         <template v-slot:no-option>
           <q-item>
@@ -106,6 +101,11 @@
               Brak wyników
             </q-item-section>
           </q-item>
+        </template>
+      </q-select>
+      <q-select class="col" filled v-model="otherName" use-input hide-selected fill-input input-debounce="0" :options="options" @input="memberName='0 0'" @filter="filterOther" label="Dodaj osobę spoza klubu">
+        <template v-slot:no-option>
+          <q-btn class="full-width" color="primary" label="dodaj nową osobę" @click="addNewOtherPerson = true"/>
         </template>
       </q-select>
     </div>

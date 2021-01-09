@@ -152,10 +152,10 @@
                       </div>
                   <div class="text-body2" v-for="(scoreList,uuid) in competitionsList.scoreList" :key="uuid">
                     <div class="row">
-                      <q-btn v-if="scoreList.ammunition == false && scoreList.member!=null" class="col-1" style="text-8" icon="book" @click="scoreUUID = scoreList.uuid,memberLeg = scoreList.member.legitimationNumber,otherID = 0, getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">wydaj Amunicję</q-tooltip></q-btn>
-                      <q-btn v-if="scoreList.ammunition == true  && scoreList.member!=null" class="col-1" style="text-8" icon="book" color="green" @click="scoreUUID = scoreList.uuid,memberLeg = scoreList.member.legitimationNumber, otherID = 0,getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">wydaj Amunicję</q-tooltip></q-btn>
-                      <q-btn v-if="scoreList.ammunition == false && scoreList.otherPersonEntity!=null" class="col-1" style="text-8" icon="book" @click="scoreUUID = scoreList.uuid,otherID = scoreList.otherPersonEntity.id,memberLeg =0, getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">wydaj Amunicję</q-tooltip></q-btn>
-                      <q-btn v-if="scoreList.ammunition == true && scoreList.otherPersonEntity!=null" class="col-1" style="text-8" icon="book" color="green" @click="scoreUUID = scoreList.uuid,otherID = scoreList.otherPersonEntity.id,memberLeg=0, getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">wydaj Amunicję</q-tooltip></q-btn>
+                      <q-btn v-if="scoreList.ammunition == false && scoreList.member!=null" class="col-1" style="text-8" icon="book" @click="scoreUUID = scoreList.uuid,memberLeg = scoreList.member.legitimationNumber,otherID = 0, getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">wydaj Amunicję {{scoreList.member.secondName}}</q-tooltip></q-btn>
+                      <q-btn v-if="scoreList.ammunition == true  && scoreList.member!=null" class="col-1" style="text-8" icon="book" color="green" @click="scoreUUID = scoreList.uuid,memberLeg = scoreList.member.legitimationNumber, otherID = 0,getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">wydaj Amunicję {{scoreList.member.secondName}}</q-tooltip></q-btn>
+                      <q-btn v-if="scoreList.ammunition == false && scoreList.otherPersonEntity!=null" class="col-1" style="text-8" icon="book" @click="scoreUUID = scoreList.uuid,otherID = scoreList.otherPersonEntity.id,memberLeg =0, getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">wydaj Amunicję {{scoreList.otherPersonEntity.secondName}}</q-tooltip></q-btn>
+                      <q-btn v-if="scoreList.ammunition == true && scoreList.otherPersonEntity!=null" class="col-1" style="text-8" icon="book" color="green" @click="scoreUUID = scoreList.uuid,otherID = scoreList.otherPersonEntity.id,memberLeg=0, getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">wydaj Amunicję {{scoreList.otherPersonEntity.secondName}}</q-tooltip></q-btn>
                     <q-field class="col-3" standout stack-label>
                       <template v-slot:control>
                         <div v-if="scoreList.otherPersonEntity == null" class="self-center full-width col no-outline" tabindex="0">{{scoreList.member.secondName}} {{scoreList.member.firstName}} {{scoreList.member.club.name}}</div>
@@ -164,8 +164,11 @@
                     </q-field>
                     <q-input class="col-1" @keypress.enter="scoreUUID = scoreList.uuid, onEnter(scoreUUID)" stack-label onkeypress="return (event.charCode > 47 && event.charCode < 58)" filled v-model="outerTen" label="10"/>
                     <q-input class="col-1" @keypress.enter="scoreUUID = scoreList.uuid, onEnter(scoreUUID)" stack-label onkeypress="return (event.charCode > 47 && event.charCode < 58)" filled v-model="innerTen" label="10W"/>
-                    <q-input color="black" @keypress.enter="scoreUUID = scoreList.uuid, onEnter(scoreUUID)" class="box col-2" stack-label onkeypress="return (event.charCode > 47 && event.charCode < 58) || event.charCode 44 || event.charCode 46" filled v-model="scoreLabel" label="wprowadź wynik"/>
-                    <q-btn class="col-1" icon="send" @click="setScore(scoreList.uuid,scoreLabel,innerTen,outerTen)"><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Wprowadź wynik</q-tooltip></q-btn>
+                    <q-input class="box col-2" @keypress.enter="scoreUUID = scoreList.uuid, onEnter(scoreUUID)" color="black" stack-label onkeypress="return (event.charCode > 47 && event.charCode < 58) || event.charCode 44 || event.charCode 46" filled v-model="scoreLabel" label="wprowadź wynik"/>
+                    <q-btn class="col-1" icon="send" @click="setScore(scoreList.uuid,scoreLabel,innerTen,outerTen)">
+                      <q-tooltip v-if="scoreList.member != null" anchor="top middle" self="bottom middle" :offset="[12, 12]">Wprowadź wynik {{scoreList.member.secondName}}</q-tooltip>
+                      <q-tooltip v-if="scoreList.otherPersonEntity != null" anchor="top middle" self="bottom middle" :offset="[12, 12]">Wprowadź wynik {{scoreList.otherPersonEntity.secondName}}</q-tooltip>
+                      </q-btn>
                     <q-field class="box col-1" standout label="Wynik" stack-label>
                       <template v-slot:control>
                         <div class="self-center full-width col no-outline" tabindex="0">{{scoreList.score}}</div>
@@ -381,12 +384,12 @@
     </div>
             <div class="col">
             <div>
-            <q-item v-if="otherArbiter!=null && otherArbiter!='0 0' "><q-btn  label="Dodaj" color="primary" @click="addOtherArbiterToTournament()"/></q-item>
-            <q-item v-if="otherArbitersList!=null && otherArbitersList!='0 0' "><q-btn  label="Dodaj spoza klubu" color="primary" @click="addOtherArbiterToTournament()"/></q-item>
+            <q-item v-if="otherArbiter!=null"><q-btn class="full-width" label="Dodaj sędziego stanowiskowego" color="primary" @click="addOtherArbiterToTournament()"/></q-item>
+            <q-item v-if="otherArbitersList!=null && otherArbiter!='0 0' "><q-btn class="full-width" label="Dodaj sędziego stanowiskowego spoza klubu" color="primary" @click="addOtherArbiterToTournament()"/></q-item>
             </div>
             <div>
-            <q-item v-if="otherArbiter!=null && otherArbiter!='0 0' "><q-btn label="usuń sędziego pomocniczego" color="primary" @click="removeArbiter()"/></q-item>
-            <q-item v-if="otherArbitersList!=null && otherArbitersList!='0 0'"><q-btn label="usuń sędziego pomocniczego spoza klubu" color="primary" @click="removeArbiter()"/></q-item>
+            <q-item v-if="otherArbiter!=null && otherArbiter!='0 0' "><q-btn class="full-width" label="usuń sędziego stanowiskowego" color="primary" @click="removeArbiter()"/></q-item>
+            <q-item v-if="otherArbitersList!=null && otherArbitersList!='0 0'"><q-btn class="full-width" label="usuń sędziego stanowiskowego spoza klubu" color="primary" @click="removeArbiter()"/></q-item>
             </div>
             </div>
             </div>
@@ -504,15 +507,15 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model="addNewTournament" persistent>
-      <q-card>
+      <q-card style="width: 400px">
         <q-card-section class="col items-center">
           <q-item><q-item-label>Nazwa zawodów</q-item-label></q-item>
           <q-item
-            ><q-input v-model="tournamentName" filled label="Nazwa"
+            ><q-input class="full-width" v-model="tournamentName" filled label="Nazwa"
           /></q-item>
           <q-item><q-item-label>Data zawodów</q-item-label></q-item>
           <q-item
-            ><q-input filled v-model="tournamentDate" mask="####/##/##" label="Wybierz datę" hint="użyj kalendarza">
+            ><q-input class="full-width" filled v-model="tournamentDate" mask="####/##/##" label="Wybierz datę" hint="użyj kalendarza">
               <template v-slot:append>
                 <q-icon name="event" class="cursor-pointer">
                   <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -798,10 +801,10 @@
 </template>
 <style>
   .box:focus-within{
-    background-color: #9b9b9b;
+    background-color:orange;
   }
   .box:hover{
-    background-color: #b17f7f;
+    background-color: orange;
   }
   .siz{
     font-size: 10px;

@@ -5,8 +5,8 @@
           <div class="self-center col full-width no-outline text-h3 text-bold" tabindex="0"> Wybierz Klubowicza</div>
         </q-item>
       </div>
-      <q-card class="row">
-        <div class="col-5">
+      <q-card class=" row">
+        <div class=" bg-green-3 col-5">
           <q-item>
             <q-select filled v-model="memberName" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filter" @input="getMember(filter)" class="full-width" label="Nazwisko - Imię - nr Leg">
                   <template v-slot:no-option>
@@ -19,8 +19,8 @@
                 </q-select>
           </q-item>
         </div>
-        <div class="col-7">
-          <q-card class="q-pa-md row">
+        <div class=" col-7">
+          <q-card class="bg-grey-3 q-pa-md row">
             <q-radio @input="getMembersNames ()" v-model="adult" :val="true" label="Grupa Powszechna"></q-radio>
             <q-radio @input="getMembersNames ()" v-model="adult" :val="false" label="Grupa Młodzieżowa"></q-radio>
             <q-radio @input="erase=false,getMembersNames ()" color="green" v-model="active" :val="true" label="Aktywni"></q-radio>
@@ -31,6 +31,7 @@
           </q-card>
         </div>
       </q-card>
+      <q-item></q-item>
       <div v-if="member!=null">
             <q-card bordered class="row">
           <q-card-section avatar class="col-1">
@@ -77,7 +78,7 @@
                     </template>
                   </q-field>
                   <div v-if="!member.erased">
-                  <div><q-btn class="full-width" color="primary" label="Przedłuż składkę" @click="uuid = member.uuid,name = member.firstName,name2 = member.secondName,contribution=true"/></div>
+                  <div><q-btn class="full-width" color="green" label="Przedłuż składkę" @click="uuid = member.uuid,name = member.firstName,name2 = member.secondName,contribution=true"/></div>
                   <div><q-btn class="full-width text-black" color="white" label="Dodaj rekord" @click="uuid = member.uuid,name  =member.firstName,name2 = member.secondName,contributionRecordConfirm=true"/></div>
                   </div>
                 <q-dialog v-model="contributionRecordConfirm">
@@ -598,7 +599,8 @@
       <q-card>
         <q-card-section class="col items-center">
         <q-item-label>Zmień dane podstawowe</q-item-label>
-        <q-item><q-input v-model="memberIdcard" hint="XXX000000" label="Numer Dowodu" placeholder="XXX000000" mask="AAA######"/></q-item>
+        <q-item><q-input v-model="memberIdcard" hint="XXX000000" label="Numer Dowodu" placeholder="XXX000000" mask="AAA ######"/></q-item>
+        <q-item><q-input v-model="memberFirstName" label="Imię" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 45" /></q-item>
         <q-item><q-input v-model="memberSecondName" label="Nazwisko" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 45" /></q-item>
         </q-card-section>
 
@@ -617,7 +619,7 @@
 
         <q-card-actions align="right">
           <q-btn flat label="anuluj" color="primary" v-close-popup />
-          <q-btn flat label="zmień" color="primary" v-close-popup @click="updateIDCardAndName(uuid,memberIdcard,memberSecondName)" />
+          <q-btn flat label="zmień" color="primary" v-close-popup @click="updateIDCardAndName(uuid,memberIdcard,memberFirstName,memberSecondName)" />
         </q-card-actions>
       </q-card>
 </q-dialog>
@@ -1267,6 +1269,7 @@ export default {
       memberPhoneNumber: '',
       memberIdcard: '',
       memberSecondName: '',
+      memberFirstName: '',
       memberPostOfficeCity: '',
       memberZipCode: '',
       memberStreet: '',
@@ -1398,9 +1401,10 @@ export default {
         } else { this.failure = true }
       })
     },
-    updateIDCardAndName (uuid, idcard, secondName) {
+    updateIDCardAndName (uuid, idcard, firstName, secondName) {
       var data = {
         idcard: idcard,
+        firstName: firstName,
         secondName: secondName
       }
       fetch('http://localhost:8080/member/' + uuid, {
@@ -1414,6 +1418,7 @@ export default {
           this.dataAlert = true
           this.memberIdcard = ''
           this.memberSecondName = ''
+          this.memberFirstName = ''
           this.showloading()
           this.getMember(uuid)
         } else { this.failure = true }
