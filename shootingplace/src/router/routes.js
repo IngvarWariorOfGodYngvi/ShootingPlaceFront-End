@@ -10,7 +10,8 @@ const routes = [
       { path: '/competition', component: () => import('pages/tournamentList.vue') },
       { path: '/memberwithpermission', component: () => import('pages/memberWithPermission.vue') },
       { path: '/member', component: () => import('pages/member.vue') },
-      { path: '/patentWilling', component: () => import('pages/patentWilling.vue') }
+      { path: '/patentWilling', component: () => import('pages/patentWilling.vue') },
+      { path: '/otherFunctions', component: () => import('pages/otherFunctions.vue') }
     ]
   },
 

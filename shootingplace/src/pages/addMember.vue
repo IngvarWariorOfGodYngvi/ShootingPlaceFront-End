@@ -18,11 +18,11 @@
       <q-card-section class="col-6 bg-grey-2">
       <div class="full-width">
         <q-form>
-      <q-item><q-input class="full-width" color="red" v-model="memberFirstName" label="*Imię" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled/></q-item>
-      <q-item><q-input class="full-width" color="red" v-model="memberSecondName" label="*Nazwisko" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 45" filled/></q-item>
-      <q-item><q-input class="full-width" color="red" v-model="memberIDCard" label="*Numer Dowodu" filled placeholder="XXX 000000" mask="AAA ######"/></q-item>
-      <q-item><q-input class="full-width" color="red" v-model="memberPesel" placeholder="tylko cyfry" label="*Pesel" mask="###########" filled/></q-item>
-      <q-item><q-input class="full-width" color="red" type="tel" v-model="memberPhone" placeholder="tylko cyfry" label="*Numer telefonu" mask="### ### ###" filled/></q-item>
+      <q-item><q-input class="full-width" color="red" v-model="memberFirstName" label="Imię*" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled/></q-item>
+      <q-item><q-input class="full-width" color="red" v-model="memberSecondName" label="Nazwisko*" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 45" filled/></q-item>
+      <q-item><q-input class="full-width" color="red" v-model="memberIDCard" label="Numer Dowodu*" filled placeholder="XXX 000000" mask="AAA ######"/></q-item>
+      <q-item><q-input class="full-width" color="red" v-model="memberPesel" placeholder="tylko cyfry" label="Pesel*" mask="###########" filled/></q-item>
+      <q-item><q-input class="full-width" color="red" type="tel" v-model="memberPhone" placeholder="tylko cyfry" label="Numer telefonu*" mask="### ### ###" filled/></q-item>
       <q-item><q-input class="full-width" filled color="green" type="email" v-model="memberEmail" label="email" /></q-item>
       <q-item><q-input class="full-width" filled color="green" v-model="memberLegitimation" label="Numer Legitymacji" /></q-item>
       <q-item><q-input class="full-width" filled v-model="memberJoinDate" mask="####/##/##" :rules="['date']" label="Wybierz datę" hint="użyj kalendarza">
@@ -386,7 +386,7 @@
         <div class="col">
           <q-item><q-item-label>Jeśli posiada Licencję Sędziego - uzupełnij dane</q-item-label></q-item>
           <q-item><q-input class="full-width" v-model="permissionsArbiterNumber" filled label="Numer uprawnień" /></q-item>
-          <q-item><q-input class="full-width" filled v-model="permissionsArbiterPermissionValidThru" mask="####/12/31" :rules="['date']" label="Wybierz datę" hint="użyj kalendarza">
+          <q-item><q-input class="full-width" filled v-model="permissionsArbiterPermissionValidThru" mask="####/12/31" :rules="['date']" label="Ważna do" hint="użyj kalendarza">
                               <template v-slot:append>
                                 <q-icon name="event" class="cursor-pointer">
                                   <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -412,7 +412,7 @@
 
       <template v-slot:navigation  >
         <q-stepper-navigation class="flex flex">
-          <q-item v-if="(step<6&&(uuid!=null&&uuid!='' && !uuid.includes('Uwaga!')))"><q-btn @click="$refs.stepper.next()" color="primary" :label="step === 6 ? 'Zakończono' : 'Przejdź Dalej'" /></q-item>
+          <q-item v-if="(step<6&&(uuid!=null&&uuid!='' && !uuid.includes('Uwaga!')))"><q-btn @click="$refs.stepper.next()" color="primary" :label="step === 5 ? 'Zakończ' : 'Przejdź Dalej'" /></q-item>
           <q-item><q-btn v-if="step > 1" flat color="primary" @click="$refs.stepper.previous()" label="Wróć" /></q-item>
           <q-item><q-btn v-if="step > 1" @click="redirect()" color="primary" label="Zakończ" /></q-item>
           <q-item><q-btn v-if="uuid!=null&&uuid!='' && !uuid.includes('Uwaga!')" color="secondary" @click="personalCardDownloadConfirm=true" label="Drukuj kartę" /></q-item>
@@ -690,7 +690,7 @@ export default {
         adult: memberAdult,
         joinDate: this.memberJoinDate.replace(/\//gi, '-')
       }
-      fetch('http://localhost:8080/member/', {
+      fetch('http://localhost:8080/shootingplace-1.0/member/', {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
@@ -726,7 +726,7 @@ export default {
         streetNumber: memberStreetNumber,
         flatNumber: memberFlatNumber
       }
-      fetch('http://localhost:8080/address/' + uuid, {
+      fetch('http://localhost:8080/shootingplace-1.0/address/' + uuid, {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {
@@ -746,7 +746,7 @@ export default {
         shotgunPermission: patentShotgunPermission,
         dateOfPosting: patentDate.replace(this.dateVar, '-')
       }
-      fetch('http://localhost:8080/patent/' + uuid, {
+      fetch('http://localhost:8080/shootingplace-1.0/patent/' + uuid, {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {
@@ -766,7 +766,7 @@ export default {
         shotgunPermission: licenseShotgunPermission,
         validThru: licenseDate.replace(this.dateVar, '-')
       }
-      fetch('http://localhost:8080/license/' + uuid, {
+      fetch('http://localhost:8080/shootingplace-1.0/license/' + uuid, {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {
@@ -783,7 +783,7 @@ export default {
         number: weaponPermissionNumber,
         exist: isExist
       }
-      fetch('http://localhost:8080/member/weapon/' + uuid, {
+      fetch('http://localhost:8080/shootingplace-1.0/member/weapon/' + uuid, {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {
@@ -802,7 +802,7 @@ export default {
         arbiterNumber: this.permissionsArbiterNumber,
         arbiterPermissionValidThru: this.permissionsArbiterPermissionValidThru.replace(/\//gi, '-')
       }
-      fetch('http://localhost:8080/permissions/' + uuid + '?ordinal=' + this.ordinal, {
+      fetch('http://localhost:8080/shootingplace-1.0/permissions/' + uuid + '?ordinal=' + this.ordinal, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -822,7 +822,7 @@ export default {
     },
     getContributionPDF () {
       axios({
-        url: 'http://localhost:8080/files/downloadContribution/' + this.uuid,
+        url: 'http://localhost:8080/shootingplace-1.0/files/downloadContribution/' + this.uuid,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
@@ -836,7 +836,7 @@ export default {
     },
     getPersonalCardPDF () {
       axios({
-        url: 'http://localhost:8080/files/downloadPersonalCard/' + this.uuid,
+        url: 'http://localhost:8080/shootingplace-1.0/files/downloadPersonalCard/' + this.uuid,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {

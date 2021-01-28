@@ -27,7 +27,7 @@
             <div v-for="(ammoInEvidenceEntityList,uuid) in ammoList.ammoInEvidenceEntityList" :key="uuid">
               <q-item>
                 <q-item-label class="text-h6">
-                  kaliber{{ammoInEvidenceEntityList.caliberName}}
+                  kaliber {{ammoInEvidenceEntityList.caliberName}}
                 </q-item-label>
               </q-item>
                 <div class="col">
@@ -120,9 +120,12 @@
         </q-radio>
     </div>
     </div>
-    <div class="row">
+    <div class="col">
     <q-input filled class="full-width col" v-model="ammoQuantity" placeholder="Tylko cyfry" onkeypress="return (event.charCode > 44 && event.charCode < 58)" label="Ilość Amunicji"></q-input>
-    <q-btn class="full-width col" color="primary" label="wydaj amunicję" @click="addMemberAndAmmoToCaliber()"></q-btn>
+    <q-card-actions class="row" align="right">
+    <q-item><q-btn class="full-width col" color="primary" label="zamknij" v-close-popup></q-btn></q-item>
+    <q-item><q-btn class="full-width col" color="primary" label="wydaj amunicję" @click="addMemberAndAmmoToCaliber()"></q-btn></q-item>
+    </q-card-actions>
     </div>
   </div>
 </q-dialog>
@@ -133,11 +136,28 @@
           <q-item><q-input class="full-width" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled v-model="otherFirstName" label="Imię"/></q-item>
           <q-item><q-input class="full-width" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled v-model="otherSecondName" label="Nazwisko"/></q-item>
           <q-item><q-input class="full-width" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled v-model="clubName" label="Nazwa Klubu"/></q-item>
-          <q-item><q-btn label="Zapisz do bazy" v-close-popup @click="addOtherPerson ()" color="primary"/></q-item>
+          <q-item><q-input class="full-width" mask="### ### ###" filled v-model="otherPhoneNumber" label="Numer telefonu"/></q-item>
+          <q-item><q-input class="full-width" filled v-model="otherEmail" label="e-mail"/></q-item>
+          <q-item><q-btn label="Zapisz do bazy" v-close-popup @click="addOtherPerson()" color="primary"/></q-item>
         </q-card-section>
 
         <q-card-actions align="right">
           <q-btn flat label="Zamknij" color="primary" v-close-popup @click="otherFirstName=null,otherSecondName=null,clubName=null"/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+        <q-dialog v-model="addOtherAlert">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Zapisano do bazy</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn
+            flat
+            label="OK"
+            color="primary"
+            v-close-popup/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -173,7 +193,13 @@ export default {
       ammoQuantity: null,
       otherFirstName: null,
       otherSecondName: null,
+      otherPhoneNumber: null,
+      otherEmail: null,
       clubName: null,
+      addOtherAlert: false,
+      permissionsOtherArbiterNumber: '',
+      ordinal: '',
+      permissionsOtherArbiterPermissionValidThru: '',
       options: stringOptions
     }
   },
@@ -193,7 +219,7 @@ export default {
       }, 1000)
     },
     getAmmoData () {
-      fetch('http://localhost:8080/ammoEvidence/evidence?state=true', {
+      fetch('http://localhost:8080/shootingplace-1.0/ammoEvidence/evidence?state=true', {
         method: 'GET'
       }).then(response => {
         response.json().then(ammoList => {
@@ -202,7 +228,7 @@ export default {
       })
     },
     getCLosedEvidence () {
-      fetch('http://localhost:8080/ammoEvidence/closedEvidences', {
+      fetch('http://localhost:8080/shootingplace-1.0/ammoEvidence/closedEvidences', {
         method: 'GET'
       }).then(response => {
         response.json().then(ammoListClose => {
@@ -211,7 +237,7 @@ export default {
       })
     },
     closeEvidence () {
-      fetch('http://localhost:8080/ammoEvidence/ammo?evidenceUUID=' + this.uuid, {
+      fetch('http://localhost:8080/shootingplace-1.0/ammoEvidence/ammo?evidenceUUID=' + this.uuid, {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {
@@ -221,7 +247,7 @@ export default {
       })
     },
     getMembersNames () {
-      fetch('http://localhost:8080/member/getAllActiveMembersNames', {
+      fetch('http://localhost:8080/shootingplace-1.0/member/getAllActiveMembersNames', {
         method: 'GET'
       }).then(response => response.json())
         .then(filters => {
@@ -230,7 +256,7 @@ export default {
     },
     getAmmoListPDF () {
       axios({
-        url: 'http://localhost:8080/files/downloadAmmunitionList/' + this.uuid,
+        url: 'http://localhost:8080/shootingplace-1.0/files/downloadAmmunitionList/' + this.uuid,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
@@ -250,7 +276,7 @@ export default {
       const otherNameWord = this.otherName.split(' ')
       var idNumber = otherNameWord.length
       const otherNameID = otherNameWord[idNumber - 1]
-      fetch('http://localhost:8080/ammoEvidence/ammo?caliberUUID=' + this.caliberUUID + '&legitimationNumber=' + memberNameUUID + '&counter=' + this.ammoQuantity + '&otherID=' + otherNameID, {
+      fetch('http://localhost:8080/shootingplace-1.0/ammoEvidence/ammo?caliberUUID=' + this.caliberUUID + '&legitimationNumber=' + memberNameUUID + '&counter=' + this.ammoQuantity + '&otherID=' + otherNameID, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -265,7 +291,7 @@ export default {
       )
     },
     getListCalibers () {
-      fetch('http://localhost:8080/ammoEvidence/calibers', {
+      fetch('http://localhost:8080/shootingplace-1.0/ammoEvidence/calibers', {
         method: 'GET'
       }).then(response => response.json())
         .then(calibers => {
@@ -273,7 +299,7 @@ export default {
         })
     },
     getOther () {
-      fetch('http://localhost:8080/other/', {
+      fetch('http://localhost:8080/shootingplace-1.0/other/', {
         method: 'GET'
       }).then(response => response.json())
         .then(filtersOther => {
@@ -283,9 +309,11 @@ export default {
     addOtherPerson () {
       var person = {
         firstName: this.otherFirstName,
-        secondName: this.otherSecondName
+        secondName: this.otherSecondName,
+        phoneNumber: this.otherPhoneNumber,
+        email: this.otherEmail
       }
-      fetch('http://localhost:8080/other?club=' + this.clubName, {
+      fetch('http://localhost:8080/shootingplace-1.0/other?club=' + this.clubName + '&arbiterClass=' + this.ordinal + '&arbiterNumber=' + this.permissionsOtherArbiterNumber + '&arbiterPermissionValidThru=' + this.permissionsOtherArbiterPermissionValidThru.replace(/\//gi, '-'), {
         method: 'POST',
         body: JSON.stringify(person),
         headers: {
@@ -293,8 +321,9 @@ export default {
         }
       }).then(response => {
         if (response.status === 201) {
+          this.addOtherAlert = true
           this.getOther()
-        } else { this.failure = true }
+        } else { this.fail = true }
       })
     },
     filterFn (val, update) {

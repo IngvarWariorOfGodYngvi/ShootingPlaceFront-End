@@ -58,8 +58,8 @@
         </div>
         <div class="col-3">
               <q-item ><q-btn class="full-width" color="primary" label="Aktualizuj" @click="tournamentUUID = tournaments.uuid, (tournamentUpdateConfirm = true) "/></q-item>
-              <q-item v-if="tournaments.mainArbiter==null || tournaments.otherMainArbiter==null" ><q-btn class="full-width" color="secondary" label="Zamknij zawody" @click="tournamentUUID = tournaments.uuid, (tournamentCloseConfirm = true) "/></q-item>
-              <q-item v-else><q-btn class="full-width text-black" color="grey-10" label="Zamknij zawody"><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Nie można zamknąć zawodów: brak ustawionych sędziów</q-tooltip></q-btn></q-item>
+              <q-item v-if="tournaments.mainArbiter!=null && tournaments.otherMainArbiter!=null" ><q-btn class="full-width" color="secondary" label="Zamknij zawody" @click="tournamentUUID = tournaments.uuid, (tournamentCloseConfirm = true) "/></q-item>
+              <q-item v-else><q-btn :ripple="false" class="full-width text-black" color="grey-9" label="Zamknij zawody"><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Nie można zamknąć zawodów: brak ustawionych sędziów</q-tooltip></q-btn></q-item>
         </div>
             <div class="full-width row bg-grey-2">
               <div class="col">
@@ -384,8 +384,8 @@
     </div>
             <div class="col">
             <div>
-            <q-item v-if="otherArbiter!=null"><q-btn class="full-width" label="Dodaj sędziego stanowiskowego" color="primary" @click="addOtherArbiterToTournament()"/></q-item>
-            <q-item v-if="otherArbitersList!=null && otherArbiter!='0 0' "><q-btn class="full-width" label="Dodaj sędziego stanowiskowego spoza klubu" color="primary" @click="addOtherArbiterToTournament()"/></q-item>
+            <q-item v-if="otherArbiter!=null && otherArbiter!='0 0'"><q-btn class="full-width" label="Dodaj sędziego stanowiskowego" color="primary" @click="addOtherArbiterToTournament()"/></q-item>
+            <q-item v-if="otherArbitersList!=null && otherArbitersList!='0 0' "><q-btn class="full-width" label="Dodaj sędziego stanowiskowego spoza klubu" color="primary" @click="addOtherArbiterToTournament()"/></q-item>
             </div>
             <div>
             <q-item v-if="otherArbiter!=null && otherArbiter!='0 0' "><q-btn class="full-width" label="usuń sędziego stanowiskowego" color="primary" @click="removeArbiter()"/></q-item>
@@ -578,6 +578,21 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <q-dialog v-model="addOtherAlert">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Zapisano do bazy</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn
+            flat
+            label="OK"
+            color="primary"
+            v-close-popup/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
     <q-dialog v-model="removeMemberAlert">
       <q-card>
         <q-card-section>
@@ -710,6 +725,8 @@
           <q-item><q-input class="full-width" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled v-model="otherFirstName" label="Imię *"/></q-item>
           <q-item><q-input class="full-width" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled v-model="otherSecondName" label="Nazwisko *"/></q-item>
           <q-item><q-input class="full-width" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled v-model="clubName" label="Nazwa Klubu *"/></q-item>
+          <q-item><q-input class="full-width" mask="### ### ###" filled v-model="otherPhoneNumber" label="Numer telefonu"/></q-item>
+          <q-item><q-input class="full-width" filled v-model="otherEmail" label="e-mail"/></q-item>
           <q-item class="full-width">
             <q-field class="full-width" standout stack-label>
               <template v-slot:control>
@@ -725,11 +742,11 @@
           <q-item><q-radio v-model="ordinal" :val="5" label="Klasa Międzynarodowa" color="secondary" /></q-item>
           </div>
           <q-input outlined filled class="full-width" v-model="permissionsOtherArbiterNumber" label="Numer uprawnień" />
-          <q-input class="col-5" outlined filled v-model="permissionsArbiterPermissionValidThru" mask="####/12/31" label="Ważne do:">
+          <q-input class="col-5" outlined filled v-model="permissionsOtherArbiterPermissionValidThru" mask="####/12/31" label="Ważne do:">
             <template v-slot:append>
               <q-icon name="event" class="cursor-pointer">
                 <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                  <q-date v-model="permissionsArbiterPermissionValidThru">
+                  <q-date v-model="permissionsOtherArbiterPermissionValidThru">
                     <div class="row items-center justify-end">
                       <q-btn v-close-popup label="Zamknij" color="primary" flat />
                     </div>
@@ -831,6 +848,7 @@ export default {
       addMemberConfirm: false,
       addNewTournament: false,
       addMemberAlert: false,
+      addOtherAlert: false,
       removeMemberAlert: false,
       removeArbiterAlert: false,
       addArbiterAlert: false,
@@ -904,7 +922,9 @@ export default {
       permissionsOtherArbiterNumber: '',
       permissionsOtherArbiterPermissionValidThru: '',
       permissionsArbiterPermissionValidThru: '',
-      otherArbitersList: ''
+      otherArbitersList: null,
+      otherPhoneNumber: '',
+      otherEmail: ''
     }
   },
   created () {
@@ -921,7 +941,7 @@ export default {
     getListTournaments () {
       this.getMembersNames()
       this.getMembersNameswithPermissions()
-      fetch('http://localhost:8080/tournament/list', {
+      fetch('http://localhost:8080/shootingplace-1.0/tournament/list', {
         method: 'GET'
       }).then(response => response.json())
         .then(tournaments => {
@@ -929,7 +949,7 @@ export default {
         })
     },
     getcompetitions () {
-      fetch('http://localhost:8080/competition/', {
+      fetch('http://localhost:8080/shootingplace-1.0/competition/', {
         method: 'GET'
       }).then(response => response.json())
         .then(competitions => {
@@ -937,7 +957,7 @@ export default {
         })
     },
     getListCalibers () {
-      fetch('http://localhost:8080/ammoEvidence/calibers', {
+      fetch('http://localhost:8080/shootingplace-1.0/ammoEvidence/calibers', {
         method: 'GET'
       }).then(response => response.json())
         .then(calibers => {
@@ -952,7 +972,7 @@ export default {
       }, 1000)
     },
     getMembersNames () {
-      fetch('http://localhost:8080/member/getAllActiveMembersNames', {
+      fetch('http://localhost:8080/shootingplace-1.0/member/getAllActiveMembersNames', {
         method: 'GET'
       }).then(response => response.json())
         .then(filters => {
@@ -960,7 +980,7 @@ export default {
         })
     },
     getMembersNameswithPermissions () {
-      fetch('http://localhost:8080/member/getArbiters', {
+      fetch('http://localhost:8080/shootingplace-1.0/member/getArbiters', {
         method: 'GET'
       }).then(response => response.json())
         .then(filtersPermission => {
@@ -968,7 +988,7 @@ export default {
         })
     },
     getOther () {
-      fetch('http://localhost:8080/other/', {
+      fetch('http://localhost:8080/shootingplace-1.0/other/', {
         method: 'GET'
       }).then(response => response.json())
         .then(filtersOther => {
@@ -976,7 +996,7 @@ export default {
         })
     },
     getOtherArbiters () {
-      fetch('http://localhost:8080/other/arbiters', {
+      fetch('http://localhost:8080/shootingplace-1.0/other/arbiters', {
         method: 'GET'
       }).then(response => response.json())
         .then(filtersOtherArbiters => {
@@ -984,7 +1004,7 @@ export default {
         })
     },
     addMemberAndAmmoToCaliber () {
-      fetch('http://localhost:8080/ammoEvidence/ammo?caliberUUID=' + this.caliberUUID + '&legitimationNumber=' + this.memberLeg + '&counter=' + this.ammoQuantity + '&otherID=' + this.otherID, {
+      fetch('http://localhost:8080/shootingplace-1.0/ammoEvidence/ammo?caliberUUID=' + this.caliberUUID + '&legitimationNumber=' + this.memberLeg + '&counter=' + this.ammoQuantity + '&otherID=' + this.otherID, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -1001,9 +1021,11 @@ export default {
     addOtherPerson () {
       var person = {
         firstName: this.otherFirstName,
-        secondName: this.otherSecondName
+        secondName: this.otherSecondName,
+        phoneNumber: this.otherPhoneNumber,
+        email: this.otherEmail
       }
-      fetch('http://localhost:8080/other?club=' + this.clubName + '&arbiterClass=' + this.ordinal + '&arbiterNumber=' + this.permissionsOtherArbiterNumber + '&arbiterPermissionValidThru=' + this.permissionsOtherArbiterPermissionValidThru, {
+      fetch('http://localhost:8080/shootingplace-1.0/other?club=' + this.clubName + '&arbiterClass=' + this.ordinal + '&arbiterNumber=' + this.permissionsOtherArbiterNumber + '&arbiterPermissionValidThru=' + this.permissionsOtherArbiterPermissionValidThru.replace(/\//gi, '-'), {
         method: 'POST',
         body: JSON.stringify(person),
         headers: {
@@ -1011,9 +1033,10 @@ export default {
         }
       }).then(response => {
         if (response.status === 201) {
+          this.addOtherAlert = true
           this.getOther()
           this.getOtherArbiters()
-        } else { this.failure = true }
+        } else { this.dataFail = true }
       })
     },
     createNewTournament (name, date) {
@@ -1022,7 +1045,7 @@ export default {
         date: date.replace(/\//gi, '-'),
         open: true
       }
-      fetch('http://localhost:8080/tournament/', {
+      fetch('http://localhost:8080/shootingplace-1.0/tournament/', {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
@@ -1044,7 +1067,7 @@ export default {
         name =
         this.choice + 'm' + this.choice1 + this.choice2 + this.choice3 + this.choice4 + this.choice5 + this.choice6 + this.choice7 + this.choice8 + this.choice9 + this.choice10 + ' strzałów' + this.choice11
       }
-      fetch('http://localhost:8080/competition?name=' + name + '&discipline=' + this.choice1, {
+      fetch('http://localhost:8080/shootingplace-1.0/competition?name=' + name + '&discipline=' + this.choice1, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -1066,7 +1089,7 @@ export default {
         name: this.tournamentName,
         date: this.tournamentDate.replace(/\//gi, '-')
       }
-      fetch('http://localhost:8080/tournament/' + this.tournamentUUID, {
+      fetch('http://localhost:8080/shootingplace-1.0/tournament/' + this.tournamentUUID, {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {
@@ -1089,7 +1112,7 @@ export default {
       const otherNameWord = this.otherName.split(' ')
       var idNumber = otherNameWord.length
       const otherNameID = otherNameWord[idNumber - 1]
-      fetch('http://localhost:8080/competitionMembersList/addMember?competitionUUID=' + uuid + '&legitimationNumber=' + memberNameUUID + '&otherPerson=' + otherNameID, {
+      fetch('http://localhost:8080/shootingplace-1.0/competitionMembersList/addMember?competitionUUID=' + uuid + '&legitimationNumber=' + memberNameUUID + '&otherPerson=' + otherNameID, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -1109,7 +1132,7 @@ export default {
       const otherNameWord = this.otherName.split(' ')
       var idNumber = otherNameWord.length
       const otherNameID = otherNameWord[idNumber - 1]
-      fetch('http://localhost:8080/competitionMembersList/removeMember?competitionUUID=' + uuid + '&legitimationNumber=' + memberNameUUID + '&otherPerson=' + otherNameID, {
+      fetch('http://localhost:8080/shootingplace-1.0/competitionMembersList/removeMember?competitionUUID=' + uuid + '&legitimationNumber=' + memberNameUUID + '&otherPerson=' + otherNameID, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -1122,7 +1145,7 @@ export default {
     },
     addCompetitonToTournament () {
       if (this.competitionRadio != null && this.competitionRadio !== '') {
-        fetch('http://localhost:8080/tournament/addCompetition/' + this.tournamentUUID + '?competitionUUID=' + this.competitionRadio, {
+        fetch('http://localhost:8080/shootingplace-1.0/tournament/addCompetition/' + this.tournamentUUID + '?competitionUUID=' + this.competitionRadio, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
@@ -1149,7 +1172,7 @@ export default {
       if (score === null) {
         score = '-1'
       }
-      fetch('http://localhost:8080/competition?scoreUUID=' + scoreUUID + '&score=' + parseFloat(score.replace(/,/gi, '.')) + '&innerTen=' + parseFloat(innerTen.replace(/,/gi, '.')) + '&outerTen=' + parseFloat(outerTen.replace(/,/gi, '.')), {
+      fetch('http://localhost:8080/shootingplace-1.0/competition?scoreUUID=' + scoreUUID + '&score=' + parseFloat(score.replace(/,/gi, '.')) + '&innerTen=' + parseFloat(innerTen.replace(/,/gi, '.')) + '&outerTen=' + parseFloat(outerTen.replace(/,/gi, '.')), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -1164,7 +1187,7 @@ export default {
       })
     },
     toggleAmmunitionInScore (scoreUUID) {
-      fetch('http://localhost:8080/competition/?scoreUUID=' + scoreUUID, {
+      fetch('http://localhost:8080/shootingplace-1.0/competition/?scoreUUID=' + scoreUUID, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -1176,7 +1199,7 @@ export default {
       })
     },
     closeTournament () {
-      fetch('http://localhost:8080/tournament/' + this.tournamentUUID, {
+      fetch('http://localhost:8080/shootingplace-1.0/tournament/' + this.tournamentUUID, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -1191,7 +1214,7 @@ export default {
       })
     },
     getCLosedTournaments () {
-      fetch('http://localhost:8080/tournament/closedList', {
+      fetch('http://localhost:8080/shootingplace-1.0/tournament/closedList', {
         method: 'GET'
       }).then(response => {
         response.json().then(tournamentsClosed => {
@@ -1206,7 +1229,7 @@ export default {
       const otherPersonArbiterWord = this.otherArbitersList.split(' ')
       var personLegNumber = otherPersonArbiterWord.length
       const otherPersonArbiterID = otherPersonArbiterWord[personLegNumber - 1]
-      fetch('http://localhost:8080/tournament/removeArbiter/' + this.tournamentUUID + '?number=' + otherArbiterUUID + '&id=' + otherPersonArbiterID, {
+      fetch('http://localhost:8080/shootingplace-1.0/tournament/removeArbiter/' + this.tournamentUUID + '?number=' + otherArbiterUUID + '&id=' + otherPersonArbiterID, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -1230,7 +1253,7 @@ export default {
       const mainOtherArbiterWord = this.otherMainArbiterName.split(' ')
       var otherLegNumber = mainOtherArbiterWord.length
       const mainOtherArbiterID = mainOtherArbiterWord[otherLegNumber - 1]
-      fetch('http://localhost:8080/tournament/addMainArbiter/' + this.tournamentUUID + '?number=' + mainArbiterUUID + '&id=' + mainOtherArbiterID, {
+      fetch('http://localhost:8080/shootingplace-1.0/tournament/addMainArbiter/' + this.tournamentUUID + '?number=' + mainArbiterUUID + '&id=' + mainOtherArbiterID, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -1252,7 +1275,7 @@ export default {
       const countOtherArbiterWord = this.otherRTSArbiterName.split(' ')
       var otherLegNumber = countOtherArbiterWord.length
       const countOtherArbiterID = countOtherArbiterWord[otherLegNumber - 1]
-      fetch('http://localhost:8080/tournament/addRTSArbiter/' + this.tournamentUUID + '?number=' + countArbiterUUID + '&id=' + countOtherArbiterID, {
+      fetch('http://localhost:8080/shootingplace-1.0/tournament/addRTSArbiter/' + this.tournamentUUID + '?number=' + countArbiterUUID + '&id=' + countOtherArbiterID, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -1274,7 +1297,7 @@ export default {
       const otherPersonArbiterWord = this.otherArbitersList.split(' ')
       var personLegNumber = otherPersonArbiterWord.length
       const otherPersonArbiterID = otherPersonArbiterWord[personLegNumber - 1]
-      fetch('http://localhost:8080/tournament/addOthersArbiters/' + this.tournamentUUID + '?number=' + otherArbiterUUID + '&id=' + otherPersonArbiterID, {
+      fetch('http://localhost:8080/shootingplace-1.0/tournament/addOthersArbiters/' + this.tournamentUUID + '?number=' + otherArbiterUUID + '&id=' + otherPersonArbiterID, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -1346,7 +1369,7 @@ export default {
       })
     },
     sortArray () {
-      fetch('http://localhost:8080/competitionMembersList/sort?competitionUUID=' + this.competitionUUID + '&sort=' + this.state, {
+      fetch('http://localhost:8080/shootingplace-1.0/competitionMembersList/sort?competitionUUID=' + this.competitionUUID + '&sort=' + this.state, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -1360,7 +1383,7 @@ export default {
     },
     getAnnouncementFromCompetition () {
       axios({
-        url: 'http://localhost:8080/files/downloadAnnouncementFromCompetition/' + this.tournamentUUID,
+        url: 'http://localhost:8080/shootingplace-1.0/files/downloadAnnouncementFromCompetition/' + this.tournamentUUID,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {

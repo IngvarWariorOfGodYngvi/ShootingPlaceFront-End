@@ -12,10 +12,23 @@
         />
 
         <q-toolbar-title >
-          <div id="title">{{programName}} </div>
+          <div id="title">{{$keycloak.keycloak.clientId}} </div>
         </q-toolbar-title>
 
-        <div><q-avatar clickable v-ripple color="secondary" text-color="white" icon="perm_identity" /></div>
+       <div><q-avatar @click="$keycloak.loadUserProfile" clickable v-ripple color="secondary" text-color="white" icon="perm_identity" />
+        <q-menu>
+        <div class="col q-pa-md">
+            <q-btn
+              color="primary"
+              label="Wyloguj"
+              push
+              size="s"
+              v-close-popup
+              @click="$keycloak.keycloak.logout"
+            />
+        </div>
+      </q-menu>
+        </div>
       </q-toolbar>
     </q-header>
 
@@ -27,9 +40,8 @@
       style="width: 50px"
     >
       <q-list>
-        <q-item-label
-          header
-        ><q-item class="flex flex-center" clickable tag="a" target="_self" href="https://localhost:8081/#/" width="max"><q-field class="full-width" standout><template v-slot:control><div class="fit flex flex-center text-center non-selectable q-pa-md">Strona główna</div></template></q-field></q-item>
+        <q-item-label header>
+          <q-item class="flex flex-center" clickable tag="a" target="_self" href="https://localhost:8081/#/" width="max"><q-field class="full-width" standout><template v-slot:control><div class="fit flex flex-center text-center non-selectable q-pa-md">Strona główna</div></template></q-field></q-item>
         </q-item-label>
         <EssentialLink
           v-for="link in essentialLinks"
@@ -42,19 +54,30 @@
     <q-page-container>
       <router-view />
     </q-page-container>
-    <q-page-sticky position="bottom-right" :offset="[18, 18]" >
-      <q-btn fab icon="add" color="accent" @click="showloading(), redirect()">
-      <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 10]">
-          <strong>Dodaj Klubowicza</strong>
-        </q-tooltip>
-    </q-btn>
-    </q-page-sticky>
   </q-layout>
 </template>
 
 <script>
 import EssentialLink from 'components/EssentialLink.vue'
+import keycloak from '@dsb-norge/vue-keycloak-js'
+import Vue from 'vue'
+import App from 'src/App.vue'
+import router from 'src/router'
 
+Vue.use(keycloak, {
+  logout: {
+    redirectUri: 'http://localhost:8180/auth'
+  },
+  onReady: (keycloak) => {
+    this.userData = keycloak.loadUserInfo()
+    keycloak.loadUserInfo().success((data) => {
+      new Vue({
+        router,
+        render: h => h(App)
+      }).$mount('#app')
+    })
+  }
+})
 export default {
   name: 'MainLayout',
 
@@ -91,10 +114,16 @@ export default {
           link: 'https://localhost:8081/#/competition'
         },
         {
-          title: 'Lista Osób z uprawnieniami',
+          title: 'Lista Osób z Uprawnieniami',
           caption: 'obsługa dodatkowa',
           icon: 'book',
           link: 'https://localhost:8081/#/memberwithpermission'
+        },
+        {
+          title: 'Pozostałe funkcje',
+          caption: 'obsługa dodatkowa',
+          icon: 'book',
+          link: 'https://localhost:8081/#/otherFunctions'
         }
       ],
       programName: 'Program'
