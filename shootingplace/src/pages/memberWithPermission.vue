@@ -145,29 +145,6 @@
               </div>
           </q-card>
   </div>
-<q-dialog v-model="personalCardDownloadConfirm" persistent>
-      <q-card>
-        <q-card-section class="row items-center">
-          <span class="q-ml-sm">Czy napewno chcesz pobrać kartę Klubowicza?</span>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="anuluj" color="primary" v-close-popup />
-          <q-btn flat label="Pobierz" color="primary" v-close-popup @click="getPersonalCardPDF(),personalCardDownloadAlert=true" />
-        </q-card-actions>
-      </q-card>
-</q-dialog>
-<q-dialog v-model="personalCardDownloadAlert">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Pobrano kartę Klubowicza</div>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup />
-        </q-card-actions>
-      </q-card>
-</q-dialog>
   </q-page>
 </template>
 
@@ -186,29 +163,8 @@ export default {
       arbiter: false,
       otherArbiter: false,
       instructor: false,
-      personalCardDownloadConfirm: false,
-      personalCardDownloadAlert: false,
-      addressConfirm: false,
-      HistoryContributionRecord: null,
-      contributionRecordConfirm: false,
-      contributionRecordAlert: false,
       members: [],
-      others: [],
-      uuid: null,
-      thumbStyle: {
-        right: '4px',
-        borderRadius: '5px',
-        backgroundColor: '#027be3',
-        width: '5px',
-        opacity: 0.75
-      },
-      barStyle: {
-        right: '2px',
-        borderRadius: '9px',
-        backgroundColor: '#027be3',
-        width: '9px',
-        opacity: 0.2
-      }
+      others: []
     }
   },
   created () {
@@ -245,20 +201,6 @@ export default {
         .then(others => {
           this.others = others
         })
-    },
-    getPersonalCardPDF () {
-      axios({
-        url: 'http://localhost:8082/files/downloadPersonalCard/' + this.uuid,
-        method: 'GET',
-        responseType: 'blob'
-      }).then(response => {
-        var fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        var fileLink = document.createElement('a')
-        fileLink.href = fileURL
-        fileLink.setAttribute('download', 'Karta_Członkowska_' + this.name + '_' + this.name2 + '.pdf')
-        document.body.appendChild(fileLink)
-        fileLink.click()
-      })
     }
   },
   name: 'memberswithpermission'

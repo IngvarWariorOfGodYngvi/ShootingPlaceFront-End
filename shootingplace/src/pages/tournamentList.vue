@@ -301,6 +301,7 @@
                           </q-input></q-item>
           </q-card-section>
           <q-card-actions align="right">
+            <q-btn color="red" label="Usuń" v-close-popup @click="deleteTournamentAlert = true"></q-btn>
             <q-btn flat label="anuluj" color="primary" v-close-popup />
             <q-btn flat label="aktualizuj" color="primary" v-close-popup @click="tournamentConfirm = true"/>
           </q-card-actions>
@@ -724,7 +725,9 @@
           <div class="text-h6">Dodawanie nowej osoby spoza klubu</div>
           <q-item><q-input class="full-width" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled v-model="otherFirstName" label="Imię *"/></q-item>
           <q-item><q-input class="full-width" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled v-model="otherSecondName" label="Nazwisko *"/></q-item>
-          <q-item><q-input class="full-width" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled v-model="clubName" label="Nazwa Klubu *"/></q-item>
+          <q-item class="col"><q-checkbox left-label color="primary" false-value="" true-value="BRAK" v-model="clubName" :val="'BRAK'" label="Brak klubu"></q-checkbox>
+          <q-input v-if="clubName!='BRAK'" class="full-width" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled v-model="clubName" label="Nazwa Klubu"/>
+          </q-item>
           <q-item><q-input class="full-width" mask="### ### ###" filled v-model="otherPhoneNumber" label="Numer telefonu"/></q-item>
           <q-item><q-input class="full-width" filled v-model="otherEmail" label="e-mail"/></q-item>
           <q-item class="full-width">
@@ -760,7 +763,7 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat label="Zamknij" color="primary" v-close-popup @click="otherFirstName=null,otherSecondName=null,clubName=null"/>
+          <q-btn flat label="Zamknij" color="primary" v-close-popup @click="otherFirstName=null,otherSecondName=null,clubName=''"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -811,6 +814,18 @@
         <q-card-actions align="right">
           <q-btn flat label="anuluj" color="primary" v-close-popup />
           <q-btn flat label="Dodaj" color="primary" v-close-popup @click="addMemberAndAmmoToCaliber()" />
+        </q-card-actions>
+      </q-card>
+</q-dialog>
+    <q-dialog v-model="deleteTournamentAlert" persistent>
+      <q-card class="bg-red">
+        <q-card-section class="row items-center">
+          <span class="q-ml-sm text-h4 text-bold">Czy napewno usunąć zawody? Zmiana będzie nieodwracalna</span>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="anuluj" color="black" v-close-popup />
+          <q-btn flat label="USUŃ" color="black" v-close-popup @click="deleteTournament()" />
         </q-card-actions>
       </q-card>
 </q-dialog>
@@ -899,7 +914,7 @@ export default {
       addNewOtherPerson: false,
       otherFirstName: null,
       otherSecondName: null,
-      clubName: null,
+      clubName: '',
       innerTen: null,
       outerTen: null,
       meters: false,
@@ -924,7 +939,8 @@ export default {
       permissionsArbiterPermissionValidThru: '',
       otherArbitersList: null,
       otherPhoneNumber: '',
-      otherEmail: ''
+      otherEmail: '',
+      deleteTournamentAlert: false
     }
   },
   created () {
@@ -1201,6 +1217,21 @@ export default {
     closeTournament () {
       fetch('http://localhost:8080/shootingplace-1.0/tournament/' + this.tournamentUUID, {
         method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          this.tournamentCloseAlert = true
+          this.showloading()
+          this.getListTournaments()
+          this.getCLosedTournaments()
+        }
+      })
+    },
+    deleteTournament () {
+      fetch('http://localhost:8080/shootingplace-1.0/tournament/delete/' + this.tournamentUUID, {
+        method: 'DELETE',
         headers: {
           'Content-Type': 'application/json'
         }

@@ -135,14 +135,16 @@
           <div class="text-h6">Dodawanie nowej osoby spoza klubu</div>
           <q-item><q-input class="full-width" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled v-model="otherFirstName" label="Imię"/></q-item>
           <q-item><q-input class="full-width" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled v-model="otherSecondName" label="Nazwisko"/></q-item>
-          <q-item><q-input class="full-width" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled v-model="clubName" label="Nazwa Klubu"/></q-item>
+          <q-item class="col"><q-checkbox left-label color="primary" false-value="" true-value="BRAK" v-model="clubName" :val="'BRAK'" label="Brak klubu"></q-checkbox>
+          <q-input v-if="clubName!='BRAK'" class="full-width" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled v-model="clubName" label="Nazwa Klubu"/>
+          </q-item>
           <q-item><q-input class="full-width" mask="### ### ###" filled v-model="otherPhoneNumber" label="Numer telefonu"/></q-item>
           <q-item><q-input class="full-width" filled v-model="otherEmail" label="e-mail"/></q-item>
           <q-item><q-btn label="Zapisz do bazy" v-close-popup @click="addOtherPerson()" color="primary"/></q-item>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat label="Zamknij" color="primary" v-close-popup @click="otherFirstName=null,otherSecondName=null,clubName=null"/>
+          <q-btn flat label="Zamknij" color="primary" v-close-popup @click="otherFirstName=null,otherSecondName=null,clubName=''"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -195,7 +197,7 @@ export default {
       otherSecondName: null,
       otherPhoneNumber: null,
       otherEmail: null,
-      clubName: null,
+      clubName: '',
       addOtherAlert: false,
       permissionsOtherArbiterNumber: '',
       ordinal: '',

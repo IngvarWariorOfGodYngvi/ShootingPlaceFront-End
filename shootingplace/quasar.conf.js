@@ -8,7 +8,6 @@ const { Loading } = require("quasar")
 // Configuration for your app
 // https://quasar.dev/quasar-cli/quasar-conf-js
 /* eslint-env node */
-
 module.exports = function( /* ctx */ ) {
     return {
         // https://quasar.dev/quasar-cli/supporting-ts
@@ -64,6 +63,8 @@ module.exports = function( /* ctx */ ) {
             // extractCSS: false,
 
             // https://quasar.dev/quasar-cli/handling-webpack
+            scopeHoisting: true,
+            publicPath: process.env.VUE_APP_PUBLIC_PATH === 'production',
             extendWebpack(cfg) {
                 cfg.module.rules.push({
                     enforce: 'pre',
@@ -76,8 +77,7 @@ module.exports = function( /* ctx */ ) {
 
         // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-devServer
         devServer: {
-            https: true,
-            port: 8081,
+            port: 8080,
             open: true // opens browser window automatically
         },
 

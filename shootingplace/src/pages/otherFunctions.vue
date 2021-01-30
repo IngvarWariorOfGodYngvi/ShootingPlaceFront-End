@@ -14,8 +14,9 @@
         <q-card-section bordered class="col-8">
     <div>
       <div class="self-center col full-width no-outline text-h5 text-bold" tabindex="0">Usuwanie osób spoza klubu</div>
+          <q-scroll-area class="full-width q-pa-none" style="height: 400px;">
         <div v-for="(others,id) in others" :key="id" class="row">
-           <q-field class="col" label="Imię i Nazwisko" standout stack-label>
+           <q-field class="col" label="Nazwisko" standout stack-label>
                 <template v-slot:control>
                     <div>
                         <div class="self-center col full-width no-outline" tabindex="0">{{others.secondName}}</div>
@@ -41,13 +42,16 @@
            </q-field>
            <q-btn label="usuń" color="primary" @click="othersID = others.id,alert=true"></q-btn>
         </div>
+           </q-scroll-area>
     </div>
     </q-card-section>
         </q-card>
         <q-card>
           <q-card-section>
+            <q-scroll-area class="full-width q-pa-none" style="height: 400px;">
           <div class="self-center col full-width no-outline text-h5 text-bold" tabindex="0">Lista znanych klubów</div>
-            <div v-for="(club,id) in clubs" :key="id" class="row">
+            <div v-for="(club,id) in clubs" :key="id">
+              <div v-if="club.name!='BRAK'" class="row">
            <q-field class="col-1" label="ID" standout stack-label>
                 <template v-slot:control>
                     <div>
@@ -78,7 +82,48 @@
                 </template>
            </q-field>
            <q-btn class="col-4" @click="clubID = club.id,editClub=true">edytuj dane {{club.name}}</q-btn>
+           </div>
             </div>
+            </q-scroll-area>
+          </q-card-section>
+        </q-card>
+        <q-card>
+          <q-card-section>
+            <q-scroll-area class="full-width q-pa-none" style="height: 600px;">
+          <div class="self-center col full-width no-outline text-h5 text-bold" >Lista osób z licencjami</div>
+            <div v-for="member in members" :key="member">
+              <div class="row">
+           <q-field class="col" label="osoba" standout stack-label>
+                <template v-slot:control>
+                    <div>
+                  <div class="self-center col full-width no-outline row" tabindex="1">{{member.secondName}} {{member.firstName}}</div>
+                  </div>
+                </template>
+           </q-field>
+           <q-field class="col-2" label="Numer Licencji" standout stack-label>
+                <template v-slot:control>
+                  <div class="self-center col full-width no-outline row" tabindex="1">{{member.license.number}}</div>
+                </template>
+           </q-field>
+           <q-field class="col-2" label="grupa" standout stack-label>
+                <template v-slot:control>
+                  <div v-if="member.adult" class="self-center col full-width no-outline row" tabindex="1">Grupa Powszechna</div>
+                  <div v-if="!member.adult" class="self-center col full-width no-outline row" tabindex="1">Grupa Młodzieżowa</div>
+                </template>
+           </q-field>
+           <q-field class="col-2" label="Ważność licencji" standout stack-label>
+                <template v-slot:control>
+                    <div>
+                  <div class="self-center col full-width no-outline row" tabindex="1">{{member.license.validThru}}</div>
+                  </div>
+                </template>
+           </q-field>
+           <q-btn color="grey-8" v-if="!member.license.paid" class="col-1" @click="memberName = member.firstName + member.secondName,memberUUID = member.uuid,paymentLicenseAlert = true">opłać licencję</q-btn>
+           <q-btn color="primary" v-if="member.license.paid" class="col-1" @click="memberName = member.firstName + member.secondName ,licensePistolPermission = member.license.pistolPermission, licenseRiflePermission = member.license.riflePermission, licenseShotgunPermission = member.license.shotgunPermission,memberUUID = member.uuid, prolongLicenseAlert = true">przedłuż licencję</q-btn>
+           </div>
+           <q-item></q-item>
+            </div>
+            </q-scroll-area>
           </q-card-section>
         </q-card>
     <q-dialog v-model="dataFail">
@@ -115,6 +160,30 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <q-dialog v-model="paymentLicenseAlert">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Czy opłacić licencję {{memberName}}</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="anuluj" color="primary" v-close-popup/>
+          <q-btn flat label="Opłać" color="primary" v-close-popup @click="addLicenseHistoryPayment (memberUUID)"/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="prolongLicenseAlert">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Czy przedłużyć licencję {{memberName}}</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="anuluj" color="primary" v-close-popup/>
+          <q-btn flat label="Przedłuż" color="primary" v-close-popup @click="prolongLicense (memberUUID, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission)"/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
     <q-dialog v-model="caliberAlert">
       <q-card>
         <q-card-section>
@@ -134,10 +203,10 @@
         <q-card-section>
                 <q-item><q-input v-model="clubName" class="full-width" filled label="nazwa"></q-input></q-item>
                 <q-item v-if="clubID == 1"><q-input v-model="clubLicenseNumber" class="full-width" filled label="Numer licencji Klubowej"></q-input></q-item>
-                <q-item><q-input v-model="clubPhoneNumber" class="full-width" filled label="Telefon"></q-input></q-item>
+                <q-item><q-input v-model="clubPhoneNumber" class="full-width" mask="+48 ### ### ###" filled label="Telefon"></q-input></q-item>
                 <q-item><q-input v-model="clubEmail" class="full-width" filled label="email"></q-input></q-item>
                 <q-item><q-input v-model="clubAddress" class="full-width" filled label="Adres"></q-input></q-item>
-                <q-item><q-input v-model="clubURL" class="full-width" filled label="Adres internetowy"></q-input></q-item>
+                <q-item><q-input v-model="clubURL" class="full-width" filled label="Strona internetowa"></q-input></q-item>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -163,6 +232,7 @@ export default {
       calibers: [],
       others: [],
       clubs: [],
+      members: [],
       othersID: null,
       clubID: null,
       clubName: null,
@@ -176,13 +246,21 @@ export default {
       caliberAlert: false,
       editClub: false,
       dataFail: false,
-      alert: false
+      alert: false,
+      licensePistolPermission: false,
+      licenseRiflePermission: false,
+      licenseShotgunPermission: false,
+      prolongLicenseAlert: false,
+      paymentLicenseAlert: false,
+      memberName: null,
+      memberUUID: null
     }
   },
   created () {
     this.getListCalibers()
     this.getOther()
     this.getAllClubs()
+    this.getMembersWithLicense()
   },
   methods: {
     showloading () {
@@ -221,6 +299,14 @@ export default {
       }).then(response => response.json())
         .then(clubs => {
           this.clubs = clubs
+        })
+    },
+    getMembersWithLicense () {
+      fetch('http://localhost:8080/shootingplace-1.0/license/members', {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(members => {
+          this.members = members
         })
     },
     updateClub () {
@@ -271,6 +357,41 @@ export default {
       this.getListCalibers()
       this.getOther()
       this.getAllClubs()
+    },
+    prolongLicense (uuid, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission) {
+      var data = {
+        pistolPermission: licensePistolPermission,
+        riflePermission: licenseRiflePermission,
+        shotgunPermission: licenseShotgunPermission
+      }
+      fetch('http://localhost:8080/shootingplace-1.0/license/' + uuid, {
+        method: 'PATCH',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          this.doneAlert = true
+          this.licensePistolPermission = false
+          this.licenseRiflePermission = false
+          this.licenseShotgunPermission = false
+          this.getMembersWithLicense()
+        } else { this.dataFail = true }
+      })
+    },
+    addLicenseHistoryPayment (uuid) {
+      fetch('http://localhost:8080/shootingplace-1.0/license/history/' + uuid, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          this.doneAlert = true
+          this.getMembersWithLicense()
+        } else { this.dataFail = true }
+      })
     }
   },
   name: 'otherFunction'

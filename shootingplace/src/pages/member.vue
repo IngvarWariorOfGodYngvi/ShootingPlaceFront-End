@@ -218,7 +218,7 @@
               </q-card-section>
               <q-card-section class="col-5 items-center">
                 <q-item-section>
-                  <q-expansion-item label="Informacje o Uprawnieniach" class="col items-center bg-grey-3" group="right-card">
+                  <q-expansion-item default-opened label="Informacje o Uprawnieniach" class="col items-center bg-grey-3" group="right-card">
                     <q-field v-if="(member.memberPermissions.arbiterNumber!=null&&member.memberPermissions.arbiterNumber!='')" class="col" standout label="Sędzia" stack-label>
                     <template v-slot:control>
                       <q-field v-if="(member.memberPermissions.arbiterNumber!=null&&member.memberPermissions.arbiterNumber!='')" class="col" standout label="Numer" stack-label>
@@ -327,7 +327,7 @@
                   </q-item-section>
                   </div>
                   <div v-if="member.active" class="row">
-                  <q-input @keypress.enter="memberUUID=member.uuid, addAmmoConfirm=true" v-temp ref="search" filled class="full-width col" v-model="quantity" placeholder="Tylko cyfry" onkeypress="return (event.charCode > 44 && event.charCode < 58)" label="Ilość Amunicji"></q-input>
+                  <q-input @keypress.enter="memberUUID=member.legitimationNumber, addAmmoConfirm=true" v-temp ref="search" filled class="full-width col" v-model="quantity" placeholder="Tylko cyfry" onkeypress="return (event.charCode > 44 && event.charCode < 58)" label="Ilość Amunicji"></q-input>
                   <q-btn class="full-width col" color="primary" label="wydaj amunicję" @click="memberUUID=member.legitimationNumber, addAmmoConfirm=true"></q-btn>
                   </div>
                 </div>
@@ -545,7 +545,7 @@
             <div class="col full-width">
                 <q-item><q-btn class="full-width" label="Pobierz kartę Członkowską" color="secondary" @click="memberUUID=member.uuid,name=member.firstName,name2=member.secondName,personalCardDownloadConfirm=true"/></q-item>
                 <q-item><q-btn class="full-width" label="Pobierz ostatnie potwierdzenie składki" color="secondary" @click="memberUUID=member.uuid,name=member.firstName,name2=member.secondName,contributionDownloadConfirm=true"/></q-item>
-                <q-item v-if="member.active&&member.adult&&!member.erased&&member.license.number!=null"><q-btn class="full-width" label="Pobierz wniosek o licencję" color="secondary" @click="memberUUID=member.uuid,name=member.firstName,name2=member.secondName,getApplicationForExtensionOfTheCompetitorsLicense ()"/></q-item>
+                <q-item v-if="member.active&&!member.erased&&member.license.number!=null"><q-btn class="full-width" label="Pobierz wniosek o licencję" color="secondary" @click="memberUUID=member.uuid,name=member.firstName,name2=member.secondName,getApplicationForExtensionOfTheCompetitorsLicense ()"/></q-item>
             </div>
           </q-card-section>
         </q-card>
@@ -1296,20 +1296,6 @@ export default {
       search: '',
       finder: '',
       memberUUID: null,
-      thumbStyle: {
-        right: '4px',
-        borderRadius: '5px',
-        backgroundColor: '#027be3',
-        width: '5px',
-        opacity: 0.75
-      },
-      barStyle: {
-        right: '2px',
-        borderRadius: '9px',
-        backgroundColor: '#027be3',
-        width: '9px',
-        opacity: 0.2
-      },
       caliberUUID: null,
       quantity: '',
       model: null,
@@ -1498,7 +1484,7 @@ export default {
     },
     getContributionPDF () {
       axios({
-        url: 'http://localhost:8080/shootingplace-1.0/files/downloadContribution/' + this.uuid,
+        url: 'http://localhost:8080/shootingplace-1.0/files/downloadContribution/' + this.memberUUID,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
@@ -1512,7 +1498,7 @@ export default {
     },
     getPersonalCardPDF () {
       axios({
-        url: 'http://localhost:8080/shootingplace-1.0/files/downloadPersonalCard/' + this.uuid,
+        url: 'http://localhost:8080/shootingplace-1.0/files/downloadPersonalCard/' + this.memberUUID,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
@@ -1526,7 +1512,7 @@ export default {
     },
     getApplicationForExtensionOfTheCompetitorsLicense () {
       axios({
-        url: 'http://localhost:8080/shootingplace-1.0/files/downloadApplication/' + this.uuid,
+        url: 'http://localhost:8080/shootingplace-1.0/files/downloadApplication/' + this.memberUUID,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
@@ -1572,7 +1558,7 @@ export default {
         riflePermission: licenseRiflePermission,
         shotgunPermission: licenseShotgunPermission
       }
-      fetch('http://localhost:8080/shootingplace-1.0/license/' + this.uuid, {
+      fetch('http://localhost:8080/shootingplace-1.0/license/' + this.memberUUID, {
         method: 'PUT',
         body: JSON.stringify(data1),
         headers: {

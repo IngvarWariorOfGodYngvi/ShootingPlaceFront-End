@@ -2,6 +2,7 @@
   <q-page padding>
     <div>
     <q-stepper
+      header-nav
       v-model="step"
       ref="stepper"
       color="primary"
@@ -25,7 +26,7 @@
       <q-item><q-input class="full-width" color="red" type="tel" v-model="memberPhone" placeholder="tylko cyfry" label="Numer telefonu*" mask="### ### ###" filled/></q-item>
       <q-item><q-input class="full-width" filled color="green" type="email" v-model="memberEmail" label="email" /></q-item>
       <q-item><q-input class="full-width" filled color="green" v-model="memberLegitimation" label="Numer Legitymacji" /></q-item>
-      <q-item><q-input class="full-width" filled v-model="memberJoinDate" mask="####/##/##" :rules="['date']" label="Wybierz datę" hint="użyj kalendarza">
+      <q-item><q-input class="full-width" filled v-model="memberJoinDate" mask="####/##/##" :rules="['date']" label="Data dołączenia do Klubu" hint="użyj kalendarza">
                           <template v-slot:append>
                             <q-icon name="event" class="cursor-pointer">
                               <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -43,7 +44,7 @@
         <q-radio v-model="memberAdult" :val="false" label="Grupa Młodzieżowa" color="secondary" />
         </div>
         <div class="col-6">
-        <q-radio  v-model="memberAdult" :val="true" label="Grupa Dorosła" color="secondary" />
+        <q-radio  v-model="memberAdult" :val="true" label="Grupa Powszechna" color="secondary" />
         </div>
       </div>
       <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),addMember(memberLegitimation, memberFirstName,
@@ -140,7 +141,7 @@
           </q-field>
         </q-item>
         <q-item>
-          <q-field class="full-width" standout label="Data dołączenia do Klubu" stack-label>
+          <q-field class="full-width" standout label="Grupa" stack-label>
             <template v-slot:control>
               <div v-if="memberAdult&&memberIDCard!=null" class="self-center full-width no-outline" tabindex="1">Grupa Dorosła</div>
               <div v-if="!memberAdult&&memberIDCard!=null" class="self-center full-width no-outline" tabindex="1">Grupa Młodzieżowa</div>
@@ -152,7 +153,7 @@
       </q-card>
       </q-step>
 
-      <q-step v-if="uuid!=null"
+      <q-step v-if="uuid!=null&&uuid!='' && !uuid.includes('Uwaga!')"
         :name="2"
         title="Dane Adresowe"
         caption="Opcjonalnie"
@@ -212,7 +213,7 @@
       </q-card>
       </q-step>
 
-      <q-step v-if="memberAdultConfirm"
+      <q-step v-if="memberAdultConfirm && (uuid!=null&&uuid!='' && !uuid.includes('Uwaga!'))"
         :name="3"
         title="Patent"
         caption="opcjonalnie"
@@ -223,7 +224,7 @@
       <q-card-section class="col-6 bg-grey-2">
       <div>
       <q-item><q-input class="full-width" v-model="patentNumber" mask="#####/AAA/##/####" label="Numer Patentu" filled/></q-item>
-      <q-item><q-input class="full-width" filled v-model="patentDate" mask="####/##/##" :rules="['date']" label="Wybierz datę">
+      <q-item><q-input class="full-width" filled v-model="patentDate" mask="####/##/##" :rules="['date']" label="Data Wydania Patenty">
                         <template v-slot:append>
                           <q-icon name="event" class="cursor-pointer">
                             <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -286,9 +287,9 @@
       </q-card>
       </q-step>
 
-      <q-step v-if="(memberAdultConfirm!=null)||patentNumberConfirm!=null"
+      <q-step v-if="(!memberAdultConfirm || (memberAdultConfirm && patentNumberConfirm)) && (uuid!=null&&uuid!='' && !uuid.includes('Uwaga!'))"
         :name="4"
-        title="Licencja"
+        title="Licencja Zawodnicza"
         caption="opcjonalnie"
         icon="assignment"
         :done="step > 4"
@@ -357,7 +358,7 @@
       </q-card-section>
       </q-card>
       </q-step>
-      <q-step v-if="memberAdultConfirm"
+      <q-step v-if="memberAdultConfirm && (uuid!=null&&uuid!='' && !uuid.includes('Uwaga!'))"
         :name="5"
         title="Uprawnienia"
         caption="opcjonalnie"
@@ -386,7 +387,7 @@
         <div class="col">
           <q-item><q-item-label>Jeśli posiada Licencję Sędziego - uzupełnij dane</q-item-label></q-item>
           <q-item><q-input class="full-width" v-model="permissionsArbiterNumber" filled label="Numer uprawnień" /></q-item>
-          <q-item><q-input class="full-width" filled v-model="permissionsArbiterPermissionValidThru" mask="####/12/31" :rules="['date']" label="Ważna do" hint="użyj kalendarza">
+          <q-item><q-input class="full-width" filled v-model="permissionsArbiterPermissionValidThru" mask="####/12/31" :rules="['date']" label="Ważne do" hint="użyj kalendarza">
                               <template v-slot:append>
                                 <q-icon name="event" class="cursor-pointer">
                                   <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -606,7 +607,6 @@ Vue.prototype.$axios = axios
 export default {
   data () {
     return {
-      fileuuid: null,
       value: false,
       value1: false,
       value2: false,
@@ -630,7 +630,6 @@ export default {
       number: '',
       validThru: '',
       member: [],
-      response: null,
       patentNumber: null,
       patentNumberConfirm: false,
       patentDate: '',
@@ -651,7 +650,7 @@ export default {
       memberPhone: '',
       memberEmail: '',
       memberAdult: true,
-      memberAdultConfirm: null,
+      memberAdultConfirm: false,
       memberLegitimation: '',
       memberJoinDate: '',
       memberZipCode: null,
@@ -662,14 +661,12 @@ export default {
       active: true,
       uuid: null,
       ordinal: '',
-      returnAlert: false,
-      addingByXlsFile: false,
       dateVar: /\//gi
     }
   },
   methods: {
     redirect () {
-      window.location.href = 'https://localhost:8081/#/member'
+      window.location.href = 'https://localhost:8080/strzelnica/#/member'
     },
     showloading () {
       this.$q.loading.show({ message: 'Dzieje się coś ważnego... Poczekaj' })
@@ -754,6 +751,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
+          this.patentNumberConfirm = true
           this.licenseAndPatentAlert = true
         } else { this.failAlert = true }
       })
