@@ -195,14 +195,16 @@ export default {
       ammoQuantity: null,
       otherFirstName: null,
       otherSecondName: null,
-      otherPhoneNumber: null,
-      otherEmail: null,
+      otherPhoneNumber: '',
+      otherEmail: '',
       clubName: '',
       addOtherAlert: false,
       permissionsOtherArbiterNumber: '',
       ordinal: '',
       permissionsOtherArbiterPermissionValidThru: '',
-      options: stringOptions
+      options: stringOptions,
+      local: 'localhost:8080',
+      prod: 'localhost:8080/shootingplace-1.0'
     }
   },
   created () {
@@ -221,7 +223,7 @@ export default {
       }, 1000)
     },
     getAmmoData () {
-      fetch('http://localhost:8080/shootingplace-1.0/ammoEvidence/evidence?state=true', {
+      fetch('http://' + this.local + '/ammoEvidence/evidence?state=true', {
         method: 'GET'
       }).then(response => {
         response.json().then(ammoList => {
@@ -230,7 +232,7 @@ export default {
       })
     },
     getCLosedEvidence () {
-      fetch('http://localhost:8080/shootingplace-1.0/ammoEvidence/closedEvidences', {
+      fetch('http://' + this.local + '/ammoEvidence/closedEvidences', {
         method: 'GET'
       }).then(response => {
         response.json().then(ammoListClose => {
@@ -239,7 +241,7 @@ export default {
       })
     },
     closeEvidence () {
-      fetch('http://localhost:8080/shootingplace-1.0/ammoEvidence/ammo?evidenceUUID=' + this.uuid, {
+      fetch('http://' + this.local + '/ammoEvidence/ammo?evidenceUUID=' + this.uuid, {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {
@@ -249,7 +251,7 @@ export default {
       })
     },
     getMembersNames () {
-      fetch('http://localhost:8080/shootingplace-1.0/member/getAllActiveMembersNames', {
+      fetch('http://' + this.local + '/member/getAllNames', {
         method: 'GET'
       }).then(response => response.json())
         .then(filters => {
@@ -258,7 +260,7 @@ export default {
     },
     getAmmoListPDF () {
       axios({
-        url: 'http://localhost:8080/shootingplace-1.0/files/downloadAmmunitionList/' + this.uuid,
+        url: 'http://' + this.local + '/files/downloadAmmunitionList/' + this.uuid,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
@@ -278,7 +280,7 @@ export default {
       const otherNameWord = this.otherName.split(' ')
       var idNumber = otherNameWord.length
       const otherNameID = otherNameWord[idNumber - 1]
-      fetch('http://localhost:8080/shootingplace-1.0/ammoEvidence/ammo?caliberUUID=' + this.caliberUUID + '&legitimationNumber=' + memberNameUUID + '&counter=' + this.ammoQuantity + '&otherID=' + otherNameID, {
+      fetch('http://' + this.local + '/ammoEvidence/ammo?caliberUUID=' + this.caliberUUID + '&legitimationNumber=' + memberNameUUID + '&counter=' + this.ammoQuantity + '&otherID=' + otherNameID, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -288,12 +290,12 @@ export default {
           // this.ammoAdded = true
           this.getAmmoData()
           this.showloading()
-        } else { this.failure = true }
+        } else { this.fail = true }
       }
       )
     },
     getListCalibers () {
-      fetch('http://localhost:8080/shootingplace-1.0/ammoEvidence/calibers', {
+      fetch('http://' + this.local + '/ammoEvidence/calibers', {
         method: 'GET'
       }).then(response => response.json())
         .then(calibers => {
@@ -301,7 +303,7 @@ export default {
         })
     },
     getOther () {
-      fetch('http://localhost:8080/shootingplace-1.0/other/', {
+      fetch('http://' + this.local + '/other/', {
         method: 'GET'
       }).then(response => response.json())
         .then(filtersOther => {
@@ -315,7 +317,7 @@ export default {
         phoneNumber: this.otherPhoneNumber,
         email: this.otherEmail
       }
-      fetch('http://localhost:8080/shootingplace-1.0/other?club=' + this.clubName + '&arbiterClass=' + this.ordinal + '&arbiterNumber=' + this.permissionsOtherArbiterNumber + '&arbiterPermissionValidThru=' + this.permissionsOtherArbiterPermissionValidThru.replace(/\//gi, '-'), {
+      fetch('http://' + this.local + '/other?club=' + this.clubName + '&arbiterClass=' + this.ordinal + '&arbiterNumber=' + this.permissionsOtherArbiterNumber + '&arbiterPermissionValidThru=' + this.permissionsOtherArbiterPermissionValidThru.replace(/\//gi, '-'), {
         method: 'POST',
         body: JSON.stringify(person),
         headers: {

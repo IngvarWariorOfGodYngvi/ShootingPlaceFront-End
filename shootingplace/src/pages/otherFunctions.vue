@@ -87,10 +87,49 @@
             </q-scroll-area>
           </q-card-section>
         </q-card>
-        <q-card>
-          <q-card-section>
-            <q-scroll-area class="full-width q-pa-none" style="height: 600px;">
-          <div class="self-center col full-width no-outline text-h5 text-bold" >Lista osób z licencjami</div>
+          <q-card>
+<q-card-section>
+            <q-scroll-area class="q-pa-none" style="height: 600px;">
+          <div class="self-center col full-width no-outline text-h5 text-bold" >Lista osób z licencjami NIEWAŻNYMI - ilość osób {{quantity[0]}}</div>
+            <div v-for="member in members2" :key="member">
+              <div class="row">
+           <q-field class="col" label="osoba" standout stack-label>
+                <template v-slot:control>
+                    <div>
+                  <div class="self-center col full-width no-outline row" tabindex="1">{{member.secondName}} {{member.firstName}}</div>
+                  </div>
+                </template>
+           </q-field>
+           <q-field class="col-2" label="Numer Licencji" standout stack-label>
+                <template v-slot:control>
+                  <div class="self-center col full-width no-outline row" tabindex="1">{{member.license.number}}</div>
+                </template>
+           </q-field>
+           <q-field class="col-2" label="grupa" standout stack-label>
+                <template v-slot:control>
+                  <div v-if="member.adult" class="self-center col full-width no-outline row" tabindex="1">Grupa Powszechna</div>
+                  <div v-if="!member.adult" class="self-center col full-width no-outline row" tabindex="1">Grupa Młodzieżowa</div>
+                </template>
+           </q-field>
+           <q-field class="col-2" label="Ważność licencji" standout stack-label>
+                <template v-slot:control>
+                    <div>
+                  <div class="self-center col full-width no-outline row" tabindex="1">{{member.license.validThru}}</div>
+                  </div>
+                </template>
+           </q-field>
+           <q-btn color="grey-8" v-if="!member.license.paid" class="col-1" @click="memberName = member.firstName + member.secondName,memberUUID = member.uuid,paymentLicenseAlert = true">opłać licencję</q-btn>
+           <q-btn color="primary" v-if="member.license.paid" class="col-1" @click="memberName = member.firstName + member.secondName ,licensePistolPermission = member.license.pistolPermission, licenseRiflePermission = member.license.riflePermission, licenseShotgunPermission = member.license.shotgunPermission,memberUUID = member.uuid, prolongLicenseAlert = true">przedłuż licencję</q-btn>
+           </div>
+           <q-item></q-item>
+            </div>
+            </q-scroll-area>
+</q-card-section>
+          </q-card>
+          <q-card>
+            <q-card-section>
+            <q-scroll-area class=" q-pa-none" style="height: 600px;">
+          <div class="self-center col full-width no-outline text-h5 text-bold" >Lista osób z licencjami AKTUALNYMI  - ilość osób {{quantity[1]}}</div>
             <div v-for="member in members" :key="member">
               <div class="row">
            <q-field class="col" label="osoba" standout stack-label>
@@ -124,12 +163,31 @@
            <q-item></q-item>
             </div>
             </q-scroll-area>
-          </q-card-section>
-        </q-card>
+            </q-card-section>
+          </q-card>
+          <q-card>
+            <q-card-section>
+          <div class="self-center col full-width no-outline text-h5 text-bold" >Sekcja Magicznych Przycisków</div>
+              <q-item>
+                <q-btn color="primary" label="pobierz uproszczoną listę wszystkich klubowiczów" />
+              </q-item>
+            </q-card-section>
+          </q-card>
     <q-dialog v-model="dataFail">
       <q-card>
         <q-card-section>
           <div class="text-h6">Coś poszło nie tak</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="prolongFail">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Nie można przedłużyć licencji - sprawdź składki</div>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -233,6 +291,8 @@ export default {
       others: [],
       clubs: [],
       members: [],
+      members2: [],
+      quantity: [],
       othersID: null,
       clubID: null,
       clubName: null,
@@ -246,6 +306,7 @@ export default {
       caliberAlert: false,
       editClub: false,
       dataFail: false,
+      prolongFail: false,
       alert: false,
       licensePistolPermission: false,
       licenseRiflePermission: false,
@@ -253,7 +314,9 @@ export default {
       prolongLicenseAlert: false,
       paymentLicenseAlert: false,
       memberName: null,
-      memberUUID: null
+      memberUUID: null,
+      local: 'localhost:8080',
+      prod: 'localhost:8080/shootingplace-1.0'
     }
   },
   created () {
@@ -261,6 +324,8 @@ export default {
     this.getOther()
     this.getAllClubs()
     this.getMembersWithLicense()
+    this.getMembersWithLicenseNotValid()
+    this.getMembersWithLicenseQuantity()
   },
   methods: {
     showloading () {
@@ -278,7 +343,7 @@ export default {
       setScrollPosition(target, offset, duration)
     },
     getListCalibers () {
-      fetch('http://localhost:8080/shootingplace-1.0/ammoEvidence/calibers', {
+      fetch('http://' + this.local + '/ammoEvidence/calibers', {
         method: 'GET'
       }).then(response => response.json())
         .then(calibers => {
@@ -286,7 +351,7 @@ export default {
         })
     },
     getOther () {
-      fetch('http://localhost:8080/shootingplace-1.0/other/all', {
+      fetch('http://' + this.local + '/other/all', {
         method: 'GET'
       }).then(response => response.json())
         .then(others => {
@@ -294,7 +359,7 @@ export default {
         })
     },
     getAllClubs () {
-      fetch('http://localhost:8080/shootingplace-1.0/club/', {
+      fetch('http://' + this.local + '/club/', {
         method: 'GET'
       }).then(response => response.json())
         .then(clubs => {
@@ -302,11 +367,27 @@ export default {
         })
     },
     getMembersWithLicense () {
-      fetch('http://localhost:8080/shootingplace-1.0/license/members', {
+      fetch('http://' + this.local + '/license/membersWithNotValidLicense', {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.members2 = response
+        })
+    },
+    getMembersWithLicenseNotValid () {
+      fetch('http://' + this.local + '/license/membersWithValidLicense', {
         method: 'GET'
       }).then(response => response.json())
         .then(members => {
           this.members = members
+        })
+    },
+    getMembersWithLicenseQuantity () {
+      fetch('http://' + this.local + '/license/membersQuantity', {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.quantity = response
         })
     },
     updateClub () {
@@ -318,7 +399,7 @@ export default {
         address: this.clubAddress,
         url: this.clubURL
       }
-      fetch('http://localhost:8080/shootingplace-1.0/club/' + this.clubID, {
+      fetch('http://' + this.local + '/club/' + this.clubID, {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {
@@ -334,7 +415,7 @@ export default {
       })
     },
     addNewCaliber () {
-      fetch('http://localhost:8080/shootingplace-1.0/ammoEvidence/calibers?caliber=' + this.caliberName, {
+      fetch('http://' + this.local + '/ammoEvidence/calibers?caliber=' + this.caliberName, {
         method: 'POST'
       }).then(response => {
         if (response.status === 201) {
@@ -346,17 +427,17 @@ export default {
       })
     },
     deleteOther () {
-      fetch('http://localhost:8080/shootingplace-1.0/other/?id=' + this.othersID, {
+      fetch('http://' + this.local + '/other/?id=' + this.othersID, {
         method: 'DELETE'
       }).then(response => {
         if (response.status === 200) {
           this.doneAlert = true
           this.othersID = null
+          this.getListCalibers()
+          this.getOther()
+          this.getAllClubs()
         } else { this.dataFail = true }
       })
-      this.getListCalibers()
-      this.getOther()
-      this.getAllClubs()
     },
     prolongLicense (uuid, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission) {
       var data = {
@@ -364,7 +445,7 @@ export default {
         riflePermission: licenseRiflePermission,
         shotgunPermission: licenseShotgunPermission
       }
-      fetch('http://localhost:8080/shootingplace-1.0/license/' + uuid, {
+      fetch('http://' + this.local + '/license/' + uuid, {
         method: 'PATCH',
         body: JSON.stringify(data),
         headers: {
@@ -377,11 +458,12 @@ export default {
           this.licenseRiflePermission = false
           this.licenseShotgunPermission = false
           this.getMembersWithLicense()
-        } else { this.dataFail = true }
+          this.getMembersWithLicenseNotValid()
+        } else { this.prolongFail = true }
       })
     },
     addLicenseHistoryPayment (uuid) {
-      fetch('http://localhost:8080/shootingplace-1.0/license/history/' + uuid, {
+      fetch('http://' + this.local + '/license/history/' + uuid, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -390,7 +472,8 @@ export default {
         if (response.status === 200) {
           this.doneAlert = true
           this.getMembersWithLicense()
-        } else { this.dataFail = true }
+          this.getMembersWithLicenseNotValid()
+        } else { this.prolongFail = true }
       })
     }
   },

@@ -36,9 +36,9 @@ module.exports = function( /* ctx */ ) {
             // 'eva-icons',
             // 'themify',
             // 'line-awesome',
-            // 'roboto-font-latin-ext', // this or either 'roboto-font', NEVER both!
+            'roboto-font-latin-ext', // this or either 'roboto-font', NEVER both!
 
-            'roboto-font', // optional, you are not bound to it
+            // 'roboto-font', // optional, you are not bound to it
             'material-icons' // optional, you are not bound to it
         ],
 
@@ -77,7 +77,7 @@ module.exports = function( /* ctx */ ) {
 
         // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-devServer
         devServer: {
-            port: 8080,
+            port: 8081,
             open: true // opens browser window automatically
         },
 
@@ -115,7 +115,7 @@ module.exports = function( /* ctx */ ) {
             manifest: {
                 name: 'Strzelnica',
                 short_name: 'Strzelnica',
-                description: 'A Quasar Framework app',
+                description: 'CRM',
                 display: 'standalone',
                 orientation: 'portrait',
                 background_color: '#ffffff',

@@ -6,33 +6,47 @@
         </q-item>
       </div>
       <q-card class=" row">
-        <div class="col-5">
+        <div class="col-4">
           <q-item>
-            <q-select class="full-width bg-green-3" filled v-model="memberName" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filter" @input="getMember(filter)"  label="Nazwisko - Imię - nr Leg">
+            <q-select class="full-width bg-green-3" filled v-model="memberName" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filter" @input="allMember = false,getMember(filter)"  label="Nazwisko - Imię - nr Leg">
                   <template v-slot:no-option>
                     <q-item>
                       <q-item-section class="text-grey">
-                        No results
+                        Brak wyników - sprawdź w nieaktywnych
                       </q-item-section>
                     </q-item>
                   </template>
                 </q-select>
           </q-item>
         </div>
-        <div class=" col-7">
+        <div class=" col-8">
           <q-card class="bg-grey-3 q-pa-md row">
-            <q-radio @input="getMembersNames ()" v-model="adult" :val="true" label="Grupa Powszechna"></q-radio>
-            <q-radio @input="getMembersNames ()" v-model="adult" :val="false" label="Grupa Młodzieżowa"></q-radio>
-            <q-radio @input="erase=false,getMembersNames ()" color="green" v-model="active" :val="true" label="Aktywni"></q-radio>
-            <q-radio @input="getMembersNames ()" color="warning" v-model="active" :val="false" label="Nieaktywni"></q-radio>
-            <q-checkbox @input="active = false,getMembersNames ()" color="red" v-model="erase" :val="false" label="Skreśleni"></q-checkbox>
+            <q-radio @input="memberName=null, member=null,getMembersNames ()" v-model="allMember" :val="true" label="Wyświetl wszystkich"></q-radio>
+            <q-radio @input="memberName=null, member=null,allMember=true,getMembersNames (),getAllMemberDTOWithArgs()" v-model="adult" :val="true" label="Grupa Powszechna"></q-radio>
+            <q-radio @input="memberName=null, member=null,allMember=true,getMembersNames (),getAllMemberDTOWithArgs()" v-model="adult" :val="false" label="Grupa Młodzieżowa"></q-radio>
+            <q-radio @input="memberName=null, member=null,allMember=true,erase=false, getMembersNames (),getAllMemberDTOWithArgs()" color="green" v-model="active" :val="true" label="Aktywni"></q-radio>
+            <q-radio @input="memberName=null, member=null,allMember=true,getMembersNames (),getAllMemberDTOWithArgs()" color="warning" v-model="active" :val="false" label="Nieaktywni"></q-radio>
+            <q-checkbox @input="memberName=null, member=null,allMember=true,active = false, getMembersNames (),getAllMemberDTOWithArgs()" color="red" v-model="erase" :val="false" label="Skreśleni"></q-checkbox>
           <q-item-section class="col">
           </q-item-section>
+          </q-card>
+          <q-card>
+          <div class="row text-bold">
+            <q-item>Ilość klubowiczów</q-item>
+            <q-item v-if="adult">Powszechna ogółem : {{quantities[0]}}</q-item>
+            <q-item v-if="active&&adult">Powszechna Aktywni : {{quantities[1]}}</q-item>
+            <q-item v-if="!active&&adult">Powszechna Nieaktywni : {{quantities[2]}}</q-item>
+            <q-item v-if="!adult">Młodzieżowa ogółem : {{quantities[3]}}</q-item>
+            <q-item v-if="active&&!adult">Młodzieżowa Aktywni : {{quantities[4]}}</q-item>
+            <q-item v-if="!active&&!adult">Młodzieżowa Nieaktywni : {{quantities[5]}}</q-item>
+            <q-item v-if="adult&&erase">Skreśleni : {{quantities[6]}}</q-item>
+            <q-item v-if="!adult&&erase">Skreśleni : {{quantities[7]}}</q-item>
+        </div>
           </q-card>
         </div>
       </q-card>
       <q-item></q-item>
-      <div v-if="member!=null">
+      <div v-if="member!=null && allMember==false">
             <q-card bordered class="row">
           <q-card-section avatar class="col-1">
             <div>
@@ -41,15 +55,14 @@
                 ||(member.address.street==null||member.address.street=='')" transparent align="middle" color="orange" text-color="black">Brak Adresu</q-badge>
                 <q-badge v-if="member.weaponPermission.exist&&!member.license.valid" transparent align="middle" color="red" text-color="black">Jest Broń i Brak Licencji</q-badge>
                 <q-badge v-if="(member.email==null||member.email=='')" transparent align="middle" color="yellow" text-color="black">Brak E-mail</q-badge>
-                <q-badge v-if="(member.license.number!=null)&&(member.license.valid == false)" transparent align="middle" color="yellow" text-color="black">Brak aktualnej licencji</q-badge>
-                <!-- <q-badge v-else>Brak Uwag</q-badge> -->
+               <q-badge v-if="(member.license.number!=null)&&(member.license.valid == false)" transparent align="middle" color="yellow" text-color="black">Brak aktualnej licencji</q-badge>
               </q-tooltip>
             <q-avatar v-if="member.weaponPermission.exist&&!member.license.valid" icon="warning" color="red" text-color="white"/>
-            <q-avatar v-if="member.license.number!=null&&!member.license.valid" icon="warning" color="yellow" text-color="white"/>
+            <q-avatar v-else-if="member.license.number!=null&&!member.license.valid" icon="warning" color="yellow" text-color="white"/>
             <q-avatar v-else-if="(member.email==null||member.email=='')
             ||(member.address.postOfficeCity===null||member.address.postOfficeCity==='')
             ||(member.address.street==null||member.address.street=='')" icon="warning" color="warning" text-color="white" />
-            <q-avatar v-else icon="perm_identity" color="primary" text-color="white" />
+            <q-avatar v-else icon="perm_identity" color="green" text-color="white" />
             </div>
           </q-card-section>
           <q-card-section class="col-4">
@@ -74,7 +87,7 @@
               <q-card-section class="col-4">
                   <q-field class="col" standout stack-label>
                     <template v-slot:control>
-                      <div class="self-center col full-width no-outline" tabindex="0">Historia Składek</div>
+                      <div class="self-center col full-width no-outline text-center" tabindex="0">Historia Składek</div>
                     </template>
                   </q-field>
                   <div v-if="!member.erased">
@@ -135,7 +148,7 @@
               <q-item-section class="col" v-if="!member.license.number!=null||member.adult">
                 <q-field class="col" standout stack-label>
                   <template v-slot:control>
-                    <div class="self-center col full-width no-outline" tabindex="0">Licencja</div>
+                    <div class="self-center col full-width no-outline text-center" tabindex="0">Licencja</div>
                   </template>
                 </q-field>
                 <div>
@@ -216,8 +229,8 @@
                 </q-scroll-area>
               </q-expansion-item>
               </q-card-section>
-              <q-card-section class="col-5 items-center">
-                <q-item-section>
+              <q-card-section class="col-5 text-center">
+                <q-item-section class="text-center">
                   <q-expansion-item default-opened label="Informacje o Uprawnieniach" class="col items-center bg-grey-3" group="right-card">
                     <q-field v-if="(member.memberPermissions.arbiterNumber!=null&&member.memberPermissions.arbiterNumber!='')" class="col" standout label="Sędzia" stack-label>
                     <template v-slot:control>
@@ -278,6 +291,11 @@
                   <q-field v-if="member.weaponPermission.number!=null&&member.weaponPermission.exist" class="col" standout label="Numer pozwolenia na broń" stack-label>
                     <template v-slot:control>
                       <div class="self-center full-width no-outline" tabindex="0">{{member.weaponPermission.number}}</div>
+                    </template>
+                  </q-field>
+                  <q-field v-if="member.weaponPermission.admissionToPossessAWeapon!=null&&member.weaponPermission.admissionToPossessAWeaponIsExist" class="col" standout label="Numer dopuszczenia do posiadania broni" stack-label>
+                    <template v-slot:control>
+                      <div class="self-center full-width no-outline" tabindex="0">{{member.weaponPermission.admissionToPossessAWeapon}}</div>
                     </template>
                   </q-field>
                   <q-field v-if="(member.memberPermissions.shootingLeaderNumber!=null&&member.memberPermissions.shootingLeaderNumber!='')" class="col" standout label="Prowadzący Strzelanie" stack-label>
@@ -351,9 +369,9 @@
                 &&member.shootingPatent.riflePermission
                 &&member.shootingPatent.shotgunPermission"><q-item-label>Klubowicz posiada cały Patent</q-item-label></q-item>
 </q-expansion-item >
-<q-expansion-item v-if="member.adult&&active&&!member.erased" label="Pozwolenie na Broń" group="right-right-card" class="bg-white">
+<q-expansion-item v-if="member.adult&&member.active&&!member.erased" label="Pozwolenie na Broń" group="right-right-card" class="bg-white">
                   <div class="row">
-                    <q-input filled class="col" v-if="(member.weaponPermission.number==null||!member.weaponPermission.exist)&&active" v-model="weaponPermissionNumber" label="Numer pozwolenia"/>
+                    <q-input filled class="col" v-if="(member.weaponPermission.number==null||!member.weaponPermission.exist)&&member.active" v-model="weaponPermissionNumber" label="Numer pozwolenia"/>
                     <q-btn class="col" v-if="(!member.weaponPermission.exist)&&member.active" label="Dodaj" color="primary" @click="changeWeaponPermission(member.uuid, weaponPermissionNumber, isExist)"/>
                     <q-btn class="col" v-if="(member.weaponPermission.exist)&&active" label="Usuń pozwolenie" color="primary" @click="memberUUID=member.uuid,eraseWeapon=true"/>
                   </div>
@@ -363,7 +381,19 @@
                     </template>
                   </q-field>
 </q-expansion-item>
-<q-expansion-item v-if="member.adult&&active&&!member.erased" label="Uprawnienia" group="right-right-card" class="bg-white">
+<q-expansion-item v-if="member.adult&&member.active&&!member.erased" label="Dopuszczenie do posiadania broni" group="right-right-card" class="bg-white">
+                  <div class="row">
+                    <q-input filled class="col" v-if="(member.weaponPermission.admissionToPossessAWeapon==null||!member.weaponPermission.admissionToPossessAWeaponIsExist)&&member.active" v-model="admissionToPossess" label="Numer dopuszczenia"/>
+                    <q-btn class="col" v-if="(!member.weaponPermission.admissionToPossessAWeaponIsExist)&&member.active" label="Dodaj" color="primary" @click="changeWeaponAdmission (member.uuid, admissionToPossess, admissionToPossessIsExist)"/>
+                    <q-btn class="col" v-if="(member.weaponPermission.admissionToPossessAWeaponIsExist)&&active" label="Usuń dopuszczenie" color="primary" @click="memberUUID=member.uuid,eraseAssest=true"/>
+                  </div>
+                  <q-field v-if="!member.license.valid&&member.weaponPermission.exist" class="col bg-red" standout stack-label>
+                    <template v-slot:control>
+                      <div class="self-center full-width no-outline " tabindex="0">POSIADA NIE WAŻNĄ LICENCJĘ!!!</div>
+                    </template>
+                  </q-field>
+</q-expansion-item>
+<q-expansion-item v-if="member.adult&&member.active&&!member.erased" label="Uprawnienia" group="right-right-card" class="bg-white">
 <q-expansion-item v-if="member.memberPermissions.shootingLeaderNumber==null" label="Prowadzący strzelanie" group="qualifications">
                   <div class="row">
                   <q-input filled class="col" v-if="member.memberPermissions.shootingLeaderNumber==null" v-model="permissionsShootingLeaderNumber" label="numer uprawnienia"/>
@@ -413,6 +443,22 @@
                     </q-item>
                       </div>
     </q-expansion-item>
+    </q-expansion-item>
+    <q-expansion-item v-if="member.active&&!member.erased" label="Portal PZSS" group="right-right-card" class="bg-white">
+      <div class="row">
+        <q-field v-if="member.pzss" class="col" standout stack-label>
+          <template v-slot:control>
+            <div class="text-center full-width no-outline" tabindex="0">Wprowadzony do portalu</div>
+          </template>
+        </q-field>
+        <q-field v-if="!member.pzss" class="col bg-red-3" standout stack-label>
+          <template v-slot:control>
+            <div class="text-center full-width no-outline" tabindex="0">Nie Wprowadzony do Portalu</div>
+          </template>
+        </q-field>
+        <q-item v-if="member.pzss"><q-btn type="a" href="https://portal.pzss.org.pl/" target="_blank" label="Przejdź do portalu" color="primary"/></q-item>
+        <q-item v-if="!member.pzss"><q-btn type="a" href="https://portal.pzss.org.pl/" target="_blank" label="Przejdź do portalu" color="primary" @click="memberUUID=member.uuid,pzssPortal = true"/></q-item>
+      </div>
     </q-expansion-item>
     <q-expansion-item v-if="member.active" label="Przenieś do nieaktywnych" group="right-right-card" class="bg-red">
                 <q-item><q-item-label v-if="member.active">Czy napewno chcesz przenieść osobę?</q-item-label></q-item>
@@ -546,9 +592,70 @@
                 <q-item><q-btn class="full-width" label="Pobierz kartę Członkowską" color="secondary" @click="memberUUID=member.uuid,name=member.firstName,name2=member.secondName,personalCardDownloadConfirm=true"/></q-item>
                 <q-item><q-btn class="full-width" label="Pobierz ostatnie potwierdzenie składki" color="secondary" @click="memberUUID=member.uuid,name=member.firstName,name2=member.secondName,contributionDownloadConfirm=true"/></q-item>
                 <q-item v-if="member.active&&!member.erased&&member.license.number!=null"><q-btn class="full-width" label="Pobierz wniosek o licencję" color="secondary" @click="memberUUID=member.uuid,name=member.firstName,name2=member.secondName,getApplicationForExtensionOfTheCompetitorsLicense ()"/></q-item>
+                <q-item><q-btn class="full-width" label="Pobierz Zaświadczenie o przynależności" color="secondary" @click="memberUUID=member.uuid,name=member.firstName,name2=member.secondName,certificateDownload = true"/></q-item>
             </div>
           </q-card-section>
         </q-card>
+      </div>
+      <div v-if="allMember==true">
+        <q-scroll-area class="full-width q-pa-none" style="height: 1000px;">
+        <div v-for="member in memberDTO" :key="member">
+          <div class="row" @click="allMember=false,memberName =member.secondName + ' '+member.firstName+' leg. '+member.legitimationNumber,getMemberFromList (member.legitimationNumber)">
+            <q-field class="col full-width" align="left" standout stack-label>
+              <template v-slot:control>
+                <div>
+                  <div class="self-center full-width no-outline" tabindex="0">{{member.secondName}} {{member.firstName}}</div>
+                  <div v-if="!member.pzss" class="self-center full-width no-outline" tabindex="0">Nie wpisany do portalu PZSS</div>
+                </div>
+              </template>
+            </q-field>
+            <q-field   class="col full-width" align="left" standout stack-label>
+              <template v-slot:control>
+                <div class="row">
+                  <div v-if="member.adult" class="self-center full-width no-outline" tabindex="0">Grupa Powszechna</div>
+                  <div v-if="!member.adult" class="self-center full-width no-outline" tabindex="0">Grupa Młodzieżowa</div>
+                </div>
+              </template>
+            </q-field>
+            <q-field  v-if="member.license.number!=null && member.license.valid" class="col full-width" align="left" standout stack-label>
+              <template v-slot:control>
+                <div class="row">
+                  <div class="self-center full-width no-outline" tabindex="0">Licencja jest ważna</div>
+                </div>
+              </template>
+            </q-field>
+            <q-field  v-if="member.license.number!=null && !member.license.valid" class="col full-width bg-yellow-3" align="left" standout stack-label>
+              <template v-slot:control>
+                <div class="row">
+                  <div class="self-center full-width no-outline" tabindex="0">Licencja jest nieważna</div>
+                </div>
+              </template>
+            </q-field>
+            <q-field  v-if="member.license.number==null" class="col full-width" align="left" standout stack-label>
+              <template v-slot:control>
+                <div class="row">
+                  <div class="self-center full-width no-outline" tabindex="0">Nie posiada licencji</div>
+                </div>
+              </template>
+            </q-field>
+            <q-field  v-if="member.active" class="col full-width bg-green-3" align="left" standout stack-label>
+              <template v-slot:control>
+                <div class="row">
+                  <div class="self-center full-width no-outline" tabindex="0">Klubowicz Aktywny</div>
+                </div>
+              </template>
+            </q-field>
+            <q-field  v-if="!member.active" class="col full-width bg-red-4" align="left" standout stack-label>
+              <template v-slot:control>
+                <div class="row">
+                  <div class="self-center full-width no-outline" tabindex="0">Klubowicz Nieaktywny - Sprawdź składki</div>
+                </div>
+              </template>
+            </q-field>
+          </div>
+          <p></p>
+        </div>
+        </q-scroll-area>
       </div>
       <q-dialog v-model="contribution" persistent>
       <q-card>
@@ -592,6 +699,19 @@
           <q-btn flat label="anuluj" color="primary" v-close-popup />
           <q-btn flat label="zmień" color="primary" v-close-popup @click="updateMember(memberUUID, memberEmail, memberPhoneNumber),
                 updateAddress(memberUUID, memberZipCode, memberPostOfficeCity, memberStreet, memberStreetNumber, memberFlatNumber)" />
+        </q-card-actions>
+      </q-card>
+</q-dialog>
+<q-dialog v-model="pzssPortal" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <q-avatar icon="add" color="primary"/>
+          <span class="q-ml-sm">Czy Klubowicz został dodany do portalu?</span>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="nie" color="primary" v-close-popup />
+          <q-btn label="tak" color="primary" v-close-popup @click="changePzss (memberUUID)"/>
         </q-card-actions>
       </q-card>
 </q-dialog>
@@ -717,7 +837,20 @@
 
         <q-card-actions align="right">
           <q-btn flat label="anuluj" color="primary" v-close-popup />
-          <q-btn flat label="usuń" color="primary" v-close-popup @click="changeWeaponPermission(memberUUID, weaponPermissionNumber, !isExist)" />
+          <q-btn flat label="usuń" color="primary" v-close-popup @click="changeWeaponPermission(memberUUID, '0', !isExist)" />
+        </q-card-actions>
+      </q-card>
+</q-dialog>
+<q-dialog v-model="eraseAssest" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <q-avatar icon="add" color="primary"/>
+          <span class="q-ml-sm">Czy napewno usunąć pozwolenie?</span>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="anuluj" color="primary" v-close-popup />
+          <q-btn flat label="usuń" color="primary" v-close-popup @click="changeWeaponAdmission(memberUUID, '0', !admissionToPossessIsExist)" />
         </q-card-actions>
       </q-card>
 </q-dialog>
@@ -861,6 +994,19 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
+<q-dialog v-model="certificateDownload" persistent>
+      <q-card>
+        <q-card-section class="col items-center">
+          <p class="q-ml-sm text-h6 text-bold">Pobrać zaświadczenie do policji dla Klubowicza?</p>
+          <p class="q-ml-sm text-bold">Pamiętaj aby sprawdzić składki Klubowicza</p>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="anuluj" color="primary" v-close-popup />
+          <q-btn flat label="Pobierz" color="primary" v-close-popup @click="getdownloadCertificateOfClubMembership()" />
+        </q-card-actions>
+      </q-card>
+</q-dialog>
 <q-dialog v-model="addAmmoConfirm" persistent>
       <q-card>
         <q-card-section class="row items-center">
@@ -988,7 +1134,7 @@
 <q-dialog v-model="weapon">
       <q-card>
         <q-card-section>
-          <div class="text-h6">Ustawiono pozwolenie na broń</div>
+          <div class="text-h6">Ustawiono pozwolenie/dopuszczenie</div>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -1239,6 +1385,7 @@ export default {
       contribution: false,
       deactivate: false,
       eraseWeapon: false,
+      eraseAssest: false,
       licenseConfirm: false,
       licensePayment: false,
       instructorConfirm: false,
@@ -1248,12 +1395,15 @@ export default {
       arbiterUpdateClassConfirm: false,
       failure: false,
       number: '',
+      legNumber: null,
       patentNumber: '',
       licenseNumber: '',
       validThru: '',
       members: [],
+      memberDTO: [],
       calibers: [],
       ammos: [],
+      quantities: [],
       patentDate: Date.now,
       patentPistolPermission: false,
       patentRiflePermission: false,
@@ -1276,9 +1426,11 @@ export default {
       permissionsArbiterPermissionValidThru: '',
       ordinal: '',
       reason: null,
-      weaponPermissionNumber: '',
-      secondName: '',
+      weaponPermissionNumber: null,
       isExist: true,
+      admissionToPossess: null,
+      admissionToPossessIsExist: true,
+      secondName: '',
       memberEmail: '',
       memberPhoneNumber: '',
       memberIdcard: '',
@@ -1301,12 +1453,20 @@ export default {
       model: null,
       dateVar: /\//gi,
       contributionDate: Date.now,
-      confirm: false
+      allMember: true,
+      confirm: false,
+      certificateDownload: false,
+      pzssPortal: false,
+      portal: false,
+      local: 'localhost:8080',
+      prod: 'localhost:8080/shootingplace-1.0'
     }
   },
   created () {
     this.getMembersNames()
     this.getListCalibers()
+    this.getMembersQuantity()
+    this.getAllMemberDTOWithArgs()
   },
   methods: {
     showloading () {
@@ -1325,7 +1485,7 @@ export default {
       setScrollPosition(target, offset, duration)
     },
     addHistoryContributionRecord (uuid, date) {
-      fetch('http://localhost:8080/shootingplace-1.0/contribution/history/' + uuid + '?date=' + date.replace(/\//gi, '-'), {
+      fetch('http://' + this.local + '/contribution/history/' + uuid + '?date=' + date.replace(/\//gi, '-'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -1343,7 +1503,7 @@ export default {
       const memberNameWord = this.memberName.split(' ')
       var legNumber = memberNameWord.length
       const memberNameUUID = memberNameWord[legNumber - 1]
-      fetch('http://localhost:8080/shootingplace-1.0/member/' + memberNameUUID, {
+      fetch('http://' + this.local + '/member/' + memberNameUUID, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -1352,8 +1512,29 @@ export default {
         this.member = response
       })
     },
+    getMemberFromList (leg) {
+      fetch('http://' + this.local + '/member/' + leg, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => response.json()).then(response => {
+        this.member = response
+      })
+    },
+    getMembersQuantity () {
+      fetch('http://' + this.local + '/member/membersQuantity', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => response.json())
+        .then(response => {
+          this.quantities = response
+        })
+    },
     removeContributionRecord () {
-      fetch('http://localhost:8080/shootingplace-1.0/contribution/remove/' + this.memberUUID + '?contributionUUID=' + this.contributionUUID, {
+      fetch('http://' + this.local + '/contribution/remove/' + this.memberUUID + '?contributionUUID=' + this.contributionUUID, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -1361,20 +1542,22 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           this.contributionRemoveRecordAlert = true
+          this.getMembersNames()
           this.showloading()
-          this.getMember(this.memberUUID)
+          this.getMember(this.legNumber)
         } else { this.failure = true }
       })
     },
     prolongContribution (uuid) {
-      fetch('http://localhost:8080/shootingplace-1.0/contribution/' + uuid, {
+      fetch('http://' + this.local + '/contribution/' + uuid, {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {
           this.contributionAlert = true
+          this.getMembersNames()
           this.showloading()
-          this.getMember(uuid)
-        }
+          this.getMember(this.legNumber)
+        } else { this.failure = true }
       })
     },
     updateMember (uuid, email, phoneNumber) {
@@ -1382,7 +1565,7 @@ export default {
         email: email,
         phoneNumber: phoneNumber
       }
-      fetch('http://localhost:8080/shootingplace-1.0/member/' + uuid, {
+      fetch('http://' + this.local + '/member/' + uuid, {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {
@@ -1404,7 +1587,7 @@ export default {
         firstName: firstName,
         secondName: secondName
       }
-      fetch('http://localhost:8080/shootingplace-1.0/member/' + uuid, {
+      fetch('http://' + this.local + '/member/' + uuid, {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {
@@ -1429,7 +1612,7 @@ export default {
         streetNumber: memberStreetNumber,
         flatNumber: memberFlatNumber
       }
-      fetch('http://localhost:8080/shootingplace-1.0/address/' + uuid, {
+      fetch('http://' + this.local + '/address/' + uuid, {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {
@@ -1449,15 +1632,31 @@ export default {
       })
     },
     getMembersNames () {
-      fetch('http://localhost:8080/shootingplace-1.0/member/getMembersNames?active=' + this.active + '&adult=' + this.adult + '&erase=' + this.erase, {
+      fetch('http://' + this.local + '/member/getMembersNames?active=' + this.active + '&adult=' + this.adult + '&erase=' + this.erase, {
         method: 'GET'
       }).then(response => response.json())
         .then(filters => {
           this.filters = filters
         })
     },
+    // getAllMemberDTO () {
+    //   fetch('http://' + this.local + '/member/getAllMemberDTO', {
+    //     method: 'GET'
+    //   }).then(response => response.json())
+    //     .then(response => {
+    //       this.memberDTO = response
+    //     })
+    // },
+    getAllMemberDTOWithArgs () {
+      fetch('http://' + this.local + '/member/getAllMemberDTOWithArgs?active=' + this.active + '&adult=' + this.adult + '&erase=' + this.erase, {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.memberDTO = response
+        })
+    },
     getListCalibers () {
-      fetch('http://localhost:8080/shootingplace-1.0/ammoEvidence/calibers', {
+      fetch('http://' + this.local + '/ammoEvidence/calibers', {
         method: 'GET'
       }).then(response => response.json())
         .then(calibers => {
@@ -1465,7 +1664,7 @@ export default {
         })
     },
     addMemberAndAmmoToCaliber () {
-      fetch('http://localhost:8080/shootingplace-1.0/ammoEvidence/ammo?caliberUUID=' + this.caliberUUID + '&legitimationNumber=' + this.memberUUID + '&counter=' + this.quantity + '&otherID=0', {
+      fetch('http://' + this.local + '/ammoEvidence/ammo?caliberUUID=' + this.caliberUUID + '&legitimationNumber=' + this.memberUUID + '&counter=' + this.quantity + '&otherID=0', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -1484,7 +1683,7 @@ export default {
     },
     getContributionPDF () {
       axios({
-        url: 'http://localhost:8080/shootingplace-1.0/files/downloadContribution/' + this.memberUUID,
+        url: 'http://' + this.local + '/files/downloadContribution/' + this.memberUUID,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
@@ -1498,7 +1697,7 @@ export default {
     },
     getPersonalCardPDF () {
       axios({
-        url: 'http://localhost:8080/shootingplace-1.0/files/downloadPersonalCard/' + this.memberUUID,
+        url: 'http://' + this.local + '/files/downloadPersonalCard/' + this.memberUUID,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
@@ -1512,7 +1711,7 @@ export default {
     },
     getApplicationForExtensionOfTheCompetitorsLicense () {
       axios({
-        url: 'http://localhost:8080/shootingplace-1.0/files/downloadApplication/' + this.memberUUID,
+        url: 'http://' + this.local + '/files/downloadApplication/' + this.memberUUID,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
@@ -1520,6 +1719,20 @@ export default {
         var fileLink = document.createElement('a')
         fileLink.href = fileURL
         fileLink.setAttribute('download', 'Wniosek_' + this.name + '_' + this.name2 + '.pdf')
+        document.body.appendChild(fileLink)
+        fileLink.click()
+      })
+    },
+    getdownloadCertificateOfClubMembership () {
+      axios({
+        url: 'http://' + this.local + '/files/downloadCertificateOfClubMembership/' + this.memberUUID,
+        method: 'GET',
+        responseType: 'blob'
+      }).then(response => {
+        var fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        var fileLink = document.createElement('a')
+        fileLink.href = fileURL
+        fileLink.setAttribute('download', 'Zaświadczenie_' + this.name + '_' + this.name2 + '.pdf')
         document.body.appendChild(fileLink)
         fileLink.click()
       })
@@ -1532,7 +1745,7 @@ export default {
         shotgunPermission: patentShotgunPermission,
         dateOfPosting: patentDate.replace(this.dateVar, '-')
       }
-      fetch('http://localhost:8080/shootingplace-1.0/patent/' + uuid, {
+      fetch('http://' + this.local + '/patent/' + uuid, {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {
@@ -1558,7 +1771,7 @@ export default {
         riflePermission: licenseRiflePermission,
         shotgunPermission: licenseShotgunPermission
       }
-      fetch('http://localhost:8080/shootingplace-1.0/license/' + this.memberUUID, {
+      fetch('http://' + this.local + '/license/' + this.memberUUID, {
         method: 'PUT',
         body: JSON.stringify(data1),
         headers: {
@@ -1582,7 +1795,7 @@ export default {
         riflePermission: licenseRiflePermission,
         shotgunPermission: licenseShotgunPermission
       }
-      fetch('http://localhost:8080/shootingplace-1.0/license/' + uuid, {
+      fetch('http://' + this.local + '/license/' + uuid, {
         method: 'PATCH',
         body: JSON.stringify(data),
         headers: {
@@ -1600,7 +1813,7 @@ export default {
       })
     },
     addLicenseHistoryPayment (uuid) {
-      fetch('http://localhost:8080/shootingplace-1.0/license/history/' + uuid, {
+      fetch('http://' + this.local + '/license/history/' + uuid, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -1618,7 +1831,7 @@ export default {
         number: weaponPermissionNumber,
         exist: isExist
       }
-      fetch('http://localhost:8080/shootingplace-1.0/member/weapon/' + uuid, {
+      fetch('http://' + this.local + '/member/weapon/' + uuid, {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {
@@ -1627,14 +1840,34 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           this.weapon = true
-          this.weaponPermissionNumber = ''
+          this.weaponPermissionNumber = null
+          this.showloading()
+          this.getMember(uuid)
+        } else { this.failure = true }
+      })
+    },
+    changeWeaponAdmission (uuid, admissionToPossess, admissionToPossessIsExist) {
+      var data = {
+        admissionToPossessAWeapon: admissionToPossess,
+        admissionToPossessAWeaponIsExist: admissionToPossessIsExist
+      }
+      fetch('http://' + this.local + '/member/weapon/' + uuid, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          this.weapon = true
+          this.admissionToPossess = null
           this.showloading()
           this.getMember(uuid)
         } else { this.failure = true }
       })
     },
     changeActive (uuid) {
-      fetch('http://localhost:8080/shootingplace-1.0/member/' + uuid, {
+      fetch('http://' + this.local + '/member/' + uuid, {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 204) {
@@ -1650,7 +1883,7 @@ export default {
         arbiterNumber: this.permissionsArbiterNumber,
         arbiterPermissionValidThru: this.permissionsArbiterPermissionValidThru.replace(this.dateVar, '-')
       }
-      fetch('http://localhost:8080/shootingplace-1.0/permissions/' + uuid + '?ordinal=' + this.ordinal, {
+      fetch('http://' + this.local + '/permissions/' + uuid + '?ordinal=' + this.ordinal, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -1679,7 +1912,7 @@ export default {
       })
     },
     eraseMember (uuid) {
-      fetch('http://localhost:8080/shootingplace-1.0/member/erase/' + uuid + '?reason=' + this.reason, {
+      fetch('http://' + this.local + '/member/erase/' + uuid + '?reason=' + this.reason, {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 204) {
@@ -1691,10 +1924,20 @@ export default {
       })
     },
     changeAdult (uuid) {
-      fetch('http://localhost:8080/shootingplace-1.0/member/adult/' + uuid, {
+      fetch('http://' + this.local + '/member/adult/' + uuid, {
         method: 'PATCH'
       }).then(response => {
         this.changeAdultAlert = true
+        this.getMembersNames()
+        this.showloading()
+        this.getMember(uuid)
+      })
+    },
+    changePzss (uuid) {
+      fetch('http://' + this.local + '/member/pzss/' + uuid, {
+        method: 'PATCH'
+      }).then(response => {
+        this.getMembersNames()
         this.showloading()
         this.getMember(uuid)
       })

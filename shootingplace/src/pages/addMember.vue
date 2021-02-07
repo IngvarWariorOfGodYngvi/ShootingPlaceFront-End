@@ -224,7 +224,7 @@
       <q-card-section class="col-6 bg-grey-2">
       <div>
       <q-item><q-input class="full-width" v-model="patentNumber" mask="#####/AAA/##/####" label="Numer Patentu" filled/></q-item>
-      <q-item><q-input class="full-width" filled v-model="patentDate" mask="####/##/##" :rules="['date']" label="Data Wydania Patenty">
+      <q-item><q-input class="full-width" filled v-model="patentDate" mask="####/##/##" :rules="['date']" label="Data Wydania Patentu">
                         <template v-slot:append>
                           <q-icon name="event" class="cursor-pointer">
                             <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -413,12 +413,15 @@
 
       <template v-slot:navigation  >
         <q-stepper-navigation class="flex flex">
-          <q-item v-if="(step<6&&(uuid!=null&&uuid!='' && !uuid.includes('Uwaga!')))"><q-btn @click="$refs.stepper.next()" color="primary" :label="step === 5 ? 'Zakończ' : 'Przejdź Dalej'" /></q-item>
+          <q-item v-if="(step<5&&(uuid!=null&&uuid!=''))"><q-btn v-if="step<5" @click="$refs.stepper.next()" color="primary" :label="step === 5 ? 'Zakończ' : 'Przejdź Dalej'" /></q-item>
           <q-item><q-btn v-if="step > 1" flat color="primary" @click="$refs.stepper.previous()" label="Wróć" /></q-item>
           <q-item><q-btn v-if="step > 1" @click="redirect()" color="primary" label="Zakończ" /></q-item>
-          <q-item><q-btn v-if="uuid!=null&&uuid!='' && !uuid.includes('Uwaga!')" color="secondary" @click="personalCardDownloadConfirm=true" label="Drukuj kartę" /></q-item>
-          <q-item><q-btn v-if="uuid!=null&&uuid!='' && !uuid.includes('Uwaga!')" color="secondary" @click="contributionDownloadConfirm=true" label="Potwierdzenie opłacenia składki" /></q-item>
+          <q-item><q-btn v-if="step > 1 && (uuid!=null&&uuid!='')" type="a" href="https://portal.pzss.org.pl/" target="_blank" label="Przejdź do portalu PZSS" color="primary" @click="pzssPortal=true"/></q-item>
+          <q-item><q-btn v-if="step > 1 && (uuid!=null&&uuid!='')" label="tymczasowy przycisk potwierdzający PZSS" color="primary" @click="pzssPortal=true"/></q-item>
+          <q-item><q-btn v-if="uuid!=null&&uuid!=''" color="secondary" @click="personalCardDownloadConfirm=true" label="Drukuj kartę" /></q-item>
+          <q-item><q-btn v-if="uuid!=null&&uuid!=''" color="secondary" @click="contributionDownloadConfirm=true" label="Potwierdzenie opłacenia składki" /></q-item>
           <q-item v-if="uuid!=null"><q-item-label>Identyfikator : {{uuid}}</q-item-label></q-item>
+          <q-item v-if="alertResponse!=null" class="bg-red-3"><q-item-label>Ostrzeżenie : {{alertResponse}}</q-item-label></q-item>
         </q-stepper-navigation>
       </template>
     </q-stepper>
@@ -595,6 +598,19 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
+<q-dialog v-model="pzssPortal" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <q-avatar icon="add" color="primary"/>
+          <span class="q-ml-sm">Czy Klubowicz został dodany do portalu?</span>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="nie" color="primary" v-close-popup />
+          <q-btn label="tak" color="primary" v-close-popup @click="changePzss (uuid)"/>
+        </q-card-actions>
+      </q-card>
+</q-dialog>
   </q-page>
 </template>
 
@@ -610,6 +626,8 @@ export default {
       value: false,
       value1: false,
       value2: false,
+      alert: false,
+      alertResponse: null,
       instructorAlert: false,
       shootingLeaderAlert: false,
       arbiterAlert: false,
@@ -661,12 +679,15 @@ export default {
       active: true,
       uuid: null,
       ordinal: '',
-      dateVar: /\//gi
+      dateVar: /\//gi,
+      pzssPortal: false,
+      local: 'localhost:8080',
+      prod: 'localhost:8080/shootingplace-1.0'
     }
   },
   methods: {
     redirect () {
-      window.location.href = 'https://localhost:8080/strzelnica/#/member'
+      window.location.href = 'http://localhost:8081/strzelnica/#/member'
     },
     showloading () {
       this.$q.loading.show({ message: 'Dzieje się coś ważnego... Poczekaj' })
@@ -687,7 +708,7 @@ export default {
         adult: memberAdult,
         joinDate: this.memberJoinDate.replace(/\//gi, '-')
       }
-      fetch('http://localhost:8080/shootingplace-1.0/member/', {
+      fetch('http://' + this.local + '/member/', {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
@@ -697,7 +718,7 @@ export default {
         if (response.status === 400) {
           response.json().then(
             response => {
-              this.uuid = response
+              this.alertResponse = response
               if (response.message === '') {
                 this.uuid = 'Uwaga! Nie można wysyłać pustego formularza'
               }
@@ -708,6 +729,7 @@ export default {
           response.json().then(
             response => {
               this.uuid = response
+              this.alertResponse = null
               this.memberAdultConfirm = this.memberAdult
               this.memberAlert = true
             }
@@ -723,7 +745,7 @@ export default {
         streetNumber: memberStreetNumber,
         flatNumber: memberFlatNumber
       }
-      fetch('http://localhost:8080/shootingplace-1.0/address/' + uuid, {
+      fetch('http://' + this.local + '/address/' + uuid, {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {
@@ -743,7 +765,7 @@ export default {
         shotgunPermission: patentShotgunPermission,
         dateOfPosting: patentDate.replace(this.dateVar, '-')
       }
-      fetch('http://localhost:8080/shootingplace-1.0/patent/' + uuid, {
+      fetch('http://' + this.local + '/patent/' + uuid, {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {
@@ -764,7 +786,7 @@ export default {
         shotgunPermission: licenseShotgunPermission,
         validThru: licenseDate.replace(this.dateVar, '-')
       }
-      fetch('http://localhost:8080/shootingplace-1.0/license/' + uuid, {
+      fetch('http://' + this.local + '/license/' + uuid, {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {
@@ -781,7 +803,7 @@ export default {
         number: weaponPermissionNumber,
         exist: isExist
       }
-      fetch('http://localhost:8080/shootingplace-1.0/member/weapon/' + uuid, {
+      fetch('http://' + this.local + '/member/weapon/' + uuid, {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {
@@ -793,6 +815,13 @@ export default {
         } else { this.failure = true }
       })
     },
+    changePzss (uuid) {
+      fetch('http://' + this.local + '/member/pzss/' + uuid, {
+        method: 'PATCH'
+      }).then(response => {
+        this.showloading()
+      })
+    },
     updateMemberPermissions (uuid, permissionsShootingLeaderNumber, permissionsInstructorNumber, permissionsArbiterNumber, permissionsArbiterPermissionValidThru) {
       var data = {
         shootingLeaderNumber: this.permissionsShootingLeaderNumber,
@@ -800,7 +829,7 @@ export default {
         arbiterNumber: this.permissionsArbiterNumber,
         arbiterPermissionValidThru: this.permissionsArbiterPermissionValidThru.replace(/\//gi, '-')
       }
-      fetch('http://localhost:8080/shootingplace-1.0/permissions/' + uuid + '?ordinal=' + this.ordinal, {
+      fetch('http://' + this.local + '/permissions/' + uuid + '?ordinal=' + this.ordinal, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -820,7 +849,7 @@ export default {
     },
     getContributionPDF () {
       axios({
-        url: 'http://localhost:8080/shootingplace-1.0/files/downloadContribution/' + this.uuid,
+        url: 'http://' + this.local + '/files/downloadContribution/' + this.uuid,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
@@ -834,7 +863,7 @@ export default {
     },
     getPersonalCardPDF () {
       axios({
-        url: 'http://localhost:8080/shootingplace-1.0/files/downloadPersonalCard/' + this.uuid,
+        url: 'http://' + this.local + '/files/downloadPersonalCard/' + this.uuid,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
