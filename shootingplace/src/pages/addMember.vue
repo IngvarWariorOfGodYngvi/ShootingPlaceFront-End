@@ -681,13 +681,13 @@ export default {
       ordinal: '',
       dateVar: /\//gi,
       pzssPortal: false,
-      local: 'localhost:8080',
-      prod: 'localhost:8080/shootingplace-1.0'
+      prod: 'localhost:8080',
+      local: 'localhost:8080/shootingplace-1.0'
     }
   },
   methods: {
     redirect () {
-      window.location.href = 'http://localhost:8081/strzelnica/#/member'
+      window.location.href = 'http://localhost:8080/strzelnica/#/member'
     },
     showloading () {
       this.$q.loading.show({ message: 'Dzieje się coś ważnego... Poczekaj' })

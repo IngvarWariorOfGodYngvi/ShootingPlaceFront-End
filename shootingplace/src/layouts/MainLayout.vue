@@ -41,7 +41,7 @@
     >
       <q-list>
         <q-item-label header>
-          <q-item class="flex flex-center" clickable tag="a" target="_self" href="http://localhost:8081/#/" width="max"><q-field class="full-width" standout><template v-slot:control><div class="fit flex flex-center text-center non-selectable q-pa-md">Strona główna</div></template></q-field></q-item>
+          <q-item class="flex flex-center" clickable tag="a" target="_self" href="http://localhost:8080/strzelnica/#/" width="max"><q-field class="full-width" standout><template v-slot:control><div class="fit flex flex-center text-center non-selectable q-pa-md">Strona główna</div></template></q-field></q-item>
         </q-item-label>
         <EssentialLink
           v-for="link in essentialLinks"
@@ -95,37 +95,37 @@ export default {
           title: 'Lista Klubowiczów',
           caption: 'Obsługa podstawowa',
           icon: 'perm_identity',
-          link: 'http://localhost:8081/#/member'
+          link: 'http://localhost:8080/strzelnica/#/member'
         },
         {
           title: 'Dodaj Nowego Klubowicza',
           caption: 'obsługa podstawowa',
           icon: 'add',
-          link: 'http://localhost:8081/#/member/adding'
+          link: 'http://localhost:8080/strzelnica/#/member/adding'
         },
         {
           title: 'Lista Amunicyjna',
           caption: 'obsługa podstawowa',
           icon: 'book',
-          link: 'http://localhost:8081/#/ammolist'
+          link: 'http://localhost:8080/strzelnica/#/ammolist'
         },
         {
           title: 'Lista Zawodów',
           caption: 'obsługa podstawowa',
           icon: 'book',
-          link: 'http://localhost:8081/#/competition'
+          link: 'http://localhost:8080/strzelnica/#/competition'
         },
         {
           title: 'Lista Osób z Uprawnieniami',
           caption: 'obsługa dodatkowa',
           icon: 'book',
-          link: 'http://localhost:8081/#/memberwithpermission'
+          link: 'http://localhost:8080/strzelnica/#/memberwithpermission'
         },
         {
           title: 'Pozostałe funkcje',
           caption: 'obsługa dodatkowa',
           icon: 'book',
-          link: 'http://localhost:8081/#/otherFunctions'
+          link: 'http://localhost:8080/strzelnica/#/otherFunctions'
         }
       ],
       programName: 'Program'

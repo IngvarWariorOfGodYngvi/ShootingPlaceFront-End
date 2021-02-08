@@ -30,25 +30,25 @@
           <q-item><q-btn color="white" class="text-black full-width" label="pobierz komunikat" @click="tournamentUUID = tournaments.uuid,date= tournaments.date,name = tournaments.name,getAnnouncementFromCompetition()"></q-btn></q-item>
           <q-item><q-btn color="white" class="text-black full-width" v-if="tournaments.open" label="dodaj sędziów" @click="tournamentUUID = tournaments.uuid,addArbitersConfirmbtn = true"></q-btn></q-item>
           <q-item v-if="tournaments.open"><q-btn color="white" class="text-black full-width" label="dodaj konkurencje" @click="tournamentUUID = tournaments.uuid,addCompetitionConfirmbtn = true"></q-btn></q-item>
-    <q-dialog v-model="addCompetitionConfirmbtn" persistent>
-      <q-card>
-        <q-card-section class="row items-center">
-          <q-item-section v-if="tournaments.open">
-            <q-item-label>Dodaj Konkurencje</q-item-label>
-            <q-item
-              v-for="(competitions,uuid) in competitions" :key="uuid"
-              ><q-radio
-                :label="competitions.name"
-                :val="competitions.uuid"
-                v-model="competitionRadio"
-            /></q-item>
-            <q-item
-              ><q-btn
+    <q-dialog v-model="addCompetitionConfirmbtn" persistent style="min-width:900px">
+      <q-card  style="min-width:900px">
+        <q-card-section class="col" style="min-width:700px">
+            <div v-for="(competitions,uuid) in competitions" :key="uuid" class="col">
+              <div v-if="competitions.discipline == 'Pistolet'" class="bg-grey-4">
+                <q-radio :val="competitions.uuid" v-model="competitionRadio">{{competitions.name}}</q-radio>
+              </div>
+              <div v-if="competitions.discipline == 'Karabin'" class="bg-grey-2">
+                <q-radio :val="competitions.uuid" v-model="competitionRadio">{{competitions.name}}</q-radio>
+              </div>
+              <div v-if="competitions.discipline == 'Strzelba'" class="bg-grey-5">
+                <q-radio :val="competitions.uuid" v-model="competitionRadio">{{competitions.name}}</q-radio>
+              </div>
+            </div>
+            <q-item><q-btn
                 label="Dodaj konkurencję"
                 color="primary"
                 @click="(addCompetitionConfirm = true)"
             /></q-item>
-          </q-item-section>
         </q-card-section>
         <q-card-actions align="right">
           <q-btn flat label="zamknij" color="primary" v-close-popup @click="competitionRadio=''"/>
@@ -953,8 +953,8 @@ export default {
       permissionsArbiterPermissionValidThru: '',
       otherArbitersList: null,
       deleteTournamentAlert: false,
-      local: 'localhost:8080',
-      prod: 'localhost:8080/shootingplace-1.0'
+      prod: 'localhost:8080',
+      local: 'localhost:8080/shootingplace-1.0'
     }
   },
   created () {

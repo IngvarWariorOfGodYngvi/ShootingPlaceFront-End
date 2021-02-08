@@ -203,8 +203,8 @@ export default {
       ordinal: '',
       permissionsOtherArbiterPermissionValidThru: '',
       options: stringOptions,
-      local: 'localhost:8080',
-      prod: 'localhost:8080/shootingplace-1.0'
+      prod: 'localhost:8080',
+      local: 'localhost:8080/shootingplace-1.0'
     }
   },
   created () {
