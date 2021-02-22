@@ -18,6 +18,12 @@
                   </template>
                 </q-select>
           </q-item>
+          <div class="q-pa-md col">
+            <div class="row">
+            <q-input class="col-9" filled label="numer karty"></q-input>
+            <q-btn class="col-3">wyszukaj</q-btn>
+            </div>
+          </div>
         </div>
         <div class=" col-8">
           <q-card class="bg-grey-3 q-pa-md row">
@@ -50,12 +56,13 @@
             <q-card bordered class="row">
           <q-card-section avatar class="col-1">
             <div>
-              <q-tooltip class="row" anchor="top middle" self="bottom middle" :offset="[12, 12]">
+              <q-tooltip v-if="(member.address.postOfficeCity===null||member.address.postOfficeCity==='')
+                ||(member.address.street==null||member.address.street=='') || (member.weaponPermission.exist&&!member.license.valid) || (member.email==null||member.email=='') || (member.license.number!=null)&&(member.license.valid == false)" class="row" anchor="top middle" self="bottom middle" :offset="[12, 12]">
                 <q-badge v-if="(member.address.postOfficeCity===null||member.address.postOfficeCity==='')
                 ||(member.address.street==null||member.address.street=='')" transparent align="middle" color="orange" text-color="black">Brak Adresu</q-badge>
-                <q-badge v-if="member.weaponPermission.exist&&!member.license.valid" transparent align="middle" color="red" text-color="black">Jest Broń i Brak Licencji</q-badge>
+                <q-badge v-if="(member.weaponPermission.exist&&!member.license.valid)" transparent align="middle" color="red" text-color="black">Jest Broń i Brak Licencji</q-badge>
                 <q-badge v-if="(member.email==null||member.email=='')" transparent align="middle" color="yellow" text-color="black">Brak E-mail</q-badge>
-               <q-badge v-if="(member.license.number!=null)&&(member.license.valid == false)" transparent align="middle" color="yellow" text-color="black">Brak aktualnej licencji</q-badge>
+                <q-badge v-if="(member.license.number!=null)&&(member.license.valid == false)" transparent align="middle" color="yellow" text-color="black">Brak aktualnej licencji</q-badge>
               </q-tooltip>
             <q-avatar v-if="member.weaponPermission.exist&&!member.license.valid" icon="warning" color="red" text-color="white"/>
             <q-avatar v-else-if="member.license.number!=null&&!member.license.valid" icon="warning" color="yellow" text-color="white"/>
@@ -120,7 +127,7 @@
                           </q-card-actions>
                           <q-card-actions align="right">
                             <q-btn flat label="zamknij" color="primary" v-close-popup />
-                            <q-btn flat label="Dodaj rekord" color="primary" v-close-popup @click="addHistoryContributionRecord (memberUUID, historyContributionRecord)" />
+                            <q-btn flat label="Dodaj rekord" color="primary" v-close-popup @click="contributionHistoryCode=true" />
                           </q-card-actions>
                       </q-card-section>
                     </q-card>
@@ -325,7 +332,7 @@
                     </q-field>
                   </div>
                   <div class="row">
-                  <q-item-section v-if="member.active" class="full-width">
+                  <q-item-section class="full-width">
                       <q-radio v-model="caliberUUID" v-for="(calibers,uuid) in calibers" :key="uuid" :val="calibers.uuid">
                         <q-field borderless style="full-width">
                          <template v-slot:control>
@@ -344,7 +351,7 @@
                     </div>
                   </q-item-section>
                   </div>
-                  <div v-if="member.active" class="row">
+                  <div v-if="!member.erased" class="row">
                   <q-input @keypress.enter="memberUUID=member.legitimationNumber, addAmmoConfirm=true" v-temp ref="search" filled class="full-width col" v-model="quantity" placeholder="Tylko cyfry" onkeypress="return (event.charCode > 44 && event.charCode < 58)" label="Ilość Amunicji"></q-input>
                   <q-btn class="full-width col" color="primary" label="wydaj amunicję" @click="memberUUID=member.legitimationNumber, addAmmoConfirm=true"></q-btn>
                   </div>
@@ -371,7 +378,7 @@
 </q-expansion-item >
 <q-expansion-item v-if="member.adult&&member.active&&!member.erased" label="Pozwolenie na Broń" group="right-right-card" class="bg-white">
                   <div class="row">
-                    <q-input filled class="col" v-if="(member.weaponPermission.number==null||!member.weaponPermission.exist)&&member.active" v-model="weaponPermissionNumber" label="Numer pozwolenia"/>
+                    <q-input @keypress.enter="changeWeaponPermission(member.uuid, weaponPermissionNumber, isExist)" filled class="col" v-if="(member.weaponPermission.number==null||!member.weaponPermission.exist)&&member.active" v-model="weaponPermissionNumber" label="Numer pozwolenia"/>
                     <q-btn class="col" v-if="(!member.weaponPermission.exist)&&member.active" label="Dodaj" color="primary" @click="changeWeaponPermission(member.uuid, weaponPermissionNumber, isExist)"/>
                     <q-btn class="col" v-if="(member.weaponPermission.exist)&&active" label="Usuń pozwolenie" color="primary" @click="memberUUID=member.uuid,eraseWeapon=true"/>
                   </div>
@@ -383,7 +390,7 @@
 </q-expansion-item>
 <q-expansion-item v-if="member.adult&&member.active&&!member.erased" label="Dopuszczenie do posiadania broni" group="right-right-card" class="bg-white">
                   <div class="row">
-                    <q-input filled class="col" v-if="(member.weaponPermission.admissionToPossessAWeapon==null||!member.weaponPermission.admissionToPossessAWeaponIsExist)&&member.active" v-model="admissionToPossess" label="Numer dopuszczenia"/>
+                    <q-input @keypress.enter="changeWeaponAdmission (member.uuid, admissionToPossess, admissionToPossessIsExist)" filled class="col" v-if="(member.weaponPermission.admissionToPossessAWeapon==null||!member.weaponPermission.admissionToPossessAWeaponIsExist)&&member.active" v-model="admissionToPossess" label="Numer dopuszczenia"/>
                     <q-btn class="col" v-if="(!member.weaponPermission.admissionToPossessAWeaponIsExist)&&member.active" label="Dodaj" color="primary" @click="changeWeaponAdmission (member.uuid, admissionToPossess, admissionToPossessIsExist)"/>
                     <q-btn class="col" v-if="(member.weaponPermission.admissionToPossessAWeaponIsExist)&&active" label="Usuń dopuszczenie" color="primary" @click="memberUUID=member.uuid,eraseAssest=true"/>
                   </div>
@@ -396,13 +403,13 @@
 <q-expansion-item v-if="member.adult&&member.active&&!member.erased" label="Uprawnienia" group="right-right-card" class="bg-white">
 <q-expansion-item v-if="member.memberPermissions.shootingLeaderNumber==null" label="Prowadzący strzelanie" group="qualifications">
                   <div class="row">
-                  <q-input filled class="col" v-if="member.memberPermissions.shootingLeaderNumber==null" v-model="permissionsShootingLeaderNumber" label="numer uprawnienia"/>
+                  <q-input @keypress.enter="memberUUID=member.uuid,shootingLeaderConfirm=true" filled class="col" v-if="member.memberPermissions.shootingLeaderNumber==null" v-model="permissionsShootingLeaderNumber" label="numer uprawnienia"/>
                   <q-btn class="col" v-if="member.memberPermissions.shootingLeaderNumber==null" label="Dodaj" color="primary" @click="memberUUID=member.uuid,shootingLeaderConfirm=true"/>
                   </div>
 </q-expansion-item>
 <q-expansion-item v-if="member.memberPermissions.instructorNumber==null" label="Instruktor" group="qualifications">
                   <div class="row">
-                    <q-input filled class="col" v-if="member.memberPermissions.instructorNumber==null" v-model="permissionsInstructorNumber" label="Numer uprawnień" />
+                    <q-input @keypress.enter="memberUUID=member.uuid,instructorConfirm=true" filled class="col" v-if="member.memberPermissions.instructorNumber==null" v-model="permissionsInstructorNumber" label="Numer uprawnień" />
                     <q-btn class="col" v-if="member.memberPermissions.instructorNumber==null" label="Dodaj" color="primary" @click="memberUUID=member.uuid,instructorConfirm=true"/>
                   </div>
 </q-expansion-item>
@@ -444,7 +451,7 @@
                       </div>
     </q-expansion-item>
     </q-expansion-item>
-    <q-expansion-item v-if="member.active&&!member.erased" label="Portal PZSS" group="right-right-card" class="bg-white">
+    <q-expansion-item v-if="!member.erased" label="Portal PZSS" group="right-right-card" class="bg-white">
       <div class="row">
         <q-field v-if="member.pzss" class="col" standout stack-label>
           <template v-slot:control>
@@ -456,8 +463,14 @@
             <div class="text-center full-width no-outline" tabindex="0">Nie Wprowadzony do Portalu</div>
           </template>
         </q-field>
-        <q-item v-if="member.pzss"><q-btn type="a" href="https://portal.pzss.org.pl/" target="_blank" label="Przejdź do portalu" color="primary"/></q-item>
-        <q-item v-if="!member.pzss"><q-btn type="a" href="https://portal.pzss.org.pl/" target="_blank" label="Przejdź do portalu" color="primary" @click="memberUUID=member.uuid,pzssPortal = true"/></q-item>
+        <q-item v-if="member.pzss"><q-btn type="a" href="https://portal.pzss.org.pl/CLub/Player" target="_blank" label="Przejdź do portalu" color="primary"/></q-item>
+        <q-item v-if="!member.pzss"><q-btn type="a" href="https://portal.pzss.org.pl/CLub/Player/Add" target="_blank" label="Przejdź do portalu" color="primary" @click="memberUUID=member.uuid,pzssPortal = true"/></q-item>
+      </div>
+    </q-expansion-item>
+    <q-expansion-item v-if="!member.erased" label="Przydziel numer karty" group="right-right-card" class="bg-white">
+      <div class="row">
+            <q-input filled class="col bg-orange" dark label-color="white" stack-label color="white" label="zeskanuj kartę tutaj"></q-input>
+        <q-item><q-btn label="dodaj" color="primary"/></q-item>
       </div>
     </q-expansion-item>
     <q-expansion-item v-if="member.active" label="Przenieś do nieaktywnych" group="right-right-card" class="bg-red">
@@ -466,16 +479,16 @@
 </q-expansion-item>
 <q-expansion-item v-if="!member.adult&&active" label="Przenieś do grupty Powszechnej" group="right-right-card">
                 <q-item><q-item-label v-if="member.active">Czy napewno chcesz przenieść osobę?</q-item-label></q-item>
-                <q-item><q-btn label="Przenieś" color="red" @click="memberUUID=member.uuid,changAdultConfirm=true"/></q-item>
+                <q-item><q-btn label="Przenieś" color="red" @click="memberUUID=member.uuid,changeAdultConfirm=true"/></q-item>
 </q-expansion-item>
 <q-expansion-item v-if="!member.active&&!member.erased" label="Skreśl z listy członków" group="right-right-card" class="bg-red">
                 <q-item class="bg-red" ><q-item-label>Czy napewno chcesz usunąć osobę?</q-item-label></q-item>
                 <q-item class="bg-red" >
-                  <q-input v-model="reason" filled color="black" class="col" label="Podaj przyczynę usunięcia oraz podstawę"/>
+                  <q-input @keypress.enter="memberUUID=member.uuid,eraseConfirm=true" v-model="reason" filled color="black" class="col" label="Podaj przyczynę usunięcia oraz podstawę"/>
                   </q-item>
                 <q-item v-if="reason!=null" class="bg-red" ><q-btn label="Usuń" color="red" @click="memberUUID=member.uuid,eraseConfirm=true"/></q-item>
 </q-expansion-item>
-<q-expansion-item v-if="!member.active&&!member.erased" class="bg-green" label="Przywróć członka klubu" group="right-right-card">
+<q-expansion-item v-if="!member.active&&!member.erased" class="bg-green" label="Przywróć do aktywnych" group="right-right-card">
                 <q-item ><q-item-label>Czy napewno chcesz przywrócić osobę?</q-item-label></q-item>
                 <q-item ><q-btn label="Przywróć" color="green-8" @click="memberUUID=member.uuid,backConfirm=true"/></q-item>
 </q-expansion-item>
@@ -599,53 +612,53 @@
       </div>
       <div v-if="allMember==true">
         <q-scroll-area class="full-width q-pa-none" style="height: 1000px;">
-        <div v-for="member in memberDTO" :key="member">
-          <div class="row" @click="allMember=false,memberName =member.secondName + ' '+member.firstName+' leg. '+member.legitimationNumber,getMemberFromList (member.legitimationNumber)">
+        <div v-for="memberDTO in memberDTOArg" :key="memberDTO">
+          <div class="row" @click="allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
             <q-field class="col full-width" align="left" standout stack-label>
               <template v-slot:control>
                 <div>
-                  <div class="self-center full-width no-outline" tabindex="0">{{member.secondName}} {{member.firstName}}</div>
-                  <div v-if="!member.pzss" class="self-center full-width no-outline" tabindex="0">Nie wpisany do portalu PZSS</div>
+                  <div class="self-center full-width no-outline" tabindex="0">{{memberDTO.secondName}} {{memberDTO.firstName}}</div>
+                  <div v-if="!memberDTO.pzss" class="self-center full-width no-outline" tabindex="0">Nie wpisany do portalu PZSS</div>
                 </div>
               </template>
             </q-field>
             <q-field   class="col full-width" align="left" standout stack-label>
               <template v-slot:control>
                 <div class="row">
-                  <div v-if="member.adult" class="self-center full-width no-outline" tabindex="0">Grupa Powszechna</div>
-                  <div v-if="!member.adult" class="self-center full-width no-outline" tabindex="0">Grupa Młodzieżowa</div>
+                  <div v-if="memberDTO.adult" class="self-center full-width no-outline" tabindex="0">Grupa Powszechna</div>
+                  <div v-if="!memberDTO.adult" class="self-center full-width no-outline" tabindex="0">Grupa Młodzieżowa</div>
                 </div>
               </template>
             </q-field>
-            <q-field  v-if="member.license.number!=null && member.license.valid" class="col full-width" align="left" standout stack-label>
+            <q-field  v-if="memberDTO.license.number!=null && memberDTO.license.valid" class="col full-width" align="left" standout stack-label>
               <template v-slot:control>
                 <div class="row">
                   <div class="self-center full-width no-outline" tabindex="0">Licencja jest ważna</div>
                 </div>
               </template>
             </q-field>
-            <q-field  v-if="member.license.number!=null && !member.license.valid" class="col full-width bg-yellow-3" align="left" standout stack-label>
+            <q-field  v-if="memberDTO.license.number!=null && !memberDTO.license.valid" class="col full-width bg-yellow-3" align="left" standout stack-label>
               <template v-slot:control>
                 <div class="row">
                   <div class="self-center full-width no-outline" tabindex="0">Licencja jest nieważna</div>
                 </div>
               </template>
             </q-field>
-            <q-field  v-if="member.license.number==null" class="col full-width" align="left" standout stack-label>
+            <q-field  v-if="memberDTO.license.number==null" class="col full-width" align="left" standout stack-label>
               <template v-slot:control>
                 <div class="row">
                   <div class="self-center full-width no-outline" tabindex="0">Nie posiada licencji</div>
                 </div>
               </template>
             </q-field>
-            <q-field  v-if="member.active" class="col full-width bg-green-3" align="left" standout stack-label>
+            <q-field  v-if="memberDTO.active" class="col full-width bg-green-3" align="left" standout stack-label>
               <template v-slot:control>
                 <div class="row">
                   <div class="self-center full-width no-outline" tabindex="0">Klubowicz Aktywny</div>
                 </div>
               </template>
             </q-field>
-            <q-field  v-if="!member.active" class="col full-width bg-red-4" align="left" standout stack-label>
+            <q-field  v-if="!memberDTO.active" class="col full-width bg-red-4" align="left" standout stack-label>
               <template v-slot:control>
                 <div class="row">
                   <div class="self-center full-width no-outline" tabindex="0">Klubowicz Nieaktywny - Sprawdź składki</div>
@@ -666,7 +679,33 @@
 
         <q-card-actions align="right">
           <q-btn flat label="anuluj" color="primary" v-close-popup/>
-          <q-btn flat label="przedłuż" color="primary" v-close-popup @click="prolongContribution(memberUUID)" />
+          <q-btn flat label="przedłuż" color="primary" v-close-popup @click="contributionCode=true" />
+        </q-card-actions>
+      </q-card>
+</q-dialog>
+<q-dialog v-model="contributionCode" persistent>
+      <q-card class="bg-red-5 text-center">
+        <q-card-section class="flex-center">
+          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
+          <q-input @keypress.enter="prolongContribution(memberUUID),contributionCode=false" autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
+          <q-btn label="Przedłuż" color="black" v-close-popup @click="prolongContribution(memberUUID)" />
+        </q-card-actions>
+      </q-card>
+</q-dialog>
+<q-dialog v-model="contributionHistoryCode" persistent>
+      <q-card class="bg-red-5 text-center">
+        <q-card-section class="flex-center">
+          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
+          <q-input @keypress.enter="addHistoryContributionRecord (memberUUID, historyContributionRecord),contributionHistoryCode=false" autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
+          <q-btn label="Przedłuż" color="black" v-close-popup @click="addHistoryContributionRecord (memberUUID, historyContributionRecord)" />
         </q-card-actions>
       </q-card>
 </q-dialog>
@@ -726,7 +765,7 @@
 
         <q-card-actions align="right">
           <q-btn flat label="anuluj" color="primary" v-close-popup />
-          <q-btn flat label="Aktualizuj" color="primary" v-close-popup @click="basicDataConfirm1=true" />
+          <q-btn flat label="Aktualizuj" color="primary" v-close-popup  @click="basicDataConfirm1=true" />
         </q-card-actions>
       </q-card>
 </q-dialog>
@@ -811,7 +850,7 @@
 
         <q-card-actions align="right">
           <q-btn flat label="anuluj" color="primary" v-close-popup />
-          <q-btn flat label="przenieś" color="primary" v-close-popup @click="changeActive(memberUUID),deactivateAlert=true" />
+          <q-btn flat label="przenieś" color="primary" v-close-popup @click="activeCode=true" />
         </q-card-actions>
       </q-card>
 </q-dialog>
@@ -824,7 +863,20 @@
 
         <q-card-actions align="right">
           <q-btn flat label="anuluj" color="primary" v-close-popup />
-          <q-btn flat label="przywróć" color="primary" v-close-popup @click="changeActive (memberUUID),backAlert=true" />
+          <q-btn flat label="przywróć" color="primary" v-close-popup @click="activeCode=true" />
+        </q-card-actions>
+      </q-card>
+</q-dialog>
+<q-dialog v-model="activeCode" persistent>
+      <q-card class="bg-red-5 text-center">
+        <q-card-section class="flex-center">
+          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
+          <q-input @keypress.enter="changeActive (memberUUID),activeCode=false" autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
+          <q-btn label="Przenieś" color="black" v-close-popup @click="changeActive (memberUUID)" />
         </q-card-actions>
       </q-card>
 </q-dialog>
@@ -854,7 +906,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="licensePayment" persistent>
+<q-dialog v-model="licensePayment" persistent @keypress.enter="addLicenseHistoryPayment (memberUUID),licensePayment=false">
       <q-card>
         <q-card-section class="row items-center">
           <q-avatar icon="add" color="primary"/>
@@ -867,7 +919,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="instructorConfirm" persistent>
+<q-dialog v-model="instructorConfirm" persistent @keypress.esc="instructorConfirm=false" @keypress.enter="updateMemberPermissions(memberUUID, permissionsInstructorNumber),instructorConfirm=false,value=true">
       <q-card>
         <q-card-section class="row items-center">
           <q-avatar icon="add" color="primary"/>
@@ -880,7 +932,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="shootingLeaderConfirm" persistent>
+<q-dialog v-model="shootingLeaderConfirm" persistent @keypress.esc="shootingLeaderConfirm=false" @keypress.enter="updateMemberPermissions(memberUUID, permissionsShootingLeaderNumber),shootingLeaderConfirm=false,value1=true">
       <q-card>
         <q-card-section class="row items-center">
           <q-avatar icon="add" color="primary"/>
@@ -893,7 +945,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="arbiterConfirm" persistent>
+<q-dialog v-model="arbiterConfirm" persistent @keypress.esc="arbiterConfirm=false" @keypress.enter="updateMemberPermissions(memberUUID, permissionsArbiterNumber, permissionsArbiterPermissionValidThru),arbiterConfirm=false,value2=true">
       <q-card>
         <q-card-section class="row items-center">
           <q-avatar icon="add" color="primary"/>
@@ -902,11 +954,11 @@
 
         <q-card-actions align="right">
           <q-btn flat label="anuluj" color="primary" v-close-popup />
-          <q-btn flat label="Tak" color="primary" v-close-popup @click="updateMemberPermissions(memberUUID, permissionsArbiterNumber, permissionsArbiterPermissionValidThru),value2=true" />
+          <q-btn flat label="Tak" color="primary" v-close-popup @click="updateMemberPermissions(memberUUID, permissionsArbiterNumber, permissionsArbiterPermissionValidThru),arbiterProlongConfirm=true" />
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="arbiterProlongConfirm" persistent>
+<q-dialog v-model="arbiterProlongConfirm" persistent @keypress.enter="updateMemberPermissions(memberUUID, permissionsArbiterPermissionValidThru),value3=true,arbiterUpdateClassConfirm=false">
       <q-card>
         <q-card-section class="row items-center">
           <q-avatar icon="add" color="primary"/>
@@ -919,7 +971,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="arbiterUpdateClassConfirm" persistent>
+<q-dialog v-model="arbiterUpdateClassConfirm" persistent @keypress.enter="updateMemberPermissions(memberUUID),value4=true,arbiterUpdateClassConfirm=false">
       <q-card>
         <q-card-section class="row items-center">
           <q-avatar icon="add" color="primary"/>
@@ -932,7 +984,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="eraseConfirm" persistent>
+<q-dialog v-model="eraseConfirm" persistent @keypress.enter="eraseCode=true,eraseConfirm=false">
       <q-card class="bg-red">
         <q-card-section class="row items-center">
           <q-avatar icon="warning"/>
@@ -941,11 +993,11 @@
 
         <q-card-actions align="right">
           <q-btn flat label="anuluj" color="white" v-close-popup />
-          <q-btn flat label="usuń" color="white" v-close-popup @click="eraseMember(memberUUID)" />
+          <q-btn flat label="usuń" color="white" v-close-popup @click="eraseCode=true" />
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="eraseBackConfirm" persistent>
+<q-dialog v-model="eraseBackConfirm" persistent @keypress.enter="eraseCode=true,eraseBackConfirm=false">
       <q-card class="bg-green">
         <q-card-section class="row items-center">
           <span class="q-ml-sm">Czy przywrócić Członka klubu?</span>
@@ -953,11 +1005,24 @@
 
         <q-card-actions align="right">
           <q-btn flat label="anuluj" color="white" v-close-popup />
-          <q-btn flat label="przywróć" color="white" v-close-popup @click="eraseMember(memberUUID)" />
+          <q-btn flat label="przywróć" color="white" v-close-popup @click="eraseCode=true" />
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="changAdultConfirm" persistent>
+<q-dialog v-model="eraseCode" persistent>
+      <q-card class="bg-red-5 text-center">
+        <q-card-section class="flex-center">
+          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
+          <q-input @keypress.enter="eraseMember(memberUUID),eraseCode=false" autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
+          <q-btn label="Skreśl" color="black" v-close-popup @click="eraseMember(memberUUID)" />
+        </q-card-actions>
+      </q-card>
+</q-dialog>
+<q-dialog v-model="changeAdultConfirm" persistent @keypress.enter="changeAdultCode=true,changeAdultConfirm=false">
       <q-card>
         <q-card-section class="row items-center">
           <q-avatar icon="warning"/>
@@ -966,11 +1031,24 @@
 
         <q-card-actions align="right">
           <q-btn flat label="anuluj" color="primary" v-close-popup />
-          <q-btn flat label="Przenieś" color="primary" v-close-popup @click="changeAdult(memberUUID)" />
+          <q-btn flat label="Przenieś" color="primary" v-close-popup @click="changeAdultCode=true" />
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="contributionDownloadConfirm" persistent>
+<q-dialog v-model="changeAdultCode" persistent>
+      <q-card class="bg-red-5 text-center">
+        <q-card-section class="flex-center">
+          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
+          <q-input @keypress.enter="changeAdult(memberUUID),changeAdultCode=false" autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
+          <q-btn label="Przedłuż" color="black" v-close-popup @click="changeAdult(memberUUID)" />
+        </q-card-actions>
+      </q-card>
+</q-dialog>
+<q-dialog v-model="contributionDownloadConfirm" persistent @keypress.enter="contributionDownloadConfirm=false,getContributionPDF()">
       <q-card>
         <q-card-section class="row items-center">
           <span class="q-ml-sm">Pobrać potwierdzenie składki?</span>
@@ -982,7 +1060,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="personalCardDownloadConfirm" persistent>
+<q-dialog v-model="personalCardDownloadConfirm" persistent @keypress.enter="personalCardDownloadConfirm=false,getPersonalCardPDF(),personalCardDownloadAlert=true">
       <q-card>
         <q-card-section class="row items-center">
           <span class="q-ml-sm">Pobrać kartę Klubowicza?</span>
@@ -994,7 +1072,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="certificateDownload" persistent>
+<q-dialog v-model="certificateDownload" persistent @keypress.enter="getdownloadCertificateOfClubMembership(),certificateDownload=false">
       <q-card>
         <q-card-section class="col items-center">
           <p class="q-ml-sm text-h6 text-bold">Pobrać zaświadczenie do policji dla Klubowicza?</p>
@@ -1007,7 +1085,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="addAmmoConfirm" persistent>
+<q-dialog v-model="addAmmoConfirm" persistent @keypress.enter="addMemberAndAmmoToCaliber(),addAmmoConfirm=false">
       <q-card>
         <q-card-section class="row items-center">
           <span class="q-ml-sm">Czy napewno chcesz Dodać amunicję?</span>
@@ -1075,7 +1153,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="patentConfirm1" persistent>
+<q-dialog v-model="patentConfirm1" persistent @keypress.enter="addPatent(memberUUID, patentNumber, patentPistolPermission, patentRiflePermission, patentShotgunPermission,patentDate),patentConfirm1=false">
       <q-card>
         <q-card-section class="row items-center">
           <span class="q-ml-sm">Czy napewno chcesz dodać PATENT?</span>
@@ -1087,7 +1165,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="instructorAlert">
+<q-dialog v-model="instructorAlert" @keypress.enter="instructorAlert=false">
       <q-card>
         <q-card-section>
           <div class="text-h6">Nadano uprawnienia Instruktora</div>
@@ -1098,7 +1176,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="shootingLeaderAlert">
+<q-dialog v-model="shootingLeaderAlert" @keypress.enter="shootingLeaderAlert=false">
       <q-card>
         <q-card-section>
           <div class="text-h6">Nadano uprawnienia Prowadzącego Strzelanie</div>
@@ -1109,7 +1187,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="patentAlert">
+<q-dialog v-model="patentAlert" @keypress.enter="patentAlert=false">
       <q-card>
         <q-card-section>
           <div class="text-h6">Patent został zapisany</div>
@@ -1120,7 +1198,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="licenseAlert">
+<q-dialog v-model="licenseAlert" @keypress.enter="licenseAlert=false">
       <q-card>
         <q-card-section>
           <div class="text-h6">Licencja została zapisana</div>
@@ -1131,7 +1209,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="weapon">
+<q-dialog v-model="weapon" @keypress.enter="weapon=false">
       <q-card>
         <q-card-section>
           <div class="text-h6">Ustawiono pozwolenie/dopuszczenie</div>
@@ -1142,7 +1220,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="dataAlert">
+<q-dialog v-model="dataAlert" @keypress.enter="dataAlert=false">
       <q-card>
         <q-card-section>
           <div class="text-h6">Zaktualizowano</div>
@@ -1153,7 +1231,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="deactivateAlert">
+<q-dialog v-model="deactivateAlert" @keypress.enter="deactivateAlert=false">
       <q-card>
         <q-card-section>
           <div class="text-h6">Przeniesiono</div>
@@ -1164,7 +1242,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="arbiterAlert">
+<q-dialog v-model="arbiterAlert" @keypress.enter="arbiterAlert=false">
       <q-card>
         <q-card-section>
           <div class="text-h6">Dodano sędziego</div>
@@ -1175,7 +1253,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="arbiterProlongAlert">
+<q-dialog v-model="arbiterProlongAlert" @keypress.enter="arbiterProlongAlert=false">
       <q-card>
         <q-card-section>
           <div class="text-h6">Przedłużono datę ważności licencji Sędziego</div>
@@ -1186,7 +1264,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="arbiterUpdateClassAlert">
+<q-dialog v-model="arbiterUpdateClassAlert" @keypress.enter="arbiterUpdateClassAlert=false">
       <q-card>
         <q-card-section>
           <div class="text-h6">Podniesiono klasę licencji Sędziego</div>
@@ -1197,7 +1275,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="contributionAlert">
+<q-dialog v-model="contributionAlert" @keypress.enter="contributionAlert=false">
       <q-card>
         <q-card-section>
           <div class="text-h6">Składka została przedłużona</div>
@@ -1209,7 +1287,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="contributionRemoveRecordQuerry" persistent>
+<q-dialog v-model="contributionRemoveRecordQuerry" persistent @keypress.enter="contributionRemoveRecordQuerry=false,contributionRemoveRecordQuerryCode=true">
       <q-card class="bg-red-5 text-center">
         <q-card-section class="row items-center">
           <h3><span class="q-ml-sm">Czy na pewno usunąć składkę?</span></h3>
@@ -1217,11 +1295,24 @@
 
         <q-card-actions align="right">
           <q-btn label="anuluj" color="black" v-close-popup />
-          <q-btn label="Usuń" color="black" v-close-popup @click="removeContributionRecord(memberUUID,contributionUUID)" />
+          <q-btn label="Usuń" color="black" v-close-popup @click="contributionRemoveRecordQuerryCode=true" />
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="contributionRecordAlert">
+<q-dialog v-model="contributionRemoveRecordQuerryCode" persistent>
+      <q-card class="bg-red-5 text-center">
+        <q-card-section class="flex-center">
+          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
+          <div><q-input @keypress.enter="removeContributionRecord(),contributionRemoveRecordQuerryCode=false" autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input></div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
+          <q-btn id="3" label="Usuń" color="black" v-close-popup @click="removeContributionRecord()" />
+        </q-card-actions>
+      </q-card>
+</q-dialog>
+<q-dialog v-model="contributionRecordAlert" @keypress.enter="contributionRecordAlert=false">
       <q-card>
         <q-card-section>
           <div class="text-h6">Rekord w historii został dodany</div>
@@ -1232,7 +1323,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="contributionRemoveRecordAlert">
+<q-dialog v-model="contributionRemoveRecordAlert" @keypress.enter="contributionRemoveRecordAlert=false">
       <q-card>
         <q-card-section>
           <div class="text-h6">Rekord w historii został usunięty</div>
@@ -1254,18 +1345,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="backAlert">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Klubowicz został przywrócony</div>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup/>
-        </q-card-actions>
-      </q-card>
-</q-dialog>
-<q-dialog v-model="changeAdultAlert">
+<q-dialog v-model="changeAdultAlert" @keypress.enter="changeAdultAlert=false">
       <q-card>
         <q-card-section>
           <div class="text-h6">Klubowicz został przeniesiony do Grupy Powszechnej</div>
@@ -1276,7 +1356,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="personalCardDownloadAlert">
+<q-dialog v-model="personalCardDownloadAlert" @keypress.enter="personalCardDownloadAlert=false">
       <q-card>
         <q-card-section>
           <div class="text-h6">Pobrano kartę Klubowicza</div>
@@ -1287,7 +1367,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model=addAmmoAlert>
+<q-dialog v-model="addAmmoAlert" @keypress.enter="addAmmoAlert=false">
       <q-card>
         <q-card-section>
           <div class="text-h6">Dodano Amunicję</div>
@@ -1298,10 +1378,21 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="failure">
+<q-dialog v-model="failure" @keypress.enter="failure=false">
       <q-card>
         <q-card-section>
           <div class="text-h6">Nie można wykonać żądania. Sprawdź poprawność danych.</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+</q-dialog>
+<q-dialog v-model="forbidden" @keypress.enter="forbidden=false">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Niewłaściwy kod. Spróbuj ponownie.</div>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -1328,6 +1419,7 @@ export default {
   data () {
     return {
       member: null,
+      con: false,
       filters: [],
       options: stringOptions,
       memberName: null,
@@ -1345,13 +1437,16 @@ export default {
       arbiterAlert: false,
       arbiterProlongAlert: false,
       arbiterUpdateClassAlert: false,
-      changAdultConfirm: false,
+      changeAdultConfirm: false,
+      changeAdultCode: false,
       changeAdultAlert: false,
       eraseAlert: false,
       backAlert: false,
       eraseConfirm: false,
       eraseBackConfirm: false,
+      eraseCode: false,
       backConfirm: false,
+      activeCode: false,
       contributionRecord: '',
       basicDataConfirm: false,
       basicDataConfirm1: false,
@@ -1368,6 +1463,8 @@ export default {
       contributionRecordAlert: false,
       contributionRemoveRecordAlert: false,
       contributionRemoveRecordQuerry: false,
+      contributionRemoveRecordQuerryCode: false,
+      code: null,
       contributionUUID: null,
       addAmmoConfirm: false,
       addAmmoAlert: false,
@@ -1383,6 +1480,8 @@ export default {
       instructorAlert: false,
       shootingLeaderAlert: false,
       contribution: false,
+      contributionCode: false,
+      contributionHistoryCode: false,
       deactivate: false,
       eraseWeapon: false,
       eraseAssest: false,
@@ -1400,7 +1499,7 @@ export default {
       licenseNumber: '',
       validThru: '',
       members: [],
-      memberDTO: [],
+      memberDTOArg: [],
       calibers: [],
       ammos: [],
       quantities: [],
@@ -1458,7 +1557,8 @@ export default {
       certificateDownload: false,
       pzssPortal: false,
       portal: false,
-      prod: 'localhost:8080',
+      forbidden: false,
+      local1: 'localhost:8080/shootingplace',
       local: 'localhost:8080/shootingplace-1.0'
     }
   },
@@ -1485,7 +1585,7 @@ export default {
       setScrollPosition(target, offset, duration)
     },
     addHistoryContributionRecord (uuid, date) {
-      fetch('http://' + this.local + '/contribution/history/' + uuid + '?date=' + date.replace(/\//gi, '-'), {
+      fetch('http://' + this.local + '/contribution/history/' + uuid + '?date=' + date.replace(/\//gi, '-') + '&pinCode=' + this.code, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -1496,7 +1596,16 @@ export default {
           this.historyContributionRecord = Date.now
           this.showloading()
           this.getMember(uuid)
-        } else { this.failure = true }
+          this.code = null
+        }
+        if (response.status === 403) {
+          this.forbidden = true
+          this.code = null
+        }
+        if (response.status === 409) {
+          this.code = null
+          this.failure = true
+        }
       })
     },
     getMember (uuid) {
@@ -1534,7 +1643,7 @@ export default {
         })
     },
     removeContributionRecord () {
-      fetch('http://' + this.local + '/contribution/remove/' + this.memberUUID + '?contributionUUID=' + this.contributionUUID, {
+      fetch('http://' + this.local + '/contribution/remove/' + this.memberUUID + '?contributionUUID=' + this.contributionUUID + '&pinCode=' + this.code, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -1542,14 +1651,24 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           this.contributionRemoveRecordAlert = true
+          this.code = null
           this.getMembersNames()
           this.showloading()
           this.getMember(this.legNumber)
-        } else { this.failure = true }
+          this.code = null
+        }
+        if (response.status === 403) {
+          this.forbidden = true
+          this.code = null
+        }
+        if (response.status === 409) {
+          this.code = null
+          this.failure = true
+        }
       })
     },
     prolongContribution (uuid) {
-      fetch('http://' + this.local + '/contribution/' + uuid, {
+      fetch('http://' + this.local + '/contribution/' + uuid + '?pinCode=' + this.code, {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {
@@ -1557,7 +1676,16 @@ export default {
           this.getMembersNames()
           this.showloading()
           this.getMember(this.legNumber)
-        } else { this.failure = true }
+          this.code = null
+        }
+        if (response.status === 403) {
+          this.forbidden = true
+          this.code = null
+        }
+        if (response.status === 409) {
+          this.code = null
+          this.failure = true
+        }
       })
     },
     updateMember (uuid, email, phoneNumber) {
@@ -1639,24 +1767,16 @@ export default {
           this.filters = filters
         })
     },
-    // getAllMemberDTO () {
-    //   fetch('http://' + this.local + '/member/getAllMemberDTO', {
-    //     method: 'GET'
-    //   }).then(response => response.json())
-    //     .then(response => {
-    //       this.memberDTO = response
-    //     })
-    // },
     getAllMemberDTOWithArgs () {
       fetch('http://' + this.local + '/member/getAllMemberDTOWithArgs?active=' + this.active + '&adult=' + this.adult + '&erase=' + this.erase, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
-          this.memberDTO = response
+          this.memberDTOArg = response
         })
     },
     getListCalibers () {
-      fetch('http://' + this.local + '/ammoEvidence/calibers', {
+      fetch('http://' + this.local + '/armory/calibers', {
         method: 'GET'
       }).then(response => response.json())
         .then(calibers => {
@@ -1867,13 +1987,21 @@ export default {
       })
     },
     changeActive (uuid) {
-      fetch('http://' + this.local + '/member/' + uuid, {
+      fetch('http://' + this.local + '/member/' + uuid + '?pinCode=' + this.code, {
         method: 'PATCH'
       }).then(response => {
-        if (response.status === 204) {
+        if (response.status === 200) {
           this.showloading()
           this.reload()
-        } else { this.failure = true }
+        }
+        if (response.status === 403) {
+          this.forbidden = true
+          this.code = null
+        }
+        if (response.status === 404) {
+          this.failure = true
+          this.code = null
+        }
       })
     },
     updateMemberPermissions (uuid, permissionsShootingLeaderNumber, permissionsInstructorNumber, permissionsArbiterNumber, permissionsArbiterPermissionValidThru) {
@@ -1912,7 +2040,7 @@ export default {
       })
     },
     eraseMember (uuid) {
-      fetch('http://' + this.local + '/member/erase/' + uuid + '?reason=' + this.reason, {
+      fetch('http://' + this.local + '/member/erase/' + uuid + '?reason=' + this.reason + '&pinCode=' + this.code, {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 204) {
@@ -1924,7 +2052,7 @@ export default {
       })
     },
     changeAdult (uuid) {
-      fetch('http://' + this.local + '/member/adult/' + uuid, {
+      fetch('http://' + this.local + '/member/adult/' + uuid + '?pinCode=' + this.code, {
         method: 'PATCH'
       }).then(response => {
         this.changeAdultAlert = true

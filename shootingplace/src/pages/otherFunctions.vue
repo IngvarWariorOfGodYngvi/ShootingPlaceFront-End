@@ -1,19 +1,9 @@
 <template>
   <q-page padding>
-      <q-card bordered class="row">
-          <q-card-section bordered class="col-4">
+      <q-card class="row">
+        <q-card-section class="col">
     <div>
-      <div class="self-center col full-width no-outline text-h5 text-bold" tabindex="0"> Dodawanie nowego kalibru do bazy danych</div>
-        <div v-for="(caliber,uuid) in calibers" :key="uuid">
-            <q-item>{{caliber.name}}</q-item>
-        </div>
-    </div>
-    <q-item><q-input v-model="caliberName" placeholder="Nowy kaliber" class="full-width" filled></q-input></q-item>
-        <q-item><q-btn class="full-width" label="dodaj nowy kaliber" color="primary" @click="addNewCaliber()"></q-btn></q-item>
-        </q-card-section>
-        <q-card-section bordered class="col-8">
-    <div>
-      <div class="self-center col full-width no-outline text-h5 text-bold" tabindex="0">Usuwanie osób spoza klubu</div>
+      <div class="self-center col full-width no-outline text-h5 text-bold" tabindex="0">Lista osób spoza klubu</div>
           <q-scroll-area class="full-width q-pa-none" style="height: 400px;">
         <div v-for="(others,id) in others" :key="id" class="row">
            <q-field class="col" label="Nazwisko" standout stack-label>
@@ -40,7 +30,7 @@
                   </div>
                 </template>
            </q-field>
-           <q-btn label="usuń" color="primary" @click="othersID = others.id,alert=true"></q-btn>
+           <q-btn @click="othersID = others.id,alert=true">usuń</q-btn>
         </div>
            </q-scroll-area>
     </div>
@@ -52,37 +42,33 @@
           <div class="self-center col full-width no-outline text-h5 text-bold" tabindex="0">Lista znanych klubów</div>
             <div v-for="(club,id) in clubs" :key="id">
               <div v-if="club.name!='BRAK'" class="row">
-           <q-field class="col-1" label="ID" standout stack-label>
+                <div  @click="clubInfoModel=club,clubInfo=true" class="col-3">
+           <q-field label="Klub" standout stack-label clickable>
                 <template v-slot:control>
-                    <div>
-                  <div class="self-center col full-width no-outline row" tabindex="1">{{club.id}}</div>
-                  </div>
+                  <div v-if="club.id != 1" class="self-center col no-outline row" tabindex="1">{{club.name}}</div>
+                  <div v-if="club.id == 1" class="self-center col no-outline row" tabindex="1">{{club.name}} {{club.licenseNumber}}</div>
                 </template>
            </q-field>
-           <q-field class="col-3" label="Nazwa Klubu" standout stack-label>
-                <template v-slot:control>
-                  <div v-if="club.id != 1" class="self-center col full-width no-outline row" tabindex="1">{{club.name}}</div>
-                  <div v-if="club.id == 1" class="self-center col full-width no-outline row" tabindex="1">{{club.name}} {{club.licenseNumber}}</div>
-                </template>
-           </q-field>
-           <q-field class="col-2" label="Kontakt" standout stack-label>
-                <template v-slot:control>
-                    <div>
-                  <div class="self-center col full-width no-outline row" tabindex="1">{{club.email}}</div>
-                  <div v-if="club.phoneNumber!=null" class="self-center col full-width no-outline row" tabindex="1">tel {{club.phoneNumber}}</div>
-                  </div>
-                </template>
-           </q-field>
+           </div>
+           <div class="col">
+           <a :href="club.url" target="_blank">
            <q-field class="col" label="strona" standout stack-label>
                 <template v-slot:control>
-                    <div>
                   <div class="self-center col full-width no-outline row" tabindex="1">{{club.url}}</div>
-                  <div class="self-center col full-width no-outline row" tabindex="1"><a :href="club.url"></a></div>
+                </template>
+           </q-field>
+           </a>
+           </div>
+           <q-field class="col" label="adres" standout stack-label>
+                <template v-slot:control>
+                    <div>
+                  <div class="self-center col full-width no-outline row" tabindex="1">{{club.address}}</div>
                   </div>
                 </template>
            </q-field>
-           <q-btn class="col-4" @click="clubID = club.id,editClub=true">edytuj dane {{club.name}}</q-btn>
+           <q-btn class="col-2" @click="clubID = club.id,editClub=true">edytuj dane {{club.name}}</q-btn>
            </div>
+            <p></p>
             </div>
             </q-scroll-area>
           </q-card-section>
@@ -169,7 +155,31 @@
             <q-card-section>
           <div class="self-center col full-width no-outline text-h5 text-bold" >Sekcja Magicznych Przycisków</div>
               <q-item>
-                <q-btn color="primary" label="pobierz uproszczoną listę wszystkich klubowiczów" />
+                <q-btn color="primary" label="pobierz listę wszystkich klubowiczów" @click="getAllMembersList()"/>
+              <q-radio v-model="tableCondition" :val="true">
+                dorośli
+              </q-radio>
+              <q-radio v-model="tableCondition" :val="false">
+                mołodzież
+              </q-radio>
+              </q-item>
+              <q-item>
+                <q-btn color="primary" label="pobierz listę klubowiczów do zgłoszenia na policję" @click="getAllMembersWithLicenseNotValidAndContributionNotValid()"/>
+              </q-item>
+              <q-item>
+                <q-btn color="primary" label="pobierz listę klubowiczów z aktualną licencją i bez składek" @click="getAllMembersWithLicenseValidAndContributionNotValid()"/>
+              </q-item>
+              <q-item>
+                <q-btn color="primary" label="pobierz listę klubowiczów do skreślenia" @click="getAllMembersToErase ()"/>
+              </q-item>
+              <q-item>
+                <q-btn color="primary" label="wyświetl listę email" @click="getMembersEmails (),membersEmails = true"/>
+              <q-radio v-model="condition" :val="true">
+                dorośli
+              </q-radio>
+              <q-radio v-model="condition" :val="false">
+                mołodzież
+              </q-radio>
               </q-item>
             </q-card-section>
           </q-card>
@@ -203,7 +213,7 @@
 
         <q-card-actions align="right">
           <q-btn flat label="anuluj" color="primary" v-close-popup/>
-          <q-btn flat label="Usuń" color="primary" v-close-popup @click="deleteOther()"/>
+          <q-btn flat label="Usuń" color="primary" v-close-popup @click="deactivateOther()"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -253,18 +263,43 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <q-dialog v-model="membersEmails">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Lista email wybranych klubowiczów</div>
+        <div v-for="email in emails" :key="email">{{email}}</div>
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="zamknij" color="primary" v-close-popup/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="clubInfo">
+      <q-card>
+        <q-card-section class="text-bold">
+          <div class="text-h6">Informacje dodatkowe o klubie {{clubInfoModel.name}}</div>
+        <div>ID : {{clubInfoModel.id}}</div>
+        <div>email : {{clubInfoModel.email}}</div>
+        <div>telefon : {{clubInfoModel.phoneNumber}}</div>
+        <div>adres : {{clubInfoModel.address}}</div>
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="zamknij" color="primary" v-close-popup/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
     <q-dialog v-model="editClub">
       <q-card>
         <q-card-section>
           <div class="text-h6" style="min-width: 500px">Zmień dane klubu</div>
         </q-card-section>
         <q-card-section>
-                <q-item><q-input v-model="clubName" class="full-width" filled label="nazwa"></q-input></q-item>
+                <q-item><q-input v-model="clubName" class="full-width" filled label="Nazwa"></q-input></q-item>
                 <q-item v-if="clubID == 1"><q-input v-model="clubLicenseNumber" class="full-width" filled label="Numer licencji Klubowej"></q-input></q-item>
-                <q-item><q-input v-model="clubPhoneNumber" class="full-width" mask="+48 ### ### ###" filled label="Telefon"></q-input></q-item>
-                <q-item><q-input v-model="clubEmail" class="full-width" filled label="email"></q-input></q-item>
-                <q-item><q-input v-model="clubAddress" class="full-width" filled label="Adres"></q-input></q-item>
-                <q-item><q-input v-model="clubURL" class="full-width" filled label="Strona internetowa"></q-input></q-item>
+                <q-item><q-input v-model="clubPhoneNumber" type="tel" class="full-width" mask="+48 ### ### ###" filled label="Telefon"></q-input></q-item>
+                <q-item><q-input v-model="clubEmail" type="email" class="full-width" filled label="email"></q-input></q-item>
+                <q-item><q-input v-model="clubAddress" type="address" class="full-width" filled label="Adres"></q-input></q-item>
+                <q-item><q-input v-model="clubURL" type="url" class="full-width" filled label="Strona internetowa"></q-input></q-item>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -301,13 +336,18 @@ export default {
       clubEmail: null,
       clubAddress: null,
       clubURL: null,
+      clubInfo: false,
+      clubInfoModel: [],
       doneAlert: false,
-      caliberName: null,
       caliberAlert: false,
       editClub: false,
       dataFail: false,
       prolongFail: false,
       alert: false,
+      condition: true,
+      tableCondition: true,
+      emails: null,
+      membersEmails: false,
       licensePistolPermission: false,
       licenseRiflePermission: false,
       licenseShotgunPermission: false,
@@ -315,7 +355,8 @@ export default {
       paymentLicenseAlert: false,
       memberName: null,
       memberUUID: null,
-      prod: 'localhost:8080',
+      nowDate: Date.now(),
+      local1: 'localhost:8080/shootingplace',
       local: 'localhost:8080/shootingplace-1.0'
     }
   },
@@ -343,7 +384,7 @@ export default {
       setScrollPosition(target, offset, duration)
     },
     getListCalibers () {
-      fetch('http://' + this.local + '/ammoEvidence/calibers', {
+      fetch('http://' + this.local + '/armory/calibers', {
         method: 'GET'
       }).then(response => response.json())
         .then(calibers => {
@@ -390,6 +431,14 @@ export default {
           this.quantity = response
         })
     },
+    getMembersEmails () {
+      fetch('http://' + this.local + '/member/membersEmails?condition=' + this.condition, {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.emails = response
+        })
+    },
     updateClub () {
       var data = {
         name: this.clubName,
@@ -414,21 +463,9 @@ export default {
         } else { this.dataFail = true }
       })
     },
-    addNewCaliber () {
-      fetch('http://' + this.local + '/ammoEvidence/calibers?caliber=' + this.caliberName, {
-        method: 'POST'
-      }).then(response => {
-        if (response.status === 201) {
-          this.caliberAlert = true
-          this.getListCalibers()
-          this.getOther()
-          this.getAllClubs()
-        } else { this.dataFail = true }
-      })
-    },
-    deleteOther () {
+    deactivateOther () {
       fetch('http://' + this.local + '/other/?id=' + this.othersID, {
-        method: 'DELETE'
+        method: 'POST'
       }).then(response => {
         if (response.status === 200) {
           this.doneAlert = true
@@ -474,6 +511,62 @@ export default {
           this.getMembersWithLicense()
           this.getMembersWithLicenseNotValid()
         } else { this.prolongFail = true }
+      })
+    },
+    getAllMembersList () {
+      axios({
+        url: 'http://' + this.local + '/files/downloadAllMembers/?condition=' + this.tableCondition,
+        method: 'GET',
+        responseType: 'blob'
+      }).then(response => {
+        var fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        var fileLink = document.createElement('a')
+        fileLink.href = fileURL
+        fileLink.setAttribute('download', 'Lista_klubowiczów_na_dzień ' + this.nowDate + '.pdf')
+        document.body.appendChild(fileLink)
+        fileLink.click()
+      })
+    },
+    getAllMembersWithLicenseNotValidAndContributionNotValid () {
+      axios({
+        url: 'http://' + this.local + '/files/downloadAllMembersWithNoValidLicenseNoContribution/',
+        method: 'GET',
+        responseType: 'blob'
+      }).then(response => {
+        var fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        var fileLink = document.createElement('a')
+        fileLink.href = fileURL
+        fileLink.setAttribute('download', 'Lista_klubowiczów_z_licencją_bez_składek_' + this.nowDate + '.pdf')
+        document.body.appendChild(fileLink)
+        fileLink.click()
+      })
+    },
+    getAllMembersWithLicenseValidAndContributionNotValid () {
+      axios({
+        url: 'http://' + this.local + '/files/downloadAllMembersWithValidLicenseNoContribution/',
+        method: 'GET',
+        responseType: 'blob'
+      }).then(response => {
+        var fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        var fileLink = document.createElement('a')
+        fileLink.href = fileURL
+        fileLink.setAttribute('download', 'Lista_klubowiczów_z_licencją_bez_składek_' + this.nowDate + '.pdf')
+        document.body.appendChild(fileLink)
+        fileLink.click()
+      })
+    },
+    getAllMembersToErase () {
+      axios({
+        url: 'http://' + this.local + '/files/downloadAllMembersToErased/',
+        method: 'GET',
+        responseType: 'blob'
+      }).then(response => {
+        var fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        var fileLink = document.createElement('a')
+        fileLink.href = fileURL
+        fileLink.setAttribute('download', 'Lista_klubowiczów_do_skreślenia_' + this.nowDate + '.pdf')
+        document.body.appendChild(fileLink)
+        fileLink.click()
       })
     }
   },

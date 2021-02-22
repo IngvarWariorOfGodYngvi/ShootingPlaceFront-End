@@ -47,13 +47,7 @@
         <q-radio  v-model="memberAdult" :val="true" label="Grupa Powszechna" color="secondary" />
         </div>
       </div>
-      <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),addMember(memberLegitimation, memberFirstName,
-      memberSecondName,
-      memberIDCard,
-      memberPesel,
-      memberPhone,
-      memberEmail,
-      memberAdult)"/></q-item>
+      <q-item><q-btn label="Dodaj" color="secondary" @click="acceptCode=true"/></q-item>
       </q-form>
       </div>
       </q-card-section>
@@ -369,17 +363,17 @@
         <q-card-section class="col-4 bg-grey-2">
           <div>
             <q-item><q-item-label>Jeśli posiada pozwolenie na broń - wpisz numer</q-item-label></q-item>
-            <q-item><q-input class="full-width" v-model="weaponPermissionNumber" label="Numer" filled/></q-item>
+            <q-item><q-input @keypress.enter="showloading(),changeWeaponPermission(uuid, weaponPermissionNumber)" class="full-width" v-model="weaponPermissionNumber" label="Numer" filled/></q-item>
             <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),changeWeaponPermission(uuid, weaponPermissionNumber)"/></q-item>
           </div>
           <div>
             <q-item><q-item-label>Jeśli posiada uprawnienia prowadzącego - wpisz numer</q-item-label></q-item>
-            <q-item><q-input class="full-width" v-model="permissionsShootingLeaderNumber" label="Numer" filled/></q-item>
+            <q-item><q-input @keypress.enter="showloading(),updateMemberPermissions(uuid, permissionsShootingLeaderNumber),value=true" class="full-width" v-model="permissionsShootingLeaderNumber" label="Numer" filled/></q-item>
             <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),updateMemberPermissions(uuid, permissionsShootingLeaderNumber),value=true"/></q-item>
           </div>
           <div>
             <q-item><q-item-label>Jeśli posiada uprawnienia instruktora - wpisz numer</q-item-label></q-item>
-            <q-item><q-input class="full-width" v-model="permissionsInstructorNumber" label="Numer" filled/></q-item>
+            <q-item><q-input @keypress.enter="showloading(),updateMemberPermissions(uuid, permissionsInstructorNumber), value1=true" class="full-width" v-model="permissionsInstructorNumber" label="Numer" filled/></q-item>
             <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),updateMemberPermissions(uuid, permissionsInstructorNumber), value1=true"/></q-item>
           </div>
         </q-card-section>
@@ -416,7 +410,7 @@
           <q-item v-if="(step<5&&(uuid!=null&&uuid!=''))"><q-btn v-if="step<5" @click="$refs.stepper.next()" color="primary" :label="step === 5 ? 'Zakończ' : 'Przejdź Dalej'" /></q-item>
           <q-item><q-btn v-if="step > 1" flat color="primary" @click="$refs.stepper.previous()" label="Wróć" /></q-item>
           <q-item><q-btn v-if="step > 1" @click="redirect()" color="primary" label="Zakończ" /></q-item>
-          <q-item><q-btn v-if="step > 1 && (uuid!=null&&uuid!='')" type="a" href="https://portal.pzss.org.pl/" target="_blank" label="Przejdź do portalu PZSS" color="primary" @click="pzssPortal=true"/></q-item>
+          <q-item><q-btn v-if="step > 1 && (uuid!=null&&uuid!='')" type="a" href="https://portal.pzss.org.pl/CLub/Player/Add" target="_blank" label="Przejdź do portalu PZSS" color="primary" @click="pzssPortal=true"/></q-item>
           <q-item><q-btn v-if="step > 1 && (uuid!=null&&uuid!='')" label="tymczasowy przycisk potwierdzający PZSS" color="primary" @click="pzssPortal=true"/></q-item>
           <q-item><q-btn v-if="uuid!=null&&uuid!=''" color="secondary" @click="personalCardDownloadConfirm=true" label="Drukuj kartę" /></q-item>
           <q-item><q-btn v-if="uuid!=null&&uuid!=''" color="secondary" @click="contributionDownloadConfirm=true" label="Potwierdzenie opłacenia składki" /></q-item>
@@ -426,7 +420,7 @@
       </template>
     </q-stepper>
   </div>
-<q-dialog v-model="contributionDownloadConfirm" persistent>
+<q-dialog v-model="contributionDownloadConfirm" persistent @keypress.enter="contributionDownloadConfirm=false,getContributionPDF(),contributionConfirmDownloadAlert=true">
       <q-card>
         <q-card-section class="row items-center">
           <span class="text-h6">Czy napewno chcesz pobrać potwierdzenie składki?</span>
@@ -438,7 +432,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="personalCardDownloadConfirm" persistent>
+<q-dialog v-model="personalCardDownloadConfirm" persistent @keypress.enter="personalCardDownloadConfirm=false,getPersonalCardPDF(),personalCardDownloadAlert=true">
       <q-card>
         <q-card-section class="row items-center">
           <span class="text-h6">Czy napewno chcesz pobrać kartę Klubowicza?</span>
@@ -450,7 +444,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="memberAlert">
+<q-dialog v-model="memberAlert" @keypress.enter="memberAlert=false">
       <q-card>
         <q-card-section>
           <div class="text-h6">Witamy w Klubie</div>
@@ -465,7 +459,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="addressAlert">
+<q-dialog v-model="addressAlert" @keypress.enter="addressAlert=false">
       <q-card>
         <q-card-section>
           <div class="text-h6">Zaktualizowano Adres</div>
@@ -480,7 +474,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="licenseAndPatentAlert">
+<q-dialog v-model="licenseAndPatentAlert" @keypress.enter="licenseAndPatentAlert=false">
       <q-card>
         <q-card-section v-if="licenseNumber==null">
           <div class="text-h6">Uprawnienia patentu zostały nadane</div>
@@ -501,7 +495,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="weaponAlert">
+<q-dialog v-model="weaponAlert" @keypress.enter="weaponAlert=false">
       <q-card>
         <q-card-section>
           <div class="text-h6">Dodano Pozwolenie na Broń</div>
@@ -516,7 +510,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="instructorAlert">
+<q-dialog v-model="instructorAlert" @keypress.enter="instructorAlert=false">
       <q-card>
         <q-card-section>
           <div class="text-h6">Dodano Uprawnienia Instruktora</div>
@@ -531,7 +525,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="shootingLeaderAlert">
+<q-dialog v-model="shootingLeaderAlert" @keypress.enter="shootingLeaderAlert=false">
       <q-card>
         <q-card-section>
           <div class="text-h6">Dodano Uprawnienia Prowadzącego Strzelanie</div>
@@ -546,7 +540,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="arbiterAlert">
+<q-dialog v-model="arbiterAlert" @keypress.enter="arbiterAlert=false">
       <q-card>
         <q-card-section>
           <div class="text-h6">Dodano Licencję Sędziego</div>
@@ -561,7 +555,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="contributionConfirmDownloadAlert">
+<q-dialog v-model="contributionConfirmDownloadAlert" @keypress.enter="contributionConfirmDownloadAlert=false">
       <q-card>
         <q-card-section>
           <div class="text-h6">Potwierdzenie Składki zostało pobrane</div>
@@ -572,7 +566,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="personalCardDownloadAlert">
+<q-dialog v-model="personalCardDownloadAlert" @keypress.enter="personalCardDownloadAlert=false">
       <q-card>
         <q-card-section>
           <div class="text-h6">Pobrano kartę Klubowicza</div>
@@ -583,7 +577,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="failAlert">
+<q-dialog v-model="failAlert" @keypress.enter="failAlert=false">
       <q-card>
         <q-card-section>
           <div class="text-h6">Coś poszło nie tak</div>
@@ -598,7 +592,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="pzssPortal" persistent>
+<q-dialog v-model="pzssPortal" persistent @keypress.enter="changePzss (uuid),pzssPortal=false">
       <q-card>
         <q-card-section class="row items-center">
           <q-avatar icon="add" color="primary"/>
@@ -608,6 +602,42 @@
         <q-card-actions align="right">
           <q-btn flat label="nie" color="primary" v-close-popup />
           <q-btn label="tak" color="primary" v-close-popup @click="changePzss (uuid)"/>
+        </q-card-actions>
+      </q-card>
+</q-dialog>
+<q-dialog v-model="acceptCode" persistent @keypress.enter="addMember(memberLegitimation, memberFirstName,
+      memberSecondName,
+      memberIDCard,
+      memberPesel,
+      memberPhone,
+      memberEmail,
+      memberAdult),acceptCode=false">
+      <q-card class="bg-red-5 text-center">
+        <q-card-section class="flex-center">
+          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
+          <div><q-input autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input></div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
+          <q-btn id="3" label="Dodaj" color="black" v-close-popup @click="addMember(memberLegitimation, memberFirstName,
+      memberSecondName,
+      memberIDCard,
+      memberPesel,
+      memberPhone,
+      memberEmail,
+      memberAdult)" />
+        </q-card-actions>
+      </q-card>
+</q-dialog>
+<q-dialog v-model="forbidden" @keypress.enter="forbidden=false">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Niewłaściwy kod. Spróbuj ponownie.</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup />
         </q-card-actions>
       </q-card>
 </q-dialog>
@@ -627,6 +657,9 @@ export default {
       value1: false,
       value2: false,
       alert: false,
+      code: null,
+      forbidden: false,
+      acceptCode: false,
       alertResponse: null,
       instructorAlert: false,
       shootingLeaderAlert: false,
@@ -681,7 +714,7 @@ export default {
       ordinal: '',
       dateVar: /\//gi,
       pzssPortal: false,
-      prod: 'localhost:8080',
+      local1: 'localhost:8080/shootingplace',
       local: 'localhost:8080/shootingplace-1.0'
     }
   },
@@ -708,16 +741,17 @@ export default {
         adult: memberAdult,
         joinDate: this.memberJoinDate.replace(/\//gi, '-')
       }
-      fetch('http://' + this.local + '/member/', {
+      fetch('http://' + this.local + '/member/?pinCode=' + this.code, {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
           'Content-Type': 'application/json'
         }
       }).then(response => {
-        if (response.status === 400) {
+        if (response.status === 406) {
           response.json().then(
             response => {
+              this.code = null
               this.alertResponse = response
               if (response.message === '') {
                 this.uuid = 'Uwaga! Nie można wysyłać pustego formularza'
@@ -729,11 +763,15 @@ export default {
           response.json().then(
             response => {
               this.uuid = response
+              this.code = null
               this.alertResponse = null
               this.memberAdultConfirm = this.memberAdult
               this.memberAlert = true
             }
           )
+        }
+        if (response.status === 403) {
+          this.forbidden = true
         }
       })
     },

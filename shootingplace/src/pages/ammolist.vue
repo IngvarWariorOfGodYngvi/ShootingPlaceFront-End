@@ -80,7 +80,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="fail">
+<q-dialog v-model="fail" @keypress.enter="fail=false">
       <q-card>
         <q-card-section>
           <div class="text-h6">Wystąpił jakiś problem</div>
@@ -121,7 +121,7 @@
     </div>
     </div>
     <div class="col">
-    <q-input filled class="full-width col" v-model="ammoQuantity" placeholder="Tylko cyfry" onkeypress="return (event.charCode > 44 && event.charCode < 58)" label="Ilość Amunicji"></q-input>
+    <q-input type="number" @keypress.enter="addMemberAndAmmoToCaliber()" filled class="full-width col" v-model="ammoQuantity" placeholder="Tylko cyfry" onkeypress="return (event.charCode > 44 && event.charCode < 58)" label="Ilość Amunicji"></q-input>
     <q-card-actions class="row" align="right">
     <q-item><q-btn class="full-width col" color="primary" label="zamknij" v-close-popup></q-btn></q-item>
     <q-item><q-btn class="full-width col" color="primary" label="wydaj amunicję" @click="addMemberAndAmmoToCaliber()"></q-btn></q-item>
@@ -203,7 +203,7 @@ export default {
       ordinal: '',
       permissionsOtherArbiterPermissionValidThru: '',
       options: stringOptions,
-      prod: 'localhost:8080',
+      local1: 'localhost:8080/shootingplace',
       local: 'localhost:8080/shootingplace-1.0'
     }
   },
@@ -295,7 +295,7 @@ export default {
       )
     },
     getListCalibers () {
-      fetch('http://' + this.local + '/ammoEvidence/calibers', {
+      fetch('http://' + this.local + '/armory/calibers', {
         method: 'GET'
       }).then(response => response.json())
         .then(calibers => {

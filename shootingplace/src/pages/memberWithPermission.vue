@@ -23,34 +23,28 @@
       <div v-for="members in members" :key="members.uuid">
         <q-card v-if="(shootingLeader&&members.memberPermissions.shootingLeaderNumber!=null)
           ||(arbiter&&members.memberPermissions.arbiterNumber)||(instructor&&members.memberPermissions.instructorNumber)" class="row">
-          <q-card-section class="col">
-            <q-item-section>
+          <q-card-section class="col-4">
+            <div class="q-pa-none">
               <q-field v-if="shootingLeader&&members.memberPermissions.shootingLeaderNumber!=null
-          ||(arbiter&&members.memberPermissions.arbiterNumber)||(instructor&&members.memberPermissions.instructorNumber)" class="col" label="Nazwisko i imię" standout stack-label>
+          ||(arbiter&&members.memberPermissions.arbiterNumber)||(instructor&&members.memberPermissions.instructorNumber)" label="Nazwisko i imię" standout stack-label>
                 <template v-slot:control>
                   <div class="self-center col full-width no-outline" tabindex="0">{{members.secondName}} {{members.firstName}}</div>
                 </template>
               </q-field>
-            </q-item-section>
+            </div>
           </q-card-section>
-          <div class="col-2">
+          <div class="col">
           <q-card-section >
             <q-item-section>
-              <q-field class="col" label="email" standout stack-label>
+              <q-field class="row" label="kontakt" standout stack-label>
                 <template v-slot:control>
-                  <div class="self-center col full-width no-outline" tabindex="0">{{members.email}}</div>
+                  <div class="self-center full-width no-outline" tabindex="0">{{members.email}}</div>
+                  <div class="self-center full-width no-outline" tabindex="0">{{members.phoneNumber}}</div>
                 </template>
               </q-field>
             </q-item-section>
           </q-card-section>
           <q-card-section>
-            <q-item-section>
-              <q-field class="col" label="Numer telefonu" standout stack-label>
-                <template v-slot:control>
-                  <div class="self-center col full-width no-outline" tabindex="0">{{members.phoneNumber}}</div>
-                </template>
-              </q-field>
-            </q-item-section>
           </q-card-section>
           </div>
           <q-card-section v-if="(shootingLeader&&members.memberPermissions.shootingLeaderNumber!=null)
@@ -164,7 +158,9 @@ export default {
       otherArbiter: false,
       instructor: false,
       members: [],
-      others: []
+      others: [],
+      local1: 'localhost:8080/shootingplace',
+      local: 'localhost:8080/shootingplace-1.0'
     }
   },
   created () {
@@ -187,7 +183,7 @@ export default {
       setScrollPosition(target, offset, duration)
     },
     getListMembers () {
-      fetch('http://localhost:8080/shootingplace-1.0/member/membersWithPermissions', {
+      fetch('http://' + this.local + '/member/membersWithPermissions', {
         method: 'GET'
       }).then(response => response.json())
         .then(members => {
@@ -195,7 +191,7 @@ export default {
         })
     },
     getListOthers () {
-      fetch('http://localhost:8080/shootingplace-1.0/other/all', {
+      fetch('http://' + this.local + '/other/all', {
         method: 'GET'
       }).then(response => response.json())
         .then(others => {

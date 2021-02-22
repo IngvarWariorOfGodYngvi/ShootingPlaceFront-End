@@ -122,9 +122,15 @@ export default {
           link: 'http://localhost:8080/strzelnica/#/memberwithpermission'
         },
         {
-          title: 'Pozostałe funkcje',
+          title: 'Magazyn Broni',
           caption: 'obsługa dodatkowa',
           icon: 'book',
+          link: 'http://localhost:8080/strzelnica/#/armory'
+        },
+        {
+          title: 'Pozostałe Funkcje',
+          caption: 'obsługa dodatkowa',
+          icon: 'menu',
           link: 'http://localhost:8080/strzelnica/#/otherFunctions'
         }
       ],

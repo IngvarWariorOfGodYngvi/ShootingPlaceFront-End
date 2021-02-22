@@ -11,7 +11,8 @@ const routes = [
       { path: '/memberwithpermission', component: () => import('pages/memberWithPermission.vue') },
       { path: '/member', component: () => import('pages/member.vue') },
       { path: '/patentWilling', component: () => import('pages/patentWilling.vue') },
-      { path: '/otherFunctions', component: () => import('pages/otherFunctions.vue') }
+      { path: '/otherFunctions', component: () => import('pages/otherFunctions.vue') },
+      { path: '/armory', component: () => import('pages/armory.vue') }
     ]
   },
 
