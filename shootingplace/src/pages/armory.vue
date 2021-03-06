@@ -566,8 +566,8 @@ export default {
       gunComment: '',
       gunBasisForPurchaseOrAssignment: null,
       transportCertificate: false,
-      local1: 'localhost:8080/shootingplace',
-      local: 'localhost:8080/shootingplace-1.0'
+      local: 'localhost:8080/shootingplace',
+      local1: 'localhost:8080/shootingplace-1.0'
     }
   },
   created () {

@@ -62,11 +62,14 @@
             Zamknięte listy
           </q-item-label>
         </q-item>
+        <q-scroll-area style="height: 550px;">
         <div v-for="(ammoListClose,id) in ammoListClose" :key="id">
           <q-item>
-            <q-btn :label="ammoListClose.date" @click="date = ammoListClose.date,uuid= ammoListClose.evidenceUUID,getAmmoListPDF()"></q-btn>
+            <q-btn class="col-6" :label="ammoListClose.date" @click="date = ammoListClose.date,uuid= ammoListClose.evidenceUUID,getAmmoListPDF()"></q-btn>
+            <q-btn class="col-6" label="otwórz listę" @click="uuid= ammoListClose.evidenceUUID,openList=true"></q-btn>
           </q-item>
         </div>
+        </q-scroll-area>
       </div>
     </q-card>
 <q-dialog v-model="ammunitionListAlert">
@@ -84,6 +87,17 @@
       <q-card>
         <q-card-section>
           <div class="text-h6">Wystąpił jakiś problem</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+</q-dialog>
+<q-dialog v-model="failArmory" @keypress.enter="failArmory=false">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Nie można wydać amunicji - Sprawdź stan magazynu</div>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -163,6 +177,30 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <q-dialog v-model="openList" persistent>
+      <q-card class="bg-red-5 text-center">
+        <q-card-section class="flex-center">
+          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
+          <div><q-input @keypress.enter="openEvidence(),openList=false" autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input></div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
+          <q-btn id="3" label="otwórz" color="black" v-close-popup @click="openEvidence()" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="forbidden" @keypress.enter="forbidden=false">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Niewłaściwy kod. Spróbuj ponownie.</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -183,6 +221,10 @@ export default {
       ammoListClose: [],
       date: '',
       fail: false,
+      openList: false,
+      forbidden: false,
+      code: null,
+      failArmory: false,
       otherName: null,
       ammoAdded: false,
       addAmmo: false,
@@ -203,8 +245,8 @@ export default {
       ordinal: '',
       permissionsOtherArbiterPermissionValidThru: '',
       options: stringOptions,
-      local1: 'localhost:8080/shootingplace',
-      local: 'localhost:8080/shootingplace-1.0'
+      local: 'localhost:8080/shootingplace',
+      local1: 'localhost:8080/shootingplace-1.0'
     }
   },
   created () {
@@ -250,6 +292,17 @@ export default {
         } else { this.fail = true }
       })
     },
+    openEvidence () {
+      fetch('http://' + this.local + '/ammoEvidence/ammoOpen?evidenceUUID=' + this.uuid + '&pinCode=' + this.code, {
+        method: 'PATCH'
+      }).then(response => {
+        if (response.status === 200) {
+          this.code = null
+          this.getAmmoData()
+          this.getCLosedEvidence()
+        } else { this.fail = true }
+      })
+    },
     getMembersNames () {
       fetch('http://' + this.local + '/member/getAllNames', {
         method: 'GET'
@@ -287,10 +340,13 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          // this.ammoAdded = true
           this.getAmmoData()
           this.showloading()
-        } else { this.fail = true }
+        }
+        if (response.status === 400) {
+          this.fail = true
+        }
+        if (response.status === 406) { this.failArmory = true }
       }
       )
     },

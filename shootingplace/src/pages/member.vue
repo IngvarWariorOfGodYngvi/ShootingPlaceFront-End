@@ -26,13 +26,22 @@
           </div>
         </div>
         <div class=" col-8">
-          <q-card class="bg-grey-3 q-pa-md row">
-            <q-radio @input="memberName=null, member=null,getMembersNames ()" v-model="allMember" :val="true" label="Wyświetl wszystkich"></q-radio>
+          <q-card class="bg-grey-3 q-pa-md col">
+            <div>
+            <q-radio @input="memberName=null, member=null,getMembersNames (),getAllMemberDTOWithArgs()" v-model="allMember" :val="true" label="Wyświetl wszystkich"></q-radio>
             <q-radio @input="memberName=null, member=null,allMember=true,getMembersNames (),getAllMemberDTOWithArgs()" v-model="adult" :val="true" label="Grupa Powszechna"></q-radio>
             <q-radio @input="memberName=null, member=null,allMember=true,getMembersNames (),getAllMemberDTOWithArgs()" v-model="adult" :val="false" label="Grupa Młodzieżowa"></q-radio>
             <q-radio @input="memberName=null, member=null,allMember=true,erase=false, getMembersNames (),getAllMemberDTOWithArgs()" color="green" v-model="active" :val="true" label="Aktywni"></q-radio>
             <q-radio @input="memberName=null, member=null,allMember=true,getMembersNames (),getAllMemberDTOWithArgs()" color="warning" v-model="active" :val="false" label="Nieaktywni"></q-radio>
-            <q-checkbox @input="memberName=null, member=null,allMember=true,active = false, getMembersNames (),getAllMemberDTOWithArgs()" color="red" v-model="erase" :val="false" label="Skreśleni"></q-checkbox>
+            </div>
+            <div class="row">
+            <q-checkbox @input="memberName=null, member=null,allMember=true,active = false, getMembersNames (),getAllMemberDTOWithArgs(),erasedType = erasedTypes[0]" color="red" v-model="erase" :val="false" label="Skreśleni"></q-checkbox>
+            <div v-for="erased in erasedTypes" :key="erased">
+              <div v-if="erase==true">
+              <q-radio @input="allMember=true" color="red" v-model="erasedType" :val="erased" :true-value="erased" :label="erased"></q-radio>
+              </div>
+            </div>
+            </div>
           <q-item-section class="col">
           </q-item-section>
           </q-card>
@@ -85,7 +94,8 @@
           <q-card-section class="col-4">
             <div v-if="member.erased">
           <q-item-label>Podstawa skreślenia z listy Klubowiczów</q-item-label>
-          <q-item-label caption lines="2">{{member.erasedReason}}</q-item-label>
+          <q-item-label caption lines="2">{{member.erasedEntity.erasedType}} {{member.erasedEntity.date}}</q-item-label>
+          <q-item-label v-if="member.erasedEntity.additionalDescription!=null" caption lines="2">{{member.erasedEntity.additionalDescription}}</q-item-label>
             </div>
           </q-card-section>
             </q-card>
@@ -358,8 +368,8 @@
                 </div>
 </q-expansion-item>
 <q-expansion-item label="Opcje Dodatkowe" group="right-card" class="bg-grey-3">
-<q-expansion-item v-if="member.adult&&active&&!member.erased" label="Patent" group="right-right-card" class="bg-white">
-                <q-btn class="full-width" color="primary" v-if="member.shootingPatent.patentNumber==null&&member.active" label="DODAJ PATENT" @click="memberUUID=member.uuid,patentConfirm=true"></q-btn>
+<q-expansion-item v-if="member.adult&&!member.erased" label="Patent" group="right-right-card" class="bg-white">
+                <q-btn class="full-width" color="primary" v-if="member.shootingPatent.patentNumber==null" label="DODAJ PATENT" @click="memberUUID=member.uuid,patentConfirm=true"></q-btn>
                 <q-btn class="full-width" color="primary" v-if="member.shootingPatent.patentNumber!=null&&(
                 !member.shootingPatent.pistolPermission
                 ||!member.shootingPatent.riflePermission
@@ -376,7 +386,7 @@
                 &&member.shootingPatent.riflePermission
                 &&member.shootingPatent.shotgunPermission"><q-item-label>Klubowicz posiada cały Patent</q-item-label></q-item>
 </q-expansion-item >
-<q-expansion-item v-if="member.adult&&member.active&&!member.erased" label="Pozwolenie na Broń" group="right-right-card" class="bg-white">
+<q-expansion-item v-if="member.adult&&!member.erased" label="Pozwolenie na Broń" group="right-right-card" class="bg-white">
                   <div class="row">
                     <q-input @keypress.enter="changeWeaponPermission(member.uuid, weaponPermissionNumber, isExist)" filled class="col" v-if="(member.weaponPermission.number==null||!member.weaponPermission.exist)&&member.active" v-model="weaponPermissionNumber" label="Numer pozwolenia"/>
                     <q-btn class="col" v-if="(!member.weaponPermission.exist)&&member.active" label="Dodaj" color="primary" @click="changeWeaponPermission(member.uuid, weaponPermissionNumber, isExist)"/>
@@ -388,7 +398,7 @@
                     </template>
                   </q-field>
 </q-expansion-item>
-<q-expansion-item v-if="member.adult&&member.active&&!member.erased" label="Dopuszczenie do posiadania broni" group="right-right-card" class="bg-white">
+<q-expansion-item v-if="member.adult&&!member.erased" label="Dopuszczenie do posiadania broni" group="right-right-card" class="bg-white">
                   <div class="row">
                     <q-input @keypress.enter="changeWeaponAdmission (member.uuid, admissionToPossess, admissionToPossessIsExist)" filled class="col" v-if="(member.weaponPermission.admissionToPossessAWeapon==null||!member.weaponPermission.admissionToPossessAWeaponIsExist)&&member.active" v-model="admissionToPossess" label="Numer dopuszczenia"/>
                     <q-btn class="col" v-if="(!member.weaponPermission.admissionToPossessAWeaponIsExist)&&member.active" label="Dodaj" color="primary" @click="changeWeaponAdmission (member.uuid, admissionToPossess, admissionToPossessIsExist)"/>
@@ -400,7 +410,7 @@
                     </template>
                   </q-field>
 </q-expansion-item>
-<q-expansion-item v-if="member.adult&&member.active&&!member.erased" label="Uprawnienia" group="right-right-card" class="bg-white">
+<q-expansion-item v-if="member.adult&&!member.erased" label="Uprawnienia" group="right-right-card" class="bg-white">
 <q-expansion-item v-if="member.memberPermissions.shootingLeaderNumber==null" label="Prowadzący strzelanie" group="qualifications">
                   <div class="row">
                   <q-input @keypress.enter="memberUUID=member.uuid,shootingLeaderConfirm=true" filled class="col" v-if="member.memberPermissions.shootingLeaderNumber==null" v-model="permissionsShootingLeaderNumber" label="numer uprawnienia"/>
@@ -413,7 +423,7 @@
                     <q-btn class="col" v-if="member.memberPermissions.instructorNumber==null" label="Dodaj" color="primary" @click="memberUUID=member.uuid,instructorConfirm=true"/>
                   </div>
 </q-expansion-item>
-<q-expansion-item v-if="member.adult&&active&&!member.erased" label="Sędzia" group="qualifications">
+<q-expansion-item v-if="member.adult&&!member.erased" label="Sędzia" group="qualifications">
                     <q-item class="full-width col">
                       <q-input outlined filled class="full-width" v-if="member.memberPermissions.arbiterNumber==null||member.memberPermissions.arbiterNumber==''" v-model="permissionsArbiterNumber" label="Numer uprawnień" />
                         <q-input class="col-5" outlined filled v-model="permissionsArbiterPermissionValidThru" mask="####/12/31" label="Ważne do:">
@@ -481,20 +491,36 @@
                 <q-item><q-item-label v-if="member.active">Czy napewno chcesz przenieść osobę?</q-item-label></q-item>
                 <q-item><q-btn label="Przenieś" color="red" @click="memberUUID=member.uuid,changeAdultConfirm=true"/></q-item>
 </q-expansion-item>
-<q-expansion-item v-if="!member.active&&!member.erased" label="Skreśl z listy członków" group="right-right-card" class="bg-red">
-                <q-item class="bg-red" ><q-item-label>Czy napewno chcesz usunąć osobę?</q-item-label></q-item>
-                <q-item class="bg-red" >
-                  <q-input @keypress.enter="memberUUID=member.uuid,eraseConfirm=true" v-model="reason" filled color="black" class="col" label="Podaj przyczynę usunięcia oraz podstawę"/>
+<q-expansion-item @focus.stop="erasedReasontype=null,erasedDate=null" class="bg-red" @click="getListErasedType()" v-if="!member.active&&!member.erased" label="Skreśl z listy członków" group="right-right-card">
+                <q-item class="bg-red-2"><q-item-label class="text-h6 text-bold text-center full-width">Czy napewno chcesz usunąć osobę?</q-item-label></q-item>
+                  <q-item class="bg-red-2">
+                    <q-select color="black" options-cover filled stack-label class="full-width" v-model="erasedReasontype" :options="erasedTypes" label="wybierz przyczynę"></q-select>
+                      <q-input class="col-5" color="black" outlined filled v-model="erasedDate" mask="####/##/##" label="w dniu:">
+                        <template v-slot:append>
+                          <q-icon name="event" class="cursor-pointer">
+                            <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                              <q-date v-model="erasedDate">
+                                <div class="row items-center justify-end">
+                                  <q-btn v-close-popup label="Zamknij" color="primary" flat />
+                                </div>
+                              </q-date>
+                            </q-popup-proxy>
+                          </q-icon>
+                        </template>
+                      </q-input>
                   </q-item>
-                <q-item v-if="reason!=null" class="bg-red" ><q-btn label="Usuń" color="red" @click="memberUUID=member.uuid,eraseConfirm=true"/></q-item>
+                <q-item class="bg-red-2">
+                  <q-input @keypress.enter="memberUUID=member.uuid,eraseConfirm=true" v-model="reason" filled color="black" class="col" stack-label label="Dodatkowe informacje"/>
+                  </q-item>
+                <q-item class="bg-red-2" v-if="erasedReasontype!=null"><q-btn label="Usuń" color="red" @click="memberUUID=member.uuid,eraseConfirm=true"/></q-item>
 </q-expansion-item>
 <q-expansion-item v-if="!member.active&&!member.erased" class="bg-green" label="Przywróć do aktywnych" group="right-right-card">
-                <q-item ><q-item-label>Czy napewno chcesz przywrócić osobę?</q-item-label></q-item>
-                <q-item ><q-btn label="Przywróć" color="green-8" @click="memberUUID=member.uuid,backConfirm=true"/></q-item>
+                <q-item class="bg-green-2"><q-item-label class="text-h6 text-bold text-center full-width">Czy napewno chcesz przywrócić osobę?</q-item-label></q-item>
+                <q-item class="bg-green-2"><q-btn class="full-width" label="Przywróć" color="green-8" @click="memberUUID=member.uuid,backConfirm=true"/></q-item>
 </q-expansion-item>
 <q-expansion-item v-if="!member.active&&member.erased" class="bg-green" label="Przywróć członka klubu" group="right-right-card">
-                <q-item ><q-item-label>Czy napewno chcesz przywrócić osobę?</q-item-label></q-item>
-                <q-item ><q-btn label="Przywróć" color="green-8" @click="memberUUID=member.uuid,eraseBackConfirm=true"/></q-item>
+                <q-item class="bg-green-2"><q-item-label class="text-h6 text-bold text-center full-width">Czy napewno chcesz przywrócić osobę?</q-item-label></q-item>
+                <q-item class="bg-green-2"><q-btn label="Przywróć" class="full-width" color="green-8" @click="memberUUID=member.uuid,resurrectCode=true"/></q-item>
 </q-expansion-item>
 </q-expansion-item>
 <q-expansion-item label="Historia startów" group="right-card" class="bg-grey-3">
@@ -522,7 +548,7 @@
                 </q-field>
               </div>
             </div>
-  <q-expansion-item label="Daty startów" class="bg-white q-pa-none">
+  <q-expansion-item label="Daty startów" class="bg-grey-3 q-pa-none">
     <q-scroll-area class="full-width q-pa-none" style="height: 200px;">
               <div class="row" v-for="(competitionHistory,uuid) in member.history.competitionHistory" :key="uuid">
                 <q-field class="col" standout label="Nazwa" stack-label>
@@ -612,8 +638,8 @@
       </div>
       <div v-if="allMember==true">
         <q-scroll-area class="full-width q-pa-none" style="height: 1000px;">
-        <div v-for="memberDTO in memberDTOArg" :key="memberDTO">
-          <div class="row" @click="allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
+        <div v-for="(memberDTO,uuid) in memberDTOArg" :key="uuid" class="row">
+            <div v-if="!memberDTO.erased" class="col" @click="allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
             <q-field class="col full-width" align="left" standout stack-label>
               <template v-slot:control>
                 <div>
@@ -622,51 +648,117 @@
                 </div>
               </template>
             </q-field>
-            <q-field   class="col full-width" align="left" standout stack-label>
+            </div>
+            <div v-if="!memberDTO.erased" class="col" @click="allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
+            <q-field class="col full-width" align="left" standout stack-label>
               <template v-slot:control>
                 <div class="row">
-                  <div v-if="memberDTO.adult" class="self-center full-width no-outline" tabindex="0">Grupa Powszechna</div>
-                  <div v-if="!memberDTO.adult" class="self-center full-width no-outline" tabindex="0">Grupa Młodzieżowa</div>
+                  <div class="self-center full-width no-outline" tabindex="0">Numer leg. {{memberDTO.legitimationNumber}}</div>
                 </div>
               </template>
             </q-field>
-            <q-field  v-if="memberDTO.license.number!=null && memberDTO.license.valid" class="col full-width" align="left" standout stack-label>
+            </div>
+            <div v-if="memberDTO.license.number!=null && memberDTO.license.valid && !memberDTO.erased" class="col" @click="allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
+            <q-field  class="col full-width" align="left" standout stack-label>
               <template v-slot:control>
                 <div class="row">
                   <div class="self-center full-width no-outline" tabindex="0">Licencja jest ważna</div>
                 </div>
               </template>
             </q-field>
-            <q-field  v-if="memberDTO.license.number!=null && !memberDTO.license.valid" class="col full-width bg-yellow-3" align="left" standout stack-label>
+            </div>
+            <div v-if="memberDTO.license.number!=null && !memberDTO.license.valid && !memberDTO.erased" class="col" @click="allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
+            <q-field  class="col full-width bg-yellow-3" align="left" standout stack-label>
               <template v-slot:control>
                 <div class="row">
                   <div class="self-center full-width no-outline" tabindex="0">Licencja jest nieważna</div>
                 </div>
               </template>
             </q-field>
-            <q-field  v-if="memberDTO.license.number==null" class="col full-width" align="left" standout stack-label>
+            </div>
+            <div v-if="memberDTO.license.number==null && !memberDTO.erased" class="col" @click="allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
+            <q-field  class="col full-width" align="left" standout stack-label>
               <template v-slot:control>
                 <div class="row">
                   <div class="self-center full-width no-outline" tabindex="0">Nie posiada licencji</div>
                 </div>
               </template>
             </q-field>
-            <q-field  v-if="memberDTO.active" class="col full-width bg-green-3" align="left" standout stack-label>
+            </div>
+            <div v-if="memberDTO.active && !memberDTO.erased" class="col" @click="allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
+            <q-field class="col full-width bg-green-3" align="left" standout stack-label>
               <template v-slot:control>
                 <div class="row">
-                  <div class="self-center full-width no-outline" tabindex="0">Klubowicz Aktywny</div>
+                  <div class="text-center full-width no-outline" tabindex="0">Klubowicz Aktywny</div>
                 </div>
               </template>
             </q-field>
-            <q-field  v-if="!memberDTO.active" class="col full-width bg-red-4" align="left" standout stack-label>
+            </div>
+            <div v-if="!memberDTO.active && !memberDTO.erased"  class="col" @click="allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
+            <q-field class="col full-width bg-red-4" align="left" standout stack-label>
               <template v-slot:control>
                 <div class="row">
                   <div class="self-center full-width no-outline" tabindex="0">Klubowicz Nieaktywny - Sprawdź składki</div>
                 </div>
               </template>
             </q-field>
-          </div>
-          <p></p>
+            </div>
+            <div v-if="memberDTO.erased && memberDTO.erasedEntity.erasedType == erasedType" class="col-3" @click="allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
+            <q-field class="col full-width" align="left" standout stack-label>
+              <template v-slot:control>
+                <div>
+                  <div class="self-center full-width no-outline" tabindex="0">{{memberDTO.secondName}} {{memberDTO.firstName}}</div>
+                  <div v-if="!memberDTO.pzss" class="self-center full-width no-outline" tabindex="0">Nie wpisany do portalu PZSS</div>
+                </div>
+              </template>
+            </q-field>
+            </div>
+            <div v-if="memberDTO.erased && memberDTO.erasedEntity.erasedType == erasedType" class="col-3" @click="allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
+            <q-field   class="col full-width" align="left" standout stack-label>
+              <template v-slot:control>
+                <div class="row">
+                  <div class="self-center full-width no-outline" tabindex="0">Numer leg. {{memberDTO.legitimationNumber}}</div>
+                </div>
+              </template>
+            </q-field>
+            </div>
+            <div v-if="memberDTO.erased && memberDTO.license.number!=null && memberDTO.license.valid && memberDTO.erasedEntity.erasedType == erasedType" class="col-3" @click="allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
+            <q-field  class="col full-width" align="left" standout stack-label>
+              <template v-slot:control>
+                <div class="row">
+                  <div class="self-center full-width no-outline" tabindex="0">Licencja jest ważna</div>
+                </div>
+              </template>
+            </q-field>
+            </div>
+            <div v-if="memberDTO.erased && memberDTO.license.number!=null && !memberDTO.license.valid && memberDTO.erasedEntity.erasedType == erasedType" class="col-3" @click="allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
+            <q-field  class="col full-width bg-yellow-3" align="left" standout stack-label>
+              <template v-slot:control>
+                <div class="row">
+                  <div class="self-center full-width no-outline" tabindex="0">Licencja jest nieważna</div>
+                </div>
+              </template>
+            </q-field>
+            </div>
+            <div v-if="memberDTO.erased && memberDTO.license.number==null && memberDTO.erasedEntity.erasedType == erasedType" class="col-3" @click="allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
+            <q-field  class="col full-width" align="left" standout stack-label>
+              <template v-slot:control>
+                <div class="row">
+                  <div class="self-center full-width no-outline" tabindex="0">Nie posiada licencji</div>
+                </div>
+              </template>
+            </q-field>
+            </div>
+            <div  v-if="memberDTO.erased && memberDTO.erasedEntity.erasedType == erasedType" class="col-3">
+            <q-field class="col full-width bg-grey-4" align="left" standout stack-label>
+              <template v-slot:control>
+                <div class="row">
+                  <div class="self-center full-width no-outline" tabindex="0">{{memberDTO.erasedEntity.erasedType}} {{memberDTO.erasedEntity.date}}</div>
+                  <div v-if="memberDTO.erasedEntity.additionalDescription!=null" class="self-center full-width no-outline" tabindex="0">{{memberDTO.erasedEntity.additionalDescription}}</div>
+                </div>
+              </template>
+            </q-field>
+            </div>
         </div>
         </q-scroll-area>
       </div>
@@ -997,7 +1089,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="eraseBackConfirm" persistent @keypress.enter="eraseCode=true,eraseBackConfirm=false">
+<q-dialog v-model="eraseBackConfirm" persistent @keypress.enter="resurrectCode=true,eraseBackConfirm=false">
       <q-card class="bg-green">
         <q-card-section class="row items-center">
           <span class="q-ml-sm">Czy przywrócić Członka klubu?</span>
@@ -1018,7 +1110,20 @@
 
         <q-card-actions align="right">
           <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
-          <q-btn label="Skreśl" color="black" v-close-popup @click="eraseMember(memberUUID)" />
+          <q-btn label="skreśl" color="black" v-close-popup @click="eraseMember(memberUUID)" />
+        </q-card-actions>
+      </q-card>
+</q-dialog>
+<q-dialog v-model="resurrectCode" persistent>
+      <q-card class="bg-red-5 text-center">
+        <q-card-section class="flex-center">
+          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
+          <q-input @keypress.enter="resurrectMember(memberUUID),resurrectCode=false" autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
+          <q-btn label="przywróć" color="black" v-close-popup @click="resurrectMember(memberUUID)" />
         </q-card-actions>
       </q-card>
 </q-dialog>
@@ -1367,17 +1472,6 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="addAmmoAlert" @keypress.enter="addAmmoAlert=false">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Dodano Amunicję</div>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup />
-        </q-card-actions>
-      </q-card>
-</q-dialog>
 <q-dialog v-model="failure" @keypress.enter="failure=false">
       <q-card>
         <q-card-section>
@@ -1445,6 +1539,7 @@ export default {
       eraseConfirm: false,
       eraseBackConfirm: false,
       eraseCode: false,
+      resurrectCode: false,
       backConfirm: false,
       activeCode: false,
       contributionRecord: '',
@@ -1467,7 +1562,6 @@ export default {
       code: null,
       contributionUUID: null,
       addAmmoConfirm: false,
-      addAmmoAlert: false,
       alert: false,
       patentConfirm: false,
       patentConfirm1: false,
@@ -1503,6 +1597,8 @@ export default {
       calibers: [],
       ammos: [],
       quantities: [],
+      erasedTypes: [],
+      erasedType: null,
       patentDate: Date.now,
       patentPistolPermission: false,
       patentRiflePermission: false,
@@ -1525,6 +1621,8 @@ export default {
       permissionsArbiterPermissionValidThru: '',
       ordinal: '',
       reason: null,
+      erasedReasontype: null,
+      erasedDate: null,
       weaponPermissionNumber: null,
       isExist: true,
       admissionToPossess: null,
@@ -1558,8 +1656,8 @@ export default {
       pzssPortal: false,
       portal: false,
       forbidden: false,
-      local1: 'localhost:8080/shootingplace',
-      local: 'localhost:8080/shootingplace-1.0'
+      local: 'localhost:8080/shootingplace',
+      local1: 'localhost:8080/shootingplace-1.0'
     }
   },
   created () {
@@ -1567,6 +1665,7 @@ export default {
     this.getListCalibers()
     this.getMembersQuantity()
     this.getAllMemberDTOWithArgs()
+    this.getListErasedType()
   },
   methods: {
     showloading () {
@@ -1779,8 +1878,16 @@ export default {
       fetch('http://' + this.local + '/armory/calibers', {
         method: 'GET'
       }).then(response => response.json())
-        .then(calibers => {
-          this.calibers = calibers
+        .then(response => {
+          this.calibers = response
+        })
+    },
+    getListErasedType () {
+      fetch('http://' + this.local + '/member/erasedType', {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.erasedTypes = response
         })
     },
     addMemberAndAmmoToCaliber () {
@@ -1791,7 +1898,6 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          this.addAmmoAlert = true
           this.caliberUUID = null
           this.quantity = null
           this.showloading()
@@ -2040,7 +2146,19 @@ export default {
       })
     },
     eraseMember (uuid) {
-      fetch('http://' + this.local + '/member/erase/' + uuid + '?reason=' + this.reason + '&pinCode=' + this.code, {
+      fetch('http://' + this.local + '/member/erase/' + uuid + '?additionalDescription=' + this.reason + '&erasedDate=' + this.erasedDate.replace(/\//gi, '-') + '&erasedType=' + this.erasedReasontype + '&pinCode=' + this.code, {
+        method: 'PATCH'
+      }).then(response => {
+        if (response.status === 204) {
+          this.eraseAlert = true
+          this.reason = null
+          this.showloading()
+          this.reload()
+        } else { this.failure = true }
+      })
+    },
+    resurrectMember (uuid) {
+      fetch('http://' + this.local + '/member/resurrect/' + uuid + '?pinCode=' + this.code, {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 204) {

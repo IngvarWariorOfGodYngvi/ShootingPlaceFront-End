@@ -714,8 +714,8 @@ export default {
       ordinal: '',
       dateVar: /\//gi,
       pzssPortal: false,
-      local1: 'localhost:8080/shootingplace',
-      local: 'localhost:8080/shootingplace-1.0'
+      local: 'localhost:8080/shootingplace',
+      local1: 'localhost:8080/shootingplace-1.0'
     }
   },
   methods: {
