@@ -12,7 +12,9 @@ const routes = [
       { path: '/member', component: () => import('pages/member.vue') },
       { path: '/license', component: () => import('pages/license.vue') },
       { path: '/patentWilling', component: () => import('pages/patentWilling.vue') },
+      { path: '/statistics', component: () => import('pages/statistics.vue') },
       { path: '/otherFunctions', component: () => import('pages/otherFunctions.vue') },
+      { path: '/settings', component: () => import('pages/settings.vue') },
       { path: '/armory', component: () => import('pages/armory.vue') }
     ]
   },

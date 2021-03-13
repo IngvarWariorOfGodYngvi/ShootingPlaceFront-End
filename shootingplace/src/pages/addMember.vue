@@ -1,6 +1,11 @@
 <template>
   <q-page padding>
     <div>
+        <q-item>
+          <div class="text-center col full-width no-outline text-h4 text-bold" tabindex="0">Dodaj nowego Klubowicza</div>
+        </q-item>
+      </div>
+    <div>
     <q-stepper
       header-nav
       v-model="step"
@@ -41,10 +46,10 @@
                         </q-input></q-item>
       <div class="row">
         <div class="col-6">
-        <q-radio v-model="memberAdult" :val="false" label="Grupa Młodzieżowa" color="secondary" />
+        <q-radio  v-model="memberAdult" :val="true" label="Grupa Powszechna" color="secondary" />
         </div>
         <div class="col-6">
-        <q-radio  v-model="memberAdult" :val="true" label="Grupa Powszechna" color="secondary" />
+        <q-radio v-model="memberAdult" :val="false" label="Grupa Młodzieżowa" color="secondary" />
         </div>
       </div>
       <q-item><q-btn label="Dodaj" color="secondary" @click="acceptCode=true"/></q-item>
@@ -411,7 +416,7 @@
           <q-item><q-btn v-if="step > 1" flat color="primary" @click="$refs.stepper.previous()" label="Wróć" /></q-item>
           <q-item><q-btn v-if="step > 1" @click="redirect()" color="primary" label="Zakończ" /></q-item>
           <q-item><q-btn v-if="step > 1 && (uuid!=null&&uuid!='')" type="a" href="https://portal.pzss.org.pl/CLub/Player/Add" target="_blank" label="Przejdź do portalu PZSS" color="primary" @click="pzssPortal=true"/></q-item>
-          <q-item><q-btn v-if="step > 1 && (uuid!=null&&uuid!='')" label="tymczasowy przycisk potwierdzający PZSS" color="primary" @click="pzssPortal=true"/></q-item>
+          <q-item><q-btn v-if="step > 1 && (uuid!=null&&uuid!='')" label="potwierdź zapis do portalu pzss" color="primary" @click="pzssPortal=true"/></q-item>
           <q-item><q-btn v-if="uuid!=null&&uuid!=''" color="secondary" @click="personalCardDownloadConfirm=true" label="Drukuj kartę" /></q-item>
           <q-item><q-btn v-if="uuid!=null&&uuid!=''" color="secondary" @click="contributionDownloadConfirm=true" label="Potwierdzenie opłacenia składki" /></q-item>
           <q-item v-if="uuid!=null"><q-item-label>Identyfikator : {{uuid}}</q-item-label></q-item>
@@ -748,6 +753,17 @@ export default {
           'Content-Type': 'application/json'
         }
       }).then(response => {
+        if (response.status === 400) {
+          response.json().then(
+            response => {
+              this.code = null
+              this.alertResponse = response
+              if (response.message === '') {
+                this.uuid = 'Uwaga! Nie można wysyłać pustego formularza'
+              }
+              this.failAlert = true
+            })
+        }
         if (response.status === 406) {
           response.json().then(
             response => {

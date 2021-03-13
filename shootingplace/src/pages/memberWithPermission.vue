@@ -1,5 +1,10 @@
 <template>
   <q-page padding>
+      <div>
+        <q-item>
+          <div class="text-center col full-width no-outline text-h4 text-bold" tabindex="0">Lista Osób z Uprawnieniami</div>
+        </q-item>
+      </div>
     <div>
       <q-card class="row">
       <q-checkbox v-model="shootingLeader" :val="true" label="Prowadzący Strzelanie"></q-checkbox>

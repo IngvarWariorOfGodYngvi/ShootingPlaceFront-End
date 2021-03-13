@@ -1,5 +1,10 @@
 <template>
-  <q-page padding class="q-pa-md">
+  <q-page padding>
+      <div>
+        <q-item>
+          <div class="text-center col full-width no-outline text-h4 text-bold" tabindex="0">Lista Zawodów</div>
+        </q-item>
+      </div>
       <q-card class="row">
         <q-card-section v-if="tournaments.length < 1">
               <q-btn
@@ -20,10 +25,12 @@
       <q-card class="col-10">
       <div v-for="(tournaments,uuid) in tournaments" :key="uuid" class="row bg-grey-2 text-h6">
         <div class="col-6">
-          <q-item-section>
-            <q-item>
-              {{ tournaments.name }} {{ tournaments.date }}
-            </q-item>
+          <q-item-section class="col q-pa-md">
+              <div class="col">
+                <q-item-label>{{ tournaments.name }} {{ tournaments.date }}</q-item-label>
+                <q-item-label v-if="tournaments.wzss" caption lines="2">zawody wpisane do kalendarza Wojewódzkiego związku</q-item-label>
+                <q-item-label v-if="!tournaments.wzss" caption lines="2">zawody nie wpisane do kalendarza Wojewódzkiego związku</q-item-label>
+              </div>
           </q-item-section>
         </div>
         <div class="col-3">
@@ -234,9 +241,10 @@
                       <q-btn v-if="scoreList.ammunition == true && scoreList.gun == false && scoreList.otherPersonEntity!=null" class="col-1" color="green" style="text-8" icon="book" @click="compName=competitionsList.name,scoreUUID = scoreList.uuid,otherID = scoreList.otherPersonEntity.id,memberLeg=0, getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Amunicja wydana</q-tooltip></q-btn>
                       <q-btn v-if="scoreList.ammunition == false && scoreList.gun == true && scoreList.otherPersonEntity!=null" class="col-1" color="yellow" style="text-8" icon="book" @click="compName=competitionsList.name,scoreUUID = scoreList.uuid,otherID = scoreList.otherPersonEntity.id,memberLeg=0, getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Broń wydana</q-tooltip></q-btn>
                       <q-btn v-if="scoreList.ammunition == true && scoreList.gun == true && scoreList.otherPersonEntity!=null" class="col-1" color="green" text-color="yellow" style="text-8" icon="book" @click="compName=competitionsList.name,scoreUUID = scoreList.uuid,otherID = scoreList.otherPersonEntity.id,memberLeg=0, getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Broń i Amunicja wydana</q-tooltip></q-btn>
-                    <div  v-if="scoreList.otherPersonEntity == null" class="col-3" @dblclick="tournamentUUID = tournaments.uuid,memberUUID=scoreList.member.uuid,otherID = '0',date=tournaments.date,name=scoreList.member.secondName,startNumber=scoreList.metricNumber,getScoreInfo(),scoreInfo=true">
+                      <div v-if="scoreList.otherPersonEntity == null" class="col-3" @dblclick="tournamentUUID = tournaments.uuid,memberUUID=scoreList.member.uuid,otherID = '0',date=tournaments.date,name=scoreList.member.secondName,startNumber=scoreList.metricNumber,getScoreInfo(),scoreInfo=true">
                     <q-field standout stack-label>
                       <template v-slot:control>
+                        <q-tooltip v-if="!scoreList.member.active" content-class="bg-red text-subtitle2" anchor="top middle" >UREGULUJ SKŁADKI</q-tooltip>
                         <div>
                         <div v-if="scoreList.otherPersonEntity == null" class="self-center full-width col no-outline" tabindex="0">{{scoreList.member.secondName}} {{scoreList.member.firstName}} </div>
                         <div v-if="scoreList.otherPersonEntity == null" class="self-center full-width col no-outline" tabindex="0">{{scoreList.member.club.name}}</div>
@@ -621,13 +629,13 @@
     <q-dialog v-model="addNewTournament" persistent>
       <q-card style="width: 400px">
         <q-card-section class="col items-center">
-          <q-item><q-item-label>Nazwa zawodów</q-item-label></q-item>
+          <q-item><q-item-label class="text-h6 text-center full-width">Nazwa zawodów</q-item-label></q-item>
           <q-item
             ><q-input class="full-width" v-model="tournamentName" filled label="Nazwa"
           /></q-item>
-          <q-item><q-item-label>Data zawodów</q-item-label></q-item>
-          <q-item
-            ><q-input class="full-width" filled v-model="tournamentDate" mask="####/##/##" label="Wybierz datę" hint="użyj kalendarza">
+          <q-item><q-item-label class="text-h6 text-center full-width">Data zawodów</q-item-label></q-item>
+          <q-item>
+            <q-input class="full-width" filled v-model="tournamentDate" mask="####/##/##" label="Wybierz datę" hint="użyj kalendarza">
               <template v-slot:append>
                 <q-icon name="event" class="cursor-pointer">
                   <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -638,8 +646,10 @@
                     </q-date>
                   </q-popup-proxy>
                 </q-icon>
-              </template> </q-input
-          ></q-item>
+              </template>
+            </q-input>
+          </q-item>
+          <q-checkbox v-model="wzss" class="full-width"><div class="text-bold text-center text-h6">zawody wpisane do WZSS</div></q-checkbox>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -1157,6 +1167,7 @@ export default {
       closedTournamentInfo: false,
       tournamentClosedName: null,
       competitionListUUID: null,
+      wzss: true,
       local: 'localhost:8080/shootingplace',
       local1: 'localhost:8080/shootingplace-1.0'
     }
@@ -1308,7 +1319,8 @@ export default {
       var data = {
         name: name,
         date: date.replace(/\//gi, '-'),
-        open: true
+        open: true,
+        wzss: this.wzss
       }
       fetch('http://' + this.local + '/tournament/', {
         method: 'POST',

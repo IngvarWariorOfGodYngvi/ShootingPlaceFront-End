@@ -1,5 +1,11 @@
 <template>
-  <q-page padding class="row">
+  <q-page padding >
+      <div>
+        <q-item>
+          <div class="text-center col full-width no-outline text-h4 text-bold" tabindex="0">Lista Amunicyjna</div>
+        </q-item>
+      </div>
+      <div class="row">
     <q-card class="col-10">
       <div>
         <q-btn class="col-1" style="text-8" label="dodaj do listy" icon="book" @click="getOther(),addAmmo=true" ></q-btn>
@@ -72,6 +78,7 @@
         </q-scroll-area>
       </div>
     </q-card>
+    </div>
 <q-dialog v-model="ammunitionListAlert">
       <q-card>
         <q-card-section>
@@ -345,8 +352,12 @@ export default {
         }
         if (response.status === 400) {
           this.fail = true
+          this.ammoQuantity = null
         }
-        if (response.status === 406) { this.failArmory = true }
+        if (response.status === 406) {
+          this.failArmory = true
+          this.ammoQuantity = null
+        }
       }
       )
     },

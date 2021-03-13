@@ -49,6 +49,13 @@
           v-bind="link"
         />
       </q-list>
+      <div class="q-pa-sm" dense>
+      <q-item-label class="text-bold" dense caption lines="3">Najwyższy numer legitymacji : {{number}}</q-item-label>
+      <q-item-label class="text-bold" dense caption lines="3">Licencje ważne : {{quantity[1]}}</q-item-label>
+      <q-item-label class="text-bold" dense caption lines="3">Licencje nieważne : {{quantity[0]}}</q-item-label>
+      <q-item-label class="text-bold" dense caption lines="3">Klubowiczów ogółem : {{quantities[0] + quantities[3]}} ({{quantities[0]}} + {{quantities[3]}})</q-item-label>
+      <q-item-label class="text-bold" dense caption lines="3">Zapisów w aktualnym roku : {{members}}</q-item-label>
+      </div>
     </q-drawer>
 
     <q-page-container>
@@ -84,12 +91,23 @@ export default {
   components: {
     EssentialLink
   },
-
+  created () {
+    this.getNumber()
+    this.getMembersWithLicenseQuantity()
+    this.getMembersQuantity()
+    this.getActualYearMemberCounts()
+  },
   data () {
     return {
       leftDrawerOpen: false,
-      local: 'localhost:8081',
-      prod: 'localhost:8080/strzelnica',
+      number: null,
+      members: null,
+      quantity: [],
+      quantities: [],
+      prod: 'localhost:8081',
+      prod1: 'localhost:8080/strzelnica',
+      local: 'localhost:8080/shootingplace',
+      local1: 'localhost:8080/shootingplace-1.0',
       essentialLinks: [
         {
           title: 'Lista Klubowiczów',
@@ -134,6 +152,12 @@ export default {
           link: 'http://localhost:8081/#/armory'
         },
         {
+          title: 'Statystyki i Wyliczenia',
+          caption: 'obsługa dodatkowa',
+          icon: 'book',
+          link: 'http://localhost:8081/#/statistics'
+        },
+        {
           title: 'Pozostałe Funkcje',
           caption: 'obsługa dodatkowa',
           icon: 'menu',
@@ -150,6 +174,43 @@ export default {
         this.$q.loading.hide()
         this.timer = 0
       }, 1000)
+    },
+    getNumber () {
+      fetch('http://' + this.local + '/statistics/maxLegNumber', {
+        method: 'GET'
+      }).then(response => response.json()).then(response => {
+        this.number = response
+      })
+    },
+    getMembersWithLicenseQuantity () {
+      fetch('http://' + this.local + '/license/membersQuantity', {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.quantity = response
+        })
+    },
+    getMembersQuantity () {
+      fetch('http://' + this.local + '/member/membersQuantity', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => response.json())
+        .then(response => {
+          this.quantities = response
+        })
+    },
+    getActualYearMemberCounts () {
+      fetch('http://' + this.local + '/statistics/actualYearMemberCounts', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => response.json())
+        .then(response => {
+          this.members = response
+        })
     }
   }
 }

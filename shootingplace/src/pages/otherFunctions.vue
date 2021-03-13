@@ -1,5 +1,10 @@
 <template>
   <q-page padding>
+      <div>
+        <q-item>
+          <div class="text-center col full-width no-outline text-h4 text-bold" tabindex="0">Pozostałe Funkcje</div>
+        </q-item>
+      </div>
       <q-card class="row">
         <q-card-section class="col">
       <div class="q-pa-md text-center col full-width no-outline text-h5 text-bold" tabindex="0">Lista osób spoza klubu</div>
@@ -82,185 +87,6 @@
           </q-card-section>
         </q-card>
         <q-card>
-        <q-card-section class="col">
-          <div class="row">
-            <div class="col">
-              <q-item>
-                <div class="q-pa-md self-center col full-width no-outline text-bold text-center bg-grey-3">WPŁACONE SKŁADKI W WYBRANYM OKRESIE</div>
-              </q-item>
-            </div>
-            <q-item class="col">
-              <q-input class="full-width" filled v-model="firstDate" label="Data początkowa">
-                <template v-slot:append>
-                  <q-icon name="event" class="cursor-pointer">
-                    <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                      <q-date v-model="firstDate">
-                        <div class="row items-center justify-end">
-                          <q-btn v-close-popup label="Zamknij" color="primary" flat />
-                        </div>
-                      </q-date>
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
-              </q-input>
-            </q-item>
-            <q-item class="col">
-              <q-input class="full-width" filled v-model="secondDate" label="Data końcowa">
-                <template v-slot:append>
-                  <q-icon name="event" class="cursor-pointer">
-                    <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                      <q-date v-model="secondDate">
-                        <div class="row items-center justify-end">
-                          <q-btn v-close-popup label="Zamknij" color="primary" flat />
-                        </div>
-                      </q-date>
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
-              </q-input>
-            </q-item>
-            <div @click="getSum ()" class="q-pa-md" align="right">
-              <q-radio class="q-pa-md" v-model="adultCondition" :val="true">
-                dorośli
-              </q-radio>
-              <q-radio class="q-pa-md" v-model="adultCondition" :val="false">
-                mołodzież
-              </q-radio>
-              <q-btn>Wyszukaj</q-btn>
-              </div>
-            </div>
-            <div v-if="quantitySum.length <1" class="q-pa-md self-center col full-width no-outline text-bold text-center text-h5">Brak wyników składek - Wybierz daty</div>
-            <div v-if="quantitySum.length >0" class="q-pa-md self-center col full-width no-outline text-bold text-center text-h6">ilość składek {{quantitySum.length}}</div>
-            <ol>
-            <li v-for="(member,uuid) in quantitySum" :key="uuid" class="self-center col full-width no-outline text-center">
-              <q-field color="black" class="self-center col full-width no-outline text-center" standout stack-label>
-                <template v-slot:control>
-                  <div class="self-center col full-width no-outline text-center">{{member.secondName}} {{member.firstName}}</div>
-                  <div class="self-center col full-width no-outline text-center">leg. {{member.legitimationNumber}}</div>
-                </template>
-              </q-field>
-              <p></p>
-            </li>
-            </ol>
-        </q-card-section>
-        </q-card>
-        <q-card>
-        <q-card-section class="col">
-          <div class="row">
-            <div class="col">
-              <q-item>
-                <div class="q-pa-md self-center col full-width no-outline text-bold text-center bg-grey-3">ZAPISY DO KLUBU W WYBRANYM OKRESIE</div>
-              </q-item>
-            </div>
-            <q-item class="col">
-              <q-input class="full-width" filled v-model="firstDateJoinDate" label="Data początkowa">
-                <template v-slot:append>
-                  <q-icon name="event" class="cursor-pointer">
-                    <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                      <q-date v-model="firstDateJoinDate">
-                        <div class="row items-center justify-end">
-                          <q-btn v-close-popup label="Zamknij" color="primary" flat />
-                        </div>
-                      </q-date>
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
-              </q-input>
-            </q-item>
-            <q-item class="col">
-              <q-input class="full-width" filled v-model="secondDateJoinDate" label="Data końcowa">
-                <template v-slot:append>
-                  <q-icon name="event" class="cursor-pointer">
-                    <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                      <q-date v-model="secondDateJoinDate">
-                        <div class="row items-center justify-end">
-                          <q-btn v-close-popup label="Zamknij" color="primary" flat />
-                        </div>
-                      </q-date>
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
-              </q-input>
-            </q-item>
-            <div @click="getSumJoinDate ()" class="q-pa-md" align="right">
-              <q-btn>Wyszukaj</q-btn>
-              </div>
-            </div>
-            <div v-if="quantitySumJoinDate.length <1" class="q-pa-md self-center col full-width no-outline text-bold text-center text-h5">Brak wyników zapisów - Wybierz daty</div>
-            <div v-if="quantitySumJoinDate.length >0" class="q-pa-md self-center col full-width no-outline text-bold text-center text-h6">ilość zapisów {{quantitySumJoinDate.length}}</div>
-            <ol>
-            <li v-for="(member,uuid) in quantitySumJoinDate" :key="uuid" class="self-center col full-width no-outline text-center">
-              <q-field color="black" class="self-center col full-width no-outline text-center" standout stack-label>
-                <template v-slot:control>
-                  <div class="self-center col full-width no-outline text-center">{{member.secondName}} {{member.firstName}}</div>
-                  <div class="self-center col full-width no-outline text-center">leg. {{member.legitimationNumber}}</div>
-                </template>
-              </q-field>
-              <p></p>
-            </li>
-            </ol>
-        </q-card-section>
-        </q-card>
-        <q-card>
-        <q-card-section class="col">
-          <div class="row">
-            <div class="col">
-              <q-item>
-                <div class="q-pa-md self-center col full-width no-outline text-bold text-center bg-grey-3">ILOŚĆ OSÓB SKREŚLONYCH W WYBRANYM OKRESIE</div>
-              </q-item>
-            </div>
-            <q-item class="col">
-              <q-input class="full-width" filled v-model="firstDateErased" label="Data początkowa">
-                <template v-slot:append>
-                  <q-icon name="event" class="cursor-pointer">
-                    <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                      <q-date v-model="firstDateErased">
-                        <div class="row items-center justify-end">
-                          <q-btn v-close-popup label="Zamknij" color="primary" flat />
-                        </div>
-                      </q-date>
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
-              </q-input>
-            </q-item>
-            <q-item class="col">
-              <q-input class="full-width" filled v-model="secondDateErased" label="Data końcowa">
-                <template v-slot:append>
-                  <q-icon name="event" class="cursor-pointer">
-                    <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                      <q-date v-model="secondDateErased">
-                        <div class="row items-center justify-end">
-                          <q-btn v-close-popup label="Zamknij" color="primary" flat />
-                        </div>
-                      </q-date>
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
-              </q-input>
-            </q-item>
-            <div @click="getSumErased ()" class="q-pa-md" align="right">
-              <q-btn>Wyszukaj</q-btn>
-              </div>
-            </div>
-            <div v-if="quantitySumErased.length <1" class="q-pa-md self-center col full-width no-outline text-bold text-center text-h5">Brak wyników skreślonych - Wybierz daty</div>
-            <div v-if="quantitySumErased.length >0" class="q-pa-md self-center col full-width no-outline text-bold text-center text-h6">ilość skreślonych {{quantitySumErased.length}}</div>
-            <ol>
-            <li v-for="(member,uuid) in quantitySumErased" :key="uuid" class="self-center col full-width no-outline text-center">
-              <q-field color="black" class="self-center col full-width no-outline text-center" standout stack-label>
-                <template v-slot:control>
-                  <div class="self-center col full-width no-outline text-center">{{member.secondName}} {{member.firstName}}</div>
-                  <div class="self-center col full-width no-outline text-center">{{member.erasedEntity.date}} {{member.erasedEntity.erasedType}}</div>
-                  <div v-if="member.erasedEntity.additionalDescription==null" class="self-center col full-width no-outline text-center">Brak dodatkowych informacji</div>
-                  <div v-if="member.erasedEntity.additionalDescription!=null" class="self-center col full-width no-outline text-center">{{member.erasedEntity.additionalDescription}}</div>
-                </template>
-              </q-field>
-              <p></p>
-            </li>
-            </ol>
-        </q-card-section>
-        </q-card>
-          <q-card>
             <q-card-section>
           <div class="q-pa-md text-center col full-width no-outline text-h5 text-bold">Sekcja Magicznych Przycisków</div>
               <q-item>
@@ -272,17 +98,24 @@
                 mołodzież
               </q-radio>
               </q-item>
+              <p></p>
+              <div class="row bg-red-4">
+                <div class="q-pa-md col"><q-btn color="primary" label="lista klubowiczów do zgłoszenia na policję" @click="showloading (),getAllMembersWithLicenseNotValidAndContributionNotValid()"/></div>
+                <div class="q-pa-md col"><q-btn color="primary" label="wyświetl listę numerów telefonów klubowiczów do zgłoszenia na policję" @click="showloading (),getMembersToPolicePhoneNumbers (),membersPhoneNumbers = true"/></div>
+                <div class="q-pa-md col"><q-btn color="primary" label="wyświetl listę email klubowiczów do zgłoszenia na policję" @click="showloading (),getMembersToPoliceEmails (),membersEmails = true"/></div>
+              </div>
+              <p></p>
+              <div class="row bg-yellow-4">
+                <div class="q-pa-md col"><q-btn color="primary" label="lista klubowiczów do skreślenia" @click="showloading (),getAllMembersToErase ()"/></div>
+                <div class="q-pa-md col"><q-btn color="primary" label="wyświetl listę numerów telefonów klubowiczów do skreślenia" @click="showloading (),getMembersToErasePhoneNumbers(),membersPhoneNumbers = true"/></div>
+                <div class="q-pa-md col"><q-btn color="primary" label="wyświetl listę email klubowiczów do skreślenia" @click="showloading (),getMembersToEraseEmails (),membersEmails = true"/></div>
+              </div>
+              <p></p>
               <q-item class="q-pa-md">
-                <q-btn color="primary" label="pobierz listę klubowiczów do zgłoszenia na policję" @click="showloading (),getAllMembersWithLicenseNotValidAndContributionNotValid()"/>
+                <q-btn color="primary" label="lista klubowiczów z aktualną licencją i bez składek" @click="showloading (),getAllMembersWithLicenseValidAndContributionNotValid()"/>
               </q-item>
               <q-item class="q-pa-md">
-                <q-btn color="primary" label="pobierz listę klubowiczów z aktualną licencją i bez składek" @click="showloading (),getAllMembersWithLicenseValidAndContributionNotValid()"/>
-              </q-item>
-              <q-item class="q-pa-md">
-                <q-btn color="primary" label="pobierz listę klubowiczów do skreślenia" @click="showloading (),getAllMembersToErase ()"/>
-              </q-item>
-              <q-item class="q-pa-md">
-                <q-btn color="primary" label="pobierz listę klubowiczów skreślonych" @click="showloading (),getAllErasedMembers ()"/>
+                <q-btn color="primary" label="lista klubowiczów skreślonych" @click="showloading (),getAllErasedMembers ()"/>
               </q-item>
               <div class="row">
                   <div class="q-pa-md"><q-btn color="primary" label="wyświetl listę numerów telefonów" @click="showloading (),getMembersPhoneNumbers (),membersPhoneNumbers = true"/></div>
@@ -300,17 +133,6 @@
       <q-card>
         <q-card-section>
           <div class="text-h6">Coś poszło nie tak</div>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup/>
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-    <q-dialog v-model="prolongFail">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Nie można przedłużyć licencji</div>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -341,17 +163,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="caliberAlert">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Dodano nowy rodzaj amunicji</div>
-        </q-card-section>
 
-        <q-card-actions align="right">
-          <q-btn flat label="ok" color="primary" v-close-popup/>
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
     <q-dialog v-model="membersEmails">
       <q-card>
         <q-card-section>
@@ -422,21 +234,8 @@ Vue.prototype.$axios = axios
 export default {
   data () {
     return {
-      calibers: [],
       others: [],
       clubs: [],
-      members: [],
-      members2: [],
-      quantity: [],
-      firstDate: null,
-      secondDate: null,
-      firstDateJoinDate: null,
-      secondDateJoinDate: null,
-      firstDateErased: null,
-      secondDateErased: null,
-      quantitySum: [],
-      quantitySumJoinDate: [],
-      quantitySumErased: [],
       othersID: null,
       clubID: null,
       clubName: null,
@@ -448,24 +247,15 @@ export default {
       clubInfo: false,
       clubInfoModel: [],
       doneAlert: false,
-      caliberAlert: false,
       editClub: false,
       dataFail: false,
-      prolongFail: false,
       alert: false,
       condition: true,
-      adultCondition: true,
-      adultConditionJoinDate: true,
       tableCondition: true,
       emails: null,
       phoneNumbers: null,
       membersEmails: false,
       membersPhoneNumbers: false,
-      licensePistolPermission: false,
-      licenseRiflePermission: false,
-      licenseShotgunPermission: false,
-      prolongLicenseAlert: false,
-      paymentLicenseAlert: false,
       memberName: null,
       memberUUID: null,
       nowDate: Date.now(),
@@ -474,12 +264,8 @@ export default {
     }
   },
   created () {
-    this.getListCalibers()
     this.getOther()
     this.getAllClubs()
-    this.getMembersWithLicense()
-    this.getMembersWithLicenseNotValid()
-    this.getMembersWithLicenseQuantity()
   },
   methods: {
     showloading () {
@@ -496,14 +282,6 @@ export default {
       const duration = 500
       setScrollPosition(target, offset, duration)
     },
-    getListCalibers () {
-      fetch('http://' + this.local + '/armory/calibers', {
-        method: 'GET'
-      }).then(response => response.json())
-        .then(calibers => {
-          this.calibers = calibers
-        })
-    },
     getOther () {
       fetch('http://' + this.local + '/other/all', {
         method: 'GET'
@@ -512,39 +290,12 @@ export default {
           this.others = others
         })
     },
-    getMember () {
-      this.$router.push({ path: 'member', params: { options: this.memberUUID } })
-    },
     getAllClubs () {
       fetch('http://' + this.local + '/club/', {
         method: 'GET'
       }).then(response => response.json())
         .then(clubs => {
           this.clubs = clubs
-        })
-    },
-    getMembersWithLicense () {
-      fetch('http://' + this.local + '/license/membersWithNotValidLicense', {
-        method: 'GET'
-      }).then(response => response.json())
-        .then(response => {
-          this.members2 = response
-        })
-    },
-    getMembersWithLicenseNotValid () {
-      fetch('http://' + this.local + '/license/membersWithValidLicense', {
-        method: 'GET'
-      }).then(response => response.json())
-        .then(members => {
-          this.members = members
-        })
-    },
-    getMembersWithLicenseQuantity () {
-      fetch('http://' + this.local + '/license/membersQuantity', {
-        method: 'GET'
-      }).then(response => response.json())
-        .then(response => {
-          this.quantity = response
         })
     },
     getMembersEmails () {
@@ -557,6 +308,38 @@ export default {
     },
     getMembersPhoneNumbers () {
       fetch('http://' + this.local + '/member/phoneNumbers?condition=' + this.condition, {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.phoneNumbers = response
+        })
+    },
+    getMembersToEraseEmails () {
+      fetch('http://' + this.local + '/member/membersToEraseEmails', {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.emails = response
+        })
+    },
+    getMembersToErasePhoneNumbers () {
+      fetch('http://' + this.local + '/member/membersToErasePhoneNumbers', {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.phoneNumbers = response
+        })
+    },
+    getMembersToPoliceEmails () {
+      fetch('http://' + this.local + '/member/membersToPoliceEmails', {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.emails = response
+        })
+    },
+    getMembersToPolicePhoneNumbers () {
+      fetch('http://' + this.local + '/member/membersToPolicePhoneNumbers', {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -581,7 +364,6 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           this.doneAlert = true
-          this.getListCalibers()
           this.getOther()
           this.getAllClubs()
         } else { this.dataFail = true }
@@ -594,75 +376,9 @@ export default {
         if (response.status === 200) {
           this.doneAlert = true
           this.othersID = null
-          this.getListCalibers()
           this.getOther()
           this.getAllClubs()
         } else { this.dataFail = true }
-      })
-    },
-    prolongLicense (uuid, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission) {
-      var data = {
-        pistolPermission: licensePistolPermission,
-        riflePermission: licenseRiflePermission,
-        shotgunPermission: licenseShotgunPermission
-      }
-      fetch('http://' + this.local + '/license/' + uuid, {
-        method: 'PATCH',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          this.doneAlert = true
-          this.licensePistolPermission = false
-          this.licenseRiflePermission = false
-          this.licenseShotgunPermission = false
-          this.getMembersWithLicense()
-          this.getMembersWithLicenseNotValid()
-          this.getMembersWithLicenseQuantity()
-        } else { this.prolongFail = true }
-      })
-    },
-    addLicenseHistoryPayment (uuid) {
-      fetch('http://' + this.local + '/license/history/' + uuid, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          this.doneAlert = true
-          this.getMembersWithLicense()
-          this.getMembersWithLicenseNotValid()
-        } else { this.prolongFail = true }
-      })
-    },
-    getSum () {
-      fetch('http://' + this.local + '/contribution/contributionSum?firstDate=' + this.firstDate.replace(/\//gi, '-') + '&secondDate=' + this.secondDate.replace(/\//gi, '-') + '&condition=' + this.adultCondition, {
-        method: 'GET'
-      }).then(response => {
-        response.json().then(response => {
-          this.quantitySum = response
-        })
-      })
-    },
-    getSumJoinDate () {
-      fetch('http://' + this.local + '/contribution/joinDateSum?firstDate=' + this.firstDateJoinDate.replace(/\//gi, '-') + '&secondDate=' + this.secondDateJoinDate.replace(/\//gi, '-'), {
-        method: 'GET'
-      }).then(response => {
-        response.json().then(response => {
-          this.quantitySumJoinDate = response
-        })
-      })
-    },
-    getSumErased () {
-      fetch('http://' + this.local + '/contribution/erasedSum?firstDate=' + this.firstDateErased.replace(/\//gi, '-') + '&secondDate=' + this.secondDateErased.replace(/\//gi, '-'), {
-        method: 'GET'
-      }).then(response => {
-        response.json().then(response => {
-          this.quantitySumErased = response
-        })
       })
     },
     getAllMembersList () {
