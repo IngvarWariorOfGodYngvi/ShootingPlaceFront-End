@@ -165,8 +165,8 @@
               </q-card-section>
               <q-card-section class="col-3 items-center">
               <q-item-section class="col" v-if="!member.license.number!=null||member.adult">
-                <div class="col" clickable @dblclick="editLicense=true">
-                <q-field clickable @dblclick="editLicense=true" class="col" standout stack-label>
+                <div class="col" clickable @dblclick="memberUUID = member.uuid, editLicense=true">
+                <q-field class="col" standout stack-label>
                   <template v-slot:control>
                     <div class="self-center col full-width no-outline text-center" tabindex="0">Licencja</div>
                   </template>
@@ -1508,11 +1508,46 @@
 <q-dialog v-model="editLicense" @keypress.esc="editLicense=false">
       <q-card>
         <q-card-section>
-          <div class="text-h6">Edytuj Licencje</div>
+          <div class="text-h5 text-bold text-center">Edytuj Licencje</div>
+          <div class="text-h6">Uwaga! Wprowadzając zmiany bądź pewny tego co robisz</div>
+          <div class="row">
+            <q-item>
+              <q-input filled standout stack-label v-model="editLicenseNumber" label="Numer Licencji"></q-input>
+            </q-item>
+            <q-item>
+              <q-input filled standout stack-label v-model="editLicenseDate" mask="####/12/31" label="Ważność licencji">
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                      <q-date v-model="editLicenseDate">
+                        <div class="row items-center justify-end">
+                          <q-btn v-close-popup label="Zamknij" color="primary" flat />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+            </q-item>
+          </div>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup />
+          <q-btn flat label="zamknij" color="primary" v-close-popup />
+          <q-btn flat label="wprowadź zmiany" color="primary" v-close-popup @click="editLicenseCode=true"/>
+        </q-card-actions>
+      </q-card>
+</q-dialog>
+<q-dialog v-model="editLicenseCode" persistent>
+      <q-card class="bg-red-5 text-center">
+        <q-card-section class="flex-center">
+          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
+          <div><q-input @keypress.enter="forceUpdateLicence(),editLicenseCode=false" autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input></div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
+          <q-btn id="3" label="Wprowadź zmiany" color="black" v-close-popup @click="forceUpdateLicence()" />
         </q-card-actions>
       </q-card>
 </q-dialog>
@@ -1535,6 +1570,9 @@ export default {
   data () {
     return {
       editLicense: false,
+      editLicenseDate: null,
+      editLicenseNumber: null,
+      editLicenseCode: false,
       member: null,
       con: false,
       filters: [],
@@ -2076,6 +2114,29 @@ export default {
           this.showloading()
           this.getMember(uuid)
         } else { this.failure = true }
+      })
+    },
+    forceUpdateLicence () {
+      fetch('http://' + this.local + '/license/forceUpdate?memberUUID=' + this.memberUUID + '&number=' + this.editLicenseNumber + '&date=' + this.editLicenseDate.replace(/\//gi, '-') + '&pinCode=' + this.code, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          this.licenseAlert = true
+          this.editLicenseNumber = null
+          this.editLicenseDate = null
+          this.code = null
+          this.showloading()
+          this.getMember(this.memberUUID)
+        }
+        if (response.status === 403) {
+          this.forbidden = true
+        }
+        if (response.status === 400) {
+          this.failure = true
+        }
       })
     },
     changeWeaponPermission (uuid, weaponPermissionNumber, isExist) {
