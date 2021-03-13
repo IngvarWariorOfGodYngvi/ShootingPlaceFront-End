@@ -143,29 +143,35 @@
                     </q-card>
                   </div>
                 </q-dialog>
-                  <q-expansion-item class="bg-grey-3 full-width q-pa-none" label="Daty składek">
+                  <q-expansion-item class="bg-grey-3 full-width q-pa-none text-center" label="Daty składek">
                     <q-scroll-area class="full-width q-pa-none" style="height: 200px;">
-                          <div v-for="(contributionList,uuid) in member.history.contributionList" :key="uuid" class="row">
-                              <q-field class="col" standout label="Opłacona dnia" stack-label>
+                          <div v-for="(contributionList,uuid) in member.history.contributionList" :key="uuid" class="row gt" @dblclick="contributionUUID = contributionList.uuid,memberUUID = member.uuid,editContributionPaymentDate=contributionList.paymentDay,editContributionValidThruDate=contributionList.validThru,editContribution=true">
+                              <q-field class="col" label="Opłacona dnia" standout stack-label>
                                 <template v-slot:control>
                                   <div class="self-center col full-width no-outline" tabindex="0">{{contributionList.paymentDay}}</div>
                                 </template>
                               </q-field>
-                              <div>
-                                <q-field  class="col" standout label="Ważna do" stack-label>
+                              <div class="col">
+                                <q-field class="col" standout label="Ważna do" stack-label>
                                   <template v-slot:control>
                                     <div class="self-center col full-width no-outline" tabindex="1">{{contributionList.validThru}}</div>
                                   </template>
                                 </q-field>
                               </div>
-                              <q-btn v-if="!member.erased" label="usuń" @click=" contributionUUID = contributionList.uuid,memberUUID = member.uuid,contributionRemoveRecordQuerry=true"></q-btn>
                           </div>
                     </q-scroll-area>
                   </q-expansion-item>
               </q-card-section>
               <q-card-section class="col-3 items-center">
               <q-item-section class="col" v-if="!member.license.number!=null||member.adult">
-                <div class="col" clickable @dblclick="memberUUID = member.uuid, editLicense=true">
+                <div v-if="member.license.number!=null" class="col" clickable @dblclick="memberUUID = member.uuid,editLicenseNumber=member.license.number,editLicenseDate=member.license.validThru, editLicense=true">
+                <q-field class="col" standout stack-label>
+                  <template v-slot:control>
+                    <div class="self-center col full-width no-outline text-center" tabindex="0">Licencja</div>
+                  </template>
+                </q-field>
+                </div>
+                <div v-if="member.license.number==null" class="col">
                 <q-field class="col" standout stack-label>
                   <template v-slot:control>
                     <div class="self-center col full-width no-outline text-center" tabindex="0">Licencja</div>
@@ -201,7 +207,7 @@
                 <q-item-label caption lines="2" v-if="!member.license.riflePermission&&member.history.licenseHistory[ 1 ]=='Karabin'">Kiedyś posiadał licencję na Karabin</q-item-label>
                 <q-item-label caption lines="2" v-if="!member.license.shotgunPermission&&member.history.licenseHistory[ 2 ]=='Strzelba'">Kiedyś posiadał licencję na strzelbę</q-item-label>
               </q-item-section>
-                <q-btn v-if="(member.shootingPatent.patentNumber!=null&&member.license.number==null&&member.license.paid)||(!member.adult&&!member.license.number==null)" class="full-width" color="primary" label="WYDAJ LICENCJĘ" @click="
+                <q-btn v-if="(member.shootingPatent.patentNumber!=null&&member.license.number==null&&member.license.paid)||(!member.adult&&member.license.number==null)" class="full-width" color="primary" label="WYDAJ LICENCJĘ" @click="
                 memberUUID=member.uuid,
                 patentPistolPermission1=member.shootingPatent.pistolPermission,
                 patentRiflePermission1=member.shootingPatent.riflePermission,
@@ -233,7 +239,7 @@
                 licenseShotgunPermission1=member.license.shotgunPermission,
                 noDomesticStarts=true"></q-btn>
                 </div>
-                <q-btn v-if="((member.active&&member.adult) || (member.active&&(member.shootingPatent.patentNumber!=null))) &&member.license.paid==false" class="full-width" label="opłać licencję" @click="memberUUID=member.uuid,licensePayment=true"></q-btn>
+                <q-btn v-if="((member.active&&(member.shootingPatent.patentNumber!=null&&member.license.paid==false))) " class="full-width" label="opłać licencję" @click="memberUUID=member.uuid,licensePayment=true"></q-btn>
               <q-expansion-item class="bg-grey-3" v-if="member.history.licensePaymentHistory!=null" label="Daty opłacenia licencji">
                 <q-scroll-area class="full-width q-pa-none" style="height: 200px;">
                 <div v-for="(licensePaymentHistory,uuid) in member.history.licensePaymentHistory" :key="uuid" class="row">
@@ -374,7 +380,7 @@
                   </div>
                 </div>
 </q-expansion-item>
-<q-expansion-item label="Opcje Dodatkowe" group="right-card" class="bg-grey-3">
+<q-expansion-item v-if="!member.erased" label="Opcje Dodatkowe" group="right-card" class="bg-grey-3">
 <q-expansion-item v-if="member.adult&&!member.erased" label="Patent" group="right-right-card" class="bg-white">
                 <q-btn class="full-width" color="primary" v-if="member.shootingPatent.patentNumber==null" label="DODAJ PATENT" @click="memberUUID=member.uuid,patentConfirm=true"></q-btn>
                 <q-btn class="full-width" color="primary" v-if="member.shootingPatent.patentNumber!=null&&(
@@ -1551,6 +1557,73 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
+<q-dialog v-model="editContribution" @keypress.esc="editContribution=false">
+      <q-card>
+        <q-card-section>
+          <div class="text-h5 text-bold text-center">Edytuj Składkę</div>
+          <div class="text-h6 text-center">Uwaga! Wprowadzając zmiany bądź pewny tego co robisz</div>
+          <div class="text-h6 text-center">Pamiętaj! Składki dla młodzieży ustaw na 02/28 lub 08/31</div>
+          <div class="text-h6 text-center">Pamiętaj! Składki dla dorosłych ustaw na 06/30 lub 12/31</div>
+          <div class="row bg-grey-3">
+            <div class="q-pa-md col-6">
+              <q-input  v-model="editContributionPaymentDate" filled standout stack-label mask="####/##/##" label="Data Opłacenia Składki">
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                      <q-date v-model="editContributionPaymentDate">
+                        <div class="row items-center justify-end">
+                          <q-btn v-close-popup label="Zamknij" color="primary" flat />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+            </div>
+            <div class="q-pa-md col-6">
+              <q-input class="col-6" v-model="editContributionValidThruDate" filled standout stack-label mask="####/##/##" label="Ważność Sładki">
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                      <q-date v-model="editContributionValidThruDate">
+                        <div class="row items-center justify-end">
+                          <q-btn v-close-popup label="Zamknij" color="primary" flat />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+            </div>
+          </div>
+          <div class="row full-width bg-red-3">
+            <div class="col-6 q-pa-md">
+              <q-btn class="full-width" label="usuń Składkę" color="red" @click="contributionRemoveRecordQuerry=true,editContribution=false"></q-btn>
+            </div>
+            <div class="col-6 q-pa-md bg-grey-3">
+              <q-btn class="full-width" label="wprowadź zmiany" color="primary" v-close-popup @click="editContributionCode=true"/>
+            </div>
+          </div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="zamknij" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+</q-dialog>
+<q-dialog v-model="editContributionCode" persistent>
+      <q-card class="bg-red-5 text-center">
+        <q-card-section class="flex-center">
+          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
+          <div><q-input @keypress.enter="editContributionRecord(),code=null,editContributionCode=false" autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input></div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
+          <q-btn id="3" label="Wprowadź zmiany" color="black" v-close-popup @click="editContributionRecord(), code=null" />
+        </q-card-actions>
+      </q-card>
+</q-dialog>
   </q-page>
 </template>
 
@@ -1573,6 +1646,10 @@ export default {
       editLicenseDate: null,
       editLicenseNumber: null,
       editLicenseCode: false,
+      editContribution: false,
+      editContributionPaymentDate: null,
+      editContributionValidThruDate: null,
+      editContributionCode: false,
       member: null,
       con: false,
       filters: [],
@@ -1801,6 +1878,31 @@ export default {
         .then(response => {
           this.quantities = response
         })
+    },
+    editContributionRecord () {
+      fetch('http://' + this.local + '/contribution/edit?memberUUID=' + this.memberUUID + '&contributionUUID=' + this.contributionUUID + '&paymentDay=' + this.editContributionPaymentDate.replace(/\//gi, '-') + '&validThru=' + this.editContributionValidThruDate.replace(/\//gi, '-') + '&pinCode=' + this.code, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          this.dataAlert = true
+          this.code = null
+          this.getMembersNames()
+          this.showloading()
+          this.getMember(this.memberUUID)
+          this.code = null
+        }
+        if (response.status === 403) {
+          this.forbidden = true
+          this.code = null
+        }
+        if (response.status === 409) {
+          this.code = null
+          this.failure = true
+        }
+      })
     },
     removeContributionRecord () {
       fetch('http://' + this.local + '/contribution/remove/' + this.memberUUID + '?contributionUUID=' + this.contributionUUID + '&pinCode=' + this.code, {
