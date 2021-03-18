@@ -412,7 +412,7 @@
 
       <template v-slot:navigation  >
         <q-stepper-navigation class="flex flex">
-          <q-item v-if="(step<5&&(uuid!=null&&uuid!=''))"><q-btn v-if="step<5" @click="$refs.stepper.next()" color="primary" :label="step === 5 ? 'Zakończ' : 'Przejdź Dalej'" /></q-item>
+          <q-item clickable v-if="(step<5&&(uuid!=null&&uuid!=''))" @click="alertResponse=null"><q-btn v-if="step<5" @click="$refs.stepper.next()" color="primary" :label="step === 5 ? 'Zakończ' : 'Przejdź Dalej'" /></q-item>
           <q-item><q-btn v-if="step > 1" flat color="primary" @click="$refs.stepper.previous()" label="Wróć" /></q-item>
           <q-item><q-btn v-if="step > 1" @click="redirect()" color="primary" label="Zakończ" /></q-item>
           <q-item><q-btn v-if="step > 1 && (uuid!=null&&uuid!='')" type="a" href="https://portal.pzss.org.pl/CLub/Player/Add" target="_blank" label="Przejdź do portalu PZSS" color="primary" @click="pzssPortal=true"/></q-item>
@@ -685,7 +685,7 @@ export default {
       step: 1,
       number: '',
       validThru: '',
-      member: [],
+      member: null,
       patentNumber: null,
       patentNumberConfirm: false,
       patentDate: '',
@@ -714,6 +714,7 @@ export default {
       memberStreet: null,
       memberStreetNumber: null,
       memberFlatNumber: null,
+      memberE: null,
       active: true,
       uuid: null,
       ordinal: '',
@@ -783,6 +784,7 @@ export default {
               this.alertResponse = null
               this.memberAdultConfirm = this.memberAdult
               this.memberAlert = true
+              this.getMember(this.uuid)
             }
           )
         }
@@ -928,6 +930,20 @@ export default {
         document.body.appendChild(fileLink)
         fileLink.click()
       })
+    },
+    getMember (uuid) {
+      fetch('http://' + this.local + '/member/uuid/' + uuid, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => response.json())
+        .then(response => {
+          this.memberE = response
+        }).then(() => {
+          this.memberLegitimation = this.memberE.legitimationNumber
+          this.memberJoinDate = this.memberE.joinDate
+        })
     }
   },
   name: 'addMember'

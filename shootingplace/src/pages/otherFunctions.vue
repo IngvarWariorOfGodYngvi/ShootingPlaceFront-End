@@ -106,7 +106,7 @@
               </div>
               <p></p>
               <div class="row bg-yellow-4">
-                <div class="q-pa-md col"><q-btn color="primary" label="lista klubowiczów do skreślenia" @click="showloading (),getAllMembersToErase ()"/></div>
+                <div class="q-pa-md col"><q-btn class=" full-width" color="primary" label="lista klubowiczów do skreślenia z listy klubowiczów" @click="showloading (),getAllMembersToErase ()"/></div>
                 <div class="q-pa-md col"><q-btn color="primary" label="wyświetl listę numerów telefonów klubowiczów do skreślenia" @click="showloading (),getMembersToErasePhoneNumbers(),membersPhoneNumbers = true"/></div>
                 <div class="q-pa-md col"><q-btn color="primary" label="wyświetl listę email klubowiczów do skreślenia" @click="showloading (),getMembersToEraseEmails (),membersEmails = true"/></div>
               </div>

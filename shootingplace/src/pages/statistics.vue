@@ -372,6 +372,79 @@
             </q-scroll-area>
         </q-card-section>
         </q-card>
+        <q-card>
+          <q-card>
+        <q-card-section class="col">
+          <q-item>
+            <div class="q-pa-md self-center col full-width no-outline text-bold text-center bg-grey-3">KLUBOWICZE I AMUNICJA W WYBRANYM OKRESIE</div>
+          </q-item>
+          <div class="row">
+            <q-item class="col">
+              <q-input class="full-width" filled v-model="firstDateAmmo" label="Data początkowa">
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                      <q-date v-model="firstDateAmmo">
+                        <div class="row items-center justify-end">
+                          <q-btn v-close-popup label="Zamknij" color="primary" flat />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+            </q-item>
+            <q-item class="col">
+              <q-input class="full-width" filled v-model="secondDateAmmo" label="Data końcowa">
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                      <q-date v-model="secondDateAmmo">
+                        <div class="row items-center justify-end">
+                          <q-btn v-close-popup label="Zamknij" color="primary" flat />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+            </q-item>
+            <div @click="memberAmmoTakesInTime ()" class="q-pa-md" align="right">
+              <q-btn>Wyszukaj</q-btn>
+              </div>
+            </div>
+            <div v-if="quantityAmmo.length <1" class="q-pa-md self-center col full-width no-outline text-bold text-center text-h5">^ Brak wyników - Wybierz daty ^</div>
+            <q-scroll-area v-if="quantityAmmo.length >0" class="full-width q-pa-none" style="height: 500px;">
+            <ol>
+            <li v-for="(member,uuid) in quantityAmmo" :key="uuid" class="text-bold text-h6">
+              <q-field color="black" class="self-center col full-width no-outline" standout stack-label>
+                <template v-slot:control>
+                  <div class="self-center col full-width no-outline text-left">{{member.secondName}} {{member.firstName}}</div>
+                  <div class="self-center col full-width no-outline text-left">leg. {{member.legitimationNumber}}</div>
+                </template>
+              </q-field>
+              <p></p>
+              <q-field color="black" class="self-center col full-width no-outline" standout stack-label>
+               <template v-slot:control>
+                 <div class="self-center col full-width no-outline text-left">kaliber</div>
+                 <div class="self-center col full-width no-outline text-left">Ilość</div>
+                </template>
+              </q-field>
+              <div v-for="(caliber,id) in member.caliber" :key="id">
+                  <q-field color="black" class="self-center col full-width no-outline" standout stack-label>
+                   <template v-slot:control>
+                     <div class="self-center col full-width no-outline text-left">{{caliber.name}}</div>
+                     <div class="self-center col full-width no-outline text-left">{{caliber.quantity}}</div>
+                    </template>
+                  </q-field>
+              </div>
+            <p></p>
+            </li>
+            </ol>
+            </q-scroll-area>
+        </q-card-section>
+        </q-card>
+        </q-card>
         <!-- <q-card>
             <q-card-section>
                 <div>osoby które wzięły najwięcej amunicji 10 osób</div>
@@ -403,6 +476,8 @@ export default {
       secondDateErased: null,
       firstDateLicense: null,
       secondDateLicense: null,
+      firstDateAmmo: null,
+      secondDateAmmo: null,
       year: null,
       month: null,
       quantitySum: [],
@@ -410,6 +485,7 @@ export default {
       quantitySumErased: [],
       quantitySumLicense: [],
       quantitySumJoinDateByMonths: [],
+      quantityAmmo: [],
       adultCondition: true,
       local: 'localhost:8080/shootingplace',
       local1: 'localhost:8080/shootingplace-1.0'
@@ -474,6 +550,15 @@ export default {
       }).then(response => {
         response.json().then(response => {
           this.quantitySumJoinDateByMonths = response
+        })
+      })
+    },
+    memberAmmoTakesInTime () {
+      fetch('http://' + this.local + '/statistics/memberAmmoTakesInTime?firstDate=' + this.firstDateAmmo.replace(/\//gi, '-') + '&secondDate=' + this.secondDateAmmo.replace(/\//gi, '-'), {
+        method: 'GET'
+      }).then(response => {
+        response.json().then(response => {
+          this.quantityAmmo = response
         })
       })
     }
