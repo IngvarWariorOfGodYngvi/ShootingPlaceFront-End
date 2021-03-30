@@ -8,7 +8,7 @@
       <q-card class=" row">
         <div class="col-4">
           <q-item>
-            <q-select class="full-width bg-green-3" filled v-model="memberName" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filter" @input="showloading(),allMember = false,getMember(filter)" label="Nazwisko - Imię - nr Leg">
+            <q-select class="full-width bg-green-3" filled v-model="memberName" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filter" @input="allMember = false,getMember(filter)" label="Nazwisko - Imię - nr Leg">
                   <template v-slot:no-option>
                     <q-item>
                       <q-item-section class="text-grey">
@@ -145,7 +145,7 @@
                   </div>
                 </q-dialog>
                   <q-expansion-item class="bg-grey-3 full-width q-pa-none text-center" label="Daty Składek">
-                    <q-scroll-area class="full-width q-pa-none" style="height: 200px;">
+                    <q-scroll-area class="full-width q-pa-none" style="height: 375px;">
                           <div v-for="(contributionList,uuid) in member.history.contributionList" :key="uuid" class="row">
                               <div class="row full-width" @dblclick="contributionUUID = contributionList.uuid,memberUUID = member.uuid,editContributionPaymentDate=contributionList.paymentDay,editContributionValidThruDate=contributionList.validThru,editContribution=true">
                               <q-field class="col-6" label="Opłacona dnia : " standout stack-label>
@@ -244,7 +244,7 @@
                 </div>
                 <q-btn v-if="((member.active&&(member.shootingPatent.patentNumber!=null&&member.license.paid==false))) " class="full-width" label="opłać licencję" @click="memberUUID=member.uuid,licensePayment=true"></q-btn>
               <q-expansion-item class="bg-grey-3" v-if="member.history.licensePaymentHistory!=null" label="Daty Opłacenia Licencji">
-                <q-scroll-area class="full-width q-pa-none" style="height: 200px;">
+                <q-scroll-area class="full-width q-pa-none" style="height: 289px;">
                 <div v-for="(licensePaymentHistory,uuid) in member.history.licensePaymentHistory" :key="uuid" class="row" @dblclick="memberUUID=member.uuid,paymentUUID = licensePaymentHistory.uuid,editLicensePaymentDate = licensePaymentHistory.date,editLicensePaymentYear = licensePaymentHistory.validForYear,editLicensePayment=true">
                   <q-field label="Opłacona dnia:" class="col" standout stack-label>
                     <template v-slot:control>
@@ -628,7 +628,7 @@
             <q-item-label caption lines="2">Pesel : {{member.pesel}}</q-item-label>
             <q-item-label caption lines="2">Numer Dowodu : {{member.idcard}}</q-item-label>
             <p></p>
-            <q-btn class="full-width" v-if="member.active&&!member.erased" label="Zmień Dane" color="secondary" @click="memberUUID=member.uuid,basicDataConfirm=true"></q-btn>
+            <q-btn class="full-width" v-if="member.active&&!member.erased" label="Zmień Dane" color="secondary" @click="memberUUID=member.uuid,memberIdcard = member.idcard,memberFirstName = member.firstName,memberSecondName = member.secondName,basicDataConfirm=true"></q-btn>
             </q-item-section>
           </q-card-section>
           <q-card-section class="col-3">
@@ -642,7 +642,7 @@
             <q-item-label caption lines="2">Ulica : {{member.address.street}} {{member.address.streetNumber}}</q-item-label>
             <q-item-label caption lines="2">Numer mieszkania : {{member.address.flatNumber}}</q-item-label>
             <p></p>
-            <q-btn v-if="member.active&&!member.erased" class="full-width" label="Aktualizuj Dane Kontaktowe" color="secondary" @click="memberUUID=member.uuid,addressConfirm=true"></q-btn>
+            <q-btn v-if="member.active&&!member.erased" class="full-width" label="Aktualizuj Dane Kontaktowe" color="secondary" @click="memberUUID=member.uuid,memberEmail = member.email,memberPhoneNumber = member.phoneNumber,memberPostOfficeCity = member.address.postOfficeCity,memberZipCode = member.address.zipCode,memberStreet = member.address.street,memberStreetNumber = member.address.streetNumber,memberFlatNumber=member.address.flatNumber,addressConfirm=true"></q-btn>
             </q-item-section>
           </q-card-section>
           <q-card-section class="col-5">
@@ -826,7 +826,7 @@
       <q-card>
         <q-card-section class="col items-center">
                 <q-item><q-input v-model="memberEmail" label="e-mail" /></q-item>
-                <q-item><q-input v-model="memberPhoneNumber" hint="tylko cyfry" label="Numer Telefonu" placeholder="tylko cyfry" mask="#########"/></q-item>
+                <q-item><q-input @focus="memberPhoneNumber = null" v-model="memberPhoneNumber" hint="tylko cyfry" label="Numer Telefonu" placeholder="tylko cyfry" mask="#########"/></q-item>
                 <q-item><q-input v-model="memberPostOfficeCity" label="Miasto" /></q-item>
                 <q-item><q-input v-model="memberZipCode" hint="00-000" label="Kod Pocztowy" placeholder="00-000" mask="##-###" /></q-item>
                 <q-item><q-input v-model="memberStreet" label="Ulica" /></q-item>
@@ -870,8 +870,8 @@
 <q-dialog v-model="basicDataConfirm" persistent>
       <q-card>
         <q-card-section class="col items-center">
-        <q-item-label>Zmień dane podstawowe</q-item-label>
-        <q-item><q-input v-model="memberIdcard" hint="XXX000000" label="Numer Dowodu" placeholder="XXX000000" mask="AAA ######"/></q-item>
+        <q-item-label class="text-bold text-center text-h6">Zmień dane podstawowe</q-item-label>
+        <q-item><q-input v-model="memberIdcard" hint="XXX 000000" label="Numer Dowodu" placeholder="XXX 000000" mask="AAA ######"/></q-item>
         <q-item><q-input v-model="memberFirstName" label="Imię" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 45" /></q-item>
         <q-item><q-input v-model="memberSecondName" label="Nazwisko" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 45" /></q-item>
         </q-card-section>
@@ -1173,7 +1173,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="personalCardDownloadConfirm" persistent @keypress.enter="personalCardDownloadConfirm=false,getPersonalCardPDF(),personalCardDownloadAlert=true">
+<q-dialog v-model="personalCardDownloadConfirm" persistent @keypress.enter="personalCardDownloadConfirm=false,getPersonalCardPDF()">
       <q-card>
         <q-card-section class="row items-center">
           <span class="q-ml-sm">Pobrać kartę Klubowicza?</span>
@@ -1181,7 +1181,7 @@
 
         <q-card-actions align="right">
           <q-btn flat label="anuluj" color="primary" v-close-popup />
-          <q-btn flat label="Pobierz" color="primary" v-close-popup @click="getPersonalCardPDF(),personalCardDownloadAlert=true" />
+          <q-btn flat label="Pobierz" color="primary" v-close-popup @click="getPersonalCardPDF()" />
         </q-card-actions>
       </q-card>
 </q-dialog>
@@ -1469,17 +1469,6 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="personalCardDownloadAlert" @keypress.enter="personalCardDownloadAlert=false">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Pobrano kartę Klubowicza</div>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup />
-        </q-card-actions>
-      </q-card>
-</q-dialog>
 <q-dialog v-model="failure" @keypress.enter="failure=false">
       <q-card>
         <q-card-section>
@@ -1597,6 +1586,9 @@
               <q-btn class="full-width" label="wprowadź zmiany" color="primary" v-close-popup @click="editContributionCode=true"/>
             </div>
           </div>
+            <div class="col-6 q-pa-md bg-grey-3">
+              <q-btn class="full-width" label="Wydrukuj potwierdzenie dla tej składki" color="primary" v-close-popup @click="contributionDownloadConfirm=true"/>
+            </div>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -1732,13 +1724,13 @@ export default {
       backConfirm: false,
       activeCode: false,
       contributionRecord: '',
+      contributionUUID: null,
       basicDataConfirm: false,
       basicDataConfirm1: false,
       contributionAlert: false,
       contributionDownloadConfirm: false,
       contributionConfirmDownloadAlert: false,
       personalCardDownloadConfirm: false,
-      personalCardDownloadAlert: false,
       addressConfirm: false,
       addressConfirm1: false,
       historyContributionRecord: Date.now,
@@ -1749,7 +1741,6 @@ export default {
       contributionRemoveRecordQuerry: false,
       contributionRemoveRecordQuerryCode: false,
       code: null,
-      contributionUUID: null,
       addAmmoConfirm: false,
       alert: false,
       patentConfirm: false,
@@ -2130,7 +2121,7 @@ export default {
     },
     getContributionPDF () {
       axios({
-        url: 'http://' + this.local + '/files/downloadContribution/' + this.memberUUID,
+        url: 'http://' + this.local + '/files/downloadContribution/' + this.memberUUID + '?contributionUUID=' + this.contributionUUID,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {

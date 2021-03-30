@@ -191,6 +191,7 @@
         <q-card-section class="text-bold">
           <div class="text-h6">Informacje dodatkowe o klubie {{clubInfoModel.name}}</div>
         <div>ID : {{clubInfoModel.id}}</div>
+        <div v-if="clubInfoModel.id == 1">Pełna nazwa : {{clubInfoModel.fullName}}</div>
         <div>email : {{clubInfoModel.email}}</div>
         <div>telefon : {{clubInfoModel.phoneNumber}}</div>
         <div>adres : {{clubInfoModel.address}}</div>
@@ -207,8 +208,9 @@
         </q-card-section>
         <q-card-section>
                 <q-item><q-input v-model="clubName" class="full-width" filled label="Nazwa"></q-input></q-item>
+                <q-item><q-input v-model="clubFullName" class="full-width" filled label="Pełna nazwa do dokumentów"></q-input></q-item>
                 <q-item v-if="clubID == 1"><q-input v-model="clubLicenseNumber" class="full-width" filled label="Numer licencji Klubowej"></q-input></q-item>
-                <q-item><q-input v-model="clubPhoneNumber" type="tel" class="full-width" mask="+48 ### ### ###" filled label="Telefon"></q-input></q-item>
+                <q-item><q-input v-model="clubPhoneNumber" type="tel" class="full-width" mask="### ### ###" filled label="Telefon"></q-input></q-item>
                 <q-item><q-input v-model="clubEmail" type="email" class="full-width" filled label="email"></q-input></q-item>
                 <q-item><q-input v-model="clubAddress" type="address" class="full-width" filled label="Adres"></q-input></q-item>
                 <q-item><q-input v-model="clubURL" type="url" class="full-width" filled label="Strona internetowa"></q-input></q-item>
@@ -239,6 +241,7 @@ export default {
       othersID: null,
       clubID: null,
       clubName: null,
+      clubFullName: null,
       clubLicenseNumber: null,
       clubPhoneNumber: null,
       clubEmail: null,
@@ -349,9 +352,10 @@ export default {
     updateClub () {
       var data = {
         name: this.clubName,
+        fullName: this.clubFullName,
         licenseNumber: this.clubLicenseNumber,
         phoneNumber: this.clubPhoneNumber,
-        eamil: this.clubEmail,
+        email: this.clubEmail,
         address: this.clubAddress,
         url: this.clubURL
       }
@@ -364,6 +368,12 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           this.doneAlert = true
+          this.clubName = null
+          this.clubFullName = null
+          this.clubLicenseNumber = null
+          this.clubEmail = null
+          this.clubAddress = null
+          this.clubURL = null
           this.getOther()
           this.getAllClubs()
         } else { this.dataFail = true }

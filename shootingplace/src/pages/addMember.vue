@@ -2,7 +2,7 @@
   <q-page padding>
     <div>
         <q-item>
-          <div class="text-center col full-width no-outline text-h4 text-bold" tabindex="0">Dodaj nowego Klubowicza</div>
+          <div class="text-center col full-width no-outline text-h4 text-bold" tabindex="0">DODAJ NOWEGO KLUBOWICZA</div>
         </q-item>
       </div>
     <div>
