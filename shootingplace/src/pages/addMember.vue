@@ -905,7 +905,7 @@ export default {
     },
     getContributionPDF () {
       axios({
-        url: 'http://' + this.local + '/files/downloadContribution/' + this.uuid,
+        url: 'http://' + this.local + '/files/downloadContribution/' + this.uuid + '?contributionUUID=null',
         method: 'GET',
         responseType: 'blob'
       }).then(response => {

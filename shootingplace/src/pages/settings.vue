@@ -64,7 +64,18 @@
       </q-form>
       </q-card-section>
       <q-card-section class="col-6">
-        <div>{{SuperUserMessage}}</div>
+        <q-item v-if="superUserMessage!=null" class="bg-red-3"><div class="full-width text-bold text-center">{{superUserMessage}}</div></q-item>
+        <div class="q-pa-md">
+            <div class="col q-pa-md text-bold text-h6">Super-Użytkownik :</div>
+            <ol class="bg-grey-3">
+            <li v-for="(superUser,id) in superUsers" :key="id" class="col text-bold bg-grey-3">
+            <div class="row full-width">
+              <div class="col full-width">{{superUser}}</div>
+              <q-btn color="primary" class="col full-width">usuń</q-btn>
+            </div>
+          </li>
+          </ol>
+        </div>
       </q-card-section>
       </q-card>
       </q-step>
@@ -86,7 +97,18 @@
       </q-form>
       </q-card-section>
       <q-card-section class="col-6">
-        <div>{{userMessage}}</div>
+        <q-item v-if="userMessage!=null" class="bg-red-3"><div class="full-width text-bold text-center">{{userMessage}}</div></q-item>
+        <div class="q-pa-md">
+            <div class="col q-pa-md text-bold text-h6">Użytkownicy :</div>
+            <ol class="bg-grey-3">
+            <li v-for="(user,id) in users" :key="id" class="col text-bold bg-grey-3">
+            <div class="row full-width">
+              <div class="col full-width">{{user}}</div>
+              <q-btn color="primary" class=" col full-width">usuń</q-btn>
+            </div>
+          </li>
+          </ol>
+        </div>
       </q-card-section>
       </q-card>
       </q-step>
@@ -110,7 +132,7 @@
         <q-item><q-btn @click="createMotherClub ()" label="Dodaj" color="secondary"/></q-item>
       </q-card-section>
       <q-card-section class="col-6">
-        <div>{{clubMessage}}</div>
+        <q-item id="club" v-if="clubMessage!=null"><div class="full-width text-bold text-center">{{clubMessage}}</div></q-item>
       </q-card-section>
       </q-card>
       </q-step>
@@ -205,7 +227,8 @@ export default {
   data () {
     return {
       step: 1,
-      SuperUsers: [],
+      superUsers: [],
+      users: [],
       acceptCodeUser: false,
       code: null,
       dataFail: false,
@@ -215,7 +238,7 @@ export default {
       userName: null,
       userCode: null,
       userCodeConfirm: null,
-      SuperUserMessage: null,
+      superUserMessage: null,
       userMessage: null,
       clubMessage: null,
       clubName: null,
@@ -233,6 +256,7 @@ export default {
   created () {
     this.getAllClubs()
     this.getAllSuperUsers()
+    this.getAllUsers()
   },
   methods: {
     showloading () {
@@ -251,17 +275,24 @@ export default {
         })
     },
     getAllSuperUsers () {
-      fetch('http://' + this.local + '/SuperUserList/', {
+      fetch('http://' + this.local + '/settings/superUserList/', {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
-          this.SuperUsers = response
+          this.superUsers = response
+        })
+    },
+    getAllUsers () {
+      fetch('http://' + this.local + '/settings/userList/', {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.users = response
         })
     },
     createSuperUser () {
-      if (this.superUserCode !== this.superUserCodeConfirm && this.SuperUsers.length > 0) {
-        this.dataFail = true
-        this.SuperUserMessage = 'Coś poszło nie tak'
+      if (this.superUserCode !== this.superUserCodeConfirm && this.superUsers.length > 0) {
+        this.superUserMessage = 'Coś poszło nie tak'
       } else {
         fetch('http://' + this.local + '/settings/createSuperUser?name=' + this.superUserName + '&pinCode=' + this.superUserCode, {
           method: 'POST'
@@ -269,35 +300,36 @@ export default {
           if (response.status === 201) {
             response.json().then(
               response => {
-                this.SuperUserMessage = response
+                this.superUserMessage = response
+                this.getAllSuperUsers()
               }
             )
           }
           if (response.status === 400) {
             response.json().then(
               response => {
-                this.SuperUserMessage = response
+                this.superUserMessage = response
               }
             )
           }
           if (response.status === 403) {
             response.json().then(
               response => {
-                this.SuperUserMessage = response
+                this.superUserMessage = response
               }
             )
           }
           if (response.status === 406) {
             response.json().then(
               response => {
-                this.SuperUserMessage = response
+                this.superUserMessage = response
               }
             )
           }
           if (response.status === 409) {
             response.json().then(
               response => {
-                this.SuperUserMessage = response
+                this.superUserMessage = response
               }
             )
           }

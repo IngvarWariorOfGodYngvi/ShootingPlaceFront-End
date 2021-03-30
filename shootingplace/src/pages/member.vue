@@ -1164,7 +1164,7 @@
 <q-dialog v-model="contributionDownloadConfirm" persistent @keypress.enter="contributionDownloadConfirm=false,getContributionPDF()">
       <q-card>
         <q-card-section class="row items-center">
-          <span class="q-ml-sm">Pobrać potwierdzenie składki?</span>
+          <span class="q-ml-sm text-bold text-h6">Pobrać potwierdzenie składki?</span>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -1176,7 +1176,7 @@
 <q-dialog v-model="personalCardDownloadConfirm" persistent @keypress.enter="personalCardDownloadConfirm=false,getPersonalCardPDF()">
       <q-card>
         <q-card-section class="row items-center">
-          <span class="q-ml-sm">Pobrać kartę Klubowicza?</span>
+          <span class="q-ml-sm text-bold text-h6">Pobrać kartę Klubowicza?</span>
         </q-card-section>
 
         <q-card-actions align="right">

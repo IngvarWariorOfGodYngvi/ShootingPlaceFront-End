@@ -365,8 +365,8 @@
               <q-radio color="orange" v-model="choice11" :val="' Młodzieżowa'" label="Młodzieżowa"></q-radio>
             </div>
             <div class="row"><q-label class="text-h6">Nazwa konkurencji : </q-label>
-              <q-label v-if="choice" class="text-h6"> {{choice + 'm'}} {{' ' + choice1}} {{' ' + choice2}} {{' ' + choice3}} {{' ' + choice4}} {{' ' + choice5}} {{' ' + choice6}} {{' ' + choice7}} {{' ' + choice8}} {{' ' + choice9}} {{' ' + choice10  + ' strzałów'}} {{' ' + choice11}}</q-label>
-              <q-label v-else class="text-h6"> {{choice}} {{' ' + choice1}} {{' ' + choice2}} {{' ' + choice3}} {{' ' + choice4}} {{' ' + choice5}} {{' ' + choice6}} {{' ' + choice7}} {{' ' + choice8}} {{' ' + choice9}} {{' ' + choice10  + ' strzałów'}} {{' ' + choice11}}</q-label>
+              <q-label v-if="choice" class="text-h6"> {{choice + 'm'}} {{' ' + choice1}} {{' ' + choice2}} {{' ' + choice3}} {{' ' + choice4}} {{' ' + choice5}} {{' ' + choice6}} {{' ' + choice7}} {{' ' + choice8}} {{' ' + choice9}} {{' ' + choice10 }} {{' ' + choice11}}</q-label>
+              <q-label v-else class="text-h6"> {{choice}} {{' ' + choice1}} {{' ' + choice2}} {{' ' + choice3}} {{' ' + choice4}} {{' ' + choice5}} {{' ' + choice6}} {{' ' + choice7}} {{' ' + choice8}} {{' ' + choice9}} {{' ' + choice10 }} {{' ' + choice11}}</q-label>
             </div>
           </q-item-section>
           <q-item-section v-if="notUsed">
@@ -1338,11 +1338,17 @@ export default {
     },
     createCompetition () {
       var name = null
+      if (this.choice10 !== null && this.choice10 !== '') {
+        this.choice10 = this.choice10 + ' strzałów'
+      }
+      if (this.choice !== null && this.choice !== '') {
+        this.choice = this.choice + 'm'
+      } else { this.choice = '' }
       if (this.competitionName !== null) {
         name = this.competitionName
       } else {
         name =
-        this.choice + 'm' + this.choice1 + this.choice2 + this.choice3 + this.choice4 + this.choice5 + this.choice6 + this.choice7 + this.choice8 + this.choice9 + this.choice10 + ' strzałów' + this.choice11
+        this.choice + this.choice1 + this.choice2 + this.choice3 + this.choice4 + this.choice5 + this.choice6 + this.choice7 + this.choice8 + this.choice9 + this.choice10 + this.choice11
       }
       fetch('http://' + this.local + '/competition?name=' + name + '&discipline=' + this.choice1, {
         method: 'POST',
@@ -1351,6 +1357,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 201) {
+          this.choice = null
           this.newCompetitionAlert = true
           this.competitionName = ''
           this.showloading()
@@ -1358,8 +1365,6 @@ export default {
           this.getCompetitions()
         }
         if (response.status === 409) {
-          this.dataFail = true
-        } else {
           this.failure = true
         }
       })
