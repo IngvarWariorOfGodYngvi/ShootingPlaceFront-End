@@ -358,7 +358,7 @@
               <q-radio class="row" color="orange" @input="quantity = false" v-model="choice10" :val="' 15'" label="15 strzałów"></q-radio>
               <q-radio class="row" color="orange" @input="quantity = false" v-model="choice10" :val="' 20'" label="20 strzałów"></q-radio>
               <q-checkbox class="row" color="orange" @input="choice10 = ''" v-model="quantity" :val="false" label="inne"></q-checkbox>
-              <q-item class="row"><q-input @focus="choice10 = ' '" onkeypress="return (event.charCode > 44 && event.charCode < 58)" class="full-width bg-grey-4 center justify" filled v-if="quantity" style="width: 100px" v-model="choice10" stack-label label="ilość strzałów" ></q-input></q-item>
+              <q-item class="row"><q-input @focus="choice10 = ' '" onkeypress="return (event.charCode > 44 && event.charCode < 58)" class="full-width bg-grey-4 center justify" filled v-if="quantity" style="width: 100px" v-model="choice10" stack-label label="Ilość strzałów" ></q-input></q-item>
             </div>
             <div class="row bg-grey-5">
               <q-radio color="orange" v-model="choice11" :val="' OPEN'" label="OPEN"></q-radio>
@@ -375,6 +375,7 @@
               <q-radio class="col" color="black" @input="choice2 = '', choice3 = '', choice4 = '', choice5 = '', choice6 = '', choice7 = '', choice8 = '', choice9 = '' " v-model="choice1" :val="' Pistolet'" label="Pistolet"></q-radio>
               <q-radio class="col" color="black" @input="choice2 = '', choice3 = '', choice4 = '', choice5 = '', choice6 = '', choice7 = '', choice8 = '', choice9 = '' " v-model="choice1" :val="' Karabin'" label="Karabin"></q-radio>
               <q-radio class="col" color="black" @input="choice2 = '', choice3 = '', choice4 = '', choice5 = '', choice6 = '', choice7 = '', choice8 = '', choice9 = '' " v-model="choice1" :val="' Strzelba'" label="Strzelba"></q-radio>
+              <q-input @focus="choice10 = ' '" onkeypress="return (event.charCode > 44 && event.charCode < 58)" class="full-width col bg-grey-4 center justify" filled style="width: 100px" v-model="choice10" stack-label label="Ilość strzałów" ></q-input>
             </div>
              <q-input class="full-width bg-grey-4 center justify" filled v-model="competitionName " stack-label label="wprowadź własną nazwę" ></q-input>
           </q-item-section>
@@ -1350,8 +1351,15 @@ export default {
         name =
         this.choice + this.choice1 + this.choice2 + this.choice3 + this.choice4 + this.choice5 + this.choice6 + this.choice7 + this.choice8 + this.choice9 + this.choice10 + this.choice11
       }
-      fetch('http://' + this.local + '/competition?name=' + name + '&discipline=' + this.choice1, {
+      var data = {
+        name: name,
+        discipline: this.choice1,
+        numberOfShots: this.choice10,
+        type: this.choice11
+      }
+      fetch('http://' + this.local + '/competition', {
         method: 'POST',
+        body: JSON.stringify(data),
         headers: {
           'Content-Type': 'application/json'
         }
