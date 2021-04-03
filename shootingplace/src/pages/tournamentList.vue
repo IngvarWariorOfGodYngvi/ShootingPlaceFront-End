@@ -530,8 +530,8 @@
             <q-item v-if="otherRTSArbitersList!=null && otherRTSArbitersList!='0 0' "><q-btn class="full-width" label="Dodaj sędziego biura obliczeń spoza klubu" color="primary" @click="addOtherRTSArbiterToTournament()"/></q-item>
             </div>
             <div>
-            <q-item v-if="otherRTSArbiter!=null && otherRTSArbiter!='0 0' "><q-btn class="full-width" label="usuń sędziego biura obliczeń" color="primary" @click="removeArbiter()"/></q-item>
-            <q-item v-if="otherRTSArbitersList!=null && otherRTSArbitersList!='0 0'"><q-btn class="full-width" label="usuń sędziego biura obliczeń spoza klubu" color="primary" @click="removeArbiter()"/></q-item>
+            <q-item v-if="otherRTSArbiter!=null && otherRTSArbiter!='0 0' "><q-btn class="full-width" label="usuń sędziego biura obliczeń" color="primary" @click="removeRTSArbiter()"/></q-item>
+            <q-item v-if="otherRTSArbitersList!=null && otherRTSArbitersList!='0 0'"><q-btn class="full-width" label="usuń sędziego biura obliczeń spoza klubu" color="primary" @click="removeRTSArbiter()"/></q-item>
             </div>
             </div>
     </div>
@@ -1584,7 +1584,7 @@ export default {
       const otherPersonArbiterWord = this.otherRTSArbitersList.split(' ')
       var personLegNumber = otherPersonArbiterWord.length
       const otherPersonArbiterID = otherPersonArbiterWord[personLegNumber - 1]
-      fetch('http://' + this.local + '/tournament/removeArbiter/' + this.tournamentUUID + '?number=' + otherArbiterUUID + '&id=' + otherPersonArbiterID, {
+      fetch('http://' + this.local + '/tournament/removeRTSArbiter/' + this.tournamentUUID + '?number=' + otherArbiterUUID + '&id=' + otherPersonArbiterID, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -1593,8 +1593,8 @@ export default {
         if (response.status === 200) {
           response.json().then(
             this.removeArbiterAlert = true,
-            this.otherArbiter = null,
-            this.otherArbitersList = null,
+            this.otherRTSArbiter = null,
+            this.otherRTSArbitersList = null,
             this.showloading(),
             this.getListTournaments()
           )

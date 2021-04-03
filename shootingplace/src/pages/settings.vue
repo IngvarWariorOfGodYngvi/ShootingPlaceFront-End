@@ -183,8 +183,8 @@
 
       <template v-slot:navigation  >
         <q-stepper-navigation class="flex flex">
-          <q-item><q-btn v-if="step < 5" @click="$refs.stepper.next()" color="primary" :label="step === 5 ? 'Zakończ' : 'Przejdź Dalej'" /></q-item>
-          <q-item><q-btn v-if="step == 5" @click="redirect()" color="primary" label="Zakończ" /></q-item>
+          <q-item><q-btn v-if="step < 5" @click="$refs.stepper.next()" color="primary" :label="step === 5 ? 'Przejdź do magazynu amunicji' : 'Przejdź Dalej'" /></q-item>
+          <q-item><q-btn v-if="step == 5" @click="redirect()" color="primary" label="Przejdź do magazynu amunicji" /></q-item>
           <q-item><q-btn v-if="step > 1" flat color="primary" @click="$refs.stepper.previous()" label="Wróć" /></q-item>
         </q-stepper-navigation>
       </template>
