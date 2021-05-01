@@ -28,26 +28,22 @@
       <div v-for="members in members" :key="members.uuid">
         <q-card v-if="(shootingLeader&&members.memberPermissions.shootingLeaderNumber!=null)
           ||(arbiter&&members.memberPermissions.arbiterNumber)||(instructor&&members.memberPermissions.instructorNumber)" class="row">
-          <q-card-section class="col-4">
+          <q-card-section class="col-3">
             <div class="q-pa-none">
               <q-field v-if="shootingLeader&&members.memberPermissions.shootingLeaderNumber!=null
-          ||(arbiter&&members.memberPermissions.arbiterNumber)||(instructor&&members.memberPermissions.instructorNumber)" label="Nazwisko i imię" standout stack-label>
-                <template v-slot:control>
-                  <div class="self-center col full-width no-outline" tabindex="0">{{members.secondName}} {{members.firstName}}</div>
-                </template>
+          ||(arbiter&&members.memberPermissions.arbiterNumber)||(instructor&&members.memberPermissions.instructorNumber)" label="Nazwisko i imię" standout="bg-accent text-black" stack-label>
+                  <div class="self-center col full-width no-outline text-left text-black" tabindex="0">{{members.secondName}} {{members.firstName}}</div>
               </q-field>
             </div>
           </q-card-section>
           <div class="col">
-          <q-card-section >
-            <q-item-section>
-              <q-field class="row" label="kontakt" standout stack-label>
-                <template v-slot:control>
-                  <div class="self-center full-width no-outline" tabindex="0">{{members.email}}</div>
-                  <div class="self-center full-width no-outline" tabindex="0">{{members.phoneNumber}}</div>
-                </template>
+          <q-card-section class="col">
+              <q-field class="col" label="email" standout="bg-accent text-black" stack-label>
+                  <div class="self-center col full-width no-outline text-left text-black" tabindex="0">{{members.email}}</div>
               </q-field>
-            </q-item-section>
+              <q-field class="col" label="telefon" standout="bg-accent text-black" stack-label>
+                  <div class="self-center col full-width no-outline text-left text-black" tabindex="0">{{members.phoneNumber}}</div>
+              </q-field>
           </q-card-section>
           <q-card-section>
           </q-card-section>
@@ -55,34 +51,18 @@
           <q-card-section v-if="(shootingLeader&&members.memberPermissions.shootingLeaderNumber!=null)
           ||(arbiter&&members.memberPermissions.arbiterNumber!=null)||(instructor&&members.memberPermissions.instructorNumber!=null)" class="col-5">
             <q-item-section>
-              <q-field v-if="shootingLeader&&members.memberPermissions.shootingLeaderNumber!=null" class="col" label="Numer Uprawnień Prowadzącego" standout stack-label>
-                <template v-slot:control>
-                  <div class="self-center col full-width no-outline" tabindex="0">{{members.memberPermissions.shootingLeaderNumber}}</div>
-                </template>
+              <q-field v-if="shootingLeader&&members.memberPermissions.shootingLeaderNumber!=null" class="col" label="Numer Uprawnień Prowadzącego" standout="bg-accent text-black" stack-label>
+                  <div class="self-center col full-width no-outline text-left text-black" tabindex="0">{{members.memberPermissions.shootingLeaderNumber}}</div>
               </q-field>
-              <q-field v-if="instructor&&members.memberPermissions.instructorNumber!=null" class="col" label="Numer Uprawnień Instruktorskich" standout stack-label>
-                <template v-slot:control>
-                  <div class="self-center col full-width no-outline" tabindex="0">{{members.memberPermissions.instructorNumber}}</div>
-                </template>
+              <q-field v-if="instructor&&members.memberPermissions.instructorNumber!=null" class="col" label="Numer Uprawnień Instruktorskich" standout="bg-accent text-black" stack-label>
+                  <div class="self-center col full-width no-outline text-left text-black" tabindex="0">{{members.memberPermissions.instructorNumber}}</div>
               </q-field>
-              <q-field v-if="arbiter&&members.memberPermissions.arbiterNumber!=null" class="col" label="Uprawnienia sędziowskie" standout stack-label>
-                <template v-slot:control>
-                  <q-field class="col" label="Numer" standout stack-label>
-                    <template v-slot:control>
-                      <div class="self-center col full-width no-outline" tabindex="0">{{members.memberPermissions.arbiterNumber}}</div>
-                    </template>
-                  </q-field>
-                  <q-field class="col" label="Klasa" standout stack-label>
-                    <template v-slot:control>
-                      <div class="self-center col full-width no-outline" tabindex="0">{{members.memberPermissions.arbiterClass}}</div>
-                    </template>
-                  </q-field>
-                  <q-field class="col" label="Ważne do" standout stack-label>
-                    <template v-slot:control>
-                      <div class="self-center col full-width no-outline" tabindex="0">{{members.memberPermissions.arbiterPermissionValidThru}}</div>
-                    </template>
-                  </q-field>
-                </template>
+              <q-field v-if="arbiter&&members.memberPermissions.arbiterNumber!=null" class="col" label="Numer Uprawnień Sędziowskich" standout="bg-accent text-black" color="black" stack-label>
+                      <div class="self-center col full-width no-outline text-left text-black">{{members.memberPermissions.arbiterNumber}}</div>
+              </q-field>
+              <q-field v-if="arbiter&&members.memberPermissions.arbiterNumber!=null" class="col" label="Klasa i Ważność Uprawnień Sędziowskich" standout="bg-accent text-black" color="black" stack-label>
+                      <div class="self-center col full-width no-outline text-left text-black">{{members.memberPermissions.arbiterClass}}</div>
+                      <div class="self-center col full-width no-outline text-left text-black">{{members.memberPermissions.arbiterPermissionValidThru}}</div>
               </q-field>
             </q-item-section>
           </q-card-section>
@@ -93,52 +73,38 @@
             <div v-if="otherArbiter&&others.permissionsEntity!=null" class="row">
             <q-card-section class="col">
             <q-item-section>
-              <q-field class="col" label="Nazwisko i imię" standout stack-label>
-                <template v-slot:control>
-                  <div class="self-center col full-width no-outline" tabindex="0">{{others.secondName}} {{others.firstName}}</div>
-                </template>
+              <q-field class="col" label="Nazwisko i imię" standout="bg-accent text-black" stack-label>
+                  <div class="self-center col full-width no-outline text-left text-black" tabindex="0">{{others.secondName}} {{others.firstName}}</div>
               </q-field>
             </q-item-section>
           </q-card-section>
           <div class="col-2">
           <q-card-section >
             <q-item-section>
-              <q-field class="col" label="email" standout stack-label>
-                <template v-slot:control>
-                  <div class="self-center col full-width no-outline" tabindex="0">{{others.email}}</div>
-                </template>
+              <q-field class="col" label="email" standout="bg-accent text-black" stack-label>
+                  <div class="self-center col full-width no-outline text-left text-black" tabindex="0">{{others.email}}</div>
               </q-field>
             </q-item-section>
           </q-card-section>
           <q-card-section>
             <q-item-section>
-              <q-field class="col" label="Numer telefonu" standout stack-label>
-                <template v-slot:control>
-                  <div class="self-center col full-width no-outline" tabindex="0">{{others.phoneNumber}}</div>
-                </template>
+              <q-field class="col" label="Numer telefonu" standout="bg-accent text-black" stack-label>
+                  <div class="self-center col full-width no-outline text-left text-black" tabindex="0">{{others.phoneNumber}}</div>
               </q-field>
             </q-item-section>
           </q-card-section>
           </div>
           <q-card-section class="col-5">
-              <q-field class="col" label="Uprawnienia sędziowskie" standout stack-label>
-                <template v-slot:control>
-                  <q-field class="col" label="Numer" standout stack-label>
-                    <template v-slot:control>
-                      <div class="self-center col full-width no-outline" tabindex="0">{{others.permissionsEntity.arbiterNumber}}</div>
-                    </template>
-                  </q-field>
-                  <q-field class="col" label="Klasa" standout stack-label>
-                    <template v-slot:control>
-                      <div class="self-center col full-width no-outline" tabindex="0">{{others.permissionsEntity.arbiterClass}}</div>
-                    </template>
-                  </q-field>
-                  <q-field class="col" label="Ważne do" standout stack-label>
-                    <template v-slot:control>
-                      <div class="self-center col full-width no-outline" tabindex="0">{{others.permissionsEntity.arbiterPermissionValidThru}}</div>
-                    </template>
-                  </q-field>
-                </template>
+              <q-field class="col" label="Uprawnienia sędziowskie" borderless color="black" stack-label>
+                <q-field class="col" borderless color="black" label="Numer">
+                    <div class="self-center full-width no-outline text-left text-black" tabindex="0">{{others.permissionsEntity.arbiterNumber}}</div>
+                </q-field>
+                <q-field class="col" label="Klasa" color="black" standout="bg-accent text-black" stack-label>
+                    <div class="self-center col full-width no-outline text-left text-black" tabindex="0">{{others.permissionsEntity.arbiterClass}}</div>
+                </q-field>
+                <q-field class="col" label="Ważne do" color="black" standout="bg-accent text-black" stack-label>
+                    <div class="self-center col full-width no-outline text-left text-black" tabindex="0">{{others.permissionsEntity.arbiterPermissionValidThru}}</div>
+                </q-field>
               </q-field>
               </q-card-section>
               </div>

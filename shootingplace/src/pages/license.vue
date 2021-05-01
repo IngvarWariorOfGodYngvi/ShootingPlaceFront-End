@@ -12,44 +12,32 @@
             <ol>
             <li v-for="(member,uuid) in members2" :key="uuid">
               <div class="row">
-           <q-field class="col" label="Nazwisko i Imię" standout stack-label>
-                <template v-slot:control>
+           <q-field class="col" color="black" label="Nazwisko i Imię" standout="bg-accent text-black" stack-label>
                   <div>
-                    <div class="self-center col full-width no-outline row" tabindex="1">{{member.secondName}} {{member.firstName}}</div>
+                    <div class="self-center col full-width no-outline row text-black" tabindex="1">{{member.secondName}} {{member.firstName}}</div>
                   </div>
-                </template>
            </q-field>
-           <q-field v-if="member.active" class="col" label="Status" standout stack-label>
-                <template v-slot:control>
+           <q-field v-if="member.active" class="col" color="black" label="Status" standout="bg-accent text-black" stack-label>
                   <div>
-                    <div class="self-center col full-width no-outline row" tabindex="1">Aktywny</div>
+                    <div class="self-center col full-width no-outline row text-black" tabindex="1">Aktywny</div>
                   </div>
-                </template>
            </q-field>
-           <q-field v-if="!member.active" class="col bg-red-3" label="Status" standout stack-label>
-                <template v-slot:control>
+           <q-field v-if="!member.active" class="col bg-red-3" color="black" label="Status" standout="bg-accent text-black" stack-label>
                   <div>
-                    <div class="self-center col full-width no-outline row" tabindex="1">Nieaktywny</div>
+                    <div class="self-center col full-width no-outline row text-black" tabindex="1">Nieaktywny</div>
                   </div>
-                </template>
            </q-field>
-           <q-field class="col-2" label="Numer Licencji" standout stack-label>
-                <template v-slot:control>
-                  <div class="self-center col full-width no-outline row" tabindex="1">{{member.license.number}}</div>
-                </template>
+           <q-field class="col-2" label="Numer Licencji" standout="bg-accent text-black" stack-label>
+                  <div class="self-center col full-width no-outline row text-black" tabindex="1">{{member.license.number}}</div>
            </q-field>
-           <q-field class="col-2" label="Grupa" standout stack-label>
-                <template v-slot:control>
-                  <div v-if="member.adult" class="self-center col full-width no-outline row" tabindex="1">Grupa Powszechna</div>
-                  <div v-if="!member.adult" class="self-center col full-width no-outline row" tabindex="1">Grupa Młodzieżowa</div>
-                </template>
+           <q-field class="col-2" label="Grupa" standout="bg-accent text-black" stack-label>
+                  <div v-if="member.adult" class="self-center col full-width no-outline row text-black" tabindex="1">Grupa Ogólna</div>
+                  <div v-if="!member.adult" class="self-center col full-width no-outline row text-black" tabindex="1">Grupa Młodzieżowa</div>
            </q-field>
-           <q-field class="col-2" label="Ważność licencji" standout stack-label>
-                <template v-slot:control>
-                    <div>
-                  <div class="self-center col full-width no-outline row" tabindex="1">{{member.license.validThru}}</div>
+           <q-field class="col-2" label="Ważność licencji" standout="bg-accent text-black" stack-label>
+                  <div>
+                  <div class="self-center col full-width no-outline row text-black" tabindex="1">{{member.license.validThru}}</div>
                   </div>
-                </template>
            </q-field>
            <q-btn color="grey-5" v-if="!member.license.paid && !member.active" class="col-1" label="opłać licencję"><q-tooltip content-class="bg-red text-subtitle2" anchor="top middle" >UREGULUJ SKŁADKI</q-tooltip></q-btn>
            <q-btn color="grey-8" v-if="!member.license.paid && member.active" class="col-1" @click="memberName = member.firstName + member.secondName,memberUUID = member.uuid,paymentLicenseAlert = true">opłać licencję</q-btn>
@@ -68,44 +56,32 @@
               <ol>
             <li v-for="(member,uuid) in members" :key="uuid">
               <div class="row">
-           <q-field class="col" label="Nazwisko i Imię" standout stack-label>
-                <template v-slot:control>
+           <q-field class="col" label="Nazwisko i Imię" standout="bg-accent text-black" stack-label>
                     <div>
-                  <div class="self-center col full-width no-outline row" tabindex="1">{{member.secondName}} {{member.firstName}}</div>
+                  <div class="self-center col full-width no-outline row text-black" tabindex="1">{{member.secondName}} {{member.firstName}}</div>
                   </div>
-                </template>
            </q-field>
-           <q-field v-if="member.active" class="col" label="Status" standout stack-label>
-                <template v-slot:control>
+           <q-field v-if="member.active" class="col" label="Status" standout="bg-accent text-black" stack-label>
                     <div>
-                  <div class="self-center col full-width no-outline row" tabindex="1">Aktywny</div>
+                  <div class="self-center col full-width no-outline row text-black" tabindex="1">Aktywny</div>
                   </div>
-                </template>
            </q-field>
-           <q-field v-if="!member.active" class="col bg-red-3" label="Status" standout stack-label>
-                <template v-slot:control>
+           <q-field v-if="!member.active" class="col bg-red-3" label="Status" standout="bg-accent text-black" stack-label>
                     <div>
-                  <div class="self-center col full-width no-outline row" tabindex="1">Nieaktywny</div>
+                  <div class="self-center col full-width no-outline row text-black" tabindex="1">Nieaktywny</div>
                   </div>
-                </template>
            </q-field>
-           <q-field class="col-2" label="Numer Licencji" standout stack-label>
-                <template v-slot:control>
-                  <div class="self-center col full-width no-outline row" tabindex="1">{{member.license.number}}</div>
-                </template>
+           <q-field class="col-2" label="Numer Licencji" standout="bg-accent text-black" stack-label>
+                  <div class="self-center col full-width no-outline row text-black" tabindex="1">{{member.license.number}}</div>
            </q-field>
-           <q-field class="col-2" label="Grupa" standout stack-label>
-                <template v-slot:control>
-                  <div v-if="member.adult" class="self-center col full-width no-outline row" tabindex="1">Grupa Powszechna</div>
-                  <div v-if="!member.adult" class="self-center col full-width no-outline row" tabindex="1">Grupa Młodzieżowa</div>
-                </template>
+           <q-field class="col-2" label="Grupa" standout="bg-accent text-black" stack-label>
+                  <div v-if="member.adult" class="self-center col full-width no-outline row text-black" tabindex="1">Grupa Ogólna</div>
+                  <div v-if="!member.adult" class="self-center col full-width no-outline row text-black" tabindex="1">Grupa Młodzieżowa</div>
            </q-field>
-           <q-field class="col-2" label="Ważność licencji" standout stack-label>
-                <template v-slot:control>
+           <q-field class="col-2" label="Ważność licencji" standout="bg-accent text-black" stack-label>
                     <div>
-                  <div class="self-center col full-width no-outline row" tabindex="1">{{member.license.validThru}}</div>
+                  <div class="self-center col full-width no-outline row text-black" tabindex="1">{{member.license.validThru}}</div>
                   </div>
-                </template>
            </q-field>
            <q-btn color="grey-5" v-if="!member.license.paid && !member.active" class="col-1" label="opłać licencję"><q-tooltip content-class="bg-red text-subtitle2" anchor="top middle" >UREGULUJ SKŁADKI</q-tooltip></q-btn>
            <q-btn color="grey-8" v-if="!member.license.paid && member.active" class="col-1" @click="memberName = member.firstName + member.secondName,memberUUID = member.uuid,paymentLicenseAlert = true">opłać licencję</q-btn>

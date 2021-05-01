@@ -8,24 +8,22 @@
       <q-card>
         <q-card-section class="col">
           <div class="q-pa-md self-center col full-width no-outline text-h5 text-center text-bold">POSIADANA AMUNICJA</div>
-          <div class="row">
+          <div class="row q-pa-md">
           <q-input v-model="caliberName" placeholder="Nowy kaliber" filled></q-input>
           <q-btn @click="addNewCaliber()">dodaj kaliber do bazy danych</q-btn>
           </div>
           <div class="col">
               <q-item class="col">
-                <div class="self-center col full-width no-outline text-center text-bold" style="text-center">kaliber</div>
-                <div class="self-center col full-width no-outline text-center text-bold" style="text-center">ilość na stanie</div>
+                <div class="self-center col full-width no-outline text-center text-bold" style="text-center">KALIBER</div>
+                <div class="self-center col full-width no-outline text-center text-bold" style="text-center">ILOŚĆ NA STANIE</div>
                 <div class="self-center col full-width no-outline text-center text-bold" style="text-center"></div>
               </q-item>
           </div>
               <div class="row" v-for="(caliber,id) in calibers" :key="id">
               <q-item class="col">
-                <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout stack-label>
-                  <template v-slot:control>
+                <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
                     <div class="self-center col full-width no-outline text-center text-bold" style="text-center">{{caliber.name}}</div>
                     <div class="self-center col full-width no-outline text-center text-bold" style="text-center">{{caliber.quantity}}</div>
-                  </template>
                 </q-field>
                 <q-btn @click="caliberUUID = caliber.uuid, addCaliberDialog = true" class="col-2">aktualizuj stan {{caliber.name}}</q-btn>
                 <q-btn @click="caliberUUID = caliber.uuid, caliberHistory = true, getCaliberHistory ()" class="col-2">historia dodawania</q-btn>
@@ -73,19 +71,15 @@
             </div>
             <div class="q-pa-md self-center col full-width no-outline text-bold text-center text-h4" v-if="quantitySum.length<1">Brak wyników - Wybierz daty</div>
             <div class="q-pa-md self-center col full-width no-outline text-bold text-center">
-              <q-field v-if="quantitySum.length>0" color="black" class="self-center col full-width no-outline text-bold text-center" standout stack-label>
-                <template v-slot:control>
+              <q-field v-if="quantitySum.length>0" color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
                   <div class="self-center col full-width no-outline text-center text-bold">kaliber</div>
                   <div class="self-center col full-width no-outline text-center text-bold">ilość zużytej amunicji</div>
-                </template>
               </q-field>
             <p v-if="quantitySum.length>0"></p>
             <div v-for="(ammo,id) in quantitySum" :key="id">
-              <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout stack-label>
-                <template v-slot:control>
+              <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
                   <div class="self-center col full-width no-outline text-center text-bold">{{ammo.name}}</div>
                   <div class="self-center col full-width no-outline text-center text-bold">{{ammo.quantity}}</div>
-                </template>
               </q-field>
             </div>
             </div>
@@ -105,33 +99,29 @@
             <q-btn color="grey-3" class="text-black" @click="getGunRegistry()">pobierz listę broni</q-btn>
           </div>
           </div>
-                <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout stack-label>
-                  <template v-slot:control>
-                    <div class="col-3 text-bold text-left">marka i model</div>
-                    <div class="col-1 text-bold text-left">kaliber</div>
-                    <div class="col-2 text-bold text-left">numer i seria</div>
-                    <div class="col-1 text-bold text-left">Poz. z książki ewidencji</div>
-                    <div class="col-1 text-bold text-left">ilość magazynków</div>
-                    <div class="col-2 text-bold text-left">numer świadectwa</div>
-                    <div class="col-2 text-bold text-left">podstawa wpisu</div>
-                  </template>
+                <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
+                    <div class="col-3 self-center text-bold text-left">marka i model</div>
+                    <div class="col-1 self-center text-bold text-left">kaliber</div>
+                    <div class="col-2 self-center text-bold text-left">numer i seria</div>
+                    <div class="col-1 self-center text-bold text-left">Poz. z książki ewidencji</div>
+                    <div class="col-1 self-center text-bold text-left">ilość magazynków</div>
+                    <div class="col-2 self-center text-bold text-left">numer świadectwa</div>
+                    <div class="col-2 self-center text-bold text-left">podstawa wpisu</div>
                 </q-field>
                 <p></p>
                 <q-expansion-item :label="gunTypes[0]" class="bg-grey-4 col full-width no-outline text-h6 text-center text-bold">
               <div v-for="(gun,id) in allGuns" :key="id" @dblclick="gunInfo=true,usedGunInfo=gun" clickable>
                 <div v-if="gun.gunType == gunTypes[0]" class="bg-white">
-                <q-field clickable color="black" class="bg-white" standout stack-label>
-                  <template v-slot:control>
+                <q-field clickable color="black" class="bg-white" standout="bg-accent text-black" stack-label>
                     <div class="row full-width">
-                    <div clickable class="col-3 text-bold text-left">{{gun.modelName}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.caliber}}</div>
-                    <div clickable class="col-2 text-bold text-left">{{gun.serialNumber}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.recordInEvidenceBook}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.numberOfMagazines}}</div>
-                    <div clickable class="col-2 text-bold text-left">{{gun.gunCertificateSerialNumber}}</div>
-                    <div clickable class="col-2 text-bold text-left">{{gun.basisForPurchaseOrAssignment}}</div>
+                    <div clickable class="col-3 self-center text-bold text-left">{{gun.modelName}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.caliber}}</div>
+                    <div clickable class="col-2 self-center text-bold text-left">{{gun.serialNumber}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.recordInEvidenceBook}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.numberOfMagazines}}</div>
+                    <div clickable class="col-2 self-center text-bold text-left">{{gun.gunCertificateSerialNumber}}</div>
+                    <div clickable class="col-2 self-center text-bold text-left">{{gun.basisForPurchaseOrAssignment}}</div>
                     </div>
-                    </template>
                 </q-field>
                 </div>
               </div>
@@ -141,18 +131,16 @@
               <p></p>
               <div v-for="(gun,id) in allGuns" :key="id" @dblclick="gunInfo=true,usedGunInfo=gun" clickable class="bg-white">
                 <div v-if="gun.gunType == gunTypes[1]" class="bg-white">
-                <q-field clickable color="black" class="bg-white" standout stack-label>
-                  <template v-slot:control>
+                <q-field clickable color="black" class="bg-white" standout="bg-accent text-black" stack-label>
                     <div class="row full-width">
-                    <div clickable class="col-3 text-bold text-left">{{gun.modelName}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.caliber}}</div>
-                    <div clickable class="col-2 text-bold text-left">{{gun.serialNumber}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.recordInEvidenceBook}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.numberOfMagazines}}</div>
-                    <div clickable class="col-2 text-bold text-left">{{gun.gunCertificateSerialNumber}}</div>
-                    <div clickable class="col-2 text-bold text-left">{{gun.basisForPurchaseOrAssignment}}</div>
+                    <div clickable class="col-3 self-center text-bold text-left">{{gun.modelName}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.caliber}}</div>
+                    <div clickable class="col-2 self-center text-bold text-left">{{gun.serialNumber}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.recordInEvidenceBook}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.numberOfMagazines}}</div>
+                    <div clickable class="col-2 self-center text-bold text-left">{{gun.gunCertificateSerialNumber}}</div>
+                    <div clickable class="col-2 self-center text-bold text-left">{{gun.basisForPurchaseOrAssignment}}</div>
                     </div>
-                    </template>
                 </q-field>
                 </div>
               </div>
@@ -162,18 +150,16 @@
               <p></p>
               <div v-for="(gun,id) in allGuns" :key="id" @dblclick="gunInfo=true,usedGunInfo=gun" clickable class="bg-white">
                 <div v-if="gun.gunType == gunTypes[2]" class="bg-white">
-                <q-field clickable color="black" class="bg-white" standout stack-label>
-                  <template v-slot:control>
+                <q-field clickable color="black" class="bg-white" standout="bg-accent text-black" stack-label>
                     <div class="row full-width">
-                    <div clickable class="col-3 text-bold text-left">{{gun.modelName}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.caliber}}</div>
-                    <div clickable class="col-2 text-bold text-left">{{gun.serialNumber}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.recordInEvidenceBook}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.numberOfMagazines}}</div>
-                    <div clickable class="col-2 text-bold text-left">{{gun.gunCertificateSerialNumber}}</div>
-                    <div clickable class="col-2 text-bold text-left">{{gun.basisForPurchaseOrAssignment}}</div>
+                    <div clickable class="col-3 self-center text-bold text-left">{{gun.modelName}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.caliber}}</div>
+                    <div clickable class="col-2 self-center text-bold text-left">{{gun.serialNumber}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.recordInEvidenceBook}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.numberOfMagazines}}</div>
+                    <div clickable class="col-2 self-center text-bold text-left">{{gun.gunCertificateSerialNumber}}</div>
+                    <div clickable class="col-2 self-center text-bold text-left">{{gun.basisForPurchaseOrAssignment}}</div>
                     </div>
-                    </template>
                 </q-field>
                 </div>
                 <p></p>
@@ -183,18 +169,16 @@
               <p></p>
               <div v-for="(gun,id) in allGuns" :key="id" @dblclick="gunInfo=true,usedGunInfo=gun" clickable class="bg-white">
                 <div v-if="gun.gunType == gunTypes[3]" class="bg-white">
-                <q-field clickable color="black" class="bg-white" standout stack-label>
-                  <template v-slot:control>
+                <q-field clickable color="black" class="bg-white" standout="bg-accent text-black" stack-label>
                     <div class="row full-width">
-                    <div clickable class="col-3 text-bold text-left">{{gun.modelName}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.caliber}}</div>
-                    <div clickable class="col-2 text-bold text-left">{{gun.serialNumber}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.recordInEvidenceBook}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.numberOfMagazines}}</div>
-                    <div clickable class="col-2 text-bold text-left">{{gun.gunCertificateSerialNumber}}</div>
-                    <div clickable class="col-2 text-bold text-left">{{gun.basisForPurchaseOrAssignment}}</div>
+                    <div clickable class="col-3 self-center text-bold text-left">{{gun.modelName}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.caliber}}</div>
+                    <div clickable class="col-2 self-center text-bold text-left">{{gun.serialNumber}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.recordInEvidenceBook}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.numberOfMagazines}}</div>
+                    <div clickable class="col-2 self-center text-bold text-left">{{gun.gunCertificateSerialNumber}}</div>
+                    <div clickable class="col-2 self-center text-bold text-left">{{gun.basisForPurchaseOrAssignment}}</div>
                     </div>
-                    </template>
                 </q-field>
                 </div>
                 <p></p>
@@ -204,18 +188,16 @@
               <p></p>
               <div v-for="(gun,id) in allGuns" :key="id" @dblclick="gunInfo=true,usedGunInfo=gun" clickable class="bg-white">
                 <div v-if="gun.gunType == gunTypes[4]" class="bg-white">
-                <q-field clickable color="black" class="bg-white" standout stack-label>
-                  <template v-slot:control>
+                <q-field clickable color="black" class="bg-white" standout="bg-accent text-black" stack-label>
                     <div class="row full-width">
-                    <div clickable class="col-3 text-bold text-left">{{gun.modelName}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.caliber}}</div>
-                    <div clickable class="col-2 text-bold text-left">{{gun.serialNumber}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.recordInEvidenceBook}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.numberOfMagazines}}</div>
-                    <div clickable class="col-2 text-bold text-left">{{gun.gunCertificateSerialNumber}}</div>
-                    <div clickable class="col-2 text-bold text-left">{{gun.basisForPurchaseOrAssignment}}</div>
+                    <div clickable class="col-3 self-center text-bold text-left">{{gun.modelName}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.caliber}}</div>
+                    <div clickable class="col-2 self-center text-bold text-left">{{gun.serialNumber}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.recordInEvidenceBook}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.numberOfMagazines}}</div>
+                    <div clickable class="col-2 self-center text-bold text-left">{{gun.gunCertificateSerialNumber}}</div>
+                    <div clickable class="col-2 self-center text-bold text-left">{{gun.basisForPurchaseOrAssignment}}</div>
                     </div>
-                    </template>
                 </q-field>
                 </div>
                 <p></p>
@@ -225,18 +207,16 @@
               <p></p>
               <div v-for="(gun,id) in allGuns" :key="id" @dblclick="gunInfo=true,usedGunInfo=gun" clickable class="bg-white">
                 <div v-if="gun.gunType == gunTypes[5]" class="bg-white">
-                <q-field clickable color="black" class="bg-white" standout stack-label>
-                  <template v-slot:control>
+                <q-field clickable color="black" class="bg-white" standout="bg-accent text-black" stack-label>
                     <div class="row full-width">
-                    <div clickable class="col-3 text-bold text-left">{{gun.modelName}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.caliber}}</div>
-                    <div clickable class="col-2 text-bold text-left">{{gun.serialNumber}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.recordInEvidenceBook}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.numberOfMagazines}}</div>
-                    <div clickable class="col-2 text-bold text-left">{{gun.gunCertificateSerialNumber}}</div>
-                    <div clickable class="col-2 text-bold text-left">{{gun.basisForPurchaseOrAssignment}}</div>
+                    <div clickable class="col-3 self-center text-bold text-left">{{gun.modelName}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.caliber}}</div>
+                    <div clickable class="col-2 self-center text-bold text-left">{{gun.serialNumber}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.recordInEvidenceBook}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.numberOfMagazines}}</div>
+                    <div clickable class="col-2 self-center text-bold text-left">{{gun.gunCertificateSerialNumber}}</div>
+                    <div clickable class="col-2 self-center text-bold text-left">{{gun.basisForPurchaseOrAssignment}}</div>
                     </div>
-                    </template>
                 </q-field>
                 </div>
                 <p></p>
@@ -246,18 +226,16 @@
               <p></p>
               <div v-for="(gun,id) in allGuns" :key="id" @dblclick="gunInfo=true,usedGunInfo=gun" clickable class="bg-white">
                 <div v-if="gun.gunType == gunTypes[6]" class="bg-white">
-                <q-field clickable color="black" class="bg-white" standout stack-label>
-                  <template v-slot:control>
+                <q-field clickable color="black" class="bg-white" standout="bg-accent text-black" stack-label>
                     <div class="row full-width">
-                    <div clickable class="col-3 text-bold text-left">{{gun.modelName}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.caliber}}</div>
-                    <div clickable class="col-2 text-bold text-left">{{gun.serialNumber}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.recordInEvidenceBook}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.numberOfMagazines}}</div>
-                    <div clickable class="col-2 text-bold text-left">{{gun.gunCertificateSerialNumber}}</div>
-                    <div clickable class="col-2 text-bold text-left">{{gun.basisForPurchaseOrAssignment}}</div>
+                    <div clickable class="col-3 self-center text-bold text-left">{{gun.modelName}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.caliber}}</div>
+                    <div clickable class="col-2 self-center text-bold text-left">{{gun.serialNumber}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.recordInEvidenceBook}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.numberOfMagazines}}</div>
+                    <div clickable class="col-2 self-center text-bold text-left">{{gun.gunCertificateSerialNumber}}</div>
+                    <div clickable class="col-2 self-center text-bold text-left">{{gun.basisForPurchaseOrAssignment}}</div>
                     </div>
-                    </template>
                 </q-field>
                 </div>
                 <p></p>
@@ -364,35 +342,31 @@
         </q-input>
       </q-item>
       </div>
-        <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout stack-label>
-          <template v-slot:control>
-            <div class="col-1 text-bold text-left"></div>
-            <div class="col-3 text-bold text-left">marka i model</div>
-            <div class="col-1 text-bold text-left">kaliber</div>
-            <div class="col-2 text-bold text-left">numer i seria</div>
-            <div class="col-1 text-bold text-left">Poz. z książki ewidencji</div>
-            <div class="col-1 text-bold text-left">ilość magazynków</div>
-            <div class="col-1 text-bold text-left">numer świadectwa</div>
-            <div class="col-2 text-bold text-left">podstawa wpisu</div>
-          </template>
+        <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
+            <div class="col-1 self-center text-bold text-left"></div>
+            <div class="col-3 self-center text-bold text-left">marka i model</div>
+            <div class="col-1 self-center text-bold text-left">kaliber</div>
+            <div class="col-2 self-center text-bold text-left">numer i seria</div>
+            <div class="col-1 self-center text-bold text-left">Poz. z książki ewidencji</div>
+            <div class="col-1 self-center text-bold text-left">ilość magazynków</div>
+            <div class="col-1 self-center text-bold text-left">numer świadectwa</div>
+            <div class="col-2 self-center text-bold text-left">podstawa wpisu</div>
         </q-field>
         <p></p>
               <q-expansion-item :label="gunTypes[0]" class="bg-grey-4 col full-width no-outline text-h6 text-center text-bold">
               <div v-for="(gun,id) in allGuns" :key="id" @dblclick="gunInfo=true,usedGunInfo=gun" clickable>
                 <div v-if="gun.gunType == gunTypes[0]" class="bg-white">
-                <q-field clickable color="black" class="bg-white" standout stack-label>
-                  <template v-slot:control>
+                <q-field clickable color="black" class="bg-white" standout="bg-accent text-black" stack-label>
                     <div class="row full-width">
                     <q-checkbox color="primary" v-model="selection" :val="gun.uuid" class="col-1"></q-checkbox>
-                    <div clickable class="col-3 text-bold text-left">{{gun.modelName}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.caliber}}</div>
-                    <div clickable class="col-2 text-bold text-left">{{gun.serialNumber}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.recordInEvidenceBook}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.numberOfMagazines}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.gunCertificateSerialNumber}}</div>
-                    <div clickable class="col-2 text-bold text-left">{{gun.basisForPurchaseOrAssignment}}</div>
+                    <div clickable class="col-3 self-center text-bold text-left">{{gun.modelName}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.caliber}}</div>
+                    <div clickable class="col-2 self-center text-bold text-left">{{gun.serialNumber}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.recordInEvidenceBook}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.numberOfMagazines}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.gunCertificateSerialNumber}}</div>
+                    <div clickable class="col-2 self-center text-bold text-left">{{gun.basisForPurchaseOrAssignment}}</div>
                     </div>
-                    </template>
                 </q-field>
                 </div>
               </div>
@@ -401,19 +375,17 @@
               <q-expansion-item :label="gunTypes[1]" class="bg-grey-4 col full-width no-outline text-h6 text-center text-bold">
               <div v-for="(gun,id) in allGuns" :key="id" @dblclick="gunInfo=true,usedGunInfo=gun" clickable>
                 <div v-if="gun.gunType == gunTypes[1]" class="bg-white">
-                <q-field clickable color="black" class="bg-white" standout stack-label>
-                  <template v-slot:control>
+                <q-field clickable color="black" class="bg-white" standout="bg-accent text-black" stack-label>
                     <div class="row full-width">
                     <q-checkbox color="primary" v-model="selection" :val="gun.uuid" class="col-1"></q-checkbox>
-                    <div clickable class="col-3 text-bold text-left">{{gun.modelName}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.caliber}}</div>
-                    <div clickable class="col-2 text-bold text-left">{{gun.serialNumber}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.recordInEvidenceBook}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.numberOfMagazines}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.gunCertificateSerialNumber}}</div>
-                    <div clickable class="col-2 text-bold text-left">{{gun.basisForPurchaseOrAssignment}}</div>
+                    <div clickable class="col-3 self-center text-bold text-left">{{gun.modelName}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.caliber}}</div>
+                    <div clickable class="col-2 self-center text-bold text-left">{{gun.serialNumber}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.recordInEvidenceBook}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.numberOfMagazines}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.gunCertificateSerialNumber}}</div>
+                    <div clickable class="col-2 self-center text-bold text-left">{{gun.basisForPurchaseOrAssignment}}</div>
                     </div>
-                    </template>
                 </q-field>
                 </div>
               </div>
@@ -422,19 +394,17 @@
               <q-expansion-item :label="gunTypes[2]" class="bg-grey-4 col full-width no-outline text-h6 text-center text-bold">
               <div v-for="(gun,id) in allGuns" :key="id" @dblclick="gunInfo=true,usedGunInfo=gun" clickable>
                 <div v-if="gun.gunType == gunTypes[2]" class="bg-white">
-                <q-field clickable color="black" class="bg-white" standout stack-label>
-                  <template v-slot:control>
+                <q-field clickable color="black" class="bg-white" standout="bg-accent text-black" stack-label>
                     <div class="row full-width">
                     <q-checkbox color="primary" v-model="selection" :val="gun.uuid" class="col-1"></q-checkbox>
-                    <div clickable class="col-3 text-bold text-left">{{gun.modelName}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.caliber}}</div>
-                    <div clickable class="col-2 text-bold text-left">{{gun.serialNumber}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.recordInEvidenceBook}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.numberOfMagazines}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.gunCertificateSerialNumber}}</div>
-                    <div clickable class="col-2 text-bold text-left">{{gun.basisForPurchaseOrAssignment}}</div>
+                    <div clickable class="col-3 self-center text-bold text-left">{{gun.modelName}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.caliber}}</div>
+                    <div clickable class="col-2 self-center text-bold text-left">{{gun.serialNumber}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.recordInEvidenceBook}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.numberOfMagazines}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.gunCertificateSerialNumber}}</div>
+                    <div clickable class="col-2 self-center text-bold text-left">{{gun.basisForPurchaseOrAssignment}}</div>
                     </div>
-                    </template>
                 </q-field>
                 </div>
               </div>
@@ -443,19 +413,17 @@
               <q-expansion-item :label="gunTypes[3]" class="bg-grey-4 col full-width no-outline text-h6 text-center text-bold">
               <div v-for="(gun,id) in allGuns" :key="id" @dblclick="gunInfo=true,usedGunInfo=gun" clickable>
                 <div v-if="gun.gunType == gunTypes[3]" class="bg-white">
-                <q-field clickable color="black" class="bg-white" standout stack-label>
-                  <template v-slot:control>
+                <q-field clickable color="black" class="bg-white" standout="bg-accent text-black" stack-label>
                     <div class="row full-width">
                     <q-checkbox color="primary" v-model="selection" :val="gun.uuid" class="col-1"></q-checkbox>
-                    <div clickable class="col-3 text-bold text-left">{{gun.modelName}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.caliber}}</div>
-                    <div clickable class="col-2 text-bold text-left">{{gun.serialNumber}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.recordInEvidenceBook}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.numberOfMagazines}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.gunCertificateSerialNumber}}</div>
-                    <div clickable class="col-2 text-bold text-left">{{gun.basisForPurchaseOrAssignment}}</div>
+                    <div clickable class="col-3 self-center text-bold text-left">{{gun.modelName}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.caliber}}</div>
+                    <div clickable class="col-2 self-center text-bold text-left">{{gun.serialNumber}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.recordInEvidenceBook}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.numberOfMagazines}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.gunCertificateSerialNumber}}</div>
+                    <div clickable class="col-2 self-center text-bold text-left">{{gun.basisForPurchaseOrAssignment}}</div>
                     </div>
-                    </template>
                 </q-field>
                 </div>
               </div>
@@ -464,19 +432,17 @@
               <q-expansion-item :label="gunTypes[4]" class="bg-grey-4 col full-width no-outline text-h6 text-center text-bold">
               <div v-for="(gun,id) in allGuns" :key="id" @dblclick="gunInfo=true,usedGunInfo=gun" clickable>
                 <div v-if="gun.gunType == gunTypes[4]" class="bg-white">
-                <q-field clickable color="black" class="bg-white" standout stack-label>
-                  <template v-slot:control>
+                <q-field clickable color="black" class="bg-white" standout="bg-accent text-black" stack-label>
                     <div class="row full-width">
                     <q-checkbox color="primary" v-model="selection" :val="gun.uuid" class="col-1"></q-checkbox>
-                    <div clickable class="col-3 text-bold text-left">{{gun.modelName}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.caliber}}</div>
-                    <div clickable class="col-2 text-bold text-left">{{gun.serialNumber}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.recordInEvidenceBook}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.numberOfMagazines}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.gunCertificateSerialNumber}}</div>
-                    <div clickable class="col-2 text-bold text-left">{{gun.basisForPurchaseOrAssignment}}</div>
+                    <div clickable class="col-3 self-center text-bold text-left">{{gun.modelName}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.caliber}}</div>
+                    <div clickable class="col-2 self-center text-bold text-left">{{gun.serialNumber}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.recordInEvidenceBook}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.numberOfMagazines}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.gunCertificateSerialNumber}}</div>
+                    <div clickable class="col-2 self-center text-bold text-left">{{gun.basisForPurchaseOrAssignment}}</div>
                     </div>
-                    </template>
                 </q-field>
                 </div>
               </div>
@@ -485,19 +451,17 @@
               <q-expansion-item :label="gunTypes[5]" class="bg-grey-4 col full-width no-outline text-h6 text-center text-bold">
               <div v-for="(gun,id) in allGuns" :key="id" @dblclick="gunInfo=true,usedGunInfo=gun" clickable>
                 <div v-if="gun.gunType == gunTypes[5]" class="bg-white">
-                <q-field clickable color="black" class="bg-white" standout stack-label>
-                  <template v-slot:control>
+                <q-field clickable color="black" class="bg-white" standout="bg-accent text-black" stack-label>
                     <div class="row full-width">
                     <q-checkbox color="primary" v-model="selection" :val="gun.uuid" class="col-1"></q-checkbox>
-                    <div clickable class="col-3 text-bold text-left">{{gun.modelName}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.caliber}}</div>
-                    <div clickable class="col-2 text-bold text-left">{{gun.serialNumber}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.recordInEvidenceBook}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.numberOfMagazines}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.gunCertificateSerialNumber}}</div>
-                    <div clickable class="col-2 text-bold text-left">{{gun.basisForPurchaseOrAssignment}}</div>
+                    <div clickable class="col-3 self-center text-bold text-left">{{gun.modelName}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.caliber}}</div>
+                    <div clickable class="col-2 self-center text-bold text-left">{{gun.serialNumber}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.recordInEvidenceBook}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.numberOfMagazines}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.gunCertificateSerialNumber}}</div>
+                    <div clickable class="col-2 self-center text-bold text-left">{{gun.basisForPurchaseOrAssignment}}</div>
                     </div>
-                    </template>
                 </q-field>
                 </div>
               </div>
@@ -506,19 +470,17 @@
               <q-expansion-item :label="gunTypes[6]" class="bg-grey-4 col full-width no-outline text-h6 text-center text-bold">
               <div v-for="(gun,id) in allGuns" :key="id" @dblclick="gunInfo=true,usedGunInfo=gun" clickable>
                 <div v-if="gun.gunType == gunTypes[6]" class="bg-white">
-                <q-field clickable color="black" class="bg-white" standout stack-label>
-                  <template v-slot:control>
+                <q-field clickable color="black" class="bg-white" standout="bg-accent text-black" stack-label>
                     <div class="row full-width">
                     <q-checkbox color="primary" v-model="selection" :val="gun.uuid" class="col-1"></q-checkbox>
-                    <div clickable class="col-3 text-bold text-left">{{gun.modelName}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.caliber}}</div>
-                    <div clickable class="col-2 text-bold text-left">{{gun.serialNumber}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.recordInEvidenceBook}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.numberOfMagazines}}</div>
-                    <div clickable class="col-1 text-bold text-left">{{gun.gunCertificateSerialNumber}}</div>
-                    <div clickable class="col-2 text-bold text-left">{{gun.basisForPurchaseOrAssignment}}</div>
+                    <div clickable class="col-3 self-center text-bold text-left">{{gun.modelName}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.caliber}}</div>
+                    <div clickable class="col-2 self-center text-bold text-left">{{gun.serialNumber}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.recordInEvidenceBook}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.numberOfMagazines}}</div>
+                    <div clickable class="col-1 self-center text-bold text-left">{{gun.gunCertificateSerialNumber}}</div>
+                    <div clickable class="col-2 self-center text-bold text-left">{{gun.basisForPurchaseOrAssignment}}</div>
                     </div>
-                    </template>
                 </q-field>
                 </div>
               </div>
@@ -527,14 +489,12 @@
       <!-- <div v-for="(gun,uuid) in allGuns" :key="uuid" @dblclick="gunInfo=true,usedGunInfo=gun" clickable class="col">
         <div>
         <q-checkbox v-model="selection" :val="gun.uuid" class="col"></q-checkbox>
-      <q-field clickable color="black" class="self-center col full-width no-outline text-bold text-center" standout stack-label>
-        <template v-slot:control>
+      <q-field clickable color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
           <div clickable class="self-center col full-width no-outline text-bold text-center">{{gun.modelName}}</div>
           <div clickable class="self-center col full-width no-outline text-bold text-center">{{gun.caliber}}</div>
           <div clickable class="self-center col full-width no-outline text-bold text-center">{{gun.serialNumber}}</div>
           <div clickable class="self-center col full-width no-outline text-bold text-center">{{gun.recordInEvidenceBook}}</div>
           <div clickable class="self-center col full-width no-outline text-bold text-center">{{gun.gunCertificateSerialNumber}}</div>
-          </template>
       </q-field>
       <p></p>
       </div>
@@ -551,58 +511,38 @@
 <q-card style="width: 600px;">
   <q-card-section class="col">
     <q-item class="col">
-      <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout stack-label>
-        <template v-slot:control>
+      <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
           <div class="self-center col full-width no-outline text-center" style="text-center">data</div>
-        </template>
       </q-field>
-      <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout stack-label>
-        <template v-slot:control>
+      <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
           <div class="self-center col full-width no-outline text-center" style="text-center">opis</div>
-        </template>
       </q-field>
-      <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout stack-label>
-        <template v-slot:control>
+      <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
           <div class="self-center col full-width no-outline text-center" style="text-center">stan końcowy</div>
-        </template>
       </q-field>
-      <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout stack-label>
-        <template v-slot:control>
+      <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
           <div class="self-center col full-width no-outline text-center" style="text-center">ilość</div>
-        </template>
       </q-field>
-      <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout stack-label>
-        <template v-slot:control>
+      <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
           <div class="self-center col full-width no-outline text-center" style="text-center">poprzedni stan</div>
-        </template>
       </q-field>
     </q-item>
       <div class="row" v-for="(caliber,uuid) in history" :key="uuid">
         <q-item class="col">
-          <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout stack-label>
-            <template v-slot:control>
+          <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
               <div class="self-center col full-width no-outline text-center" style="text-center">{{caliber.date}}</div>
-            </template>
           </q-field>
-          <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout stack-label>
-            <template v-slot:control>
+          <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
               <div class="self-center col full-width no-outline text-center" style="text-center">{{caliber.description}}</div>
-            </template>
           </q-field>
-          <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout stack-label>
-            <template v-slot:control>
+          <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
               <div class="self-center col full-width no-outline text-center" style="text-center">{{caliber.finalStateForAddedDay}}</div>
-            </template>
           </q-field>
-          <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout stack-label>
-            <template v-slot:control>
+          <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
               <div class="self-center col full-width no-outline text-center" style="text-center">{{caliber.ammoAdded}}</div>
-            </template>
           </q-field>
-          <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout stack-label>
-            <template v-slot:control>
+          <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
               <div class="self-center col full-width no-outline text-center" style="text-center">{{caliber.stateForAddedDay}}</div>
-            </template>
           </q-field>
         </q-item>
       </div>
@@ -807,7 +747,6 @@ export default {
     }
   },
   created () {
-    this.getAmmoData()
     this.getListCalibers()
     this.getListCalibersSelect()
     this.getGunType()
@@ -828,15 +767,15 @@ export default {
       const duration = 500
       setScrollPosition(target, offset, duration)
     },
-    getAmmoData () {
-      fetch('http://' + this.local + '/ammoEvidence/oneEvidence', {
-        method: 'GET'
-      }).then(response => {
-        response.json().then(response => {
-          this.ammoList = response
-        })
-      })
-    },
+    // getAmmoData () {
+    //   fetch('http://' + this.local + '/ammoEvidence/oneEvidence', {
+    //     method: 'GET'
+    //   }).then(response => {
+    //     response.json().then(response => {
+    //       this.ammoList = response
+    //     })
+    //   })
+    // },
     getSum () {
       fetch('http://' + this.local + '/armory/quantitySum?firstDate=' + this.firstDate.replace(/\//gi, '-') + '&secondDate=' + this.secondDate.replace(/\//gi, '-'), {
         method: 'GET'
@@ -855,18 +794,18 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           this.success = true
-          this.gunAdding = false
-          this.gunModelName = null
-          this.gunCaliber = null
-          this.gunType = null
-          this.gunSerialNumber = null
-          this.gunProductionYear = null
-          this.gunNumberOfMagazines = ''
-          this.gunCertificateSerialNumber = null
-          this.gunAdditionalEquipment = ''
-          this.gunRecordInEvidenceBook = null
-          this.gunComment = ''
-          this.gunBasisForPurchaseOrAssignment = null
+          // this.gunAdding = false
+          // this.gunModelName = null
+          // this.gunCaliber = null
+          // this.gunType = null
+          // this.gunSerialNumber = null
+          // this.gunProductionYear = null
+          // this.gunNumberOfMagazines = ''
+          // this.gunCertificateSerialNumber = null
+          // this.gunAdditionalEquipment = ''
+          // this.gunRecordInEvidenceBook = null
+          // this.gunComment = ''
+          // this.gunBasisForPurchaseOrAssignment = null
           this.getAllGuns()
         } else { this.fail = true }
       })

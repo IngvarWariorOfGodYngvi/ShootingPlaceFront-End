@@ -12,36 +12,29 @@
             <ol>
         <li v-for="(others,id) in others" :key="id">
           <div class="row">
-           <q-field class="col" label="Nazwisko" standout stack-label>
-                <template v-slot:control>
+           <q-field class="col" label="Nazwisko" standout="bg-accent text-black" stack-label>
                     <div>
-                        <div class="self-center col full-width no-outline" tabindex="0">{{others.secondName}} {{others.firstName}}</div>
-                        <div class="self-center col full-width no-outline" tabindex="0"></div>
+                        <div class="self-center col full-width no-outline text-left text-black" tabindex="0">{{others.secondName}} {{others.firstName}}</div>
+                        <div class="self-center col full-width no-outline text-left text-black" tabindex="0"></div>
                     </div>
-                </template>
            </q-field>
-           <q-field class="col" label="Klub" standout stack-label>
-                <template v-slot:control>
+           <q-field class="col" label="Klub" standout="bg-accent text-black" stack-label>
                     <div>
-                      <div class="self-center col full-width no-outline" tabindex="0">{{others.club.name}}</div>
+                      <div class="self-center col full-width no-outline text-left text-black" tabindex="0">{{others.club.name}}</div>
                     </div>
-                </template>
            </q-field>
-           <q-field class="col" label="telefon" standout stack-label>
-                <template v-slot:control>
+           <q-field class="col" label="telefon" standout="bg-accent text-black" stack-label>
                     <div>
-                  <div class="self-center col full-width no-outline row" tabindex="0">{{others.phoneNumber}}</div>
+                  <div class="self-center col full-width no-outline text-left text-black row" tabindex="0">{{others.phoneNumber}}</div>
                   </div>
-                </template>
            </q-field>
-           <q-field class="col" label="email" standout stack-label>
-                <template v-slot:control>
+           <q-field class="col" label="email" standout="bg-accent text-black" stack-label>
                     <div>
-                  <div class="self-center col full-width no-outline row" tabindex="1">{{others.email}}</div>
+                  <div class="self-center col full-width no-outline text-left text-black row" tabindex="1">{{others.email}}</div>
                   </div>
-                </template>
            </q-field>
            <q-btn class="col-1" @click="othersID = others.id,alert=true">usuń</q-btn>
+           <q-btn class="col-1" @click="othersID = others.id,otherPersonFirstName = others.firstName,otherPersonSecondName = others.secondName,otherPersonPhoneNumber = others.phoneNumber,otherPersonEmail = others.email,club = others.club.name,editOtherPerson=true">Edytuj</q-btn>
            </div>
            <p></p>
         </li>
@@ -55,31 +48,45 @@
             <q-scroll-area class="full-width q-pa-none" style="height: 400px;">
             <div v-for="(club,id) in clubs" :key="id">
               <div v-if="club.name!='BRAK'" class="row">
-                <div  @click="clubInfoModel=club,clubInfo=true" class="col-3">
-           <q-field label="Klub" standout stack-label clickable>
-                <template v-slot:control>
-                  <div v-if="club.id != 1" class="self-center col no-outline row" tabindex="1">{{club.name}}</div>
-                  <div v-if="club.id == 1" class="self-center col no-outline row" tabindex="1">{{club.name}} {{club.licenseNumber}}</div>
-                </template>
-           </q-field>
+                <div @dblclick="clubInfoModel=club,clubInfo=true" class="col-2">
+                  <q-field label="Klub" standout="bg-accent text-black" stack-label clickable>
+                      <div class="self-center col full-width no-outline text-left text-black" tabindex="1">{{club.name}}</div>
+                  </q-field>
+                </div>
+                <div class="col">
+                  <a :href="club.url" target="_blank">
+                    <q-field class="col" label="strona" standout="bg-accent text-black" stack-label>
+                        <div class="self-center col full-width no-outline text-left text-black" tabindex="1">{{club.url}}</div>
+                    </q-field>
+                  </a>
+                </div>
+                <div class="col-4">
+                  <q-field label="adres" standout="bg-accent text-black" stack-label>
+                    <div class="self-center col full-width no-outline text-left text-black" tabindex="1">{{club.address}}</div>
+                  </q-field>
+                </div>
+                  <q-btn class="col-2" @click="clubID = club.id,editClub=true">edytuj dane {{club.name}}</q-btn>
            </div>
-           <div class="col">
-           <a :href="club.url" target="_blank">
-           <q-field class="col" label="strona" standout stack-label>
-                <template v-slot:control>
-                  <div class="self-center col full-width no-outline row" tabindex="1">{{club.url}}</div>
-                </template>
-           </q-field>
-           </a>
-           </div>
-           <q-field class="col" label="adres" standout stack-label>
-                <template v-slot:control>
-                    <div>
-                  <div class="self-center col full-width no-outline row" tabindex="1">{{club.address}}</div>
-                  </div>
-                </template>
-           </q-field>
-           <q-btn class="col-2" @click="clubID = club.id,editClub=true">edytuj dane {{club.name}}</q-btn>
+            <p></p>
+            </div>
+            </q-scroll-area>
+          </q-card-section>
+        </q-card>
+        <q-card>
+          <q-card-section>
+          <div class="q-pa-md text-center col full-width no-outline text-h5 text-bold" tabindex="0">Lista Konkurencji</div>
+            <q-scroll-area class="full-width q-pa-none" style="height: 400px;">
+            <div v-for="(comp,uuid) in competitions" :key="uuid">
+              <div v-if="comp.name!='BRAK'" class="col">
+                <div class="row">
+                  <q-field class="col" label="Konkurencja" standout="bg-accent text-black" stack-label clickable>
+                      <div class="self-center col full-width no-outline text-left text-black" tabindex="1">{{comp.name}}</div>
+                  </q-field>
+                  <q-field class="col-2" label="Kolejność na listach" standout="bg-accent text-black" stack-label clickable>
+                      <div class="self-center col full-width no-outline text-center text-black" tabindex="1">{{comp.ordering}}</div>
+                  </q-field>
+                  <q-btn class="col-4" @click="competition=comp,competitionInfo=true">edytuj dane {{comp.name}}</q-btn>
+                </div>
            </div>
             <p></p>
             </div>
@@ -88,7 +95,7 @@
         </q-card>
         <q-card>
             <q-card-section>
-          <div class="q-pa-md text-center col full-width no-outline text-h5 text-bold">Sekcja Magicznych Przycisków</div>
+          <div class="q-pa-md text-center col full-width no-outline text-h5 text-bold">Dodatkowe Funkcje</div>
               <q-item>
                 <q-btn color="primary" label="pobierz listę wszystkich klubowiczów" @click="showloading (),getAllMembersList()"/>
               <q-radio v-model="tableCondition" :val="true">
@@ -100,15 +107,15 @@
               </q-item>
               <p></p>
               <div class="row bg-red-4">
-                <div class="q-pa-md col"><q-btn color="primary" label="lista klubowiczów do zgłoszenia na policję" @click="showloading (),getAllMembersWithLicenseNotValidAndContributionNotValid()"/></div>
-                <div class="q-pa-md col"><q-btn color="primary" label="wyświetl listę numerów telefonów klubowiczów do zgłoszenia na policję" @click="showloading (),getMembersToPolicePhoneNumbers (),membersPhoneNumbers = true"/></div>
-                <div class="q-pa-md col"><q-btn color="primary" label="wyświetl listę email klubowiczów do zgłoszenia na policję" @click="showloading (),getMembersToPoliceEmails (),membersEmails = true"/></div>
+                <div class="q-pa-md col"><q-btn class="full-width full-height" color="primary" label="lista klubowiczów do zgłoszenia na policję" @click="showloading (),getAllMembersWithLicenseNotValidAndContributionNotValid()"/></div>
+                <div class="q-pa-md col"><q-btn class="full-width full-height" color="primary" label="wyświetl listę numerów telefonów klubowiczów do zgłoszenia na policję" @click="showloading (),getMembersToPolicePhoneNumbers (),membersPhoneNumbers = true"/></div>
+                <div class="q-pa-md col"><q-btn class="full-width full-height" color="primary" label="wyświetl listę email klubowiczów do zgłoszenia na policję" @click="showloading (),getMembersToPoliceEmails (),membersEmails = true"/></div>
               </div>
               <p></p>
               <div class="row bg-yellow-4">
-                <div class="q-pa-md col"><q-btn class=" full-width" color="primary" label="lista klubowiczów do skreślenia z listy klubowiczów" @click="showloading (),getAllMembersToErase ()"/></div>
-                <div class="q-pa-md col"><q-btn color="primary" label="wyświetl listę numerów telefonów klubowiczów do skreślenia" @click="showloading (),getMembersToErasePhoneNumbers(),membersPhoneNumbers = true"/></div>
-                <div class="q-pa-md col"><q-btn color="primary" label="wyświetl listę email klubowiczów do skreślenia" @click="showloading (),getMembersToEraseEmails (),membersEmails = true"/></div>
+                <div class="q-pa-md col"><q-btn class="full-width full-height" color="primary" label="lista klubowiczów do skreślenia" @click="showloading (),getAllMembersToErase ()"/></div>
+                <div class="q-pa-md col"><q-btn class="full-width full-height" color="primary" label="wyświetl listę numerów telefonów klubowiczów do skreślenia" @click="showloading (),getMembersToErasePhoneNumbers(),membersPhoneNumbers = true"/></div>
+                <div class="q-pa-md col"><q-btn class="full-width full-height" color="primary" label="wyświetl listę email klubowiczów do skreślenia" @click="showloading (),getMembersToEraseEmails (),membersEmails = true"/></div>
               </div>
               <p></p>
               <q-item class="q-pa-md">
@@ -117,6 +124,10 @@
               <q-item class="q-pa-md">
                 <q-btn color="primary" label="lista klubowiczów skreślonych" @click="showloading (),getAllErasedMembers ()"/>
               </q-item>
+              <div class="row">
+                <div class="q-pa-md col full-width"><q-btn class="full-width full-height" color="primary" label="wyświetl listę numerów telefonów klubowiczów bez patentu" @click="showloading (),getMembersPhoneNumbersWithNoPatent (),membersPhoneNumbers = true"/></div>
+                <div class="q-pa-md col full-width"><q-btn class="full-width full-height" color="primary" label="wyświetl listę email klubowiczów bez patentu" @click="showloading (),getMembersEmailsWithNoPatent (),membersEmails = true"/></div>
+              </div>
               <div class="row">
                   <div class="q-pa-md"><q-btn color="primary" label="wyświetl listę numerów telefonów" @click="showloading (),getMembersPhoneNumbers (),membersPhoneNumbers = true"/></div>
                   <div class="q-pa-md"><q-btn color="primary" label="wyświetl listę email" @click="showloading (),getMembersEmails (),membersEmails = true"/></div>
@@ -149,6 +160,20 @@
         <q-card-actions align="right">
           <q-btn flat label="anuluj" color="primary" v-close-popup/>
           <q-btn flat label="Usuń" color="primary" v-close-popup @click="deactivateOther()"/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="editOtherPerson">
+      <q-card>
+        <q-card-section>
+                <q-item><q-input v-model="otherPersonFirstName" class="full-width" filled label="Imię"></q-input></q-item>
+                <q-item><q-input v-model="otherPersonSecondName" class="full-width" filled label="Nazwisko"></q-input></q-item>
+                <q-item><q-input v-model="otherPersonPhoneNumber" type="tel" class="full-width" mask="### ### ###" filled label="Telefon"></q-input></q-item>
+                <q-item><q-input v-model="otherPersonEmail" type="email" class="full-width" filled label="email"></q-input></q-item>
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="zamknij" color="primary" v-close-popup/>
+          <q-btn flat label="edytuj" color="primary" v-close-popup @click="updateOtherPerson(othersID,otherPersonFirstName, otherPersonSecondName, otherPersonPhoneNumber,otherPersonEmail)"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -192,9 +217,35 @@
           <div class="text-h6">Informacje dodatkowe o klubie {{clubInfoModel.name}}</div>
         <div>ID : {{clubInfoModel.id}}</div>
         <div v-if="clubInfoModel.id == 1">Pełna nazwa : {{clubInfoModel.fullName}}</div>
+        <div v-if="clubInfoModel.id == 1">Numer Licencji Klubowej : {{clubInfoModel.licenseNumber}}</div>
         <div>email : {{clubInfoModel.email}}</div>
         <div>telefon : {{clubInfoModel.phoneNumber}}</div>
         <div>adres : {{clubInfoModel.address}}</div>
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="zamknij" color="primary" v-close-popup/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="competitionInfo">
+      <q-card>
+        <q-card-section class="text-bold">
+          <div class="text-h6">{{competition.name}}</div>
+        <div>ID: {{competition.uuid}}</div>
+        <div>Dyscyplina: {{competition.discipline}}</div>
+        <div>Ilość Strzałów: {{competition.numberOfShots}}</div>
+        <div>Rodzaj: {{competition.type}}</div>
+        <div class="row">Metoda Liczenia <div v-if="competition.countingMethod == 'NORMAL'">: Normalnie</div><div v-else>{{competition.countingMethod}}</div></div>
+        <div>Numer Kolejności na Listach: {{competition.ordering}}</div>
+        <q-field class="col-2 cursor-pointer" standout="bg-accent text-black" label="ZMIEŃ NUMER KOLEJNOŚCI NA LISTACH">
+            <q-popup-edit >
+                <q-input v-model="orderNumber" input-class="text-center" dense autofocus stack-label label="zmień na inny numer" onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
+                <div class="q-pa-xs">
+                  <q-btn align="left" color="primary" label="Anuluj" v-close-popup></q-btn>
+                  <q-btn align="right" color="primary" label="Zmień" v-close-popup @click="compID=competition.uuid,updateOrderingCompetition()"></q-btn>
+                </div>
+            </q-popup-edit>
+        </q-field>
         </q-card-section>
         <q-card-actions align="right">
           <q-btn flat label="zamknij" color="primary" v-close-popup/>
@@ -239,6 +290,13 @@ export default {
       others: [],
       clubs: [],
       othersID: null,
+      otherPerson: [],
+      club: '',
+      competitions: null,
+      competition: [],
+      copmID: null,
+      competitionInfo: false,
+      orderNumber: null,
       clubID: null,
       clubName: null,
       clubFullName: null,
@@ -253,6 +311,11 @@ export default {
       editClub: false,
       dataFail: false,
       alert: false,
+      editOtherPerson: false,
+      otherPersonFirstName: null,
+      otherPersonSecondName: null,
+      otherPersonPhoneNumber: null,
+      otherPersonEmail: null,
       condition: true,
       tableCondition: true,
       emails: null,
@@ -269,6 +332,7 @@ export default {
   created () {
     this.getOther()
     this.getAllClubs()
+    this.getCompetitions()
   },
   methods: {
     showloading () {
@@ -317,6 +381,22 @@ export default {
           this.phoneNumbers = response
         })
     },
+    getMembersEmailsWithNoPatent () {
+      fetch('http://' + this.local + '/member/membersEmailsNoPatent', {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.emails = response
+        })
+    },
+    getMembersPhoneNumbersWithNoPatent () {
+      fetch('http://' + this.local + '/member/phoneNumbersNoPatent', {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.phoneNumbers = response
+        })
+    },
     getMembersToEraseEmails () {
       fetch('http://' + this.local + '/member/membersToEraseEmails', {
         method: 'GET'
@@ -349,6 +429,14 @@ export default {
           this.phoneNumbers = response
         })
     },
+    getCompetitions () {
+      fetch('http://' + this.local + '/competition/', {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.competitions = response
+        })
+    },
     updateClub () {
       var data = {
         name: this.clubName,
@@ -376,6 +464,41 @@ export default {
           this.clubURL = null
           this.getOther()
           this.getAllClubs()
+        } else { this.dataFail = true }
+      })
+    },
+    updateOrderingCompetition () {
+      fetch('http://' + this.local + '/competition/ordering?uuid=' + this.compID + '&orderNumber=' + this.orderNumber, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          this.doneAlert = true
+          this.orderNumber = null
+          this.compID = null
+          this.getCompetitions()
+        } else { this.dataFail = true }
+      })
+    },
+    updateOtherPerson (id, first, second, phone, mail) {
+      var data = {
+        firstName: first,
+        secondName: second,
+        phoneNumber: phone,
+        email: mail
+      }
+      fetch('http://' + this.local + '/other/?id=' + id, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          this.getOther()
+          this.doneAlert = true
         } else { this.dataFail = true }
       })
     },

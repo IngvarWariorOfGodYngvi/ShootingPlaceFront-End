@@ -30,7 +30,7 @@
           <q-card class="bg-grey-3 q-pa-md col">
             <div>
             <q-radio @input="memberName=null, member=null,getMembersNames (),getAllMemberDTOWithArgs()" v-model="allMember" :val="true" label="Wyświetl wszystkich"></q-radio>
-            <q-radio @input="memberName=null, member=null,allMember=true,getMembersNames (),getAllMemberDTOWithArgs()" v-model="adult" :val="true" label="Grupa Powszechna"></q-radio>
+            <q-radio @input="memberName=null, member=null,allMember=true,getMembersNames (),getAllMemberDTOWithArgs()" v-model="adult" :val="true" label="Grupa Ogólna"></q-radio>
             <q-radio @input="memberName=null, member=null,allMember=true,getMembersNames (),getAllMemberDTOWithArgs()" v-model="adult" :val="false" label="Grupa Młodzieżowa"></q-radio>
             <q-radio @input="memberName=null, member=null,allMember=true,erase=false, getMembersNames (),getAllMemberDTOWithArgs()" color="green" v-model="active" :val="true" label="Aktywni"></q-radio>
             <q-radio @input="memberName=null, member=null,allMember=true,getMembersNames (),getAllMemberDTOWithArgs()" color="warning" v-model="active" :val="false" label="Nieaktywni"></q-radio>
@@ -48,15 +48,16 @@
           </q-card>
           <q-card>
           <div class="row text-bold">
-            <q-item>Ilość klubowiczów</q-item>
-            <q-item v-if="adult">Powszechna ogółem : {{quantities[0]}}</q-item>
-            <q-item v-if="active&&adult">Powszechna Aktywni : {{quantities[1]}}</q-item>
-            <q-item v-if="!active&&adult">Powszechna Nieaktywni : {{quantities[2]}}</q-item>
-            <q-item v-if="!adult">Młodzieżowa ogółem : {{quantities[3]}}</q-item>
-            <q-item v-if="active&&!adult">Młodzieżowa Aktywni : {{quantities[4]}}</q-item>
-            <q-item v-if="!active&&!adult">Młodzieżowa Nieaktywni : {{quantities[5]}}</q-item>
-            <q-item v-if="adult&&erase">Skreśleni : {{quantities[6]}}</q-item>
-            <q-item v-if="!adult&&erase">Skreśleni : {{quantities[7]}}</q-item>
+            <q-item class="bg-accent">Ilość klubowiczów</q-item>
+            <q-item v-if="adult&&!erase">Gr. Ogólna ogółem : {{quantities[0]}}</q-item>
+            <q-item v-if="adult&&!erase">Aktywni : {{quantities[1]}}</q-item>
+            <q-item v-if="adult&&!erase">Nieaktywni : {{quantities[2]}}</q-item>
+            <q-item v-if="!adult&&!erase">Gr. Młodzieżowa ogółem : {{quantities[3]}}</q-item>
+            <q-item v-if="!adult&&!erase">Aktywni : {{quantities[4]}}</q-item>
+            <q-item v-if="!adult&&!erase">Nieaktywni : {{quantities[5]}}</q-item>
+            <q-item v-if="erase">Skreśleni ogółem : {{quantities[6] + quantities[7]}}</q-item>
+            <q-item v-if="adult&&erase">Skreśleni Gr. Ogólna : {{quantities[6]}}</q-item>
+            <q-item v-if="!adult&&erase">Skreśleni Gr. Młodzieżowa : {{quantities[7]}}</q-item>
         </div>
           </q-card>
         </div>
@@ -103,10 +104,8 @@
 
         <q-card bordered class="row">
               <q-card-section class="col-4">
-                  <q-field class="col" standout stack-label>
-                    <template v-slot:control>
-                      <div class="self-center col full-width no-outline text-center" tabindex="0">Historia Składek</div>
-                    </template>
+                  <q-field class="col" standout="bg-accent text-black" stack-label>
+                      <div class="self-center col full-width no-outline text-center text-black" tabindex="0">Historia Składek</div>
                   </q-field>
                   <div v-if="!member.erased">
                   <div><q-btn class="full-width" color="green" label="Przedłuż składkę" @click="memberUUID = member.uuid,name = member.firstName,name2 = member.secondName,contribution=true"/></div>
@@ -148,16 +147,12 @@
                     <q-scroll-area class="full-width q-pa-none" style="height: 375px;">
                           <div v-for="(contributionList,uuid) in member.history.contributionList" :key="uuid" class="row">
                               <div class="row full-width" @dblclick="contributionUUID = contributionList.uuid,memberUUID = member.uuid,editContributionPaymentDate=contributionList.paymentDay,editContributionValidThruDate=contributionList.validThru,editContribution=true">
-                              <q-field class="col-6" label="Opłacona dnia : " standout stack-label>
-                                <template v-slot:control>
-                                  <div class="self-center col full-width no-outline" tabindex="0">{{contributionList.paymentDay}}</div>
-                                </template>
+                              <q-field class="col-6" label="Opłacona dnia : " standout="bg-accent text-black" stack-label>
+                                  <div class="self-center col full-width no-outline text-left text-black" tabindex="0">{{contributionList.paymentDay}}</div>
                               </q-field>
                               <div class="col-6">
-                                <q-field class="col" standout label="Ważna do : " stack-label>
-                                  <template v-slot:control>
-                                    <div class="self-center col full-width no-outline" tabindex="1">{{contributionList.validThru}}</div>
-                                  </template>
+                                <q-field class="col" standout="bg-accent text-black" label="Ważna do : " stack-label>
+                                    <div class="self-center col full-width no-outline text-left text-black" tabindex="1">{{contributionList.validThru}}</div>
                                 </q-field>
                               </div>
                               </div>
@@ -168,41 +163,31 @@
               <q-card-section class="col-3 items-center">
               <q-item-section class="col" v-if="!member.license.number!=null||member.adult">
                 <div v-if="member.license.number!=null" class="col" clickable @dblclick="memberUUID = member.uuid,editLicenseNumber=member.license.number,editLicenseDate=member.license.validThru, editLicense=true">
-                <q-field class="col" standout stack-label>
-                  <template v-slot:control>
-                    <div class="self-center col full-width no-outline text-center" tabindex="0">Licencja</div>
-                  </template>
+                <q-field class="col" standout="bg-accent text-black" stack-label>
+                    <div class="self-center col full-width no-outline text-center text-black" tabindex="0">Licencja</div>
                 </q-field>
                 </div>
                 <div v-if="member.license.number==null" class="col">
-                <q-field class="col" standout stack-label>
-                  <template v-slot:control>
-                    <div class="self-center col full-width no-outline text-center" tabindex="0">Licencja</div>
-                  </template>
+                <q-field class="col" standout="bg-accent text-black" stack-label>
+                    <div class="self-center col full-width no-outline text-center text-black" tabindex="0">Licencja</div>
                 </q-field>
                 </div>
                 <div>
                   <div class="row">
                     <div class="col">
-                      <q-field class="col" v-if="member.license.number!=null" label="Numer Licencji" standout stack-label>
-                        <template v-slot:control>
-                          <div class="self-center col full-width no-outline" tabindex="0">{{member.license.number}}</div>
-                        </template>
+                      <q-field class="col" v-if="member.license.number!=null" label="Numer Licencji" standout="bg-accent text-black" stack-label>
+                          <div class="self-center col full-width no-outline text-left text-black" tabindex="0">{{member.license.number}}</div>
                       </q-field>
                     </div>
-                <q-field  class="col" v-if="member.license.validThru!=null" label="Ważna do :" standout stack-label>
-                  <template v-slot:control>
-                    <div class="self-center col full-width no-outline" tabindex="0">{{member.license.validThru}}</div>
-                  </template>
+                <q-field  class="col" v-if="member.license.validThru!=null" label="Ważna do :" standout="bg-accent text-black" stack-label>
+                    <div class="self-center col full-width no-outline text-left text-black" tabindex="0">{{member.license.validThru}}</div>
                 </q-field>
                 </div>
                 <div v-if="member.license.pistolPermission == true || member.license.riflePermission == true || member.license.shotgunPermission == true" class="row">
-                  <q-field  label="Dyscypliny" class="col" standout stack-label>
-                    <template v-slot:control>
-                      <div v-if="member.license.pistolPermission" class="text-left col-4 no-outline" tabindex="0">Pistolet</div>
-                      <div v-if="member.license.riflePermission" class="text-left col-4 no-outline" tabindex="0">Karabin</div>
-                      <div v-if="member.license.shotgunPermission" class="text-left col-4 no-outline" tabindex="0">Strzelba</div>
-                    </template>
+                  <q-field  label="Dyscypliny" class="col" standout="bg-accent text-black" stack-label>
+                      <div v-if="member.license.pistolPermission" class="self-center text-center col-4 no-outline text-black" tabindex="0">Pistolet</div>
+                      <div v-if="member.license.riflePermission" class="self-center text-center col-4 no-outline text-black" tabindex="0">Karabin</div>
+                      <div v-if="member.license.shotgunPermission" class="self-center text-center col-4 no-outline text-black" tabindex="0">Strzelba</div>
                   </q-field>
                 </div>
                 </div>
@@ -243,18 +228,14 @@
                 noDomesticStarts=true"></q-btn>
                 </div>
                 <q-btn v-if="((member.active&&(member.shootingPatent.patentNumber!=null&&member.license.paid==false))) " class="full-width" label="opłać licencję" @click="memberUUID=member.uuid,licensePayment=true"></q-btn>
-              <q-expansion-item class="bg-grey-3" v-if="member.history.licensePaymentHistory!=null" label="Daty Opłacenia Licencji">
+              <q-expansion-item class="bg-grey-3 text-center" v-if="member.history.licensePaymentHistory!=null" label="Daty Opłacenia Licencji">
                 <q-scroll-area class="full-width q-pa-none" style="height: 289px;">
                 <div v-for="(licensePaymentHistory,uuid) in member.history.licensePaymentHistory" :key="uuid" class="row" @dblclick="memberUUID=member.uuid,paymentUUID = licensePaymentHistory.uuid,editLicensePaymentDate = licensePaymentHistory.date,editLicensePaymentYear = licensePaymentHistory.validForYear,editLicensePayment=true">
-                  <q-field label="Opłacona dnia:" class="col" standout stack-label>
-                    <template v-slot:control>
-                      <div class="self-center col full-width no-outline" tabindex="0">{{licensePaymentHistory.date}}</div>
-                    </template>
+                  <q-field label="Opłacona dnia:" class="col" standout="bg-accent text-black" stack-label>
+                      <div class="self-center col full-width no-outline text-center text-black" tabindex="0">{{licensePaymentHistory.date}}</div>
                   </q-field>
-                  <q-field label="Opłacona na rok:" class="col" standout stack-label>
-                    <template v-slot:control>
-                      <div class="self-center col full-width no-outline" tabindex="0">{{licensePaymentHistory.validForYear}}</div>
-                    </template>
+                  <q-field label="Opłacona na rok:" class="col" standout="bg-accent text-black" stack-label>
+                      <div class="self-center col full-width no-outline text-center text-black" tabindex="0">{{licensePaymentHistory.validForYear}}</div>
                   </q-field>
                 </div>
                 </q-scroll-area>
@@ -263,122 +244,84 @@
               <q-card-section class="col-5 text-center">
                 <q-item-section class="text-center">
                   <q-expansion-item default-opened label="Informacje o Uprawnieniach" class="col items-center bg-grey-3" group="right-card">
-                    <q-field v-if="(member.memberPermissions.arbiterNumber!=null&&member.memberPermissions.arbiterNumber!='')" class="col" standout label="Sędzia" stack-label>
-                    <template v-slot:control>
-                      <q-field v-if="(member.memberPermissions.arbiterNumber!=null&&member.memberPermissions.arbiterNumber!='')" class="col" standout label="Numer" stack-label>
-                        <template v-slot:control>
-                         <div class="self-center full-width no-outline" tabindex="0">{{member.memberPermissions.arbiterNumber}}</div>
-                        </template>
+                    <q-field v-if="(member.memberPermissions.arbiterNumber!=null&&member.memberPermissions.arbiterNumber!='')" class="col q-pa-md" borderless color="black" label="Sędzia" stack-label>
+                      <q-field v-if="(member.memberPermissions.arbiterNumber!=null&&member.memberPermissions.arbiterNumber!='')" class="col" standout="bg-accent text-black" color="black" label="Numer" stack-label>
+                         <div class="self-center full-width no-outline text-left text-black" tabindex="0">{{member.memberPermissions.arbiterNumber}}</div>
                       </q-field>
-                      <q-field v-if="(member.memberPermissions.arbiterNumber!=null&&member.memberPermissions.arbiterNumber!='')" class="col" standout label="Klasa" stack-label>
-                        <template v-slot:control>
-                         <div class="self-center full-width no-outline" tabindex="0">{{member.memberPermissions.arbiterClass}}</div>
-                        </template>
+                      <q-field v-if="(member.memberPermissions.arbiterNumber!=null&&member.memberPermissions.arbiterNumber!='')" class="col" standout="bg-accent text-black" color="black" label="Klasa" stack-label>
+                         <div class="self-center full-width no-outline text-left text-black" tabindex="0">{{member.memberPermissions.arbiterClass}}</div>
                       </q-field>
-                      <q-field v-if="(member.memberPermissions.arbiterNumber!=null&&member.memberPermissions.arbiterNumber!='')" class="col" standout label="Ważna do" stack-label>
-                        <template v-slot:control>
-                         <div class="self-center full-width no-outline" tabindex="0">{{member.memberPermissions.arbiterPermissionValidThru}}</div>
-                        </template>
+                      <q-field v-if="(member.memberPermissions.arbiterNumber!=null&&member.memberPermissions.arbiterNumber!='')" class="col" standout="bg-accent text-black" color="black" label="Ważna do" stack-label>
+                         <div class="self-center full-width no-outline text-left text-black" tabindex="0">{{member.memberPermissions.arbiterPermissionValidThru}}</div>
                       </q-field>
-                    </template>
                   </q-field>
-                  <q-field v-if="member.shootingPatent.patentNumber!=null" class="col" label-slot standout label="Patent" stack-label>
-                    <template v-slot:control>
+                  <q-field v-if="member.shootingPatent.patentNumber!=null" class="col q-pa-md" borderless label="Patent" color="black" stack-label>
                     <div class="col">
                       <div class="row">
-                      <q-field class="col" standout label="Numer" stack-label>
-                        <template v-slot:control>
-                         <div class="self-center full-width no-outline" tabindex="0">{{member.shootingPatent.patentNumber}}</div>
-                        </template>
+                      <q-field class="col" standout="bg-accent text-black" color="black" label="Numer" stack-label>
+                         <div class="self-center full-width no-outline text-left text-black" tabindex="0">{{member.shootingPatent.patentNumber}}</div>
                       </q-field>
-                      <q-field class="col" standout label="Nadany dnia" stack-label>
-                        <template v-slot:control>
-                         <div class="self-center full-width no-outline" tabindex="0">{{member.shootingPatent.dateOfPosting}}</div>
-                        </template>
+                      <q-field class="col" standout="bg-accent text-black" color="black" label="Nadany dnia" stack-label>
+                         <div class="self-center full-width no-outline text-left text-black" tabindex="0">{{member.shootingPatent.dateOfPosting}}</div>
                       </q-field>
                       </div>
-                      <q-field class="col q-pa-none" standout label="Dyscypliny" stack-label>
-                        <template v-slot:control>
-                          <q-field v-if="member.shootingPatent.pistolPermission" class="col" standout label="Pistolet" stack-label>
-                            <template v-slot:control>
-                              <div class="self-center full-width no-outline" tabindex="0">{{member.history.patentDay[ 0 ]}}</div>
-                            </template>
+                      <q-field class="col" borderless label="Dyscypliny" color="black" stack-label>
+                          <q-field v-if="member.shootingPatent.pistolPermission" class="col" color="black" standout="bg-accent text-black" label="Pistolet" stack-label>
+                              <div class="self-center full-width no-outline text-left text-black" tabindex="0">{{member.history.patentDay[ 0 ]}}</div>
                           </q-field>
-                          <q-field v-if="member.shootingPatent.riflePermission" class="col" standout label="Karabin" stack-label>
-                            <template v-slot:control>
-                              <div class="self-center full-width no-outline" tabindex="0">{{member.history.patentDay[ 1 ]}}</div>
-                            </template>
+                          <q-field v-if="member.shootingPatent.riflePermission" class="col" color="black" standout="bg-accent text-black" label="Karabin" stack-label>
+                              <div class="self-center full-width no-outline text-left text-black" tabindex="0">{{member.history.patentDay[ 1 ]}}</div>
                           </q-field>
-                          <q-field v-if="member.shootingPatent.shotgunPermission" class="col" standout label="Strzelba" stack-label>
-                            <template v-slot:control>
-                              <div class="self-center full-width no-outline" tabindex="0">{{member.history.patentDay[ 2 ]}}</div>
-                            </template>
+                          <q-field v-if="member.shootingPatent.shotgunPermission" class="col" color="black" standout="bg-accent text-black" label="Strzelba" stack-label>
+                              <div class="self-center full-width no-outline text-left text-black" tabindex="0">{{member.history.patentDay[ 2 ]}}</div>
                           </q-field>
-                        </template>
                       </q-field>
                     </div>
-                    </template>
                   </q-field>
-                  <q-field v-if="member.weaponPermission.number!=null&&member.weaponPermission.exist" class="col" standout label="Numer pozwolenia na broń" stack-label>
-                    <template v-slot:control>
-                      <div class="self-center full-width no-outline" tabindex="0">{{member.weaponPermission.number}}</div>
-                    </template>
+                  <q-field v-if="member.weaponPermission.number!=null&&member.weaponPermission.exist" class="col" standout="bg-accent text-black" label="Numer pozwolenia na broń" stack-label>
+                      <div class="self-center full-width no-outline text-left text-black" tabindex="0">{{member.weaponPermission.number}}</div>
                   </q-field>
-                  <q-field v-if="member.weaponPermission.admissionToPossessAWeapon!=null&&member.weaponPermission.admissionToPossessAWeaponIsExist" class="col" standout label="Numer dopuszczenia do posiadania broni" stack-label>
-                    <template v-slot:control>
-                      <div class="self-center full-width no-outline" tabindex="0">{{member.weaponPermission.admissionToPossessAWeapon}}</div>
-                    </template>
+                  <q-field v-if="member.weaponPermission.admissionToPossessAWeapon!=null&&member.weaponPermission.admissionToPossessAWeaponIsExist" class="col" standout="bg-accent text-black" label="Numer dopuszczenia do posiadania broni" stack-label>
+                      <div class="self-center full-width no-outline text-left text-black" tabindex="0">{{member.weaponPermission.admissionToPossessAWeapon}}</div>
                   </q-field>
-                  <q-field v-if="(member.memberPermissions.shootingLeaderNumber!=null&&member.memberPermissions.shootingLeaderNumber!='')" class="col" standout label="Prowadzący Strzelanie" stack-label>
-                    <template v-slot:control>
-                      <div class="self-center full-width no-outline" tabindex="0">{{member.memberPermissions.shootingLeaderNumber}}</div>
-                    </template>
+                  <q-field v-if="(member.memberPermissions.shootingLeaderNumber!=null&&member.memberPermissions.shootingLeaderNumber!='')" class="col" standout="bg-accent text-black" label="Prowadzący Strzelanie" stack-label>
+                      <div class="self-center full-width no-outline text-left text-black" tabindex="0">{{member.memberPermissions.shootingLeaderNumber}}</div>
                   </q-field>
-                  <q-field v-if="(member.memberPermissions.instructorNumber!=null&&member.memberPermissions.instructorNumber!='')" class="col" standout label="Instruktor" stack-label>
-                    <template v-slot:control>
-                      <div class="self-center full-width no-outline" tabindex="0">{{member.memberPermissions.instructorNumber}}</div>
-                    </template>
+                  <q-field v-if="(member.memberPermissions.instructorNumber!=null&&member.memberPermissions.instructorNumber!='')" class="col" standout="bg-accent text-black" label="Instruktor" stack-label>
+                      <div class="self-center full-width no-outline text-left text-black" tabindex="0">{{member.memberPermissions.instructorNumber}}</div>
                   </q-field>
                   </q-expansion-item>
                 </q-item-section>
 <q-expansion-item  label="Wydawanie Amunicji" class="col items-center bg-grey-3" group="right-card">
                 <div class="bg-white">
                   <div class="row">
-                    <q-field class="full-width col" standout stack-label>
-                    <template v-slot:control>
-                      <div class="self-center full-width no-outline" tabindex="0">Kaliber</div>
-                    </template>
+                    <q-field class="full-width col" standout="bg-accent text-black" stack-label>
+                      <div class="self-center full-width no-outline text-center text-black" tabindex="0">Kaliber</div>
                     </q-field>
-                    <q-field class="full-width col" standout stack-label>
-                    <template v-slot:control>
-                      <div class="self-center full-width no-outline" tabindex="0">Ilość wydanej amunicji</div>
-                    </template>
+                    <q-field class="full-width col" standout="bg-accent text-black" stack-label>
+                      <div class="self-center full-width no-outline text-center text-black" tabindex="0">Ilość wydanej amunicji</div>
                     </q-field>
                   </div>
                   <q-card flat class="row">
                     <q-card-section class="col q-pa-none">
                     <div v-for="(calibers,uuid) in calibers" :key="uuid" :val="calibers.uuid">
                         <q-radio v-model="caliberUUID" :val="calibers.uuid" class="col full-width">
-                          <q-field borderless>
-                           <template v-slot:control>
-                            <div class="full-width">{{calibers.name}}</div>
-                           </template>
+                          <q-field borderless class="cursor-pointer">
+                            <div class="self-center full-width no-outline text-center text-black q-pa-xs">{{calibers.name}}</div>
                           </q-field>
                         </q-radio>
                     </div>
                   </q-card-section>
                   <q-card-section class="col q-pa-none">
                     <div v-for="(counter,uuid) in member.personalEvidence.ammoList" :key="uuid">
-                      <q-field class="col" standout :label="counter.caliberName" stack-label>
-                      <template v-slot:control>
-                        <div class="self-center full-width no-outline" tabindex="0">{{counter.counter}} sztuk</div>
-                      </template>
+                      <q-field class="col" standout="bg-accent text-black" :label="counter.caliberName" stack-label>
+                        <div class="self-center full-width no-outline text-center text-black q-pa-xs" tabindex="0">{{counter.counter}} sztuk</div>
                       </q-field>
                     </div>
                   </q-card-section>
                   </q-card>
                   <div v-if="!member.erased" class="row">
-                  <q-input @keypress.enter="memberUUID=member.legitimationNumber, addAmmoConfirm=true" v-temp ref="search" filled class="full-width col" v-model="quantity" placeholder="Tylko cyfry" onkeypress="return (event.charCode > 44 && event.charCode < 58)" label="Ilość Amunicji"></q-input>
+                  <q-input @keypress.enter="memberUUID=member.legitimationNumber, addAmmoConfirm=true" v-temp ref="search" filled class="full-width col" color="black" v-model="quantity" placeholder="Tylko cyfry" onkeypress="return (event.charCode > 44 && event.charCode < 58)" label="Ilość Amunicji"></q-input>
                   <q-btn class="full-width col" color="primary" label="wydaj amunicję" @click="memberUUID=member.legitimationNumber, addAmmoConfirm=true"></q-btn>
                   </div>
                 </div>
@@ -400,30 +343,26 @@
                 </q-btn>
               <q-item v-if="member.shootingPatent.pistolPermission
                 &&member.shootingPatent.riflePermission
-                &&member.shootingPatent.shotgunPermission"><q-item-label>Klubowicz posiada cały Patent</q-item-label></q-item>
+                &&member.shootingPatent.shotgunPermission"><q-item-label class="text-center full-width self-center">Klubowicz posiada cały Patent</q-item-label></q-item>
 </q-expansion-item >
 <q-expansion-item v-if="member.adult&&!member.erased" label="Pozwolenie na Broń" group="right-right-card" class="bg-white">
                   <div class="row">
-                    <q-input @keypress.enter="changeWeaponPermission(member.uuid, weaponPermissionNumber, isExist)" filled class="col" v-if="(member.weaponPermission.number==null||!member.weaponPermission.exist)&&member.active" v-model="weaponPermissionNumber" label="Numer pozwolenia"/>
-                    <q-btn class="col" v-if="(!member.weaponPermission.exist)&&member.active" label="Dodaj" color="primary" @click="changeWeaponPermission(member.uuid, weaponPermissionNumber, isExist)"/>
-                    <q-btn class="col" v-if="(member.weaponPermission.exist)&&active" label="Usuń pozwolenie" color="primary" @click="memberUUID=member.uuid,permission = true,eraseWeapon=true"/>
+                    <q-input @keypress.enter="changeWeaponPermission(member.uuid, weaponPermissionNumber, isExist)" filled class="col" v-if="member.weaponPermission.number==null||!member.weaponPermission.exist" v-model="weaponPermissionNumber" label="Numer pozwolenia"/>
+                    <q-btn class="col" v-if="!member.weaponPermission.exist" label="Dodaj" color="primary" @click="changeWeaponPermission(member.uuid, weaponPermissionNumber, isExist)"/>
+                    <q-btn class="col" v-if="member.weaponPermission.exist" label="Usuń pozwolenie" color="primary" @click="memberUUID=member.uuid,permission = true,eraseWeapon=true"/>
                   </div>
-                  <q-field v-if="!member.license.valid&&member.weaponPermission.exist" class="col bg-red" standout stack-label>
-                    <template v-slot:control>
-                      <div class="self-center full-width no-outline " tabindex="0">POSIADA NIE WAŻNĄ LICENCJĘ!!!</div>
-                    </template>
+                  <q-field v-if="!member.license.valid&&member.weaponPermission.exist" class="col bg-red" standout="bg-accent text-black" stack-label>
+                      <div class="self-center full-width no-outline text-center text-black" tabindex="0">POSIADA NIE WAŻNĄ LICENCJĘ!!!</div>
                   </q-field>
 </q-expansion-item>
 <q-expansion-item v-if="member.adult&&!member.erased" label="Dopuszczenie do Posiadania Broni" group="right-right-card" class="bg-white">
                   <div class="row">
-                    <q-input @keypress.enter="changeWeaponAdmission (member.uuid, admissionToPossess, admissionToPossessIsExist)" filled class="col" v-if="(member.weaponPermission.admissionToPossessAWeapon==null||!member.weaponPermission.admissionToPossessAWeaponIsExist)&&member.active" v-model="admissionToPossess" label="Numer Dopuszczenia"/>
-                    <q-btn class="col" v-if="(!member.weaponPermission.admissionToPossessAWeaponIsExist)&&member.active" label="Dodaj" color="primary" @click="changeWeaponAdmission (member.uuid, admissionToPossess, admissionToPossessIsExist)"/>
-                    <q-btn class="col" v-if="(member.weaponPermission.admissionToPossessAWeaponIsExist)&&active" label="Usuń dopuszczenie" color="primary" @click="memberUUID=member.uuid, admission = true,eraseAssest=true"/>
+                    <q-input @keypress.enter="changeWeaponAdmission (member.uuid, admissionToPossess, admissionToPossessIsExist)" filled class="col" v-if="member.weaponPermission.admissionToPossessAWeapon==null||!member.weaponPermission.admissionToPossessAWeaponIsExist" v-model="admissionToPossess" label="Numer Dopuszczenia"/>
+                    <q-btn class="col" v-if="!member.weaponPermission.admissionToPossessAWeaponIsExist" label="Dodaj" color="primary" @click="changeWeaponAdmission (member.uuid, admissionToPossess, admissionToPossessIsExist)"/>
+                    <q-btn class="col" v-if="member.weaponPermission.admissionToPossessAWeaponIsExist" label="Usuń dopuszczenie" color="primary" @click="memberUUID=member.uuid, admission = true,eraseAssest=true"/>
                   </div>
-                  <q-field v-if="!member.license.valid&&member.weaponPermission.exist" class="col bg-red" standout stack-label>
-                    <template v-slot:control>
-                      <div class="self-center full-width no-outline " tabindex="0">POSIADA NIE WAŻNĄ LICENCJĘ!!!</div>
-                    </template>
+                  <q-field v-if="!member.license.valid&&member.weaponPermission.exist" class="col bg-red" standout="bg-accent text-black" stack-label>
+                      <div class="self-center full-width no-outline text-center text-black" tabindex="0">POSIADA NIE WAŻNĄ LICENCJĘ!!!</div>
                   </q-field>
 </q-expansion-item>
 <q-expansion-item v-if="member.adult&&!member.erased" label="Uprawnienia" group="right-right-card" class="bg-white">
@@ -440,9 +379,9 @@
                   </div>
 </q-expansion-item>
 <q-expansion-item v-if="member.adult&&!member.erased" label="Sędzia" group="qualifications">
-                    <q-item class="full-width col">
-                      <q-input outlined filled class="full-width" v-if="member.memberPermissions.arbiterNumber==null||member.memberPermissions.arbiterNumber==''" v-model="permissionsArbiterNumber" label="Numer Uprawnień" />
-                        <q-input class="col-5" outlined filled v-model="permissionsArbiterPermissionValidThru" mask="####/12/31" label="Ważne do:">
+                    <q-item class="full-width">
+                      <q-input outlined filled class="full-width col" v-if="member.memberPermissions.arbiterNumber==null||member.memberPermissions.arbiterNumber==''" v-model="permissionsArbiterNumber" label="Numer Uprawnień" />
+                        <q-input class="col" outlined filled v-model="permissionsArbiterPermissionValidThru" mask="####/12/31" label="Ważne do:">
                           <template v-slot:append>
                             <q-icon name="event" class="cursor-pointer">
                               <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -455,7 +394,7 @@
                             </q-icon>
                           </template>
                         </q-input>
-                        <q-btn class="col" v-if="member.memberPermissions.arbiterNumber!=null" color="primary" label="Przedłuż" @click="memberUUID=member.uuid,arbiterProlongConfirm=true"/>
+                        <q-btn class="col full-width" v-if="member.memberPermissions.arbiterNumber!=null" color="primary" label="Przedłuż" @click="memberUUID=member.uuid,arbiterProlongConfirm=true"/>
                       </q-item>
                       <div class="col">
                     <div class="col">
@@ -464,34 +403,30 @@
                     <q-radio class="flex" v-if="member.memberPermissions.arbiterNumber==null" v-model="ordinal" :val="3" label="Klasa 1" color="secondary" />
                     <q-radio class="flex" v-if="member.memberPermissions.arbiterNumber==null" v-model="ordinal" :val="4" label="Klasa Państwowa" color="secondary" />
                     <q-radio class="flex" v-if="member.memberPermissions.arbiterNumber==null" v-model="ordinal" :val="5" label="Klasa Międzynarodowa" color="secondary" />
-                    <q-radio class="flex" v-if="member.memberPermissions.arbiterNumber!=null&&member.memberPermissions.arbiterClass!='Klasa 3'&&member.memberPermissions.arbiterClass=='Brak'" v-model="ordinal" :val="1" label="Klasa 3" color="secondary" />
-                    <q-radio class="flex" v-if="member.memberPermissions.arbiterNumber!=null&&member.memberPermissions.arbiterClass!='Klasa 2'&&member.memberPermissions.arbiterClass=='Klasa 3'" v-model="ordinal" :val="2" label="Klasa 2" color="secondary" />
-                    <q-radio class="flex" v-if="member.memberPerarbiterNumber!=null&&member.memberPermissions.arbiterClass!='Klasa 1'&&member.memberPermissions.arbiterClass=='Klasa 2'" v-model="ordinal" :val="3" label="Klasa 1" color="secondary" />
-                    <q-radio class="flex" v-if="member.memberPermissions.arbiterNumber!=null&&member.memberPermissions.arbiterClass!='Klasa Państwowa'&&member.memberPermissions.arbiterClass=='Klasa 1'" v-model="ordinal" :val="4" label="Klasa Państwowa" color="secondary" />
-                    <q-radio class="flex" v-if="member.memberPermissions.arbiterNumber!=null&&member.memberPermissions.arbiterClass!='Klasa Międzynarodowa'&&member.memberPermissions.arbiterClass=='Klasa Państwowa'" v-model="ordinal" :val="5" label="Klasa Międzynarodowa" color="secondary" />
                     </div>
-                    <q-item class="full-width col">
-                    <q-btn class="full-width col-1" v-if="member.memberPermissions.arbiterNumber!=null" color="primary" label="Podnieś Klasę" @click="memberUUID=member.uuid,arbiterUpdateClassConfirm=true"/>
-                    <q-btn class="full-width col-1" v-if="member.memberPermissions.arbiterNumber==null||member.memberPermissions.arbiterNumber==''" label="Dodaj" color="primary" @click="memberUUID=member.uuid,arbiterConfirm=true"/>
+                    <q-item class="full-width row">
+                      <q-input outlined filled class="full-width col" v-if="member.memberPermissions.arbiterNumber!=null||member.memberPermissions.arbiterNumber!=''" v-model="permissionsArbiterNumber" label="Numer Uprawnień" />
+                      <q-btn class="full-width col" v-if="member.memberPermissions.arbiterNumber!=null||member.memberPermissions.arbiterNumber!=''" label="Nadaj Nowy Numer" color="primary" @click="memberUUID=member.uuid,arbiterConfirm=true"/>
                     </q-item>
-                      </div>
+                    <q-item class="full-width">
+                      <q-btn class="full-width col-1" v-if="member.memberPermissions.arbiterNumber!=null" color="primary" label="Podnieś Klasę" @click="memberUUID=member.uuid,arbiterUpdateClassConfirm=true"/>
+                      <q-btn class="full-width col-1" v-if="member.memberPermissions.arbiterNumber==null||member.memberPermissions.arbiterNumber==''" label="Dodaj" color="primary" @click="memberUUID=member.uuid,arbiterConfirm=true"/>
+                    </q-item>
+                    </div>
     </q-expansion-item>
     </q-expansion-item>
     <q-expansion-item v-if="!member.erased" label="Portal PZSS" group="right-right-card" class="bg-white">
       <div class="row">
-        <q-field v-if="member.pzss" class="col" standout stack-label>
-          <template v-slot:control>
-            <div class="text-center full-width no-outline" tabindex="0">Wprowadzony do portalu</div>
-          </template>
+        <q-field v-if="member.pzss" class="col q-pa-md" bg-color="green-3" standout="bg-green-3 text-black" stack-label>
+            <div class="self-center full-width no-outline text-center text-black" tabindex="0">Wprowadzony do portalu</div>
         </q-field>
-        <q-field v-if="!member.pzss" class="col bg-red-3" standout stack-label>
-          <template v-slot:control>
-            <div class="text-center full-width no-outline" tabindex="0">Nie Wprowadzony do Portalu</div>
-          </template>
+        <q-field v-if="!member.pzss" class="col q-pa-md" bg-color="red-3" standout="bg-red-3 text-black" stack-label>
+            <div class="self-center full-width no-outline text-center text-black" tabindex="0">Nie Wprowadzony do Portalu</div>
         </q-field>
-        <q-item v-if="member.pzss"><q-btn type="a" href="https://portal.pzss.org.pl/CLub/Player" target="_blank" label="Przejdź do portalu" color="primary"/></q-item>
-        <q-item v-if="!member.pzss"><q-btn type="a" href="https://portal.pzss.org.pl/CLub/Player/Add" target="_blank" label="Przejdź do portalu" color="primary" @click="memberUUID=member.uuid,pzssPortal = true"/></q-item>
+        <q-item class="q-pa-md"><q-btn label="pobierz plik .csv" @click="name = member.firstName, name2 = member.secondName,memberUUID = member.uuid, getCSVFile()"></q-btn></q-item>
       </div>
+        <q-item v-if="member.pzss"><q-btn class="full-width q-pa-none" type="a" href="https://portal.pzss.org.pl/CLub/Player" target="_blank" label="Przejdź do portalu" color="primary"/></q-item>
+        <q-item v-if="!member.pzss"><q-btn class="full-width q-pa-none" type="a" href="https://portal.pzss.org.pl/CLub/Player/Add" target="_blank" label="Przejdź do portalu" color="primary" @click="memberUUID=member.uuid,pzssPortal = true"/></q-item>
     </q-expansion-item>
     <!-- aktywować gdy będą już karty z kodami kreskowymi -->
     <!-- <q-expansion-item v-if="!member.erased" label="Przydziel Numer Karty" group="right-right-card" class="bg-white">
@@ -501,15 +436,15 @@
       </div>
     </q-expansion-item> -->
     <q-expansion-item v-if="member.active" label="Przenieś do Nieaktywnych" group="right-right-card" class="bg-red">
-                <div class="q-pa-md text-h6 text-bold text-center full-width bg-red-2">Czy napewno chcesz przenieść osobę?</div>
+                <div class="q-pa-md text-h6 text-bold text-center full-width bg-red-2">Czy na pewno chcesz przenieść osobę?</div>
                 <div class="q-pa-md text-bold text-center full-width bg-red-2"><q-btn class="full-width" label="Przenieś" color="red" @click="memberUUID=member.uuid,deactivate=true"/></div>
 </q-expansion-item>
 <q-expansion-item v-if="!member.adult&&active" label="Przenieś do Grupty Powszechnej" group="right-right-card">
-                <q-item><q-item-label v-if="member.active">Czy napewno chcesz przenieść osobę?</q-item-label></q-item>
-                <q-item><q-btn label="Przenieś" color="red" @click="memberUUID=member.uuid,changeAdultConfirm=true"/></q-item>
+                <q-item><q-item-label v-if="member.active">Czy na pewno chcesz przenieść osobę?</q-item-label></q-item>
+                <q-item ><q-btn class="full-width" label="Przenieś" color="red" @click="memberUUID=member.uuid,changeAdultConfirm=true"/></q-item>
 </q-expansion-item>
 <q-expansion-item @focus.stop="erasedReasontype=null,erasedDate=null" class="bg-red" @click="getListErasedType()" v-if="!member.active&&!member.erased" label="Skreśl z listy członków" group="right-right-card">
-                <q-item class="bg-red-2"><q-item-label class="text-h6 text-bold text-center full-width">Czy napewno chcesz usunąć osobę?</q-item-label></q-item>
+                <q-item class="bg-red-2"><q-item-label class="text-h6 text-bold text-center full-width">Czy na pewno chcesz usunąć osobę?</q-item-label></q-item>
                   <q-item class="bg-red-2">
                     <q-select color="black" options-cover filled stack-label class="full-width" v-model="erasedReasontype" :options="erasedTypes" label="wybierz przyczynę"></q-select>
                       <q-input class="col-5" color="black" outlined filled v-model="erasedDate" mask="####/##/##" label="w dniu:">
@@ -532,65 +467,55 @@
                 <q-item class="bg-red-2" v-if="erasedReasontype!=null"><q-btn label="Usuń" color="red" @click="memberUUID=member.uuid,eraseConfirm=true"/></q-item>
 </q-expansion-item>
 <q-expansion-item v-if="!member.active&&!member.erased" class="bg-green" label="Przywróć do Aktywnych" group="right-right-card">
-                <q-item class="bg-green-2"><q-item-label class="text-h6 text-bold text-center full-width">Czy napewno chcesz przywrócić osobę?</q-item-label></q-item>
+                <q-item class="bg-green-2"><q-item-label class="text-h6 text-bold text-center full-width">Czy na pewno chcesz przywrócić osobę?</q-item-label></q-item>
                 <q-item class="bg-green-2"><q-btn class="full-width" label="Przywróć" color="green-8" @click="memberUUID=member.uuid,backConfirm=true"/></q-item>
 </q-expansion-item>
 <q-expansion-item v-if="!member.active&&member.erased" class="bg-green" label="Przywróć Członka klubu" group="right-right-card">
-                <q-item class="bg-green-2"><q-item-label class="text-h6 text-bold text-center full-width">Czy napewno chcesz przywrócić osobę?</q-item-label></q-item>
+                <q-item class="bg-green-2"><q-item-label class="text-h6 text-bold text-center full-width">Czy na pewno chcesz przywrócić osobę?</q-item-label></q-item>
                 <q-item class="bg-green-2"><q-btn label="Przywróć" class="full-width" color="green-8" @click="memberUUID=member.uuid,resurrectCode=true"/></q-item>
 </q-expansion-item>
 </q-expansion-item>
 <q-expansion-item label="Historia startów" group="right-card" class="bg-grey-3">
               <div class="bg-white">
-              <q-field class="col" standout stack-label>
-                  <template v-slot:control>
-                    <div class="self-center full-width no-outline text-center" tabindex="0">Licznik startów</div>
-                  </template>
+              <q-field class="col" standout="bg-accent text-black" stack-label>
+                    <div class="self-center full-width no-outline text-center text-black" tabindex="0">Licznik startów</div>
                 </q-field>
               <div class="row">
-                <q-field class="col" standout label="Pistolet" stack-label>
-                  <template v-slot:control>
-                    <div class="self-center full-width no-outline" tabindex="0">{{member.history.pistolCounter}}</div>
-                  </template>
+                <q-field class="col" standout="bg-accent text-black" label="Pistolet" stack-label>
+                    <div class="self-center full-width no-outline text-left text-black" tabindex="0">{{member.history.pistolCounter}}</div>
                 </q-field>
-                <q-field class="col" standout label="Karabin" stack-label>
-                  <template v-slot:control>
-                    <div class="self-center full-width no-outline" tabindex="1">{{member.history.rifleCounter}}</div>
-                  </template>
+                <q-field class="col" standout="bg-accent text-black" label="Karabin" stack-label>
+                    <div class="self-center full-width no-outline text-left text-black" tabindex="1">{{member.history.rifleCounter}}</div>
                 </q-field>
-                <q-field class="col" standout label="Strzelba" stack-label>
-                  <template v-slot:control>
-                    <div class="self-center full-width no-outline" tabindex="2"> {{member.history.shotgunCounter}} </div>
-                  </template>
+                <q-field class="col" standout="bg-accent text-black" label="Strzelba" stack-label>
+                    <div class="self-center full-width no-outline text-left text-black" tabindex="2"> {{member.history.shotgunCounter}} </div>
                 </q-field>
               </div>
             </div>
   <q-expansion-item label="Daty Startów" class="bg-grey-3 q-pa-none">
     <q-scroll-area class="full-width q-pa-none" style="height: 200px;">
               <div class="row" v-for="(competitionHistory,uuid) in member.history.competitionHistory" :key="uuid">
-                <q-field class="col" standout label="Nazwa" stack-label>
-                  <template v-slot:control>
-                    <div class="self-center full-width no-outline" tabindex="0">{{competitionHistory.name}}</div>
-                  </template>
+                <q-field class="col" standout="bg-accent text-black" label="Nazwa" stack-label>
+                    <div class="self-center full-width no-outline text-left text-black" tabindex="0">{{competitionHistory.name}}</div>
                 </q-field>
-                <q-field class="col-3" standout label="Data" stack-label>
-                  <template v-slot:control>
-                    <div class="self-center full-width no-outline" tabindex="1">{{competitionHistory.date}}</div>
-                  </template>
+                <q-field class="col-3" standout="bg-accent text-black" label="Data" stack-label>
+                    <div class="self-center full-width no-outline text-left text-black" tabindex="1">{{competitionHistory.date}}</div>
                 </q-field>
-                <q-field class="col" standout label="Konkurencja" stack-label>
-                  <template v-slot:control>
-                    <div class="self-center full-width no-outline" tabindex="2"> {{competitionHistory.discipline}} </div>
-                  </template>
+                <q-field class="col" standout="bg-accent text-black" label="Konkurencja" stack-label>
+                    <div class="self-center full-width no-outline text-left text-black" tabindex="2"> {{competitionHistory.discipline}} </div>
+                </q-field>
+                <q-field v-if="competitionHistory.wzss" class="col" standout="bg-accent text-black" label="WZSS" stack-label>
+                    <div class="self-center full-width no-outline text-left text-black" tabindex="2">Tak</div>
+                </q-field>
+                <q-field v-if="!competitionHistory.wzss" class="col" standout="bg-accent text-black" label="WZSS" stack-label>
+                    <div class="self-center full-width no-outline text-left text-black" tabindex="2">Nie</div>
                 </q-field>
               </div>
     </q-scroll-area>
     <q-scroll-area v-if="member.history.competitionHistory.lenght<1" class="full-width q-pa-none" style="height: 200px;">
               <div>
-                <q-field class="col" standout stack-label>
-                  <template v-slot:control>
-                    <div class="self-center full-width no-outline" tabindex="0">Brak</div>
-                  </template>
+                <q-field class="col" standout="bg-accent text-black" stack-label>
+                    <div class="self-center full-width no-outline text-center text-black" tabindex="0">Brak</div>
                 </q-field>
               </div>
     </q-scroll-area>
@@ -598,20 +523,14 @@
 </q-expansion-item>
 <q-expansion-item v-if="member.memberPermissions.arbiterNumber!=null" label="Historia sędziowania" group="right-card" class="bg-grey-3">
               <div class="row" v-for="(judgingHistory,uuid) in member.history.judgingHistory" :key="uuid">
-                <q-field class="col" standout label="Nazwa" stack-label>
-                  <template v-slot:control>
-                    <div class="self-center full-width no-outline" tabindex="0">{{judgingHistory.name}}</div>
-                  </template>
+                <q-field class="col" standout="bg-accent text-black" label="Nazwa" stack-label>
+                    <div class="self-center full-width no-outline text-left text-black" tabindex="0">{{judgingHistory.name}}</div>
                 </q-field>
-                <q-field class="col-3" standout label="Data" stack-label>
-                  <template v-slot:control>
-                    <div class="self-center full-width no-outline" tabindex="1">{{judgingHistory.date}}</div>
-                  </template>
+                <q-field class="col-3" standout="bg-accent text-black" label="Data" stack-label>
+                    <div class="self-center full-width no-outline text-left text-black" tabindex="1">{{judgingHistory.date}}</div>
                 </q-field>
-                <q-field class="col" standout label="Funkcja" stack-label>
-                  <template v-slot:control>
-                    <div class="self-center full-width no-outline" tabindex="2"> {{judgingHistory.judgingFunction}} </div>
-                  </template>
+                <q-field class="col" standout="bg-accent text-black" label="Funkcja" stack-label>
+                    <div class="self-center full-width no-outline text-left text-black" tabindex="2"> {{judgingHistory.judgingFunction}} </div>
                 </q-field>
               </div>
 </q-expansion-item>
@@ -660,123 +579,97 @@
         <div v-for="(memberDTO,uuid) in memberDTOArg" :key="uuid" class="col">
           <div class="row">
             <div v-if="!memberDTO.erased" class="col" @click="showloading(),allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
-            <q-field class="col full-width" align="left" standout stack-label>
-              <template v-slot:control>
-                <div>
-                  <div class="self-center full-width no-outline" tabindex="0">{{memberDTO.secondName}} {{memberDTO.firstName}}</div>
-                  <div v-if="!memberDTO.pzss" class="self-center full-width no-outline" tabindex="0">Nie wpisany do portalu PZSS</div>
+            <q-field class="col full-width" align="left" standout="bg-accent text-black" stack-label>
+                <div class="row q-pa-xs full-width">
+                  <div class="col self-center full-width no-outline text-left text-black" tabindex="0">{{memberDTO.secondName}} {{memberDTO.firstName}}</div>
+                  <div v-if="!memberDTO.pzss" class="col self-center full-width no-outline text-left text-black" tabindex="0">Nie wpisany do portalu PZSS</div>
                 </div>
-              </template>
             </q-field>
             </div>
-            <div v-if="!memberDTO.erased" class="col" @click="showloading(),allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
-            <q-field class="col full-width" align="left" standout stack-label>
-              <template v-slot:control>
-                <div class="row">
-                  <div class="self-center full-width no-outline" tabindex="0">Numer leg. {{memberDTO.legitimationNumber}}</div>
+            <div v-if="!memberDTO.erased" class="col-2" @click="showloading(),allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
+            <q-field class="col full-width" align="left" standout="bg-accent text-black" stack-label>
+                <div class="row q-pa-xs">
+                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">Numer leg. {{memberDTO.legitimationNumber}}</div>
                 </div>
-              </template>
             </q-field>
             </div>
-            <div v-if="!memberDTO.erased && memberDTO.license.number!=null && memberDTO.license.valid" class="col" @click="showloading(),allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
-            <q-field  class="col full-width" align="left" standout stack-label>
-              <template v-slot:control>
-                <div class="row">
-                  <div class="self-center full-width no-outline" tabindex="0">Licencja jest ważna</div>
+            <div v-if="!memberDTO.erased && memberDTO.license.number!=null && memberDTO.license.valid" class="col-2" @click="showloading(),allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
+            <q-field  class="col full-width" align="left" standout="bg-accent text-black" stack-label>
+                <div class="row q-pa-xs">
+                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">Licencja jest ważna</div>
                 </div>
-              </template>
             </q-field>
             </div>
-            <div v-if="memberDTO.license.number!=null && !memberDTO.license.valid && !memberDTO.erased" class="col" @click="showloading(),allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
-            <q-field  class="col full-width bg-yellow-3" align="left" standout stack-label>
-              <template v-slot:control>
-                <div class="row">
-                  <div class="self-center full-width no-outline" tabindex="0">Licencja jest nieważna</div>
+            <div v-if="memberDTO.license.number!=null && !memberDTO.license.valid && !memberDTO.erased" class="col-2" @click="showloading(),allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
+            <q-field  class="col full-width bg-yellow-3" align="left" standout="bg-accent text-black" stack-label>
+                <div class="row q-pa-xs">
+                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">Licencja jest nieważna</div>
                 </div>
-              </template>
             </q-field>
             </div>
-            <div v-if="memberDTO.license.number==null && !memberDTO.erased" class="col" @click="showloading(),allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
-            <q-field  class="col full-width" align="left" standout stack-label>
-              <template v-slot:control>
-                <div class="row">
-                  <div class="self-center full-width no-outline" tabindex="0">Nie posiada licencji</div>
+            <div v-if="memberDTO.license.number==null && !memberDTO.erased" class="col-2" @click="showloading(),allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
+            <q-field class="col full-width" align="left" standout="bg-accent text-black" stack-label>
+                <div class="row q-pa-xs">
+                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">Nie posiada licencji</div>
                 </div>
-              </template>
             </q-field>
             </div>
-            <div v-if="memberDTO.active && !memberDTO.erased" class="col" @click="showloading(),allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
-            <q-field class="col full-width bg-green-3" align="left" standout stack-label>
-              <template v-slot:control>
-                <div class="row">
-                  <div class="text-center full-width no-outline" tabindex="0">Klubowicz Aktywny</div>
+            <div v-if="memberDTO.active && !memberDTO.erased" class="col-3" @click="showloading(),allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
+            <q-field class="col full-width bg-green-3" standout="bg-accent text-center text-black" stack-label>
+                <div class="row q-pa-xs full-width">
+                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">Klubowicz Aktywny</div>
                 </div>
-              </template>
             </q-field>
             </div>
-            <div v-if="!memberDTO.active && !memberDTO.erased"  class="col" @click="showloading(),allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
-            <q-field class="col full-width bg-red-4" align="left" standout stack-label>
-              <template v-slot:control>
-                <div class="row">
-                  <div class="self-center full-width no-outline" tabindex="0">Klubowicz Nieaktywny - Sprawdź składki</div>
+            <div v-if="!memberDTO.active && !memberDTO.erased"  class="col-3" @click="showloading(),allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
+            <q-field class="col full-width bg-red-4" standout="bg-accent text-center text-black" stack-label>
+                <div class="row q-pa-xs full-width">
+                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">Klubowicz Nieaktywny - Sprawdź składki</div>
                 </div>
-              </template>
             </q-field>
             </div>
-            <div v-if="memberDTO.erased && memberDTO.erasedEntity.erasedType == erasedType" class="col-3" @click="showloading(),allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
-            <q-field class="col full-width" align="left" standout stack-label>
-              <template v-slot:control>
-                <div>
-                  <div class="self-center full-width no-outline" tabindex="0">{{memberDTO.secondName}} {{memberDTO.firstName}}</div>
-                  <div v-if="!memberDTO.pzss" class="self-center full-width no-outline" tabindex="0">Nie wpisany do portalu PZSS</div>
+            <div v-if="memberDTO.erased && memberDTO.erasedEntity.erasedType == erasedType" class="col-5" @click="showloading(),allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
+            <q-field class="col full-width" align="left" standout="bg-accent text-black" stack-label>
+                <div class="row q-pa-xs full-width">
+                  <div class="col self-center full-width no-outline text-center text-black" tabindex="0">{{memberDTO.secondName}} {{memberDTO.firstName}}</div>
+                  <div v-if="!memberDTO.pzss" class="col self-center full-width no-outline text-center text-black" tabindex="0">Nie wpisany do portalu PZSS</div>
                 </div>
-              </template>
             </q-field>
             </div>
-            <div v-if="memberDTO.erased && memberDTO.erasedEntity.erasedType == erasedType" class="col-3" @click="showloading(),allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
-            <q-field   class="col full-width" align="left" standout stack-label>
-              <template v-slot:control>
-                <div class="row">
-                  <div class="self-center full-width no-outline" tabindex="0">Numer leg. {{memberDTO.legitimationNumber}}</div>
+            <div v-if="memberDTO.erased && memberDTO.erasedEntity.erasedType == erasedType" class="col-2" @click="showloading(),allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
+            <q-field class="col full-width" align="left" standout="bg-accent text-black" stack-label>
+                <div class="row q-pa-xs">
+                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">Numer leg. {{memberDTO.legitimationNumber}}</div>
                 </div>
-              </template>
             </q-field>
             </div>
-            <div v-if="memberDTO.erased && memberDTO.license.number!=null && memberDTO.license.valid && memberDTO.erasedEntity.erasedType == erasedType" class="col-3" @click="showloading(),allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
-            <q-field  class="col full-width" align="left" standout stack-label>
-              <template v-slot:control>
-                <div class="row">
-                  <div class="self-center full-width no-outline" tabindex="0">Licencja jest ważna</div>
+            <div v-if="memberDTO.erased && memberDTO.license.number!=null && memberDTO.license.valid && memberDTO.erasedEntity.erasedType == erasedType" class="col-2" @click="showloading(),allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
+            <q-field class="col full-width" align="left" standout="bg-accent text-black" stack-label>
+                <div class="row q-pa-xs">
+                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">Licencja jest ważna</div>
                 </div>
-              </template>
             </q-field>
             </div>
-            <div v-if="memberDTO.erased && memberDTO.license.number!=null && !memberDTO.license.valid && memberDTO.erasedEntity.erasedType == erasedType" class="col-3" @click="showloading(),allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
-            <q-field  class="col full-width bg-yellow-3" align="left" standout stack-label>
-              <template v-slot:control>
-                <div class="row">
-                  <div class="self-center full-width no-outline" tabindex="0">Licencja jest nieważna</div>
+            <div v-if="memberDTO.erased && memberDTO.license.number!=null && !memberDTO.license.valid && memberDTO.erasedEntity.erasedType == erasedType" class="col-2" @click="showloading(),allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
+            <q-field class="col full-width bg-yellow-3" align="left" standout="bg-accent text-black" stack-label>
+                <div class="row q-pa-xs">
+                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">Licencja jest nieważna</div>
                 </div>
-              </template>
             </q-field>
             </div>
-            <div v-if="memberDTO.erased && memberDTO.license.number==null && memberDTO.erasedEntity.erasedType == erasedType" class="col-3" @click="showloading(),allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
-            <q-field  class="col full-width" align="left" standout stack-label>
-              <template v-slot:control>
-                <div class="row">
-                  <div class="self-center full-width no-outline" tabindex="0">Nie posiada licencji</div>
+            <div v-if="memberDTO.erased && memberDTO.license.number==null && memberDTO.erasedEntity.erasedType == erasedType" class="col-2" @click="showloading(),allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
+            <q-field  class="col full-width" align="left" standout="bg-accent text-black" stack-label>
+                <div class="row q-pa-xs">
+                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">Nie posiada licencji</div>
                 </div>
-              </template>
             </q-field>
             </div>
-            <div v-if="memberDTO.erased && memberDTO.erasedEntity.erasedType == erasedType" class="col-3">
-            <q-field class="col full-width bg-grey-4" align="left" standout stack-label>
-              <template v-slot:control>
-                <div class="row">
-                  <div class="self-center full-width no-outline" tabindex="0">{{memberDTO.erasedEntity.erasedType}} {{memberDTO.erasedEntity.date}}</div>
+            <div v-if="memberDTO.erased && memberDTO.erasedEntity.erasedType == erasedType" class="col">
+            <q-field class="col full-width bg-grey-4" align="left" standout="bg-accent text-black" stack-label>
+                <div class="row q-pa-xs">
+                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">{{memberDTO.erasedEntity.erasedType}} {{memberDTO.erasedEntity.date}}</div>
                   <div v-if="memberDTO.erasedEntity.additionalDescription!=null" class="self-center full-width no-outline" tabindex="0">{{memberDTO.erasedEntity.additionalDescription}}</div>
                 </div>
-              </template>
             </q-field>
             </div>
             </div>
@@ -931,8 +824,8 @@
 </q-dialog>
 <q-dialog v-model="noDomesticStarts">
     <q-card>
-      <h4>Klubowicz nie ma zaliczonej wymaganej ilości startów </h4>
-      <h4>Upewnij się, że klubowicz może udokumentować swoje starty</h4>
+      <h4 class="text-bold text-center">Klubowicz nie ma zaliczonej wymaganej ilości startów </h4>
+      <h4 class="text-bold text-center">Upewnij się, że klubowicz może udokumentować swoje starty</h4>
       <q-card-actions align="right">
           <q-btn flat label="zamknij" color="primary" v-close-popup @click="prolongLicenseConfirm=true"/>
         </q-card-actions>
@@ -971,7 +864,7 @@
       <q-card>
         <q-card-section class="row items-center">
           <q-avatar icon="warning"/>
-          <span class="q-ml-sm">Czy napewno chcesz przywrócić Klubowicza?</span>
+          <span class="q-ml-sm">Czy na pewno chcesz przywrócić Klubowicza?</span>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -1067,7 +960,7 @@
 
         <q-card-actions align="right">
           <q-btn flat label="anuluj" color="primary" v-close-popup />
-          <q-btn flat label="Tak" color="primary" v-close-popup @click="updateMemberPermissions(memberUUID, permissionsArbiterNumber, permissionsArbiterPermissionValidThru),arbiterProlongConfirm=true" />
+          <q-btn flat label="Tak" color="primary" v-close-popup @click="updateMemberPermissions(memberUUID, permissionsArbiterNumber, permissionsArbiterPermissionValidThru)" />
         </q-card-actions>
       </q-card>
 </q-dialog>
@@ -1084,7 +977,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="arbiterUpdateClassConfirm" persistent @keypress.enter="updateMemberPermissions(memberUUID),value4=true,arbiterUpdateClassConfirm=false">
+<q-dialog v-model="arbiterUpdateClassConfirm" persistent @keypress.enter="updateMemberArbiterClass(memberUUID),arbiterUpdateClassConfirm=false">
       <q-card>
         <q-card-section class="row items-center">
           <q-avatar icon="add" color="primary"/>
@@ -1093,7 +986,7 @@
 
         <q-card-actions align="right">
           <q-btn flat label="anuluj" color="primary" v-close-popup />
-          <q-btn flat label="podnieś" color="primary" v-close-popup @click="updateMemberPermissions(memberUUID),value4=true" />
+          <q-btn flat label="podnieś" color="primary" v-close-popup @click="updateMemberArbiterClass(memberUUID)" />
         </q-card-actions>
       </q-card>
 </q-dialog>
@@ -1206,7 +1099,7 @@
 
         <q-card-actions align="right">
           <q-btn flat label="anuluj" color="primary" v-close-popup />
-          <q-btn flat label="Dodaj" color="primary" v-close-popup @click="addMemberAndAmmoToCaliber()" />
+          <q-btn flat label="wydaj" color="primary" v-close-popup @click="addMemberAndAmmoToCaliber()" />
         </q-card-actions>
       </q-card>
 </q-dialog>
@@ -1498,10 +1391,10 @@
           <div class="text-h6">Uwaga! Wprowadzając zmiany bądź pewny tego co robisz</div>
           <div class="row bg-grey-3">
             <div class="q-pa-md col-6">
-              <q-input filled standout stack-label v-model="editLicenseNumber" label="Numer Licencji"></q-input>
+              <q-input filled standout="bg-accent text-black" stack-label v-model="editLicenseNumber" label="Numer Licencji"></q-input>
             </div>
             <div class="q-pa-md col-6">
-              <q-input filled standout stack-label v-model="editLicenseDate" mask="####/12/31" label="Ważność licencji">
+              <q-input filled standout="bg-accent text-black" stack-label v-model="editLicenseDate" mask="####/12/31" label="Ważność licencji">
                 <template v-slot:append>
                   <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -1548,7 +1441,7 @@
           <div class="text-h6 text-center">Pamiętaj! Składki dla dorosłych ustaw na 06/30 lub 12/31</div>
           <div class="row bg-grey-3">
             <div class="q-pa-md col-6">
-              <q-input  v-model="editContributionPaymentDate" filled standout stack-label mask="####/##/##" label="Data Opłacenia Składki">
+              <q-input  v-model="editContributionPaymentDate" filled standout="bg-accent text-black" stack-label mask="####/##/##" label="Data Opłacenia Składki">
                 <template v-slot:append>
                   <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -1563,7 +1456,7 @@
               </q-input>
             </div>
             <div class="q-pa-md col-6">
-              <q-input class="col-6" v-model="editContributionValidThruDate" filled standout stack-label mask="####/##/##" label="Ważność Sładki">
+              <q-input class="col-6" v-model="editContributionValidThruDate" filled standout="bg-accent text-black" stack-label mask="####/##/##" label="Ważność Sładki">
                 <template v-slot:append>
                   <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -1616,7 +1509,7 @@
           <div class="text-h6 text-center">Uwaga! Wprowadzając zmiany bądź pewny tego co robisz</div>
           <div class="row bg-grey-3">
             <div class="q-pa-md col-6">
-              <q-input  v-model="editLicensePaymentDate" filled standout stack-label mask="####/##/##" label="Data Opłacenia Licencji">
+              <q-input  v-model="editLicensePaymentDate" filled standout="bg-accent text-black" stack-label mask="####/##/##" label="Data Opłacenia Licencji">
                 <template v-slot:append>
                   <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -1631,7 +1524,7 @@
               </q-input>
             </div>
             <div class="q-pa-md col-6">
-              <q-input class="col-6" v-model="editLicensePaymentYear" filled standout stack-label mask="####" label="Opłacona na Rok"></q-input>
+              <q-input class="col-6" v-model="editLicensePaymentYear" filled standout="bg-accent text-black" stack-label mask="####" label="Opłacona na Rok"></q-input>
             </div>
           </div>
           <div class="row full-width bg-red-3">
@@ -2175,6 +2068,20 @@ export default {
         fileLink.click()
       })
     },
+    getCSVFile () {
+      axios({
+        url: 'http://' + this.local + '/files/downloadCSVFile/' + this.memberUUID,
+        method: 'GET',
+        responseType: 'blob'
+      }).then(response => {
+        var fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        var fileLink = document.createElement('a')
+        fileLink.href = fileURL
+        fileLink.setAttribute('download', this.name + '_' + this.name2 + '.csv')
+        document.body.appendChild(fileLink)
+        fileLink.click()
+      })
+    },
     addPatent (uuid, patentNumber, patentPistolPermission, patentRiflePermission, patentShotgunPermission, patentDate) {
       var data = {
         patentNumber: patentNumber,
@@ -2427,6 +2334,20 @@ export default {
           this.permissionsArbiterNumber = ''
           this.permissionsArbiterPermissionValidThru = ''
           this.ordinal = ''
+          this.showloading()
+          this.getMember(this.memberUUID)
+        } else { this.failure = true }
+      })
+    },
+    updateMemberArbiterClass (uuid) {
+      fetch('http://' + this.local + '/permissions/arbiter/' + uuid, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          this.arbiterUpdateClassAlert = true
           this.showloading()
           this.getMember(this.memberUUID)
         } else { this.failure = true }

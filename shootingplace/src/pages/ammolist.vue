@@ -23,10 +23,10 @@
           Lista Amunicji {{ammoList[0].date}} numer {{ammoList[0].number}}
         </q-item-section>
       <q-item-section side top>
-      <q-btn color="primary" label="Zamknij listę" @click="uuid=ammoList[0].uuid,showloading(),closeEvidence (),getAmmoData(),getCLosedEvidence()"/>
+      <q-btn color="primary" label="Zamknij listę" @click="uuid=ammoList[0].uuid,confirmation=true"/>
       </q-item-section>
       <q-item-section side top>
-      <q-btn color="primary" label="Pobierz listę" @click=" date = ammoList[0].date,uuid=ammoList[0].uuid,showloading(),getAmmoListPDF(),getAmmoData(),getCLosedEvidence()"/>
+      <q-btn color="primary" label="Pobierz listę" @click="date=ammoList[0].date,uuid=ammoList[0].uuid,showloading(),getAmmoListPDF(),getAmmoData(),getCLosedEvidence()"/>
       </q-item-section>
       </q-item>
       <div v-for="(ammoList, uuid) in ammoList" :key="uuid">
@@ -38,22 +38,16 @@
               </q-item>
                 <div class="col">
                   <div class="row" v-for="(ammoUsedToEvidenceEntityList,uuid) in ammoInEvidenceEntityList.ammoUsedToEvidenceEntityList" :key="uuid">
-                    <q-field color="black" class="col-10" standout label="osoba" stack-label>
-                      <template v-slot:control>
-                        <div class="row">{{ammoUsedToEvidenceEntityList.name}}</div>
-                      </template>
+                    <q-field color="black" class="col-10" standout="bg-accent text-black" label="osoba" stack-label>
+                        <div class="row text-black">{{ammoUsedToEvidenceEntityList.name}}</div>
                     </q-field>
-                    <q-field class="col-2" standout label="ilość" stack-label>
-                      <template v-slot:control>
-                        <div class="row">{{ammoUsedToEvidenceEntityList.counter}}</div>
-                      </template>
+                    <q-field class="col-2" standout="bg-accent text-black" label="ilość" stack-label>
+                        <div class="row text-black">{{ammoUsedToEvidenceEntityList.counter}}</div>
                     </q-field>
                   </div>
                   <div class="row reverse">
-                    <q-field class="col-2 bg-grey-4" standout label="suma" stack-label>
-                      <template v-slot:control>
-                        <div>{{ammoInEvidenceEntityList.quantity}}</div>
-                      </template>
+                    <q-field class="col-2 bg-grey-4" standout="bg-accent text-black" label="suma" stack-label>
+                        <div class="text-black">{{ammoInEvidenceEntityList.quantity}}</div>
                     </q-field>
                   </div>
                 </div>
@@ -71,8 +65,10 @@
         <q-scroll-area style="height: 550px;">
         <div v-for="(ammoListClose,id) in ammoListClose" :key="id">
           <q-item>
-            <q-btn class="col-6" :label="ammoListClose.date" @click="date = ammoListClose.date,uuid= ammoListClose.evidenceUUID,getAmmoListPDF()"></q-btn>
-            <q-btn class="col-6" label="otwórz listę" @click="uuid= ammoListClose.evidenceUUID,openList=true"></q-btn>
+            <q-btn class="col full-width full-height" @click="date = ammoListClose.date,ammunitionListNumber = ammoListClose.number,uuid= ammoListClose.evidenceUUID,getEvidence(),ammunitionListInfo=true">
+              <div>{{ammoListClose.number}}</div>
+              <div>{{ammoListClose.date}}</div>
+              </q-btn>
           </q-item>
         </div>
         </q-scroll-area>
@@ -87,6 +83,37 @@
 
         <q-card-actions align="right">
           <q-btn flat label="OK" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+</q-dialog>
+<q-dialog v-model="ammunitionListInfo">
+      <q-card>
+        <q-card-section class="col">
+          <div class="col q-pa-xs">
+            <div class="text-h6">Lista numer {{ammunitionListNumber}}</div>
+            <div class="text-h6">Informacje dla listy z dnia {{date}}</div>
+          </div>
+          <div class="col q-pa-md">
+                <div class="row bg-accent">
+                    <div class="col h6 text-bold text-center">Kaliber</div>
+                    <div class="col h6 text-bold text-center">Suma</div>
+                </div>
+              <div v-for="(ammo,uuid) in ammunitionListEvidence.ammoInEvidenceEntityList" :key="uuid" class="full-width col">
+                <div class="row">
+                    <div class="col text-bold text-center">{{ammo.caliberName}}</div>
+                    <div class="col text-bold text-center">{{ammo.quantity}}</div>
+                </div>
+              </div>
+            </div>
+          <div class="row">
+            <q-btn color="secondary" class="col full-width full-height" label="pobierz listę" @click="getAmmoListPDF()"></q-btn>
+            <q-item></q-item>
+            <q-btn color="primary" class="col full-width full-height" label="otwórz listę" @click="openList=true"></q-btn>
+          </div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Zamknij" color="primary" v-close-popup />
         </q-card-actions>
       </q-card>
 </q-dialog>
@@ -126,17 +153,18 @@
       </q-select>
       <q-select class="col" filled v-model="otherName" use-input hide-selected fill-input input-debounce="0" :options="options" @input="memberName='0 0'" @filter="filterOther" label="Dodaj osobę spoza klubu">
         <template v-slot:no-option>
-          <q-btn class="full-width" color="primary" label="dodaj nową osobę" @click="addNewOtherPerson = true"/>
+          <div>
+            <div class="q-pa-md bg-grey-5 text-center text-bold">Brak wyników  - możesz dodać nową osobę</div>
+            <div class="q-pa-md bg-grey-5"><q-btn class="full-width" color="primary" label="przejdź do formularza" @click="addNewOtherPerson = true"/></div>
+          </div>
         </template>
       </q-select>
     </div>
     <div class="row">
     <div class="full-width">
         <q-radio v-model="caliberUUID" v-for="(calibers,uuid) in calibers" :key="uuid" :val="calibers.uuid">
-          <q-field borderless style="full-width">
-           <template v-slot:control>
-            <div class="full-width">{{calibers.name}}</div>
-           </template>
+          <q-field borderless class="full-width cursor-pointer">
+            <div class="full-width text-black text-left q-pa-md">{{calibers.name}}</div>
           </q-field>
         </q-radio>
     </div>
@@ -154,10 +182,21 @@
       <q-card class="full-width">
         <q-card-section>
           <div class="text-h6">Dodawanie nowej osoby spoza klubu</div>
-          <q-item><q-input class="full-width" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled v-model="otherFirstName" label="Imię"/></q-item>
-          <q-item><q-input class="full-width" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled v-model="otherSecondName" label="Nazwisko"/></q-item>
+          <q-item><q-input class="full-width" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled v-model="otherFirstName" label="Imię *"/></q-item>
+          <q-item><q-input class="full-width" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled v-model="otherSecondName" label="Nazwisko *"/></q-item>
           <q-item class="col"><q-checkbox left-label color="primary" false-value="" true-value="BRAK" v-model="clubName" :val="'BRAK'" label="Brak klubu"></q-checkbox>
-          <q-input v-if="clubName!='BRAK'" class="full-width" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled v-model="clubName" label="Nazwa Klubu"/>
+          <!-- <q-input v-if="clubName!='BRAK'" class="full-width" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled v-model="clubName" label="Nazwa Klubu"/> -->
+          <q-item v-if="clubName!='BRAK'" class="full-width">
+            <q-select v-if="clubName!='BRAK'" class="full-width" @new-value="createValue" hide-selected use-chips filled v-model="clubName" use-input fill-input input-debounce="0" :options="filterOptions" @filter="filterFna" label="Wybierz Klub">
+                  <template v-slot:no-option>
+                    <q-item>
+                      <q-item-section class="text-grey">
+                        Brak wyników
+                      </q-item-section>
+                    </q-item>
+                  </template>
+                </q-select>
+          </q-item>
           </q-item>
           <q-item><q-input class="full-width" mask="### ### ###" filled v-model="otherPhoneNumber" label="Numer telefonu"/></q-item>
           <q-item><q-input class="full-width" filled v-model="otherEmail" label="e-mail"/></q-item>
@@ -208,6 +247,18 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <q-dialog v-model="confirmation" @keypress.enter="showloading(),closeEvidence (),getAmmoData(),getCLosedEvidence(),confirmation=false">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Czy na pewno zamknąć listę amunicyjną</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="anuluj" color="primary" v-close-popup />
+          <q-btn label="Zamknij" color="primary" v-close-popup @click="showloading(),closeEvidence (),getAmmoData(),getCLosedEvidence()"/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -223,6 +274,9 @@ export default {
     return {
       uuid: null,
       ammunitionListAlert: false,
+      ammunitionListInfo: false,
+      ammunitionListNumber: null,
+      ammunitionListEvidence: '',
       listDate: null,
       ammoList: [],
       ammoListClose: [],
@@ -230,6 +284,7 @@ export default {
       fail: false,
       openList: false,
       forbidden: false,
+      confirmation: false,
       code: null,
       failArmory: false,
       otherName: null,
@@ -238,6 +293,8 @@ export default {
       filters: [],
       filtersOther: [],
       calibers: [],
+      clubs: [],
+      filterOptions: stringOptions,
       caliberUUID: null,
       memberName: '',
       addNewOtherPerson: false,
@@ -262,6 +319,7 @@ export default {
     this.getListCalibers()
     this.getOther()
     this.getMembersNames()
+    this.getAllClubsToTournament()
   },
   methods: {
     showloading () {
@@ -286,6 +344,15 @@ export default {
       }).then(response => {
         response.json().then(ammoListClose => {
           this.ammoListClose = ammoListClose
+        })
+      })
+    },
+    getEvidence () {
+      fetch('http://' + this.local + '/ammoEvidence/oneEvidence?uuid=' + this.uuid, {
+        method: 'GET'
+      }).then(response => {
+        response.json().then(response => {
+          this.ammunitionListEvidence = response
         })
       })
     },
@@ -423,6 +490,60 @@ export default {
       update(() => {
         const needle = val.toLowerCase()
         this.options = this.filtersOther.filter(v => v.toLowerCase().indexOf(needle) > -1)
+      })
+    },
+    getAllClubsToTournament () {
+      fetch('http://' + this.local + '/club/tournament', {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.clubs = response
+        })
+    },
+    createValue (val, done) {
+      // Calling done(var) when new-value-mode is not set or is "add", or done(var, "add") adds "var" content to the model
+      // and it resets the input textbox to empty string
+      // ----
+      // Calling done(var) when new-value-mode is "add-unique", or done(var, "add-unique") adds "var" content to the model
+      // only if is not already set and it resets the input textbox to empty string
+      // ----
+      // Calling done(var) when new-value-mode is "toggle", or done(var, "toggle") toggles the model with "var" content
+      // (adds to model if not already in the model, removes from model if already has it)
+      // and it resets the input textbox to empty string
+      // ----
+      // If "var" content is undefined/null, then it doesn't tampers with the model
+      // and only resets the input textbox to empty string
+
+      if (val.length > 0) {
+        const model = (this.clubName || []).slice()
+
+        val
+          .split(/[,;|]+/)
+          .map(v => v.trim())
+          .filter(v => v.length > 0)
+          .forEach(v => {
+            if (this.clubs.includes(v) === false) {
+              this.clubs.push(v)
+            }
+            if (model.includes(v) === false) {
+              model.push(v)
+            }
+          })
+
+        done(null)
+        this.clubName = model
+      }
+    },
+    filterFna (val, update) {
+      update(() => {
+        if (val === '') {
+          this.filterOptions = this.clubs
+        } else {
+          const needle = val.toLowerCase()
+          this.filterOptions = this.clubs.filter(
+            v => v.toLowerCase().indexOf(needle) > -1
+          )
+        }
       })
     }
   }

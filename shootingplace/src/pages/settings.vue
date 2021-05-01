@@ -201,7 +201,7 @@
         </q-card-actions>
       </q-card>
   </q-dialog>
-  <q-dialog v-model="acceptCodeUser" persistent @keypress.enter="createUser (),acceptCodeUser=false">
+  <q-dialog v-model="acceptCodeUser" persistent @keypress.enter="createUser (),acceptCodeUser=false,code=null">
       <q-card class="bg-red-5 text-center">
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
@@ -210,7 +210,7 @@
 
         <q-card-actions align="right">
           <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
-          <q-btn id="3" label="Dodaj" color="black" v-close-popup @click="createUser (),acceptCodeUser=false" />
+          <q-btn id="3" label="Dodaj" color="black" v-close-popup @click="createUser (),acceptCodeUser=false,code=null" />
         </q-card-actions>
       </q-card>
   </q-dialog>
@@ -347,6 +347,7 @@ export default {
             response.json().then(
               response => {
                 this.userMessage = response
+                this.getAllUsers()
               }
             )
           }

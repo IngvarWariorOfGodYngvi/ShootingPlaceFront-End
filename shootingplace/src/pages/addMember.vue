@@ -28,9 +28,9 @@
       <q-item><q-input class="full-width" color="red" v-model="memberSecondName" label="Nazwisko*" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 45" filled/></q-item>
       <q-item><q-input class="full-width" color="red" v-model="memberIDCard" label="Numer Dowodu*" filled placeholder="XXX 000000" mask="AAA ######"/></q-item>
       <q-item><q-input class="full-width" color="red" v-model="memberPesel" placeholder="tylko cyfry" label="Pesel*" mask="###########" filled/></q-item>
-      <q-item><q-input class="full-width" color="red" type="tel" v-model="memberPhone" placeholder="tylko cyfry" label="Numer telefonu*" mask="### ### ###" filled/></q-item>
+      <q-item><q-input class="full-width" color="red" type="tel" v-model="memberPhone" placeholder="tylko cyfry" label="Numer telefonu*" mask="### ### ###" filled onkeypress="return (event.charCode > 47 && event.charCode < 58)"/></q-item>
       <q-item><q-input class="full-width" filled color="green" type="email" v-model="memberEmail" label="email" /></q-item>
-      <q-item><q-input class="full-width" filled color="green" v-model="memberLegitimation" label="Numer Legitymacji" /></q-item>
+      <q-item><q-input class="full-width" filled color="green" v-model="memberLegitimation" label="Numer Legitymacji" onkeypress="return (event.charCode > 47 && event.charCode < 58)"/></q-item>
       <q-item><q-input class="full-width" filled v-model="memberJoinDate" mask="####/##/##" :rules="['date']" label="Data dołączenia do Klubu" hint="użyj kalendarza">
                           <template v-slot:append>
                             <q-icon name="event" class="cursor-pointer">
@@ -46,7 +46,7 @@
                         </q-input></q-item>
       <div class="row">
         <div class="col-6">
-        <q-radio  v-model="memberAdult" :val="true" label="Grupa Powszechna" color="secondary" />
+        <q-radio  v-model="memberAdult" :val="true" label="Grupa Ogólna" color="secondary" />
         </div>
         <div class="col-6">
         <q-radio v-model="memberAdult" :val="false" label="Grupa Młodzieżowa" color="secondary" />
@@ -59,7 +59,7 @@
       <q-card-section class="col-6">
       <div>
         <q-item>
-          <q-field v-if="memberFirstName==''" class="full-width bg-red-2" standout label="Imię" stack-label>
+          <q-field v-if="memberFirstName.length<3" class="full-width bg-red-2" standout label="Imię" stack-label>
             <template v-slot:control>
               <div class="self-center full-width no-outline" tabindex="1">{{memberFirstName}}</div>
             </template>
@@ -71,7 +71,7 @@
           </q-field>
         </q-item>
         <q-item>
-          <q-field v-if="memberSecondName==''" class="full-width bg-red-2" standout label="Nazwisko" stack-label>
+          <q-field v-if="memberSecondName.length<3" class="full-width bg-red-2" standout label="Nazwisko" stack-label>
             <template v-slot:control>
               <div class="self-center full-width no-outline" tabindex="1">{{memberSecondName}}</div>
             </template>
@@ -83,7 +83,7 @@
           </q-field>
         </q-item>
         <q-item>
-          <q-field v-if="memberIDCard==''" class="full-width bg-red-2" standout label="Numer Dowodu Osobistego" stack-label>
+          <q-field v-if="memberIDCard.length<10" class="full-width bg-red-2" standout label="Numer Dowodu Osobistego" stack-label>
             <template v-slot:control>
               <div class="self-center full-width no-outline" tabindex="1">{{memberIDCard}}</div>
             </template>
@@ -95,7 +95,7 @@
           </q-field>
         </q-item>
         <q-item>
-          <q-field v-if="memberPesel==''" class="full-width bg-red-2" standout label="Numer PESEL" stack-label>
+          <q-field v-if="memberPesel.length<11" class="full-width bg-red-2" standout label="Numer PESEL" stack-label>
             <template v-slot:control>
               <div class="self-center full-width no-outline" tabindex="1">{{memberPesel}}</div>
             </template>
@@ -107,7 +107,7 @@
           </q-field>
         </q-item>
         <q-item>
-          <q-field v-if="memberPhone==''" class="full-width bg-red-2" standout label="Numer Telefonu" stack-label>
+          <q-field v-if="memberPhone.length<11" class="full-width bg-red-2" standout label="Numer Telefonu" stack-label>
             <template v-slot:control>
               <div class="self-center full-width no-outline" tabindex="1">+48 {{memberPhone}}</div>
             </template>
@@ -119,14 +119,24 @@
           </q-field>
         </q-item>
         <q-item>
-          <q-field class="full-width" standout label="Adres E-mail" stack-label>
+          <q-field v-if="!memberEmail.includes('@') || !memberEmail.includes('.')" class="full-width bg-red-2" standout label="Adres E-mail" stack-label>
+            <template v-slot:control>
+              <div class="self-center full-width no-outline" tabindex="1">{{memberEmail}}</div>
+            </template>
+          </q-field>
+          <q-field v-else class="full-width bg-green-2" standout label="Adres E-mail" stack-label>
             <template v-slot:control>
               <div class="self-center full-width no-outline" tabindex="1">{{memberEmail}}</div>
             </template>
           </q-field>
         </q-item>
         <q-item>
-          <q-field class="full-width" standout label="Numer Legitymacji Klubowej" stack-label>
+          <q-field v-if="memberLegitimation.length<1" class="full-width" standout label="Numer Legitymacji Klubowej" stack-label>
+            <template v-slot:control>
+              <div class="self-center full-width no-outline" tabindex="1">{{memberLegitimation}}</div>
+            </template>
+          </q-field>
+          <q-field v-else class="full-width bg-green-2" standout label="Numer Legitymacji Klubowej" stack-label>
             <template v-slot:control>
               <div class="self-center full-width no-outline" tabindex="1">{{memberLegitimation}}</div>
             </template>
@@ -415,10 +425,11 @@
           <q-item clickable v-if="(step<5&&(uuid!=null&&uuid!=''))" @click="alertResponse=null"><q-btn v-if="step<5" @click="$refs.stepper.next()" color="primary" :label="step === 5 ? 'Zakończ' : 'Przejdź Dalej'" /></q-item>
           <q-item><q-btn v-if="step > 1" flat color="primary" @click="$refs.stepper.previous()" label="Wróć" /></q-item>
           <q-item><q-btn v-if="step > 1" @click="redirect()" color="primary" label="Zakończ" /></q-item>
-          <q-item><q-btn v-if="step > 1 && (uuid!=null&&uuid!='')" type="a" href="https://portal.pzss.org.pl/CLub/Player/Add" target="_blank" label="Przejdź do portalu PZSS" color="primary" @click="pzssPortal=true"/></q-item>
+          <q-item><q-btn v-if="step > 1 && (uuid!=null&&uuid!='')" type="a" href="https://portal.pzss.org.pl/CLub/Player" target="_blank" label="Przejdź do portalu PZSS" color="primary" @click="pzssPortal=true"/></q-item>
           <q-item><q-btn v-if="step > 1 && (uuid!=null&&uuid!='')" label="potwierdź zapis do portalu pzss" color="primary" @click="pzssPortal=true"/></q-item>
           <q-item><q-btn v-if="uuid!=null&&uuid!=''" color="secondary" @click="personalCardDownloadConfirm=true" label="Drukuj kartę" /></q-item>
           <q-item><q-btn v-if="uuid!=null&&uuid!=''" color="secondary" @click="contributionDownloadConfirm=true" label="Potwierdzenie opłacenia składki" /></q-item>
+          <q-item><q-btn v-if="uuid!=null&&uuid!=''" color="secondary" @click="getCSVFile()" label="Pobierz plik .CSV" /></q-item>
           <q-item v-if="uuid!=null"><q-item-label>Identyfikator : {{uuid}}</q-item-label></q-item>
           <q-item v-if="alertResponse!=null" class="bg-red-3"><q-item-label>Ostrzeżenie : {{alertResponse}}</q-item-label></q-item>
         </q-stepper-navigation>
@@ -878,6 +889,9 @@ export default {
         this.showloading()
       })
     },
+    checkValid () {
+      this.showloading()
+    },
     updateMemberPermissions (uuid, permissionsShootingLeaderNumber, permissionsInstructorNumber, permissionsArbiterNumber, permissionsArbiterPermissionValidThru) {
       var data = {
         shootingLeaderNumber: this.permissionsShootingLeaderNumber,
@@ -927,6 +941,20 @@ export default {
         var fileLink = document.createElement('a')
         fileLink.href = fileURL
         fileLink.setAttribute('download', 'Karta_Członkowska_' + this.memberFirstName + '_' + this.memberSecondName + '.pdf')
+        document.body.appendChild(fileLink)
+        fileLink.click()
+      })
+    },
+    getCSVFile () {
+      axios({
+        url: 'http://' + this.local + '/files/downloadCSVFile/' + this.uuid,
+        method: 'GET',
+        responseType: 'blob'
+      }).then(response => {
+        var fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        var fileLink = document.createElement('a')
+        fileLink.href = fileURL
+        fileLink.setAttribute('download', this.memberFirstName + '_' + this.memberSecondName + '.csv')
         document.body.appendChild(fileLink)
         fileLink.click()
       })

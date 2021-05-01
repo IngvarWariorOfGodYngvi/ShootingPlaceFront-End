@@ -11,8 +11,8 @@
           @click="leftDrawerOpen = !leftDrawerOpen"
         />
 
-        <q-toolbar-title >
-          <div id="title">{{$keycloak.keycloak.clientId}} </div>
+       <q-toolbar-title >
+          <!-- <div id="title">{{$keycloak.keycloak.clientId}} </div> -->
         </q-toolbar-title>
 
        <div><q-avatar @click="$keycloak.loadUserProfile" clickable v-ripple color="secondary" text-color="white" icon="perm_identity" />
@@ -164,7 +164,7 @@ export default {
           link: 'http://localhost:8081/#/otherFunctions'
         }
       ],
-      programName: 'Program'
+      programName: 'app'
     }
   },
   methods: {
