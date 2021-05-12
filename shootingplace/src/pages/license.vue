@@ -93,37 +93,28 @@
             </q-scroll-area>
             </q-card-section>
           </q-card>
-    <q-dialog v-model="dataFail">
+    <q-dialog position="top" v-model="dataFail">
       <q-card>
         <q-card-section>
           <div class="text-h6">Coś poszło nie tak</div>
         </q-card-section>
 
-        <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup/>
-        </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="prolongFail">
+    <q-dialog position="top" v-model="prolongFail">
       <q-card>
         <q-card-section>
           <div class="text-h6">Nie można przedłużyć licencji</div>
         </q-card-section>
 
-        <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup/>
-        </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="doneAlert">
+    <q-dialog position="top" v-model="doneAlert">
       <q-card>
         <q-card-section>
           <div class="text-h6">Wykonano żądanie</div>
         </q-card-section>
 
-        <q-card-actions align="right">
-          <q-btn flat label="ok" color="primary" v-close-popup/>
-        </q-card-actions>
       </q-card>
     </q-dialog>
     <q-dialog v-model="paymentLicenseAlert">
@@ -154,6 +145,7 @@
 </template>
 
 <script>
+import App from 'src/App.vue'
 
 export default {
   data () {
@@ -172,8 +164,7 @@ export default {
       paymentLicenseAlert: false,
       memberName: null,
       memberUUID: null,
-      local: 'localhost:8080/shootingplace',
-      local1: 'localhost:8080/shootingplace-1.0'
+      local: App.host
     }
   },
   created () {
@@ -234,7 +225,11 @@ export default {
           this.getMembersWithLicense()
           this.getMembersWithLicenseNotValid()
           this.getMembersWithLicenseQuantity()
-        } else { this.prolongFail = true }
+          this.autoClose()
+        } else {
+          this.prolongFail = true
+          this.autoClose()
+        }
       })
     },
     addLicenseHistoryPayment (uuid) {
@@ -248,8 +243,20 @@ export default {
           this.doneAlert = true
           this.getMembersWithLicense()
           this.getMembersWithLicenseNotValid()
-        } else { this.prolongFail = true }
+          this.autoClose()
+        } else {
+          this.prolongFail = true
+          this.autoClose()
+        }
       })
+    },
+    autoClose () {
+      setTimeout(() => {
+        this.dataFail = false
+        this.prolongFail = false
+        this.alert = false
+        this.doneAlert = false
+      }, 2000)
     }
   },
   name: 'otherFunction'

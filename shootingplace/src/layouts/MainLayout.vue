@@ -41,7 +41,7 @@
     >
       <q-list>
         <q-item-label header>
-          <q-item class="flex flex-center" clickable tag="a" target="_self" href="http://localhost:8081/#/" width="max"><q-field class="full-width" standout><template v-slot:control><div class="fit flex flex-center text-center non-selectable q-pa-md">Strona główna</div></template></q-field></q-item>
+          <q-item class="flex flex-center" clickable tag="a" target="_self" :href="hrefTarget" width="max"><q-field class="full-width" standout><template v-slot:control><div class="fit flex flex-center text-center non-selectable q-pa-md">Strona główna</div></template></q-field></q-item>
         </q-item-label>
         <EssentialLink
           v-for="link in essentialLinks"
@@ -104,67 +104,65 @@ export default {
       members: null,
       quantity: [],
       quantities: [],
-      prod: 'localhost:8081',
-      prod1: 'localhost:8080/strzelnica',
-      local: 'localhost:8080/shootingplace',
-      local1: 'localhost:8080/shootingplace-1.0',
+      hrefTarget: 'http://' + App.prod,
+      local: App.host,
       essentialLinks: [
         {
           title: 'Lista Klubowiczów',
           caption: 'Obsługa podstawowa',
           icon: 'perm_identity',
-          link: 'http://localhost:8081/#/member'
+          link: 'http://' + App.prod + 'member'
         },
         {
           title: 'Licencje',
           caption: 'Obsługa podstawowa',
           icon: 'perm_identity',
-          link: 'http://localhost:8081/#/license'
+          link: 'http://' + App.prod + 'license'
         },
         {
           title: 'Dodaj Nowego Klubowicza',
           caption: 'obsługa podstawowa',
           icon: 'add',
-          link: 'http://localhost:8081/#/member/adding'
+          link: 'http://' + App.prod + 'member/adding'
         },
         {
           title: 'Lista Amunicyjna',
           caption: 'obsługa podstawowa',
           icon: 'book',
-          link: 'http://localhost:8081/#/ammolist'
+          link: 'http://' + App.prod + 'ammolist'
         },
         {
           title: 'Lista Zawodów',
           caption: 'obsługa podstawowa',
           icon: 'book',
-          link: 'http://localhost:8081/#/competition'
+          link: 'http://' + App.prod + 'competition'
         },
         {
           title: 'Lista Osób z Uprawnieniami',
           caption: 'obsługa dodatkowa',
           icon: 'book',
-          link: 'http://localhost:8081/#/memberwithpermission'
+          link: 'http://' + App.prod + 'memberwithpermission'
         },
         {
           title: 'Magazyn Broni i Amunicji',
           caption: 'obsługa dodatkowa',
           icon: 'book',
-          link: 'http://localhost:8081/#/armory'
+          link: 'http://' + App.prod + 'armory'
         },
         {
           title: 'Statystyki i Wyliczenia',
           caption: 'obsługa dodatkowa',
           icon: 'book',
-          link: 'http://localhost:8081/#/statistics'
+          link: 'http://' + App.prod + 'statistics'
         },
         {
           title: 'Pozostałe Funkcje',
           caption: 'obsługa dodatkowa',
           icon: 'menu',
-          link: 'http://localhost:8081/#/otherFunctions'
+          link: 'http://' + App.prod + 'otherFunctions'
         }
       ],
-      programName: 'app'
+      programName: 'Program'
     }
   },
   methods: {

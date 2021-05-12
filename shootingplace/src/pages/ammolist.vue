@@ -75,23 +75,19 @@
       </div>
     </q-card>
     </div>
-<q-dialog v-model="ammunitionListAlert">
+<q-dialog position="top" v-model="ammunitionListAlert">
       <q-card>
         <q-card-section>
-          <div class="text-h6">Pobrano listę {{date}}</div>
+          <div class="text-h6">Pobrano listę z dnia {{date}}</div>
         </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup />
-        </q-card-actions>
       </q-card>
 </q-dialog>
 <q-dialog v-model="ammunitionListInfo">
       <q-card>
         <q-card-section class="col">
           <div class="col q-pa-xs">
-            <div class="text-h6">Lista numer {{ammunitionListNumber}}</div>
             <div class="text-h6">Informacje dla listy z dnia {{date}}</div>
+            <div class="text-h6">Lista numer {{ammunitionListNumber}}</div>
           </div>
           <div class="col q-pa-md">
                 <div class="row bg-accent">
@@ -117,26 +113,18 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="fail" @keypress.enter="fail=false">
-      <q-card>
+<q-dialog position="top" v-model="fail">
+      <q-card class="bg-warning">
         <q-card-section>
           <div class="text-h6">Wystąpił jakiś problem</div>
         </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup />
-        </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="failArmory" @keypress.enter="failArmory=false">
-      <q-card>
+<q-dialog position="top" v-model="failArmory">
+      <q-card class="bg-warning">
         <q-card-section>
           <div class="text-h6">Nie można wydać amunicji - Sprawdź stan magazynu</div>
         </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup />
-        </q-card-actions>
       </q-card>
 </q-dialog>
 <q-dialog v-model="addAmmo">
@@ -208,19 +196,11 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-        <q-dialog v-model="addOtherAlert">
+        <q-dialog position="top" v-model="addOtherAlert">
       <q-card>
         <q-card-section>
           <div class="text-h6">Zapisano do bazy</div>
         </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn
-            flat
-            label="OK"
-            color="primary"
-            v-close-popup/>
-        </q-card-actions>
       </q-card>
     </q-dialog>
     <q-dialog v-model="openList" persistent>
@@ -236,15 +216,11 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="forbidden" @keypress.enter="forbidden=false">
-      <q-card>
+    <q-dialog position="top" v-model="forbidden">
+      <q-card class="bg-warning">
         <q-card-section>
           <div class="text-h6">Niewłaściwy kod. Spróbuj ponownie.</div>
         </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup />
-        </q-card-actions>
       </q-card>
     </q-dialog>
     <q-dialog v-model="confirmation" @keypress.enter="showloading(),closeEvidence (),getAmmoData(),getCLosedEvidence(),confirmation=false">
@@ -259,6 +235,27 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <q-dialog position="top" v-model="closeList">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Lista została zamknięta</div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+    <q-dialog position="top" v-model="openListAlert">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Lista została otwarta</div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+    <q-dialog position="top" v-model="listAdded">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Dodano do listy</div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -267,6 +264,7 @@
 const stringOptions = []
 import Vue from 'vue'
 import axios from 'axios'
+import App from 'src/App.vue'
 Vue.prototype.$axios = axios
 
 export default {
@@ -281,8 +279,11 @@ export default {
       ammoList: [],
       ammoListClose: [],
       date: '',
+      listAdded: false,
       fail: false,
       openList: false,
+      openListAlert: false,
+      closeList: false,
       forbidden: false,
       confirmation: false,
       code: null,
@@ -309,8 +310,7 @@ export default {
       ordinal: '',
       permissionsOtherArbiterPermissionValidThru: '',
       options: stringOptions,
-      local: 'localhost:8080/shootingplace',
-      local1: 'localhost:8080/shootingplace-1.0'
+      local: App.host
     }
   },
   created () {
@@ -361,9 +361,14 @@ export default {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {
+          this.closeList = true
           this.getAmmoData()
           this.getCLosedEvidence()
-        } else { this.fail = true }
+          this.autoClose()
+        } else {
+          this.fail = true
+          this.autoClose()
+        }
       })
     },
     openEvidence () {
@@ -372,9 +377,20 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           this.code = null
+          this.openListAlert = true
+          this.ammunitionListInfo = false
           this.getAmmoData()
           this.getCLosedEvidence()
-        } else { this.fail = true }
+          this.autoClose()
+        }
+        if (response.status === 403) {
+          this.forbidden = true
+          this.autoClose()
+        }
+        if (response.status === 400) {
+          this.fail = true
+          this.autoClose()
+        }
       })
     },
     getMembersNames () {
@@ -398,6 +414,7 @@ export default {
         fileLink.setAttribute('download', 'Lista_Rozliczenia_Amunicji_' + this.date + '.pdf')
         document.body.appendChild(fileLink)
         fileLink.click()
+        this.autoClose()
       })
     },
     addMemberAndAmmoToCaliber () {
@@ -414,16 +431,20 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
+          this.listAdded = true
           this.getAmmoData()
           this.showloading()
+          this.autoClose()
         }
         if (response.status === 400) {
           this.fail = true
           this.ammoQuantity = null
+          this.autoClose()
         }
         if (response.status === 406) {
           this.failArmory = true
           this.ammoQuantity = null
+          this.autoClose()
         }
       }
       )
@@ -461,7 +482,11 @@ export default {
         if (response.status === 201) {
           this.addOtherAlert = true
           this.getOther()
-        } else { this.fail = true }
+          this.autoClose()
+        } else {
+          this.fail = true
+          this.autoClose()
+        }
       })
     },
     filterFn (val, update) {
@@ -501,19 +526,6 @@ export default {
         })
     },
     createValue (val, done) {
-      // Calling done(var) when new-value-mode is not set or is "add", or done(var, "add") adds "var" content to the model
-      // and it resets the input textbox to empty string
-      // ----
-      // Calling done(var) when new-value-mode is "add-unique", or done(var, "add-unique") adds "var" content to the model
-      // only if is not already set and it resets the input textbox to empty string
-      // ----
-      // Calling done(var) when new-value-mode is "toggle", or done(var, "toggle") toggles the model with "var" content
-      // (adds to model if not already in the model, removes from model if already has it)
-      // and it resets the input textbox to empty string
-      // ----
-      // If "var" content is undefined/null, then it doesn't tampers with the model
-      // and only resets the input textbox to empty string
-
       if (val.length > 0) {
         const model = (this.clubName || []).slice()
 
@@ -545,6 +557,18 @@ export default {
           )
         }
       })
+    },
+    autoClose () {
+      setTimeout(() => {
+        this.ammunitionListAlert = false
+        this.fail = false
+        this.closeList = false
+        this.forbidden = false
+        this.openListAlert = false
+        this.failArmory = false
+        this.addOtherAlert = false
+        this.listAdded = false
+      }, 2000)
     }
   }
 }

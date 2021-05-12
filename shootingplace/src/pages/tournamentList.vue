@@ -649,20 +649,12 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="tournamentUpdated" persistent>
+    <q-dialog position="top" v-model="tournamentUpdated" persistent>
       <q-card>
         <q-card-section class="row items-center">
-          <span class="q-ml-sm">Zaktualizowano</span>
+          <span class="q-ml-sm text-h6 text-bold">Zaktualizowano</span>
         </q-card-section>
 
-        <q-card-actions align="right">
-          <q-btn
-            flat
-            label="OK"
-            color="primary"
-            v-close-popup
-          />
-        </q-card-actions>
       </q-card>
     </q-dialog>
     <q-dialog v-model="tournamentCloseConfirm" persistent>
@@ -735,126 +727,72 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="tournamentAlert">
+    <q-dialog position="top" v-model="tournamentAlert">
       <q-card>
         <q-card-section>
           <div class="text-h6">Dodano nowe zawody</div>
         </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup/>
-        </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="tournamentCloseAlert">
+    <q-dialog position="top" v-model="tournamentCloseAlert">
       <q-card>
         <q-card-section>
           <div class="text-h6">Zawody są już zamknięte</div>
         </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn
-            flat
-            label="OK"
-            color="primary"
-            v-close-popup
-          />
-        </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="addOtherAlert">
+    <q-dialog position="top" v-model="tournamentOpenAlert">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Zawody są otwarte</div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+    <q-dialog position="top" v-model="addOtherAlert">
       <q-card>
         <q-card-section>
           <div class="text-h6">Zapisano do bazy</div>
         </q-card-section>
 
-        <q-card-actions align="right">
-          <q-btn
-            flat
-            label="OK"
-            color="primary"
-            v-close-popup/>
-        </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="removeMemberAlert">
+    <q-dialog position="top" v-model="removeMemberAlert">
       <q-card>
         <q-card-section>
           <div class="text-h6">Usunięto Zawodnika z listy</div>
         </q-card-section>
 
-        <q-card-actions align="right">
-          <q-btn
-            flat
-            label="OK"
-            color="primary"
-            v-close-popup
-          />
-        </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="removeArbiterAlert">
+    <q-dialog position="top" v-model="removeArbiterAlert">
       <q-card>
         <q-card-section>
           <div class="text-h6">Usunięto sędziego z listy</div>
         </q-card-section>
 
-        <q-card-actions align="right">
-          <q-btn
-            flat
-            label="OK"
-            color="primary"
-            v-close-popup
-          />
-        </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="addArbiterAlert">
+    <q-dialog position="top" v-model="addArbiterAlert">
       <q-card>
         <q-card-section>
           <div class="text-h6">Dodano Sędziego</div>
         </q-card-section>
 
-        <q-card-actions align="right">
-          <q-btn
-            flat
-            label="OK"
-            color="primary"
-            v-close-popup
-          />
-        </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="addCompetitionAlert">
+    <q-dialog position="top" v-model="addCompetitionAlert">
       <q-card>
         <q-card-section>
           <div class="text-h6">Dodano konkurencję do zawodów</div>
         </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn
-            flat
-            label="OK"
-            color="primary"
-            v-close-popup
-          />
-        </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="newCompetitionAlert">
+    <q-dialog position="top" v-model="newCompetitionAlert">
       <q-card>
         <q-card-section>
           <div class="text-h6">Dodano nową konkurencję</div>
         </q-card-section>
 
-        <q-card-actions align="right">
-          <q-btn
-            flat
-            label="OK"
-            color="primary"
-            v-close-popup
-          />
-        </q-card-actions>
       </q-card>
     </q-dialog>
     <q-dialog v-model="failure" @keypress.enter="failure=false">
@@ -886,37 +824,28 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="memberFailure">
+    <q-dialog position="top" v-model="memberFailure">
       <q-card>
         <q-card-section>
           <div class="text-h6">Nie można dodać Zawodnika bo już znajduje się w konkurencji.</div>
         </q-card-section>
 
-        <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup/>
-        </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="dataFail">
+    <q-dialog position="top" v-model="dataFail">
       <q-card>
         <q-card-section>
           <div class="text-h6">Sprawdź poprawność danych</div>
         </q-card-section>
 
-        <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup/>
-        </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="arbiterFailure">
+    <q-dialog position="top" v-model="arbiterFailure">
       <q-card>
         <q-card-section>
           <div class="text-h6">Nie można dodać Sędziego.</div>
         </q-card-section>
 
-        <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup/>
-        </q-card-actions>
       </q-card>
     </q-dialog>
     <q-dialog v-model="addNewOtherPerson">
@@ -1017,15 +946,12 @@
                 </q-card-actions>
                 </q-card>
     </q-dialog>
-    <q-dialog v-model="gunAdded" persistent @keypress.enter="gunAdded=false">
+    <q-dialog position="top" v-model="gunAdded" persistent @keypress.enter="gunAdded=false">
       <q-card>
         <q-card-section class="row items-center">
-          <span class="q-ml-sm">Broń została przydzielona</span>
+          <span class="q-ml-sm text-h6 text-bold">Broń została przydzielona</span>
         </q-card-section>
 
-        <q-card-actions align="right">
-          <q-btn flat label="zamknij" color="primary" v-close-popup />
-        </q-card-actions>
       </q-card>
 </q-dialog>
     <q-dialog v-model="addAmmoConfirm" persistent @keypress.enter="addMemberAndAmmoToCaliber(),addAmmoConfirm=false,ammoQuantity=null,addAmmo=false">
@@ -1124,17 +1050,20 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="forbidden" @keypress.enter="forbidden=false">
-      <q-card>
+    <q-dialog position="top" v-model="forbidden">
+      <q-card class="bg-warning">
         <q-card-section>
           <div class="text-h6">Niewłaściwy kod. Spróbuj ponownie.</div>
         </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup />
-        </q-card-actions>
       </q-card>
     </q-dialog>
+  <q-dialog position="top" v-model="listDownload">
+  <q-card>
+    <q-card-section class="col">
+    <div class="self-center col full-width no-outline text-center text-h5 text-bold">Pobrano</div>
+  </q-card-section>
+  </q-card>
+</q-dialog>
   </q-page>
 </template>
 <style>
@@ -1153,6 +1082,7 @@
 const stringOptions = []
 import Vue from 'vue'
 import axios from 'axios'
+import App from 'src/App.vue'
 Vue.prototype.$axios = axios
 export default {
   data () {
@@ -1162,12 +1092,14 @@ export default {
       valUUID: null,
       code: null,
       openList: false,
+      listDownload: false,
       forbidden: false,
       tournamentUUID: null,
       tournamentConfirm: false,
       tournamentAlert: false,
       tournamentCloseConfirm: false,
       tournamentCloseAlert: false,
+      tournamentOpenAlert: false,
       tournamentUpdateConfirm: false,
       tournamentUpdated: false,
       addMemberConfirm: false,
@@ -1272,8 +1204,7 @@ export default {
       competitionListUUID: null,
       wzss: true,
       filterOptions: stringOptions,
-      local: 'localhost:8080/shootingplace',
-      local1: 'localhost:8080/shootingplace-1.0'
+      local: App.host
     }
   },
   created () {
@@ -1396,7 +1327,11 @@ export default {
         if (response.status === 200) {
           this.toggleAmmunitionInScore(this.scoreUUID)
           this.showloading()
-        } else { this.dataFail = true }
+          this.autoClose()
+        } else {
+          this.dataFail = true
+          this.autoClose()
+        }
       }
       )
     },
@@ -1418,7 +1353,11 @@ export default {
           this.addOtherAlert = true
           this.getOther()
           this.getOtherArbiters()
-        } else { this.dataFail = true }
+          this.autoClose()
+        } else {
+          this.dataFail = true
+          this.autoClose()
+        }
       })
     },
     createNewTournament (name, date) {
@@ -1493,9 +1432,11 @@ export default {
           this.showloading()
           this.getListTournaments()
           this.getCompetitions()
+          this.autoClose()
         }
         if (response.status === 409) {
           this.failure = true
+          this.autoClose()
         }
       })
     },
@@ -1517,6 +1458,7 @@ export default {
           this.tournamentUpdated = true
           this.showloading()
           this.getListTournaments()
+          this.autoClose()
         }
       })
     },
@@ -1536,7 +1478,11 @@ export default {
         if (response.status === 200) {
           this.showloading()
           this.getListTournaments()
-        } else { this.dataFail = true }
+          this.autoClose()
+        } else {
+          this.dataFail = true
+          this.autoClose()
+        }
       })
     },
     removeMemberFromCompetition (uuid, finder) {
@@ -1557,7 +1503,11 @@ export default {
           this.showloading()
           this.getListTournaments()
           this.getCompetitions()
-        } else { this.dataFail = true }
+          this.autoClose()
+        } else {
+          this.dataFail = true
+          this.autoClose()
+        }
       })
     },
     addCompetitonToTournament () {
@@ -1573,10 +1523,15 @@ export default {
             this.showloading()
             this.getListTournaments()
             this.getCompetitions()
-          } else { this.failure = true }
+            this.autoClose()
+          } else {
+            this.failure = true
+            this.autoClose()
+          }
         })
       } else {
         this.dataFail = true
+        this.autoClose()
       }
     },
     setScore (scoreUUID, score, innerTen, outerTen, procedures) {
@@ -1604,7 +1559,10 @@ export default {
           this.outerTen = null
           this.procedures = null
           this.getListTournaments()
-        } else { this.dataFail = true }
+        } else {
+          this.dataFail = true
+          this.autoClose()
+        }
       })
     },
     toggleAmmunitionInScore (scoreUUID) {
@@ -1616,7 +1574,10 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           this.getListTournaments()
-        } else { this.dataFail = true }
+        } else {
+          this.dataFail = true
+          this.autoClose()
+        }
       })
     },
     toggleGunInScore () {
@@ -1629,7 +1590,11 @@ export default {
         if (response.status === 200) {
           this.getListTournaments()
           this.gunAdded = true
-        } else { this.dataFail = true }
+          this.autoClose()
+        } else {
+          this.dataFail = true
+          this.autoClose()
+        }
       })
     },
     closeTournament () {
@@ -1644,6 +1609,7 @@ export default {
           this.showloading()
           this.getListTournaments()
           this.getCLosedTournaments()
+          this.autoClose()
         }
       })
     },
@@ -1656,9 +1622,12 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           this.code = null
+          this.tournamentOpenAlert = true
+          this.closedTournamentInfo = false
           this.showloading()
           this.getListTournaments()
           this.getCLosedTournaments()
+          this.autoClose()
         }
       })
     },
@@ -1674,6 +1643,7 @@ export default {
           this.showloading()
           this.getListTournaments()
           this.getCLosedTournaments()
+          this.autoClose()
         }
       })
     },
@@ -1705,9 +1675,13 @@ export default {
             this.otherArbiter = null,
             this.otherArbitersList = null,
             this.showloading(),
-            this.getListTournaments()
+            this.getListTournaments(),
+            this.autoClose()
           )
-        } else { this.arbiterFailure = true }
+        } else {
+          this.arbiterFailure = true
+          this.autoClose()
+        }
       })
     },
     removeRTSArbiter () {
@@ -1753,7 +1727,11 @@ export default {
           this.otherMainArbiterName = null
           this.showloading()
           this.getListTournaments()
-        } else { this.arbiterFailure = true }
+          this.autoClose()
+        } else {
+          this.arbiterFailure = true
+          this.autoClose()
+        }
       })
     },
     addRTSArbiterToTournament () {
@@ -1775,7 +1753,11 @@ export default {
           this.otherRTSArbiterName = null
           this.showloading()
           this.getListTournaments()
-        } else { this.arbiterFailure = true }
+          this.autoClose()
+        } else {
+          this.arbiterFailure = true
+          this.autoClose()
+        }
       })
     },
     addOtherArbiterToTournament () {
@@ -1797,7 +1779,11 @@ export default {
           this.otherArbitersList = null
           this.showloading()
           this.getListTournaments()
-        } else { this.arbiterFailure = true }
+          this.autoClose()
+        } else {
+          this.arbiterFailure = true
+          this.autoClose()
+        }
       })
     },
     addOtherRTSArbiterToTournament () {
@@ -1820,7 +1806,11 @@ export default {
           this.otherRTSArbitersList = null
           this.showloading()
           this.getListTournaments()
-        } else { this.arbiterFailure = true }
+          this.autoClose()
+        } else {
+          this.arbiterFailure = true
+          this.autoClose()
+        }
       })
     },
     deleteListFromTournament () {
@@ -1835,7 +1825,11 @@ export default {
           this.competitionListUUID = null
           this.showloading()
           this.getListTournaments()
-        } else { this.dataFail = true }
+          this.autoClose()
+        } else {
+          this.dataFail = true
+          this.autoClose()
+        }
       })
     },
     filterFn (val, update) {
@@ -1895,19 +1889,6 @@ export default {
       })
     },
     createValue (val, done) {
-      // Calling done(var) when new-value-mode is not set or is "add", or done(var, "add") adds "var" content to the model
-      // and it resets the input textbox to empty string
-      // ----
-      // Calling done(var) when new-value-mode is "add-unique", or done(var, "add-unique") adds "var" content to the model
-      // only if is not already set and it resets the input textbox to empty string
-      // ----
-      // Calling done(var) when new-value-mode is "toggle", or done(var, "toggle") toggles the model with "var" content
-      // (adds to model if not already in the model, removes from model if already has it)
-      // and it resets the input textbox to empty string
-      // ----
-      // If "var" content is undefined/null, then it doesn't tampers with the model
-      // and only resets the input textbox to empty string
-
       if (val.length > 0) {
         const model = (this.clubName || []).slice()
 
@@ -1952,6 +1933,8 @@ export default {
         fileLink.setAttribute('download', this.date + '-Dziesiątka-' + this.name + '.pdf')
         document.body.appendChild(fileLink)
         fileLink.click()
+        this.listDownload = true
+        this.autoClose()
       })
     },
     getJudgeFromTournament () {
@@ -1966,6 +1949,8 @@ export default {
         fileLink.setAttribute('download', 'Lista_sędziów_na_zawodach_' + this.name + '_' + this.date + '.pdf')
         document.body.appendChild(fileLink)
         fileLink.click()
+        this.listDownload = true
+        this.autoClose()
       })
     },
     getMemberMetrics (info) {
@@ -1980,6 +1965,8 @@ export default {
         fileLink.setAttribute('download', 'metryki_' + this.name + '_' + this.date + '.pdf')
         document.body.appendChild(fileLink)
         fileLink.click()
+        this.listDownload = true
+        this.autoClose()
       })
     },
     getRankingCompetitions () {
@@ -1994,6 +1981,8 @@ export default {
         fileLink.setAttribute('download', 'zestawienie_rankingowe.pdf')
         document.body.appendChild(fileLink)
         fileLink.click()
+        this.listDownload = true
+        this.autoClose()
       })
     },
     getAllClubsToTournament () {
@@ -2003,6 +1992,26 @@ export default {
         .then(response => {
           this.clubs = response
         })
+    },
+    autoClose () {
+      setTimeout(() => {
+        this.tournamentAlert = false
+        this.tournamentCloseAlert = false
+        this.addOtherAlert = false
+        this.removeMemberAlert = false
+        this.addArbiterAlert = false
+        this.addCompetitionAlert = false
+        this.newCompetitionAlert = false
+        this.memberFailure = false
+        this.dataFail = false
+        this.arbiterFailure = false
+        this.gunAdded = false
+        this.arbiterFailure = false
+        this.tournamentUpdated = false
+        this.forbidden = false
+        this.tournamentOpenAlert = false
+        this.listDownload = false
+      }, 2000)
     }
   },
   name: 'tournament'

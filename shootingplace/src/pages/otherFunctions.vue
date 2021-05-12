@@ -129,6 +129,10 @@
                 <div class="q-pa-md col full-width"><q-btn class="full-width full-height" color="primary" label="wyświetl listę email klubowiczów bez patentu" @click="showloading (),getMembersEmailsWithNoPatent (),membersEmails = true"/></div>
               </div>
               <div class="row">
+                <div class="q-pa-md col full-width"><q-btn class="full-width full-height" color="primary" label="wyświetl listę numerów telefonów nieaktywnych klubowiczów" @click="showloading (),getMembersPhoneNumbersNoActive (),membersPhoneNumbers = true"/></div>
+                <div class="q-pa-md col full-width"><q-btn class="full-width full-height" color="primary" label="wyświetl listę email nieaktywnych klubowiczów" @click="showloading (),getMembersEmailsNoActive (),membersEmails = true"/></div>
+              </div>
+              <div class="row">
                   <div class="q-pa-md"><q-btn color="primary" label="wyświetl listę numerów telefonów" @click="showloading (),getMembersPhoneNumbers (),membersPhoneNumbers = true"/></div>
                   <div class="q-pa-md"><q-btn color="primary" label="wyświetl listę email" @click="showloading (),getMembersEmails (),membersEmails = true"/></div>
               <q-radio v-model="condition" :val="true">
@@ -138,6 +142,7 @@
                 mołodzież
               </q-radio>
               </div>
+              <!-- <div class="q-pa-md"><q-btn color="primary" label="mejla ślij" @click="sendMail ()"/></div> -->
             </q-card-section>
           </q-card>
     <q-dialog v-model="dataFail">
@@ -177,15 +182,11 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="doneAlert">
+    <q-dialog position="top" v-model="doneAlert">
       <q-card>
         <q-card-section>
           <div class="text-h6">Wykonano żądanie</div>
         </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="ok" color="primary" v-close-popup/>
-        </q-card-actions>
       </q-card>
     </q-dialog>
 
@@ -238,8 +239,8 @@
         <div class="row">Metoda Liczenia <div v-if="competition.countingMethod == 'NORMAL'">: Normalnie</div><div v-else>{{competition.countingMethod}}</div></div>
         <div>Numer Kolejności na Listach: {{competition.ordering}}</div>
         <q-field class="col-2 cursor-pointer" standout="bg-accent text-black" label="ZMIEŃ NUMER KOLEJNOŚCI NA LISTACH">
-            <q-popup-edit >
-                <q-input v-model="orderNumber" input-class="text-center" dense autofocus stack-label label="zmień na inny numer" onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
+            <q-popup-edit :cover="false" @keypress.enter="compID=competition.uuid,updateOrderingCompetition()">
+                <q-input v-model="orderNumber" input-class="text-center" dense autofocus stack-label label="zmień na inny numer" onkeypress="return (event.charCode > 47 && event.charCode < 58)" @keypress.enter="compID=competition.uuid,updateOrderingCompetition()"/>
                 <div class="q-pa-xs">
                   <q-btn align="left" color="primary" label="Anuluj" v-close-popup></q-btn>
                   <q-btn align="right" color="primary" label="Zmień" v-close-popup @click="compID=competition.uuid,updateOrderingCompetition()"></q-btn>
@@ -273,6 +274,13 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+<q-dialog position="top" v-model="listDownload">
+  <q-card>
+    <q-card-section class="col">
+    <div class="self-center col full-width no-outline text-center text-h5 text-bold">Pobrano Listę</div>
+  </q-card-section>
+  </q-card>
+</q-dialog>
   </q-page>
 </template>
 
@@ -282,6 +290,7 @@ import { scroll } from 'quasar'
 const { getScrollTarget, setScrollPosition } = scroll
 import Vue from 'vue'
 import axios from 'axios'
+import App from 'src/App.vue'
 Vue.prototype.$axios = axios
 
 export default {
@@ -296,6 +305,7 @@ export default {
       competition: [],
       copmID: null,
       competitionInfo: false,
+      listDownload: false,
       orderNumber: null,
       clubID: null,
       clubName: null,
@@ -325,8 +335,7 @@ export default {
       memberName: null,
       memberUUID: null,
       nowDate: Date.now(),
-      local: 'localhost:8080/shootingplace',
-      local1: 'localhost:8080/shootingplace-1.0'
+      local: App.host
     }
   },
   created () {
@@ -397,6 +406,22 @@ export default {
           this.phoneNumbers = response
         })
     },
+    getMembersEmailsNoActive () {
+      fetch('http://' + this.local + '/member/membersEmailsNoActive', {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.emails = response
+        })
+    },
+    getMembersPhoneNumbersNoActive () {
+      fetch('http://' + this.local + '/member/phoneNumbersNoActive', {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.phoneNumbers = response
+        })
+    },
     getMembersToEraseEmails () {
       fetch('http://' + this.local + '/member/membersToEraseEmails', {
         method: 'GET'
@@ -437,6 +462,11 @@ export default {
           this.competitions = response
         })
     },
+    sendMail () {
+      fetch('http://' + this.local + '/email/', {
+        method: 'POST'
+      }).then(response => response.json())
+    },
     updateClub () {
       var data = {
         name: this.clubName,
@@ -464,7 +494,11 @@ export default {
           this.clubURL = null
           this.getOther()
           this.getAllClubs()
-        } else { this.dataFail = true }
+          this.autoClose()
+        } else {
+          this.dataFail = true
+          this.autoClose()
+        }
       })
     },
     updateOrderingCompetition () {
@@ -475,11 +509,16 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
+          this.competition.ordering = this.orderNumber
           this.doneAlert = true
           this.orderNumber = null
           this.compID = null
           this.getCompetitions()
-        } else { this.dataFail = true }
+          this.autoClose()
+        } else {
+          this.dataFail = true
+          this.autoClose()
+        }
       })
     },
     updateOtherPerson (id, first, second, phone, mail) {
@@ -499,7 +538,11 @@ export default {
         if (response.status === 200) {
           this.getOther()
           this.doneAlert = true
-        } else { this.dataFail = true }
+          this.autoClose()
+        } else {
+          this.dataFail = true
+          this.autoClose()
+        }
       })
     },
     deactivateOther () {
@@ -511,7 +554,11 @@ export default {
           this.othersID = null
           this.getOther()
           this.getAllClubs()
-        } else { this.dataFail = true }
+          this.autoClose()
+        } else {
+          this.dataFail = true
+          this.autoClose()
+        }
       })
     },
     getAllMembersList () {
@@ -526,6 +573,8 @@ export default {
         fileLink.setAttribute('download', 'Lista_klubowiczów_na_dzień ' + this.nowDate + '.pdf')
         document.body.appendChild(fileLink)
         fileLink.click()
+        this.listDownload = true
+        this.autoClose()
       })
     },
     getAllMembersWithLicenseNotValidAndContributionNotValid () {
@@ -540,6 +589,8 @@ export default {
         fileLink.setAttribute('download', 'Lista_klubowiczów_z_licencją_bez_składek_' + this.nowDate + '.pdf')
         document.body.appendChild(fileLink)
         fileLink.click()
+        this.listDownload = true
+        this.autoClose()
       })
     },
     getAllMembersWithLicenseValidAndContributionNotValid () {
@@ -554,6 +605,8 @@ export default {
         fileLink.setAttribute('download', 'Lista_klubowiczów_z_licencją_bez_składek_' + this.nowDate + '.pdf')
         document.body.appendChild(fileLink)
         fileLink.click()
+        this.listDownload = true
+        this.autoClose()
       })
     },
     getAllMembersToErase () {
@@ -568,6 +621,8 @@ export default {
         fileLink.setAttribute('download', 'Lista_klubowiczów_do_skreślenia_' + this.nowDate + '.pdf')
         document.body.appendChild(fileLink)
         fileLink.click()
+        this.listDownload = true
+        this.autoClose()
       })
     },
     getAllErasedMembers () {
@@ -582,7 +637,16 @@ export default {
         fileLink.setAttribute('download', 'Lista_klubowiczów_skreślonych_' + this.nowDate + '.pdf')
         document.body.appendChild(fileLink)
         fileLink.click()
+        this.listDownload = true
+        this.autoClose()
       })
+    },
+    autoClose () {
+      setTimeout(() => {
+        this.doneAlert = false
+        this.dataFail = false
+        this.listDownload = false
+      }, 2000)
     }
   },
   name: 'otherFunction'

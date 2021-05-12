@@ -221,6 +221,7 @@
 
 import Vue from 'vue'
 import axios from 'axios'
+import App from 'src/App.vue'
 Vue.prototype.$axios = axios
 
 export default {
@@ -249,8 +250,7 @@ export default {
       clubAddress: null,
       clubURL: null,
       clubs: [],
-      local: 'localhost:8080/shootingplace',
-      local1: 'localhost:8080/shootingplace-1.0'
+      local: App.host
     }
   },
   created () {

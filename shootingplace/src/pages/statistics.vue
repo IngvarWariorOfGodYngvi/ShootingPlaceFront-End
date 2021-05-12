@@ -8,7 +8,7 @@
         <q-card>
         <q-card-section class="col">
             <q-item>
-              <div class="q-pa-md self-center col full-width no-outline text-bold text-center bg-grey-3">WPŁACONE SKŁADKI W WYBRANYM OKRESIE</div>
+              <div class="q-pa-md self-center col full-width no-outline text-h5 text-bold text-center bg-grey-3">WPŁACONE SKŁADKI W WYBRANYM OKRESIE</div>
             </q-item>
             <div class="row">
             <q-item class="col">
@@ -59,6 +59,7 @@
               <q-field color="black" class="self-center col full-width no-outline text-center" standout="bg-accent text-black" stack-label>
                   <div class="self-center col full-width no-outline text-left">{{member.secondName}} {{member.firstName}}</div>
                   <div class="self-center col full-width no-outline text-left">leg. {{member.legitimationNumber}}</div>
+                  <div class="self-center col full-width no-outline text-left">składka {{member.contributionDate}}</div>
               </q-field>
               <p></p>
             </li>
@@ -69,7 +70,7 @@
         <q-card>
         <q-card-section class="col">
           <q-item>
-            <div class="q-pa-md self-center col full-width no-outline text-bold text-center bg-grey-3">ILOŚĆ OSÓB SKREŚLONYCH W WYBRANYM OKRESIE</div>
+            <div class="q-pa-md self-center col full-width no-outline text-h5 text-bold text-center bg-grey-3">ILOŚĆ OSÓB SKREŚLONYCH W WYBRANYM OKRESIE</div>
           </q-item>
           <div class="row">
             <q-item class="col">
@@ -133,7 +134,7 @@
         <q-card>
         <q-card-section class="col">
           <q-item>
-            <div class="q-pa-md self-center col full-width no-outline text-bold text-center bg-grey-3">ILOŚĆ OPŁACONYCH LICENCJI W WYBRANYM OKRESIE</div>
+            <div class="q-pa-md self-center col full-width no-outline text-h5 text-bold text-center bg-grey-3">ILOŚĆ OPŁACONYCH LICENCJI W WYBRANYM OKRESIE</div>
           </q-item>
           <div class="row">
             <q-item class="col">
@@ -198,7 +199,7 @@
         <q-card>
         <q-card-section class="col">
           <q-item>
-            <div class="q-pa-md self-center col full-width no-outline text-bold text-center bg-grey-3">ZAPISY DO KLUBU W WYBRANYM OKRESIE</div>
+            <div class="q-pa-md self-center col full-width no-outline text-h5 text-bold text-center bg-grey-3">ZAPISY DO KLUBU W WYBRANYM OKRESIE</div>
           </q-item>
           <div class="row">
             <q-item class="col">
@@ -280,7 +281,7 @@
         <q-card>
         <q-card-section class="col">
           <q-item>
-            <div class="q-pa-md self-center col full-width no-outline text-bold text-center bg-grey-3">OSOBY ZAPISANE W WYBRANYM ROKU</div>
+            <div class="q-pa-md self-center col full-width no-outline text-h5 text-bold text-center bg-grey-3">OSOBY ZAPISANE W WYBRANYM ROKU</div>
           </q-item>
           <div class="row">
             <q-item class="col">
@@ -350,7 +351,7 @@
           <q-card>
         <q-card-section class="col">
           <q-item>
-            <div class="q-pa-md self-center col full-width no-outline text-bold text-center bg-grey-3">KLUBOWICZE I AMUNICJA W WYBRANYM OKRESIE</div>
+            <div class="q-pa-md self-center col full-width no-outline text-h5 text-bold text-center bg-grey-3">KLUBOWICZE I AMUNICJA W WYBRANYM OKRESIE</div>
           </q-item>
           <div class="row">
             <q-item class="col">
@@ -422,6 +423,7 @@ import { scroll } from 'quasar'
 const { getScrollTarget, setScrollPosition } = scroll
 import Vue from 'vue'
 import axios from 'axios'
+import App from 'src/App.vue'
 Vue.prototype.$axios = axios
 
 export default {
@@ -446,8 +448,7 @@ export default {
       quantitySumJoinDateByMonths: [],
       quantityAmmo: [],
       adultCondition: true,
-      local: 'localhost:8080/shootingplace',
-      local1: 'localhost:8080/shootingplace-1.0'
+      local: App.host
     }
   },
   created () {

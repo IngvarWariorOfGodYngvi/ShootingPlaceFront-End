@@ -119,6 +119,7 @@ import { scroll } from 'quasar'
 const { getScrollTarget, setScrollPosition } = scroll
 import Vue from 'vue'
 import axios from 'axios'
+import App from 'src/App.vue'
 Vue.prototype.$axios = axios
 
 export default {
@@ -130,8 +131,7 @@ export default {
       instructor: false,
       members: [],
       others: [],
-      local: 'localhost:8080/shootingplace',
-      local1: 'localhost:8080/shootingplace-1.0'
+      local: App.host
     }
   },
   created () {

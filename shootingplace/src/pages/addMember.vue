@@ -26,10 +26,10 @@
         <q-form>
       <q-item><q-input class="full-width" color="red" v-model="memberFirstName" label="Imię*" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled/></q-item>
       <q-item><q-input class="full-width" color="red" v-model="memberSecondName" label="Nazwisko*" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 45" filled/></q-item>
-      <q-item><q-input class="full-width" color="red" v-model="memberIDCard" label="Numer Dowodu*" filled placeholder="XXX 000000" mask="AAA ######"/></q-item>
-      <q-item><q-input class="full-width" color="red" v-model="memberPesel" placeholder="tylko cyfry" label="Pesel*" mask="###########" filled/></q-item>
-      <q-item><q-input class="full-width" color="red" type="tel" v-model="memberPhone" placeholder="tylko cyfry" label="Numer telefonu*" mask="### ### ###" filled onkeypress="return (event.charCode > 47 && event.charCode < 58)"/></q-item>
-      <q-item><q-input class="full-width" filled color="green" type="email" v-model="memberEmail" label="email" /></q-item>
+      <q-item><q-input class="full-width" color="red" v-model="memberIDCard" label="Numer Dowodu*" filled placeholder="XXX 000000" mask="AAA ######" @input="isPresentIDCard(memberIDCard)"/></q-item>
+      <q-item><q-input class="full-width" color="red" v-model="memberPesel" placeholder="tylko cyfry" label="Pesel*" mask="###########" filled @input="isValidPesel(memberPesel),isPresentPesel(memberPesel)"/></q-item>
+      <q-item><q-input class="full-width" color="red" type="tel" v-model="memberPhone" placeholder="tylko cyfry" prefix="+48 " label="Numer telefonu*" mask="### ### ###" filled onkeypress="return (event.charCode > 47 && event.charCode < 58)"/></q-item>
+      <q-item><q-input class="full-width" filled color="green" type="email" v-model="memberEmail" label="email" @input="isPresentEmail(memberEmail)"/></q-item>
       <q-item><q-input class="full-width" filled color="green" v-model="memberLegitimation" label="Numer Legitymacji" onkeypress="return (event.charCode > 47 && event.charCode < 58)"/></q-item>
       <q-item><q-input class="full-width" filled v-model="memberJoinDate" mask="####/##/##" :rules="['date']" label="Data dołączenia do Klubu" hint="użyj kalendarza">
                           <template v-slot:append>
@@ -88,45 +88,60 @@
               <div class="self-center full-width no-outline" tabindex="1">{{memberIDCard}}</div>
             </template>
           </q-field>
-          <q-field v-else class="full-width bg-green-2" standout label="Numer Dowodu Osobistego" stack-label>
+          <q-field v-if="memberIDCard.length==10 && !isIDCard" class="full-width bg-green-2" standout label="Numer Dowodu Osobistego" stack-label>
             <template v-slot:control>
               <div class="self-center full-width no-outline" tabindex="1">{{memberIDCard}}</div>
             </template>
           </q-field>
+          <q-field v-if="memberIDCard.length==10 && isIDCard" class="full-width bg-warning" standout label="Numer Dowodu Osobistego" stack-label>
+            <template v-slot:control>
+              <div class="self-center full-width no-outline" tabindex="1">TAKI DOWÓD ISTNIEJE JUŻ W BAZIE</div>
+            </template>
+          </q-field>
         </q-item>
         <q-item>
-          <q-field v-if="memberPesel.length<11" class="full-width bg-red-2" standout label="Numer PESEL" stack-label>
+          <q-field v-if="!peselValue" class="full-width bg-red-2" standout label="Numer PESEL" stack-label>
             <template v-slot:control>
               <div class="self-center full-width no-outline" tabindex="1">{{memberPesel}}</div>
             </template>
           </q-field>
-          <q-field v-else class="full-width bg-green-2" standout label="Numer PESEL" stack-label>
+          <q-field v-if="peselValue&&!isPresent" class="full-width bg-green-2" standout label="Numer PESEL" stack-label>
             <template v-slot:control>
               <div class="self-center full-width no-outline" tabindex="1">{{memberPesel}}</div>
             </template>
           </q-field>
-        </q-item>
-        <q-item>
-          <q-field v-if="memberPhone.length<11" class="full-width bg-red-2" standout label="Numer Telefonu" stack-label>
+          <q-field v-if="peselValue&&isPresent" class="full-width bg-warning" standout label="Numer PESEL" stack-label>
             <template v-slot:control>
-              <div class="self-center full-width no-outline" tabindex="1">+48 {{memberPhone}}</div>
-            </template>
-          </q-field>
-          <q-field v-else class="full-width bg-green-2" standout label="Numer Telefonu" stack-label>
-            <template v-slot:control>
-              <div class="self-center full-width no-outline" tabindex="1">+48 {{memberPhone}}</div>
+              <div class="self-center full-width no-outline" tabindex="1">TAKI PESEL ISTNIEJE JUŻ W BAZIE</div>
             </template>
           </q-field>
         </q-item>
         <q-item>
-          <q-field v-if="!memberEmail.includes('@') || !memberEmail.includes('.')" class="full-width bg-red-2" standout label="Adres E-mail" stack-label>
+          <q-field v-if="memberPhone.length<11" prefix="+48 " class="full-width bg-red-2" standout label="Numer Telefonu" stack-label>
+            <template v-slot:control>
+              <div class="self-center full-width no-outline" tabindex="1">{{memberPhone}}</div>
+            </template>
+          </q-field>
+          <q-field v-else prefix="+48 " class="full-width bg-green-2" standout label="Numer Telefonu" stack-label>
+            <template v-slot:control>
+              <div class="self-center full-width no-outline" tabindex="1">{{memberPhone}}</div>
+            </template>
+          </q-field>
+        </q-item>
+        <q-item>
+          <q-field v-if="(!memberEmail.includes('@') || !memberEmail.includes('.')) " class="full-width bg-red-2" standout label="Adres E-mail" stack-label>
             <template v-slot:control>
               <div class="self-center full-width no-outline" tabindex="1">{{memberEmail}}</div>
             </template>
           </q-field>
-          <q-field v-else class="full-width bg-green-2" standout label="Adres E-mail" stack-label>
+          <q-field v-if="(memberEmail.includes('@') && memberEmail.includes('.')) && !isEmail" class="full-width bg-green-2" standout label="Adres E-mail" stack-label>
             <template v-slot:control>
               <div class="self-center full-width no-outline" tabindex="1">{{memberEmail}}</div>
+            </template>
+          </q-field>
+          <q-field v-if="(memberEmail.includes('@') && memberEmail.includes('.')) && isEmail" class="full-width bg-warning" standout label="Adres E-mail" stack-label>
+            <template v-slot:control>
+              <div class="self-center full-width no-outline" tabindex="1">TAKI EMAIL ISTNIEJE JUŻ W BAZIE</div>
             </template>
           </q-field>
         </q-item>
@@ -436,7 +451,7 @@
       </template>
     </q-stepper>
   </div>
-<q-dialog v-model="contributionDownloadConfirm" persistent @keypress.enter="contributionDownloadConfirm=false,getContributionPDF(),contributionConfirmDownloadAlert=true">
+<q-dialog v-model="contributionDownloadConfirm" persistent @keypress.enter="contributionDownloadConfirm=false,getContributionPDF()">
       <q-card>
         <q-card-section class="row items-center">
           <span class="text-h6">Czy napewno chcesz pobrać potwierdzenie składki?</span>
@@ -444,11 +459,11 @@
 
         <q-card-actions align="right">
           <q-btn flat label="anuluj" color="primary" v-close-popup />
-          <q-btn flat label="Pobierz" color="primary" v-close-popup @click="getContributionPDF(),contributionConfirmDownloadAlert=true" />
+          <q-btn flat label="Pobierz" color="primary" v-close-popup @click="getContributionPDF()" />
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="personalCardDownloadConfirm" persistent @keypress.enter="personalCardDownloadConfirm=false,getPersonalCardPDF(),personalCardDownloadAlert=true">
+<q-dialog v-model="personalCardDownloadConfirm" persistent @keypress.enter="personalCardDownloadConfirm=false,getPersonalCardPDF()">
       <q-card>
         <q-card-section class="row items-center">
           <span class="text-h6">Czy napewno chcesz pobrać kartę Klubowicza?</span>
@@ -456,41 +471,25 @@
 
         <q-card-actions align="right">
           <q-btn flat label="anuluj" color="primary" v-close-popup />
-          <q-btn flat label="Pobierz" color="primary" v-close-popup @click="getPersonalCardPDF(),personalCardDownloadAlert=true" />
+          <q-btn flat label="Pobierz" color="primary" v-close-popup @click="getPersonalCardPDF()" />
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="memberAlert" @keypress.enter="memberAlert=false">
+<q-dialog position="top" v-model="memberAlert">
       <q-card>
         <q-card-section>
-          <div class="text-h6">Witamy w Klubie</div>
+          <div class="text-h6 text-bold">Osoba została dodana do bazy klubu</div>
         </q-card-section>
-
-        <q-card-section class="q-pt-none">
-          Od tej chwili jesteś skazany na przenoszenie szaf z piętra na parter.
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup />
-        </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="addressAlert" @keypress.enter="addressAlert=false">
+<q-dialog position="top" v-model="addressAlert">
       <q-card>
         <q-card-section>
-          <div class="text-h6">Zaktualizowano Adres</div>
+          <div class="text-h6">Zapisano Adres</div>
         </q-card-section>
-
-        <q-card-section class="q-pt-none">
-          Już nie mieszkasz w kartonie po bananach.
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup />
-        </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="licenseAndPatentAlert" @keypress.enter="licenseAndPatentAlert=false">
+<q-dialog position="top" v-model="licenseAndPatentAlert">
       <q-card>
         <q-card-section v-if="licenseNumber==null">
           <div class="text-h6">Uprawnienia patentu zostały nadane</div>
@@ -498,114 +497,70 @@
         <q-card-section v-else>
           <div class="text-h6">Uprawnienia licencji zostały nadane</div>
         </q-card-section>
-
-        <q-card-section v-if="licenseNumber==null" class="q-pt-none">
-          Od tej chwili już nie jesteś gołowąsem i coś już umiesz.
-        </q-card-section>
-        <q-card-section v-else class="q-pt-none">
-          Pniesz się do góry w karierze małej mróweczki
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup />
-        </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="weaponAlert" @keypress.enter="weaponAlert=false">
+<q-dialog position="top" v-model="weaponAlert">
       <q-card>
         <q-card-section>
           <div class="text-h6">Dodano Pozwolenie na Broń</div>
         </q-card-section>
-
-        <q-card-section class="q-pt-none">
-          Teraz nie strzaszny Ci już RAMBO, TERMINATOR czy JOHN WICK.
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup />
-        </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="instructorAlert" @keypress.enter="instructorAlert=false">
+<q-dialog position="top" v-model="instructorAlert">
       <q-card>
         <q-card-section>
           <div class="text-h6">Dodano Uprawnienia Instruktora</div>
         </q-card-section>
-
-        <q-card-section class="q-pt-none">
-          Możesz już szkolić ludzi takich jak RAMBO.
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup />
-        </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="shootingLeaderAlert" @keypress.enter="shootingLeaderAlert=false">
+<q-dialog position="top" v-model="shootingLeaderAlert">
       <q-card>
         <q-card-section>
           <div class="text-h6">Dodano Uprawnienia Prowadzącego Strzelanie</div>
         </q-card-section>
-
-        <q-card-section class="q-pt-none">
-          Możesz już nadzorować wszystkich podczas strzelania z armat.
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup />
-        </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="arbiterAlert" @keypress.enter="arbiterAlert=false">
+<q-dialog position="top" v-model="arbiterAlert">
       <q-card>
         <q-card-section>
           <div class="text-h6">Dodano Licencję Sędziego</div>
         </q-card-section>
-
-        <q-card-section class="q-pt-none">
-          Od dzisiaj wystawiasz oceny takim goścom jak RAMBO.
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup />
-        </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="contributionConfirmDownloadAlert" @keypress.enter="contributionConfirmDownloadAlert=false">
+<q-dialog position="top" v-model="contributionConfirmDownloadAlert">
       <q-card>
         <q-card-section>
-          <div class="text-h6">Potwierdzenie Składki zostało pobrane</div>
+          <div class="text-h6">Pobrano potwierdzenie składki</div>
         </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup />
-        </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="personalCardDownloadAlert" @keypress.enter="personalCardDownloadAlert=false">
+<q-dialog position="top" v-model="personalCardDownloadAlert">
       <q-card>
         <q-card-section>
           <div class="text-h6">Pobrano kartę Klubowicza</div>
         </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup />
-        </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="failAlert" @keypress.enter="failAlert=false">
+<q-dialog position="top" v-model="csvfile">
       <q-card>
         <q-card-section>
-          <div class="text-h6">Coś poszło nie tak</div>
+          <div class="text-h6">Pobrano plik .CSV</div>
         </q-card-section>
-
-        <q-card-section class="q-pt-none">
-          Upewnij się, że wszystkie wymagane pola są uzupełnione a wszystkie dane są podane prawidłowo
+      </q-card>
+</q-dialog>
+<q-dialog position="top" v-model="pzss">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Potwierdzono zapis w PZSS</div>
         </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup />
-        </q-card-actions>
+      </q-card>
+</q-dialog>
+<q-dialog position="top" v-model="failAlert">
+      <q-card class="bg-red-5">
+        <q-card-section>
+          <div class="text-h6 text-center">Coś poszło nie tak</div>
+          <div class="q-pt-none">Upewnij się, że wszystkie wymagane pola są uzupełnione a wszystkie dane są podane prawidłowo</div>
+        </q-card-section>
       </q-card>
 </q-dialog>
 <q-dialog v-model="pzssPortal" persistent @keypress.enter="changePzss (uuid),pzssPortal=false">
@@ -646,15 +601,11 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="forbidden" @keypress.enter="forbidden=false">
-      <q-card>
+<q-dialog position="top" v-model="forbidden">
+      <q-card class="bg-warning">
         <q-card-section>
           <div class="text-h6">Niewłaściwy kod. Spróbuj ponownie.</div>
         </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup />
-        </q-card-actions>
       </q-card>
 </q-dialog>
   </q-page>
@@ -664,15 +615,19 @@
 
 import Vue from 'vue'
 import axios from 'axios'
+import App from 'src/App.vue'
 Vue.prototype.$axios = axios
 
 export default {
   data () {
     return {
+      peselValue: false,
       value: false,
       value1: false,
       value2: false,
       alert: false,
+      pzss: false,
+      csvfile: false,
       code: null,
       forbidden: false,
       acceptCode: false,
@@ -731,8 +686,10 @@ export default {
       ordinal: '',
       dateVar: /\//gi,
       pzssPortal: false,
-      local: 'localhost:8080/shootingplace',
-      local1: 'localhost:8080/shootingplace-1.0'
+      isPresent: false,
+      isIDCard: false,
+      isEmail: false,
+      local: App.host
     }
   },
   methods: {
@@ -774,6 +731,7 @@ export default {
                 this.uuid = 'Uwaga! Nie można wysyłać pustego formularza'
               }
               this.failAlert = true
+              this.autoClose()
             })
         }
         if (response.status === 406) {
@@ -785,6 +743,7 @@ export default {
                 this.uuid = 'Uwaga! Nie można wysyłać pustego formularza'
               }
               this.failAlert = true
+              this.autoClose()
             })
         }
         if (response.status === 201) {
@@ -796,11 +755,13 @@ export default {
               this.memberAdultConfirm = this.memberAdult
               this.memberAlert = true
               this.getMember(this.uuid)
+              this.autoClose()
             }
           )
         }
         if (response.status === 403) {
           this.forbidden = true
+          this.autoClose()
         }
       })
     },
@@ -821,7 +782,11 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           this.addressAlert = true
-        } else { this.failAlert = true }
+          this.autoClose()
+        } else {
+          this.failAlert = true
+          this.autoClose()
+        }
       })
     },
     addPatent (uuid, patentNumber, patentPistolPermission, patentRiflePermission, patentShotgunPermission, patentDate) {
@@ -842,7 +807,11 @@ export default {
         if (response.status === 200) {
           this.patentNumberConfirm = true
           this.licenseAndPatentAlert = true
-        } else { this.failAlert = true }
+          this.autoClose()
+        } else {
+          this.failAlert = true
+          this.autoClose()
+        }
       })
     },
     addLicense (uuid, licenseNumber, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission, licenseDate) {
@@ -862,7 +831,11 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           this.licenseAndPatentAlert = true
-        } else { this.failAlert = true }
+          this.autoClose()
+        } else {
+          this.failAlert = true
+          this.autoClose()
+        }
       })
     },
     changeWeaponPermission (uuid, weaponPermissionNumber, isExist) {
@@ -870,7 +843,7 @@ export default {
         number: weaponPermissionNumber,
         exist: isExist
       }
-      fetch('http://' + this.local + '/member/weapon/' + uuid, {
+      fetch('http://' + this.local + '/weapon/weapon/' + uuid, {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {
@@ -879,18 +852,21 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           this.weaponAlert = true
-        } else { this.failure = true }
+          this.autoClose()
+        } else {
+          this.failure = true
+          this.autoClose()
+        }
       })
     },
     changePzss (uuid) {
       fetch('http://' + this.local + '/member/pzss/' + uuid, {
         method: 'PATCH'
       }).then(response => {
+        this.pzss = true
         this.showloading()
+        this.autoClose()
       })
-    },
-    checkValid () {
-      this.showloading()
     },
     updateMemberPermissions (uuid, permissionsShootingLeaderNumber, permissionsInstructorNumber, permissionsArbiterNumber, permissionsArbiterPermissionValidThru) {
       var data = {
@@ -914,7 +890,11 @@ export default {
           this.value = false
           this.value1 = false
           this.value2 = false
-        } else { this.failAlert = true }
+          this.autoClose()
+        } else {
+          this.failAlert = true
+          this.autoClose()
+        }
       })
     },
     getContributionPDF () {
@@ -929,6 +909,8 @@ export default {
         fileLink.setAttribute('download', 'Składka_' + this.memberFirstName + '_' + this.memberSecondName + '.pdf')
         document.body.appendChild(fileLink)
         fileLink.click()
+        this.contributionConfirmDownloadAlert = true
+        this.autoClose()
       })
     },
     getPersonalCardPDF () {
@@ -943,6 +925,8 @@ export default {
         fileLink.setAttribute('download', 'Karta_Członkowska_' + this.memberFirstName + '_' + this.memberSecondName + '.pdf')
         document.body.appendChild(fileLink)
         fileLink.click()
+        this.personalCardDownloadAlert = true
+        this.autoClose()
       })
     },
     getCSVFile () {
@@ -957,6 +941,8 @@ export default {
         fileLink.setAttribute('download', this.memberFirstName + '_' + this.memberSecondName + '.csv')
         document.body.appendChild(fileLink)
         fileLink.click()
+        this.csvfile = true
+        this.autoClose()
       })
     },
     getMember (uuid) {
@@ -972,6 +958,77 @@ export default {
           this.memberLegitimation = this.memberE.legitimationNumber
           this.memberJoinDate = this.memberE.joinDate
         })
+    },
+    isValidPesel (pesel) {
+      if (typeof pesel !== 'string') {
+        this.peselValue = false
+      } else {
+        var weight = [1, 3, 7, 9, 1, 3, 7, 9, 1, 3]
+        var sum = 0
+        var controlNumber = parseInt(pesel.substring(10, 11))
+
+        for (var i = 0; i < weight.length; i++) {
+          sum += (parseInt(pesel.substring(i, i + 1)) * weight[i])
+        }
+        sum = sum % 10
+        this.peselValue = (10 - sum) % 10 === controlNumber
+      }
+    },
+    isPresentPesel (pesel) {
+      if (pesel.length === 11 && this.peselValue) {
+        fetch('http://' + this.local + '/member/pesel?pesel=' + pesel, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }).then(response => response.json())
+          .then(response => {
+            this.isPresent = response
+          })
+      }
+    },
+    isPresentIDCard (IDCard) {
+      if (IDCard.length === 10) {
+        fetch('http://' + this.local + '/member/IDCard?IDCard=' + IDCard, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }).then(response => response.json())
+          .then(response => {
+            this.isIDCard = response
+          })
+      }
+    },
+    isPresentEmail (email) {
+      if (email.includes('@') && email.includes('.')) {
+        fetch('http://' + this.local + '/member/email?email=' + email, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }).then(response => response.json())
+          .then(response => {
+            this.isEmail = response
+          })
+      }
+    },
+    autoClose () {
+      setTimeout(() => {
+        this.memberAlert = false
+        this.failAlert = false
+        this.addressAlert = false
+        this.licenseAndPatentAlert = false
+        this.weaponAlert = false
+        this.instructorAlert = false
+        this.shootingLeaderAlert = false
+        this.arbiterAlert = false
+        this.contributionConfirmDownloadAlert = false
+        this.personalCardDownloadAlert = false
+        this.csvfile = false
+        this.pzss = false
+        this.forbidden = false
+      }, 2000)
     }
   },
   name: 'addMember'

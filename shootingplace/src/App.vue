@@ -41,7 +41,7 @@ Vue.use(Keycloak, {
     new Vue({
       router,
       render: h => h(App)
-    }).$mount('#app')
+    }).$mount('App')
   }
 })
 function tokenInterceptor () {
@@ -58,7 +58,7 @@ Vue.use(Keycloak, {
     tokenInterceptor()
     /* eslint-disable no-new */
     new Vue({
-      el: '#app',
+      el: 'App',
       router,
       template: '<App/>',
       render: h => h(App)
@@ -66,6 +66,10 @@ Vue.use(Keycloak, {
   }
 })
 export default {
-  name: 'App'
+  name: 'App',
+  // prod: 'localhost:8081/#/',
+  prod: 'localhost:8080/strzelnica/#/',
+  // host: 'localhost:8080/shootingplace'
+  host: 'localhost:8080/shootingplace-1.0'
 }
 </script>
