@@ -704,7 +704,7 @@ export default {
       }, 1000)
     },
     addMember (memberLegitimation, memberFirstName, memberSecondName, memberIDCard, memberPesel, memberPhone, memberEmail, memberAdult) {
-      var data = {
+      const data = {
         legitimationNumber: memberLegitimation,
         firstName: memberFirstName,
         secondName: memberSecondName,
@@ -766,7 +766,7 @@ export default {
       })
     },
     updateAddress (uuid, memberPostOfficeCity, memberZipCode, memberStreet, memberStreetNumber, memberFlatNumber) {
-      var data = {
+      const data = {
         postOfficeCity: memberPostOfficeCity,
         zipCode: memberZipCode,
         street: memberStreet,
@@ -790,7 +790,7 @@ export default {
       })
     },
     addPatent (uuid, patentNumber, patentPistolPermission, patentRiflePermission, patentShotgunPermission, patentDate) {
-      var data = {
+      const data = {
         patentNumber: patentNumber,
         pistolPermission: patentPistolPermission,
         riflePermission: patentRiflePermission,
@@ -815,7 +815,7 @@ export default {
       })
     },
     addLicense (uuid, licenseNumber, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission, licenseDate) {
-      var data = {
+      const data = {
         number: licenseNumber,
         pistolPermission: licensePistolPermission,
         riflePermission: licenseRiflePermission,
@@ -839,7 +839,7 @@ export default {
       })
     },
     changeWeaponPermission (uuid, weaponPermissionNumber, isExist) {
-      var data = {
+      const data = {
         number: weaponPermissionNumber,
         exist: isExist
       }
@@ -869,7 +869,7 @@ export default {
       })
     },
     updateMemberPermissions (uuid, permissionsShootingLeaderNumber, permissionsInstructorNumber, permissionsArbiterNumber, permissionsArbiterPermissionValidThru) {
-      var data = {
+      const data = {
         shootingLeaderNumber: this.permissionsShootingLeaderNumber,
         instructorNumber: this.permissionsInstructorNumber,
         arbiterNumber: this.permissionsArbiterNumber,
@@ -903,8 +903,8 @@ export default {
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
-        var fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        var fileLink = document.createElement('a')
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        const fileLink = document.createElement('a')
         fileLink.href = fileURL
         fileLink.setAttribute('download', 'Składka_' + this.memberFirstName + '_' + this.memberSecondName + '.pdf')
         document.body.appendChild(fileLink)
@@ -919,8 +919,8 @@ export default {
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
-        var fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        var fileLink = document.createElement('a')
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        const fileLink = document.createElement('a')
         fileLink.href = fileURL
         fileLink.setAttribute('download', 'Karta_Członkowska_' + this.memberFirstName + '_' + this.memberSecondName + '.pdf')
         document.body.appendChild(fileLink)
@@ -935,8 +935,8 @@ export default {
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
-        var fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        var fileLink = document.createElement('a')
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        const fileLink = document.createElement('a')
         fileLink.href = fileURL
         fileLink.setAttribute('download', this.memberFirstName + '_' + this.memberSecondName + '.csv')
         document.body.appendChild(fileLink)
@@ -963,11 +963,11 @@ export default {
       if (typeof pesel !== 'string') {
         this.peselValue = false
       } else {
-        var weight = [1, 3, 7, 9, 1, 3, 7, 9, 1, 3]
-        var sum = 0
-        var controlNumber = parseInt(pesel.substring(10, 11))
+        const weight = [1, 3, 7, 9, 1, 3, 7, 9, 1, 3]
+        let sum = 0
+        const controlNumber = parseInt(pesel.substring(10, 11))
 
-        for (var i = 0; i < weight.length; i++) {
+        for (let i = 0; i < weight.length; i++) {
           sum += (parseInt(pesel.substring(i, i + 1)) * weight[i])
         }
         sum = sum % 10

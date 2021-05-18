@@ -1,3 +1,4 @@
+/* eslint-disable no-var */
 <template>
   <q-page padding>
       <div>
@@ -1774,7 +1775,7 @@ export default {
     },
     getMember (uuid) {
       const memberNameWord = this.memberName.split(' ')
-      var legNumber = memberNameWord.length
+      const legNumber = memberNameWord.length
       const memberNameUUID = memberNameWord[legNumber - 1]
       fetch('http://' + this.local + '/member/' + memberNameUUID, {
         method: 'GET',
@@ -1889,7 +1890,7 @@ export default {
       })
     },
     updateMember (uuid, email, phoneNumber) {
-      var data = {
+      const data = {
         email: email,
         phoneNumber: phoneNumber
       }
@@ -1914,7 +1915,7 @@ export default {
       })
     },
     updateIDCardAndName (uuid, idcard, firstName, secondName) {
-      var data = {
+      const data = {
         idcard: idcard,
         firstName: firstName,
         secondName: secondName
@@ -1941,7 +1942,7 @@ export default {
       })
     },
     updateAddress (uuid, memberZipCode, memberPostOfficeCity, memberStreet, memberStreetNumber, memberFlatNumber) {
-      var data = {
+      const data = {
         zipCode: memberZipCode,
         postOfficeCity: memberPostOfficeCity,
         street: memberStreet,
@@ -2026,14 +2027,14 @@ export default {
       }
       )
     },
-    getContributionPDF () {
+    getContributionPDF (memberUUID, contributionUUID) {
       axios({
         url: 'http://' + this.local + '/files/downloadContribution/' + this.memberUUID + '?contributionUUID=' + this.contributionUUID,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
-        var fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        var fileLink = document.createElement('a')
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        const fileLink = document.createElement('a')
         fileLink.href = fileURL
         fileLink.setAttribute('download', 'Składka_' + this.name + '_' + this.name2 + '.pdf')
         document.body.appendChild(fileLink)
@@ -2043,14 +2044,14 @@ export default {
         this.autoClose()
       })
     },
-    getPersonalCardPDF () {
+    getPersonalCardPDF (memberUUID) {
       axios({
         url: 'http://' + this.local + '/files/downloadPersonalCard/' + this.memberUUID,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
-        var fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        var fileLink = document.createElement('a')
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        const fileLink = document.createElement('a')
         fileLink.href = fileURL
         fileLink.setAttribute('download', 'Karta_Członkowska_' + this.name + '_' + this.name2 + '.pdf')
         document.body.appendChild(fileLink)
@@ -2065,8 +2066,8 @@ export default {
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
-        var fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        var fileLink = document.createElement('a')
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        const fileLink = document.createElement('a')
         fileLink.href = fileURL
         fileLink.setAttribute('download', 'Wniosek_' + this.name + '_' + this.name2 + '.pdf')
         document.body.appendChild(fileLink)
@@ -2081,8 +2082,8 @@ export default {
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
-        var fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        var fileLink = document.createElement('a')
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        const fileLink = document.createElement('a')
         fileLink.href = fileURL
         fileLink.setAttribute('download', 'Zaświadczenie_' + this.name + '_' + this.name2 + '.pdf')
         document.body.appendChild(fileLink)
@@ -2098,8 +2099,8 @@ export default {
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
-        var fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        var fileLink = document.createElement('a')
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        const fileLink = document.createElement('a')
         fileLink.href = fileURL
         fileLink.setAttribute('download', this.name + '_' + this.name2 + '.csv')
         document.body.appendChild(fileLink)
@@ -2109,7 +2110,7 @@ export default {
       })
     },
     addPatent (uuid, patentNumber, patentPistolPermission, patentRiflePermission, patentShotgunPermission, patentDate) {
-      var data = {
+      const data = {
         patentNumber: patentNumber,
         pistolPermission: patentPistolPermission,
         riflePermission: patentRiflePermission,
@@ -2140,7 +2141,7 @@ export default {
       })
     },
     addLicense (uuid, licenseNumber, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission) {
-      var data1 = {
+      const data1 = {
         number: licenseNumber,
         pistolPermission: licensePistolPermission,
         riflePermission: licenseRiflePermission,
@@ -2169,7 +2170,7 @@ export default {
       })
     },
     prolongLicense (uuid, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission) {
-      var data = {
+      const data = {
         pistolPermission: licensePistolPermission,
         riflePermission: licenseRiflePermission,
         shotgunPermission: licenseShotgunPermission
@@ -2276,7 +2277,7 @@ export default {
       })
     },
     changeWeaponPermission (uuid, weaponPermissionNumber, isExist) {
-      var data = {
+      const data = {
         number: weaponPermissionNumber,
         exist: isExist
       }
@@ -2301,7 +2302,7 @@ export default {
       })
     },
     changeWeaponAdmission (uuid, admissionToPossess, admissionToPossessIsExist) {
-      var data = {
+      const data = {
         admissionToPossessAWeapon: admissionToPossess,
         admissionToPossessAWeaponIsExist: admissionToPossessIsExist
       }
@@ -2366,7 +2367,7 @@ export default {
       })
     },
     updateMemberPermissions (uuid, permissionsShootingLeaderNumber, permissionsInstructorNumber, permissionsArbiterNumber, permissionsArbiterPermissionValidThru) {
-      var data = {
+      const data = {
         shootingLeaderNumber: this.permissionsShootingLeaderNumber,
         instructorNumber: this.permissionsInstructorNumber,
         arbiterNumber: this.permissionsArbiterNumber,

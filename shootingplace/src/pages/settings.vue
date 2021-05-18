@@ -386,7 +386,7 @@ export default {
       if (this.clubs.length > 0) {
         this.clubMessage = 'Nie można dodać więcej macierzystego Klubu'
       } else {
-        var data = {
+        const data = {
           name: this.clubName,
           fullName: this.clubFullName,
           licenseNumber: this.clubLicenseNumber,

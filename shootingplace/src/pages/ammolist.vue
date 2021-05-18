@@ -408,8 +408,8 @@ export default {
         responseType: 'blob'
       }).then(response => {
         this.ammunitionListAlert = true
-        var fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        var fileLink = document.createElement('a')
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        const fileLink = document.createElement('a')
         fileLink.href = fileURL
         fileLink.setAttribute('download', 'Lista_Rozliczenia_Amunicji_' + this.date + '.pdf')
         document.body.appendChild(fileLink)
@@ -419,10 +419,10 @@ export default {
     },
     addMemberAndAmmoToCaliber () {
       const memberNameWord = this.memberName.split(' ')
-      var legNumber = memberNameWord.length
+      const legNumber = memberNameWord.length
       const memberNameUUID = memberNameWord[legNumber - 1]
       const otherNameWord = this.otherName.split(' ')
-      var idNumber = otherNameWord.length
+      const idNumber = otherNameWord.length
       const otherNameID = otherNameWord[idNumber - 1]
       fetch('http://' + this.local + '/ammoEvidence/ammo?caliberUUID=' + this.caliberUUID + '&legitimationNumber=' + memberNameUUID + '&counter=' + this.ammoQuantity + '&otherID=' + otherNameID, {
         method: 'POST',
@@ -466,7 +466,7 @@ export default {
         })
     },
     addOtherPerson () {
-      var person = {
+      const person = {
         firstName: this.otherFirstName,
         secondName: this.otherSecondName,
         phoneNumber: this.otherPhoneNumber,

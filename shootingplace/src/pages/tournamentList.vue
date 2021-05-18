@@ -250,15 +250,20 @@
                           </div>
                       </q-field>
                       </div>
-                      <q-field class="col-1 text-center" standout="bg-accent text-black" stack-label label="metryka">
-                          <div class="self-center full-width col no-outline text-center text-black" tabindex="0">{{scoreList.metricNumber}}</div>
-                      </q-field>
+                      <div class="col-1" @dblclick="scoreUUID = scoreList.uuid,toggleDSQDNF=true">
+                        <q-field class="text-center" standout="bg-accent text-black" stack-label label="metryka">
+                            <div class="self-center full-width col no-outline text-center text-black" tabindex="0">{{scoreList.metricNumber}}</div>
+                        </q-field>
+                      </div>
                       <q-field class="box col-1 cursor-pointer" standout="bg-accent text-black" label="trafienia" stack-label>
                         <q-popup-edit v-model="outerTen">
-                          <q-input @focus="scoreUUID = scoreList.uuid" input-class="text-center" v-model="outerTen" @keypress.enter="scoreUUID = scoreList.uuid, onEnter(scoreUUID)" dense autofocus stack-label label="trafienia" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+                          <q-input v-if="alfa == '' && charlie == '' && delta == ''" @focus="scoreUUID = scoreList.uuid" input-class="text-center" v-model="outerTen" @keypress.enter="scoreUUID = scoreList.uuid, onEnter(scoreUUID)" dense autofocus stack-label label="trafienia" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+                          <q-input @focus="scoreUUID = scoreList.uuid" @keypress.enter="scoreUUID = scoreList.uuid, onEnter(scoreUUID)" input-class="text-center" v-model="alfa" stack-label label="Alfa" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+                          <q-input @focus="scoreUUID = scoreList.uuid" @keypress.enter="scoreUUID = scoreList.uuid, onEnter(scoreUUID)" input-class="text-center" v-model="charlie" stack-label label="Charlie" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+                          <q-input @focus="scoreUUID = scoreList.uuid" @keypress.enter="scoreUUID = scoreList.uuid, onEnter(scoreUUID)" input-class="text-center" v-model="delta" stack-label label="Delta" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
                           <div class="q-pa-xs">
-                            <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
-                            <q-btn color="primary" label="Zapisz" v-close-popup @click="scoreUUID = scoreList.uuid, setScore(scoreList.uuid,scoreLabel,innerTen,outerTen,procedures)"></q-btn>
+                            <q-btn color="primary" label="Anuluj" v-close-popup @click="outerTen='',alfa='',charlie='',delta=''"></q-btn>
+                            <q-btn color="primary" label="Zapisz" v-close-popup @click="scoreUUID = scoreList.uuid, setScore(scoreList.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
                           </div>
                         </q-popup-edit>
                         <div class="self-center full-width col no-outline text-center text-black" tabindex="0">{{scoreList.outerTen}}</div>
@@ -268,7 +273,7 @@
                         <q-input @focus="scoreUUID = scoreList.uuid" input-class="text-center" v-model="innerTen" @keypress.enter="scoreUUID = scoreList.uuid, onEnter(scoreUUID)" dense autofocus stack-label label="czas" onkeypress="return (event.charCode > 47 && event.charCode < 58) || event.charCode 44 || event.charCode 46" />
                         <div class="q-pa-xs">
                           <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
-                          <q-btn color="primary" label="Zapisz" v-close-popup @click="scoreUUID = scoreList.uuid, setScore(scoreList.uuid,scoreLabel,innerTen,outerTen,procedures)"></q-btn>
+                          <q-btn color="primary" label="Zapisz" v-close-popup @click="scoreUUID = scoreList.uuid, setScore(scoreList.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
                         </div>
                       </q-popup-edit>
                       <div class="self-center full-width col no-outline text-center text-black" tabindex="0">{{scoreList.innerTen}}</div>
@@ -278,17 +283,26 @@
                         <q-input @focus="scoreUUID = scoreList.uuid" input-class="text-center" v-model="procedures" @keypress.enter="scoreUUID = scoreList.uuid, onEnter(scoreUUID)" dense autofocus stack-label label="procedury + 3 sek" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
                         <div class="q-pa-xs row full-width">
                           <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
-                          <q-btn color="primary" label="Zapisz" v-close-popup @click="scoreUUID = scoreList.uuid, setScore(scoreList.uuid,scoreLabel,innerTen,outerTen,procedures)"></q-btn>
+                          <q-btn color="primary" label="Zapisz" v-close-popup @click="scoreUUID = scoreList.uuid, setScore(scoreList.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
                         </div>
                       </q-popup-edit>
                       <div class="self-center full-width col no-outline text-center text-black" tabindex="0">{{scoreList.procedures}}</div>
                     </q-field>
                     <q-field class="col-1" standout="bg-accent text-black" label="HF" stack-label>
-                        <div class="self-center full-width col no-outline text-center text-black" tabindex="0">{{scoreList.hf}}</div>
+                      <q-tooltip v-if="scoreList.alfa>0||scoreList.charlie>0||scoreList.delta>0" anchor="top middle" self="bottom middle" :offset="[12, 12]">
+                        <div v-if="scoreList.alfa>0">alfa: {{scoreList.alfa}}</div>
+                        <div v-if="scoreList.charlie>0">charlie: {{scoreList.charlie}}</div>
+                        <div v-if="scoreList.delta>0">delta: {{scoreList.delta}}</div>
+                      </q-tooltip>
+                        <div class="self-center full-width col no-outline text-center text-black" tabindex="0">{{scoreList.hf}} </div>
                     </q-field>
-                    <div class="col-1" @dblclick="toggleDSQDNF=true">
-                    <q-field standout="bg-accent text-black" label="Wynik" clickable stack-label @dblclick="toggleDSQDNF=true">
-                        <div class="self-center full-width col no-outline text-center text-black q-pa-xs" tabindex="0">{{scoreList.score}}</div>
+                    <div class="col-1">
+                    <q-field standout="bg-accent text-black" label="Wynik" clickable stack-label >
+                      <div v-if="scoreList.dnf||scoreList.dsq" class="self-center full-width col no-outline text-center text-black" tabindex="0">
+                          <div v-if="scoreList.dnf">DNF</div>
+                          <div v-if="scoreList.dsq">DSQ</div>
+                          </div>
+                        <div v-else class="self-center full-width col no-outline text-center text-black" tabindex="0">{{scoreList.score}}</div>
                     </q-field>
                     </div>
                     </div>
@@ -318,15 +332,17 @@
                         </div>
                     </q-field>
                     </div>
-                    <q-field class="col-1 text-center" standout="bg-accent text-black" stack-label label="metryka">
-                        <div class="self-center full-width col no-outline text-center text-black" tabindex="0">{{scoreList.metricNumber}}</div>
-                    </q-field>
+                    <div class="col-1" @dblclick="scoreUUID = scoreList.uuid,metric = scoreList.metricNumber,toggleDSQDNF=true">
+                        <q-field class="text-center" standout="bg-accent text-black" stack-label label="metryka">
+                            <div class="self-center full-width col no-outline text-center text-black" tabindex="0">{{scoreList.metricNumber}}</div>
+                        </q-field>
+                      </div>
                       <q-field class="box col-2 cursor-pointer" standout="bg-accent text-black" label="10 ogólnie" stack-label>
                           <q-popup-edit v-model="outerTen">
                               <q-input @focus="scoreUUID = scoreList.uuid" input-class="text-center" v-model="outerTen" @keypress.enter="scoreUUID = scoreList.uuid, onEnter(scoreUUID)" dense autofocus stack-label label="ilość 10 ogólnie" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
                               <div class="q-pa-xs">
                                 <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
-                                <q-btn color="primary" label="Zapisz" v-close-popup @click="scoreUUID = scoreList.uuid, setScore(scoreList.uuid,scoreLabel,innerTen,outerTen,procedures)"></q-btn>
+                                <q-btn color="primary" label="Zapisz" v-close-popup @click="scoreUUID = scoreList.uuid, setScore(scoreList.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
                               </div>
                             </q-popup-edit>
                             <div class="self-center full-width col no-outline text-center text-black" tabindex="0">{{scoreList.outerTen}}</div>
@@ -336,7 +352,7 @@
                               <q-input @focus="scoreUUID = scoreList.uuid" input-class="text-center" v-model="innerTen" @keypress.enter="scoreUUID = scoreList.uuid, onEnter(scoreUUID)" dense autofocus stack-label label="ilość 10 wewnętrznych" onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                               <div class="q-pa-xs">
                                 <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
-                                <q-btn color="primary" label="Zapisz" v-close-popup @click="scoreUUID = scoreList.uuid, setScore(scoreList.uuid,scoreLabel,innerTen,outerTen,procedures)"></q-btn>
+                                <q-btn color="primary" label="Zapisz" v-close-popup @click="scoreUUID = scoreList.uuid, setScore(scoreList.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
                               </div>
                             </q-popup-edit>
                         <div class="self-center full-width col no-outline text-center text-black" tabindex="0">{{scoreList.innerTen}}</div>
@@ -346,10 +362,14 @@
                               <q-input @focus="scoreUUID = scoreList.uuid" input-class="text-center" v-model="scoreLabel" @keypress.enter="scoreUUID = scoreList.uuid, onEnter(scoreUUID)" dense autofocus stack-label label="Wynik" onkeypress="return (event.charCode > 47 && event.charCode < 58) || event.charCode 44 || event.charCode 46"/>
                               <div class="q-pa-xs">
                                 <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
-                                <q-btn color="primary" label="Zapisz" v-close-popup @click="scoreUUID = scoreList.uuid, setScore(scoreList.uuid,scoreLabel,innerTen,outerTen,procedures)"></q-btn>
+                                <q-btn color="primary" label="Zapisz" v-close-popup @click="scoreUUID = scoreList.uuid, setScore(scoreList.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
                               </div>
                             </q-popup-edit>
-                        <div class="self-center full-width col no-outline text-center text-black" tabindex="0">{{scoreList.score}}</div>
+                        <div v-if="scoreList.dnf||scoreList.dsq" class="self-center full-width col no-outline text-center text-black" tabindex="0">
+                          <div v-if="scoreList.dnf">DNF</div>
+                          <div v-if="scoreList.dsq">DSQ</div>
+                          </div>
+                        <div v-else class="self-center full-width col no-outline text-center text-black" tabindex="0">{{scoreList.score}}</div>
                     </q-field>
                     </div>
                   </div>
@@ -806,21 +826,21 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="toggleDSQDNF" @keypress.enter="failure=false">
+    <q-dialog v-model="toggleDSQDNF">
       <q-card>
         <q-card-section>
           <div>
-            <div class="text-h6">Czy ustawić w wyniku DNF?</div>
-            <q-btn>ustaw zawodnikowi DNF</q-btn>
+            <div class="text-h5 text-bold text-center">Kary dla zawodnika z numerem {{metric}}</div>
           </div>
-          <div>
-            <div class="text-h6">Czy ustawić w wyniku DSQ?</div>
-            <q-btn>ustaw zawodnikowi DSQ</q-btn>
+          <div class="col q-pa-md">
+            <q-btn color="primary" class="full-width q-pa-md" @click="toggleDnfScore()">przyznaj DNF</q-btn>
+            <p></p>
+            <q-btn color="primary" class="full-width q-pa-md" @click="toggleDsqScore()">przyznaj DSQ</q-btn>
           </div>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup/>
+          <q-btn flat label="Anuluj" color="primary" v-close-popup/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -844,6 +864,14 @@
       <q-card>
         <q-card-section>
           <div class="text-h6">Nie można dodać Sędziego.</div>
+        </q-card-section>
+
+      </q-card>
+    </q-dialog>
+    <q-dialog position="top" v-model="toggle">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Ustawiono DNF / DSQ</div>
         </q-card-section>
 
       </q-card>
@@ -1092,6 +1120,7 @@ export default {
       valUUID: null,
       code: null,
       openList: false,
+      toggle: false,
       listDownload: false,
       forbidden: false,
       tournamentUUID: null,
@@ -1169,11 +1198,15 @@ export default {
       clubName: '',
       innerTen: null,
       outerTen: null,
+      alfa: '',
+      charlie: '',
+      delta: '',
       procedures: null,
       meters: false,
       quantity: false,
       notUsed: false,
       state: null,
+      metric: null,
       addAmmo: false,
       addAmmoConfirm: false,
       ammoQuantity: '',
@@ -1217,7 +1250,7 @@ export default {
   },
   methods: {
     onEnter (scoreUUID) {
-      this.setScore(scoreUUID, this.scoreLabel, this.innerTen, this.outerTen, this.procedures)
+      this.setScore(scoreUUID, this.scoreLabel, this.innerTen, this.outerTen, this.alfa, this.charlie, this.delta, this.procedures)
     },
     getListTournaments () {
       this.getMembersNames()
@@ -1336,7 +1369,7 @@ export default {
       )
     },
     addOtherPerson () {
-      var person = {
+      const person = {
         firstName: this.otherFirstName,
         secondName: this.otherSecondName,
         phoneNumber: this.otherPhoneNumber,
@@ -1361,7 +1394,7 @@ export default {
       })
     },
     createNewTournament (name, date) {
-      var data = {
+      const data = {
         name: name,
         date: date.replace(/\//gi, '-'),
         open: true,
@@ -1382,7 +1415,7 @@ export default {
       })
     },
     createCompetition () {
-      var name = null
+      let name = null
       if (this.choice10 !== null && this.choice10 !== '') {
         this.choice10 = this.choice10 + ' strzałów'
       }
@@ -1399,7 +1432,7 @@ export default {
         this.choice + this.choice1 + this.choice2 + this.choice3 + this.choice4 + this.choice5 + this.choice6 + this.choice7 + this.choice8 + this.choice9 + this.choice10 + this.choice11
       }
       const choice10 = this.choice10.replace(/ strzałów/g, '')
-      var data = {
+      const data = {
         name: name,
         discipline: this.choice1.replace(/ /g, ''),
         numberOfShots: choice10,
@@ -1441,7 +1474,7 @@ export default {
       })
     },
     updateTournament () {
-      var data = {
+      const data = {
         name: this.tournamentName,
         date: this.tournamentDate.replace(/\//gi, '-')
       }
@@ -1464,10 +1497,10 @@ export default {
     },
     addMemberToCompetition (uuid) {
       const memberNameWord = this.memberName.split(' ')
-      var legNumber = memberNameWord.length
+      const legNumber = memberNameWord.length
       const memberNameUUID = memberNameWord[legNumber - 1]
       const otherNameWord = this.otherName.split(' ')
-      var idNumber = otherNameWord.length
+      const idNumber = otherNameWord.length
       const otherNameID = otherNameWord[idNumber - 1]
       fetch('http://' + this.local + '/competitionMembersList/addMember?competitionUUID=' + uuid + '&legitimationNumber=' + memberNameUUID + '&otherPerson=' + otherNameID, {
         method: 'PUT',
@@ -1487,10 +1520,10 @@ export default {
     },
     removeMemberFromCompetition (uuid, finder) {
       const memberNameWord = this.memberName.split(' ')
-      var legNumber = memberNameWord.length
+      const legNumber = memberNameWord.length
       const memberNameUUID = memberNameWord[legNumber - 1]
       const otherNameWord = this.otherName.split(' ')
-      var idNumber = otherNameWord.length
+      const idNumber = otherNameWord.length
       const otherNameID = otherNameWord[idNumber - 1]
       fetch('http://' + this.local + '/competitionMembersList/removeMember?competitionUUID=' + uuid + '&legitimationNumber=' + memberNameUUID + '&otherPerson=' + otherNameID, {
         method: 'POST',
@@ -1534,12 +1567,21 @@ export default {
         this.autoClose()
       }
     },
-    setScore (scoreUUID, score, innerTen, outerTen, procedures) {
+    setScore (scoreUUID, score, innerTen, outerTen, alfa, charlie, delta, procedures) {
       if (innerTen === null) {
         innerTen = '-1'
       }
       if (outerTen === null) {
         outerTen = '-1'
+      }
+      if (alfa === '') {
+        alfa = '-1'
+      }
+      if (charlie === '') {
+        charlie = '-1'
+      }
+      if (delta === '') {
+        delta = '-1'
       }
       if (score === null) {
         score = '-1'
@@ -1547,7 +1589,7 @@ export default {
       if (procedures === null) {
         procedures = '-1'
       }
-      fetch('http://' + this.local + '/competition?scoreUUID=' + scoreUUID + '&score=' + parseFloat(score.replace(/,/gi, '.')) + '&innerTen=' + parseFloat(innerTen.replace(/,/gi, '.')) + '&outerTen=' + parseFloat(outerTen.replace(/,/gi, '.')) + '&procedures=' + procedures, {
+      fetch('http://' + this.local + '/competition?scoreUUID=' + scoreUUID + '&score=' + parseFloat(score.replace(/,/gi, '.')) + '&innerTen=' + parseFloat(innerTen.replace(/,/gi, '.')) + '&outerTen=' + parseFloat(outerTen.replace(/,/gi, '.')) + '&alfa=' + parseFloat(alfa.replace(/,/gi, '.')) + '&charlie=' + parseFloat(charlie.replace(/,/gi, '.')) + '&delta=' + parseFloat(delta.replace(/,/gi, '.')) + '&procedures=' + procedures, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -1558,6 +1600,9 @@ export default {
           this.innerTen = null
           this.outerTen = null
           this.procedures = null
+          this.alfa = ''
+          this.charlie = ''
+          this.delta = ''
           this.getListTournaments()
         } else {
           this.dataFail = true
@@ -1590,6 +1635,40 @@ export default {
         if (response.status === 200) {
           this.getListTournaments()
           this.gunAdded = true
+          this.autoClose()
+        } else {
+          this.dataFail = true
+          this.autoClose()
+        }
+      })
+    },
+    toggleDnfScore () {
+      fetch('http://' + this.local + '/competition/dnf?scoreUUID=' + this.scoreUUID, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          this.getListTournaments()
+          this.toggle = true
+          this.autoClose()
+        } else {
+          this.dataFail = true
+          this.autoClose()
+        }
+      })
+    },
+    toggleDsqScore () {
+      fetch('http://' + this.local + '/competition/dsq?scoreUUID=' + this.scoreUUID, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          this.getListTournaments()
+          this.toggle = true
           this.autoClose()
         } else {
           this.dataFail = true
@@ -1658,10 +1737,10 @@ export default {
     },
     removeArbiter () {
       const otherArbiterWord = this.otherArbiter.split(' ')
-      var legNumber = otherArbiterWord.length
+      const legNumber = otherArbiterWord.length
       const otherArbiterUUID = otherArbiterWord[legNumber - 1]
       const otherPersonArbiterWord = this.otherArbitersList.split(' ')
-      var personLegNumber = otherPersonArbiterWord.length
+      const personLegNumber = otherPersonArbiterWord.length
       const otherPersonArbiterID = otherPersonArbiterWord[personLegNumber - 1]
       fetch('http://' + this.local + '/tournament/removeArbiter/' + this.tournamentUUID + '?number=' + otherArbiterUUID + '&id=' + otherPersonArbiterID, {
         method: 'POST',
@@ -1686,10 +1765,10 @@ export default {
     },
     removeRTSArbiter () {
       const otherArbiterWord = this.otherRTSArbiter.split(' ')
-      var legNumber = otherArbiterWord.length
+      const legNumber = otherArbiterWord.length
       const otherArbiterUUID = otherArbiterWord[legNumber - 1]
       const otherPersonArbiterWord = this.otherRTSArbitersList.split(' ')
-      var personLegNumber = otherPersonArbiterWord.length
+      const personLegNumber = otherPersonArbiterWord.length
       const otherPersonArbiterID = otherPersonArbiterWord[personLegNumber - 1]
       fetch('http://' + this.local + '/tournament/removeRTSArbiter/' + this.tournamentUUID + '?number=' + otherArbiterUUID + '&id=' + otherPersonArbiterID, {
         method: 'POST',
@@ -1710,10 +1789,10 @@ export default {
     },
     addMainArbiterToTournament () {
       const mainArbiterWord = this.mainArbiter.split(' ')
-      var legNumber = mainArbiterWord.length
+      const legNumber = mainArbiterWord.length
       const mainArbiterUUID = mainArbiterWord[legNumber - 1]
       const mainOtherArbiterWord = this.otherMainArbiterName.split(' ')
-      var otherLegNumber = mainOtherArbiterWord.length
+      const otherLegNumber = mainOtherArbiterWord.length
       const mainOtherArbiterID = mainOtherArbiterWord[otherLegNumber - 1]
       fetch('http://' + this.local + '/tournament/addMainArbiter/' + this.tournamentUUID + '?number=' + mainArbiterUUID + '&id=' + mainOtherArbiterID, {
         method: 'PUT',
@@ -1736,10 +1815,10 @@ export default {
     },
     addRTSArbiterToTournament () {
       const countArbiterWord = this.countArbiter.split(' ')
-      var legNumber = countArbiterWord.length
+      const legNumber = countArbiterWord.length
       const countArbiterUUID = countArbiterWord[legNumber - 1]
       const countOtherArbiterWord = this.otherRTSArbiterName.split(' ')
-      var otherLegNumber = countOtherArbiterWord.length
+      const otherLegNumber = countOtherArbiterWord.length
       const countOtherArbiterID = countOtherArbiterWord[otherLegNumber - 1]
       fetch('http://' + this.local + '/tournament/addRTSArbiter/' + this.tournamentUUID + '?number=' + countArbiterUUID + '&id=' + countOtherArbiterID, {
         method: 'PUT',
@@ -1762,10 +1841,10 @@ export default {
     },
     addOtherArbiterToTournament () {
       const otherArbiterWord = this.otherArbiter.split(' ')
-      var legNumber = otherArbiterWord.length
+      const legNumber = otherArbiterWord.length
       const otherArbiterUUID = otherArbiterWord[legNumber - 1]
       const otherPersonArbiterWord = this.otherArbitersList.split(' ')
-      var personLegNumber = otherPersonArbiterWord.length
+      const personLegNumber = otherPersonArbiterWord.length
       const otherPersonArbiterID = otherPersonArbiterWord[personLegNumber - 1]
       fetch('http://' + this.local + '/tournament/addOthersArbiters/' + this.tournamentUUID + '?number=' + otherArbiterUUID + '&id=' + otherPersonArbiterID, {
         method: 'PUT',
@@ -1788,10 +1867,10 @@ export default {
     },
     addOtherRTSArbiterToTournament () {
       const otherArbiterWord = this.otherRTSArbiter.split(' ')
-      var legNumber = otherArbiterWord.length
+      const legNumber = otherArbiterWord.length
       const otherArbiterUUID = otherArbiterWord[legNumber - 1]
       const otherPersonArbiterWord = this.otherRTSArbitersList.split(' ')
-      var personLegNumber = otherPersonArbiterWord.length
+      const personLegNumber = otherPersonArbiterWord.length
       const otherPersonArbiterID = otherPersonArbiterWord[personLegNumber - 1]
       fetch('http://' + this.local + '/tournament/addOthersRTSArbiters/' + this.tournamentUUID + '?number=' + otherArbiterUUID + '&id=' + otherPersonArbiterID, {
         method: 'PUT',
@@ -1927,8 +2006,8 @@ export default {
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
-        var fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        var fileLink = document.createElement('a')
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        const fileLink = document.createElement('a')
         fileLink.href = fileURL
         fileLink.setAttribute('download', this.date + '-Dziesiątka-' + this.name + '.pdf')
         document.body.appendChild(fileLink)
@@ -1943,8 +2022,8 @@ export default {
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
-        var fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        var fileLink = document.createElement('a')
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        const fileLink = document.createElement('a')
         fileLink.href = fileURL
         fileLink.setAttribute('download', 'Lista_sędziów_na_zawodach_' + this.name + '_' + this.date + '.pdf')
         document.body.appendChild(fileLink)
@@ -1959,8 +2038,8 @@ export default {
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
-        var fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        var fileLink = document.createElement('a')
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        const fileLink = document.createElement('a')
         fileLink.href = fileURL
         fileLink.setAttribute('download', 'metryki_' + this.name + '_' + this.date + '.pdf')
         document.body.appendChild(fileLink)
@@ -1975,8 +2054,8 @@ export default {
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
-        var fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        var fileLink = document.createElement('a')
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        const fileLink = document.createElement('a')
         fileLink.href = fileURL
         fileLink.setAttribute('download', 'zestawienie_rankingowe.pdf')
         document.body.appendChild(fileLink)
@@ -2011,6 +2090,7 @@ export default {
         this.forbidden = false
         this.tournamentOpenAlert = false
         this.listDownload = false
+        this.toggle = false
       }, 2000)
     }
   },

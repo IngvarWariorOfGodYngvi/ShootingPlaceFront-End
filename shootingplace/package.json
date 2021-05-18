@@ -12,24 +12,26 @@
   "dependencies": {
     "@dsb-norge/vue-keycloak-js": "^1.3.2",
     "@quasar/cli": "^1.1.3",
-    "@quasar/extras": "^1.0.0",
+    "@quasar/extras": "^1.10.4",
     "axios": "^0.21.1",
-    "core-js": "^3.6.5",
-    "keycloak-js": "^12.0.1",
-    "quasar": "^1.0.0",
-    "vuex": "^3.6.0"
+    "core-js": "^3.12.1",
+    "eslint-webpack-plugin": "^2.5.4",
+    "keycloak-js": "^12.0.4",
+    "quasar": "^1.15.14",
+    "vuejs-logger": "^1.5.5",
+    "vuex": "^3.6.2"
   },
   "devDependencies": {
-    "@quasar/app": "^2.1.14",
+    "@quasar/app": "^2.2.6",
     "babel-eslint": "^10.0.1",
-    "eslint": "^6.8.0",
-    "eslint-config-standard": "^14.1.0",
-    "eslint-loader": "^3.0.4",
-    "eslint-plugin-import": "^2.14.0",
+    "eslint": "^7.26.0",
+    "eslint-config-standard": "^16.0.2",
+    "eslint-loader": "^4.0.2",
+    "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.0.0",
-    "eslint-plugin-promise": "^4.0.1",
-    "eslint-plugin-standard": "^4.0.0",
-    "eslint-plugin-vue": "^6.1.2"
+    "eslint-plugin-promise": "^5.1.0",
+    "eslint-plugin-standard": "^5.0.0",
+    "eslint-plugin-vue": "^7.9.0"
   },
   "browserslist": [
     "last 10 Chrome versions",

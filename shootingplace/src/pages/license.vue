@@ -205,7 +205,7 @@ export default {
         })
     },
     prolongLicense (uuid, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission) {
-      var data = {
+      const data = {
         pistolPermission: licensePistolPermission,
         riflePermission: licenseRiflePermission,
         shotgunPermission: licenseShotgunPermission

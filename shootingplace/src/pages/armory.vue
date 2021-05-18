@@ -114,7 +114,7 @@
                 <p></p>
                 <q-expansion-item v-for="(gunType,id) in allGuns" :key="id" :label="gunType.typeName" class="bg-grey-4 col full-width no-outline text-h6 text-center text-bold">
                 <div v-for="(gun,uuid) in gunType.gunEntityList" :key="uuid" @dblclick="gunInfo=true,usedGunInfo=gun" clickable class="bg-white">
-                <q-field clickable color="black" class="bg-white" standout="bg-accent text-black" stack-label>
+                <q-field clickable color="black" class="bg-white" standout="bg-warning text-black" stack-label>
                     <div class="row full-width">
                     <div clickable class="col-3 self-center text-bold text-left">{{gun.modelName}}</div>
                     <div clickable class="col-1 self-center text-bold text-left">{{gun.caliber}}</div>
@@ -593,8 +593,25 @@ export default {
       if (this.gunNumberOfMagazines === '') {
         this.gunNumberOfMagazines = 'BRAK'
       }
-      fetch('http://' + this.local + '/armory/addGun?modelName=' + this.gunModelName + '&caliber=' + this.gunCaliber + '&gunType=' + this.gunType + '&serialNumber=' + this.gunSerialNumber + '&productionYear=' + this.gunProductionYear + '&numberOfMagazines=' + this.gunNumberOfMagazines + '&gunCertificateSerialNumber=' + this.gunCertificateSerialNumber + '&additionalEquipment=' + this.gunAdditionalEquipment + '&recordInEvidenceBook=' + this.gunRecordInEvidenceBook + '&comment=' + this.gunComment + '&basisForPurchaseOrAssignment=' + this.gunBasisForPurchaseOrAssignment, {
-        method: 'POST'
+      const data = {
+        modelName: this.gunModelName,
+        caliber: this.gunCaliber,
+        gunType: this.gunType,
+        serialNumber: this.gunSerialNumber,
+        productionYear: this.gunProductionYear,
+        numberOfMagazines: this.gunNumberOfMagazines,
+        gunCertificateSerialNumber: this.gunCertificateSerialNumber,
+        additionalEquipment: this.gunAdditionalEquipment,
+        recordInEvidenceBook: this.gunRecordInEvidenceBook,
+        comment: this.gunComment,
+        basisForPurchaseOrAssignment: this.gunBasisForPurchaseOrAssignment
+      }
+      fetch('http://' + this.local + '/armory/addGun', {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }).then(response => {
         if (response.status === 200) {
           this.success = true
@@ -638,8 +655,26 @@ export default {
       if (this.gunNumberOfMagazines === '') {
         this.gunNumberOfMagazines = 'BRAK'
       }
-      fetch('http://' + this.local + '/armory/editGun?gunUUID=' + this.gunUUID + '&modelName=' + this.gunModelName + '&caliber=' + this.gunCaliber + '&gunType=' + this.gunType + '&serialNumber=' + this.gunSerialNumber + '&productionYear=' + this.gunProductionYear + '&numberOfMagazines=' + this.gunNumberOfMagazines + '&gunCertificateSerialNumber=' + this.gunCertificateSerialNumber + '&additionalEquipment=' + this.gunAdditionalEquipment + '&recordInEvidenceBook=' + this.gunRecordInEvidenceBook + '&comment=' + this.gunComment + '&basisForPurchaseOrAssignment=' + this.gunBasisForPurchaseOrAssignment, {
-        method: 'POST'
+      const data = {
+        uuid: this.gunUUID,
+        modelName: this.gunModelName,
+        caliber: this.gunCaliber,
+        gunType: this.gunType,
+        serialNumber: this.gunSerialNumber,
+        productionYear: this.gunProductionYear,
+        numberOfMagazines: this.gunNumberOfMagazines,
+        gunCertificateSerialNumber: this.gunCertificateSerialNumber,
+        additionalEquipment: this.gunAdditionalEquipment,
+        recordInEvidenceBook: this.gunRecordInEvidenceBook,
+        comment: this.gunComment,
+        basisForPurchaseOrAssignment: this.gunBasisForPurchaseOrAssignment
+      }
+      fetch('http://' + this.local + '/armory/editGun', {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }).then(response => {
         if (response.status === 200) {
           this.success = true
@@ -743,8 +778,8 @@ export default {
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
-        var fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        var fileLink = document.createElement('a')
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        const fileLink = document.createElement('a')
         fileLink.href = fileURL
         fileLink.setAttribute('download', 'Lista_broni_w_magazynie.pdf')
         document.body.appendChild(fileLink)
@@ -759,8 +794,8 @@ export default {
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
-        var fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        var fileLink = document.createElement('a')
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        const fileLink = document.createElement('a')
         fileLink.href = fileURL
         fileLink.setAttribute('download', 'List_przewozowy.pdf')
         document.body.appendChild(fileLink)

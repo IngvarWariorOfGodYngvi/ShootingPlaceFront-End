@@ -468,7 +468,7 @@ export default {
       }).then(response => response.json())
     },
     updateClub () {
-      var data = {
+      const data = {
         name: this.clubName,
         fullName: this.clubFullName,
         licenseNumber: this.clubLicenseNumber,
@@ -522,7 +522,7 @@ export default {
       })
     },
     updateOtherPerson (id, first, second, phone, mail) {
-      var data = {
+      const data = {
         firstName: first,
         secondName: second,
         phoneNumber: phone,
@@ -567,8 +567,8 @@ export default {
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
-        var fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        var fileLink = document.createElement('a')
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        const fileLink = document.createElement('a')
         fileLink.href = fileURL
         fileLink.setAttribute('download', 'Lista_klubowiczów_na_dzień ' + this.nowDate + '.pdf')
         document.body.appendChild(fileLink)
@@ -583,8 +583,8 @@ export default {
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
-        var fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        var fileLink = document.createElement('a')
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        const fileLink = document.createElement('a')
         fileLink.href = fileURL
         fileLink.setAttribute('download', 'Lista_klubowiczów_z_licencją_bez_składek_' + this.nowDate + '.pdf')
         document.body.appendChild(fileLink)
@@ -599,8 +599,8 @@ export default {
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
-        var fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        var fileLink = document.createElement('a')
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        const fileLink = document.createElement('a')
         fileLink.href = fileURL
         fileLink.setAttribute('download', 'Lista_klubowiczów_z_licencją_bez_składek_' + this.nowDate + '.pdf')
         document.body.appendChild(fileLink)
@@ -615,8 +615,8 @@ export default {
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
-        var fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        var fileLink = document.createElement('a')
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        const fileLink = document.createElement('a')
         fileLink.href = fileURL
         fileLink.setAttribute('download', 'Lista_klubowiczów_do_skreślenia_' + this.nowDate + '.pdf')
         document.body.appendChild(fileLink)
@@ -631,8 +631,8 @@ export default {
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
-        var fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        var fileLink = document.createElement('a')
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        const fileLink = document.createElement('a')
         fileLink.href = fileURL
         fileLink.setAttribute('download', 'Lista_klubowiczów_skreślonych_' + this.nowDate + '.pdf')
         document.body.appendChild(fileLink)

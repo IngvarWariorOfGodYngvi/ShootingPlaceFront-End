@@ -12,7 +12,7 @@
         />
 
        <q-toolbar-title >
-          <!-- <div id="title">{{$keycloak.keycloak.clientId}} </div> -->
+          <div id="title">{{$keycloak.keycloak.clientId}} </div>
         </q-toolbar-title>
 
        <div><q-avatar @click="$keycloak.loadUserProfile" clickable v-ripple color="secondary" text-color="white" icon="perm_identity" />
@@ -25,6 +25,16 @@
               size="s"
               v-close-popup
               @click="$keycloak.keycloak.logout"
+            />
+        </div>
+        <div class="col q-pa-md">
+            <q-btn
+              color="primary"
+              label="token"
+              push
+              size="s"
+              v-close-popup
+              @click="$keycloak.keycloak.updateToken"
             />
         </div>
       </q-menu>
