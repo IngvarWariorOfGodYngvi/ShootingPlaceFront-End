@@ -34,7 +34,7 @@
                   </div>
            </q-field>
            <q-btn class="col-1" @click="othersID = others.id,alert=true">usuń</q-btn>
-           <q-btn class="col-1" @click="othersID = others.id,otherPersonFirstName = others.firstName,otherPersonSecondName = others.secondName,otherPersonPhoneNumber = others.phoneNumber,otherPersonEmail = others.email,club = others.club.name,editOtherPerson=true">Edytuj</q-btn>
+           <q-btn class="col-1" @click="othersID = others.id,otherPersonFirstName = others.firstName,otherPersonSecondName = others.secondName,otherPersonPhoneNumber = others.phoneNumber,otherPersonEmail = others.email,clubNamePerson = others.club.name,getAllClubsToTournament(),editOtherPerson=true">Edytuj</q-btn>
            </div>
            <p></p>
         </li>
@@ -173,6 +173,19 @@
         <q-card-section>
                 <q-item><q-input v-model="otherPersonFirstName" class="full-width" filled label="Imię"></q-input></q-item>
                 <q-item><q-input v-model="otherPersonSecondName" class="full-width" filled label="Nazwisko"></q-input></q-item>
+                <q-item><q-checkbox left-label color="primary" false-value="" true-value="BRAK" v-model="clubNamePerson" :val="'BRAK'" label="Brak Klubu"></q-checkbox>
+                <q-item v-if="clubNamePerson!='BRAK'" class="full-width">
+                  <q-select v-if="clubNamePerson!='BRAK'" class="full-width" @new-value="createValue" hide-selected use-chips filled v-model="clubNamePerson" use-input fill-input input-debounce="0" :options="filterOptions" @filter="filterFna" label="Wybierz Klub">
+                    <template v-slot:no-option>
+                      <q-item>
+                        <q-item-section class="text-grey">
+                            Brak wyników
+                        </q-item-section>
+                      </q-item>
+                    </template>
+                  </q-select>
+                </q-item>
+                </q-item>
                 <q-item><q-input v-model="otherPersonPhoneNumber" type="tel" class="full-width" mask="### ### ###" filled label="Telefon"></q-input></q-item>
                 <q-item><q-input v-model="otherPersonEmail" type="email" class="full-width" filled label="email"></q-input></q-item>
         </q-card-section>
@@ -285,7 +298,7 @@
 </template>
 
 <script>
-
+const stringOptions = []
 import { scroll } from 'quasar'
 const { getScrollTarget, setScrollPosition } = scroll
 import Vue from 'vue'
@@ -301,12 +314,14 @@ export default {
       othersID: null,
       otherPerson: [],
       club: '',
+      clubNames: [],
       competitions: null,
       competition: [],
       copmID: null,
       competitionInfo: false,
       listDownload: false,
       orderNumber: null,
+      clubNamePerson: null,
       clubID: null,
       clubName: null,
       clubFullName: null,
@@ -335,6 +350,7 @@ export default {
       memberName: null,
       memberUUID: null,
       nowDate: Date.now(),
+      filterOptions: stringOptions,
       local: App.host
     }
   },
@@ -528,7 +544,7 @@ export default {
         phoneNumber: phone,
         email: mail
       }
-      fetch('http://' + this.local + '/other/?id=' + id, {
+      fetch('http://' + this.local + '/other/?id=' + id + '&clubName=' + this.clubNamePerson, {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {
@@ -640,6 +656,47 @@ export default {
         this.listDownload = true
         this.autoClose()
       })
+    },
+    createValue (val, done) {
+      if (val.length > 0) {
+        const model = (this.clubNames || []).slice()
+
+        val
+          .split(/[,;|]+/)
+          .map(v => v.trim())
+          .filter(v => v.length > 0)
+          .forEach(v => {
+            if (this.clubNames.includes(v) === false) {
+              this.clubNames.push(v)
+            }
+            if (model.includes(v) === false) {
+              model.push(v)
+            }
+          })
+
+        done(null)
+        this.clubNames = model
+      }
+    },
+    filterFna (val, update) {
+      update(() => {
+        if (val === '') {
+          this.filterOptions = this.clubNames
+        } else {
+          const needle = val.toLowerCase()
+          this.filterOptions = this.clubNames.filter(
+            v => v.toLowerCase().indexOf(needle) > -1
+          )
+        }
+      })
+    },
+    getAllClubsToTournament () {
+      fetch('http://' + this.local + '/club/tournament', {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.clubNames = response
+        })
     },
     autoClose () {
       setTimeout(() => {

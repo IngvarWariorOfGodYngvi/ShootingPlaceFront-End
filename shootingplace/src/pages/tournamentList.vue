@@ -883,7 +883,6 @@
           <q-item><q-input class="full-width" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled v-model="otherFirstName" label="Imię *"/></q-item>
           <q-item><q-input class="full-width" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 45" filled v-model="otherSecondName" label="Nazwisko *"/></q-item>
           <q-item><q-checkbox left-label color="primary" false-value="" true-value="BRAK" v-model="clubName" :val="'BRAK'" label="Brak Klubu"></q-checkbox>
-          <!-- <q-input v-if="clubName!='BRAK'" class="full-width" filled v-model="clubName" label="Nazwa Klubu"/> -->
           <q-item v-if="clubName!='BRAK'" class="full-width">
             <q-select v-if="clubName!='BRAK'" class="full-width" @new-value="createValue" hide-selected use-chips filled v-model="clubName" use-input fill-input input-debounce="0" :options="filterOptions" @filter="filterFna" label="Wybierz Klub">
                   <template v-slot:no-option>

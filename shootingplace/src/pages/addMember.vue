@@ -360,17 +360,17 @@
             <q-item>
               <q-field class="col" standout label="Dyscypliny" stack-label>
                 <template v-slot:control>
-                  <q-field v-if="(licensePistolPermission&&patentPistolPermission)||(!memberAdult&licensePistolPermission)" class="col" standout>
+                  <q-field v-if="(licensePistolPermission&&patentPistolPermission)||(!memberAdult&&licensePistolPermission)" class="col" standout>
                     <template v-slot:control>
                       <div class="self-center full-width no-outline" tabindex="0">Pistolet</div>
                     </template>
                   </q-field>
-                  <q-field v-if="(licenseRiflePermission&&patentRiflePermission)||(!memberAdult&licenseRiflePermission)" class="col" standout>
+                  <q-field v-if="(licenseRiflePermission&&patentRiflePermission)||(!memberAdult&&licenseRiflePermission)" class="col" standout>
                     <template v-slot:control>
                       <div class="self-center full-width no-outline" tabindex="0">Karabin</div>
                     </template>
                   </q-field>
-                  <q-field v-if="(licenseShotgunPermission&&patentShotgunPermission)||(!memberAdult&licenseShotgunPermission)" class="col" standout>
+                  <q-field v-if="(licenseShotgunPermission&&patentShotgunPermission)||(!memberAdult&&licenseShotgunPermission)" class="col" standout>
                     <template v-slot:control>
                       <div class="self-center full-width no-outline" tabindex="0">Strzelba</div>
                     </template>
