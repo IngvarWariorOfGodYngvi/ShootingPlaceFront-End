@@ -608,6 +608,13 @@
         </q-card-section>
       </q-card>
 </q-dialog>
+<q-dialog position="top" v-model="conflict">
+      <q-card class="bg-warning">
+        <q-card-section>
+          <div class="text-h6">Wystąpił konflikt. Nie można wykonać żądania.</div>
+        </q-card-section>
+      </q-card>
+</q-dialog>
   </q-page>
 </template>
 
@@ -628,6 +635,7 @@ export default {
       alert: false,
       pzss: false,
       csvfile: false,
+      conflict: false,
       code: null,
       forbidden: false,
       acceptCode: false,
@@ -754,6 +762,19 @@ export default {
               this.alertResponse = null
               this.memberAdultConfirm = this.memberAdult
               this.memberAlert = true
+              this.getMember(this.uuid)
+              this.autoClose()
+            }
+          )
+        }
+        if (response.status === 409) {
+          response.json().then(
+            response => {
+              this.uuid = response
+              this.code = null
+              this.alertResponse = null
+              this.memberAdultConfirm = this.memberAdult
+              this.conflict = true
               this.getMember(this.uuid)
               this.autoClose()
             }
@@ -1028,6 +1049,7 @@ export default {
         this.csvfile = false
         this.pzss = false
         this.forbidden = false
+        this.conflict = false
       }, 2000)
     }
   },

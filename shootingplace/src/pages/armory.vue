@@ -88,7 +88,7 @@
       <q-card>
         <q-card-section class="col">
             <div class="q-pa-md self-center col full-width no-outline text-h5 text-center text-bold">POSIADANA BROŃ</div>
-          <div class="row q-pa-md">
+          <div class="row q-pb-md">
           <div class="col" align="left">
             <q-btn color="grey-3" class="text-black" @click="gunAdding=true">wprowadź na stan</q-btn>
           </div>
@@ -99,7 +99,7 @@
             <q-btn color="grey-3" class="text-black" @click="openGunList = true">pobierz listę broni</q-btn>
           </div>
           <div class="col" align="right">
-            <q-btn color="grey-3" class="text-black" @click="newGunType=true">utwórz nowy rodzaj Broni</q-btn>
+            <q-btn color="grey-3" class="text-black" @click="newGunType=true">utwórz nowy typ Broni</q-btn>
           </div>
           </div>
                 <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>

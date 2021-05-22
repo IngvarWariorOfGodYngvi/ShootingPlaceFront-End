@@ -274,7 +274,7 @@ export default {
       ammunitionListAlert: false,
       ammunitionListInfo: false,
       ammunitionListNumber: null,
-      ammunitionListEvidence: '',
+      ammunitionListEvidence: ['', []],
       listDate: null,
       ammoList: [],
       ammoListClose: [],

@@ -59,7 +59,6 @@
               <q-field color="black" class="self-center col full-width no-outline text-center" standout="bg-accent text-black" stack-label>
                   <div class="self-center col full-width no-outline text-left">{{member.secondName}} {{member.firstName}}</div>
                   <div class="self-center col full-width no-outline text-left">leg. {{member.legitimationNumber}}</div>
-                  <div class="self-center col full-width no-outline text-left">składka {{member.contributionDate}}</div>
               </q-field>
               <p></p>
             </li>
