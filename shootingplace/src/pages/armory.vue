@@ -123,6 +123,8 @@
                     <div clickable class="col-1 self-center text-bold text-left">{{gun.numberOfMagazines}}</div>
                     <div clickable class="col-2 self-center text-bold text-left">{{gun.gunCertificateSerialNumber}}</div>
                     <div clickable class="col-2 self-center text-bold text-left">{{gun.basisForPurchaseOrAssignment}}</div>
+                    <div v-if="gun.imgUUID!=null" clickable class="col-1 self-center text-center box"><q-icon name="menu"></q-icon><q-tooltip :delay="1000" @hide ="url = ''" @before-show ="getUrl (gun.imgUUID)" anchor="center middle" self="center middle" transition-show="scale" class="text-center"
+                      transition-hide="scale" content-style="width: 50%; height: 50%"><q-img :src="url" spinner-color="white" height="100%" width="100%" ratio="1" contain /></q-tooltip></div>
                     </div>
                 </q-field>
                 </div>
@@ -185,6 +187,7 @@
   </q-card-section>
   <q-card-section>
     <q-btn color="red" @click="gunUUID = usedGunInfo.uuid, acceptCode=true">usuń z ewidencji</q-btn>
+    <q-btn @click="gunUUID = usedGunInfo.uuid, getAllImages(),imgDialog = true">wybierz zdjęcie dla broni</q-btn>
     <q-btn @click="gunUUID = usedGunInfo.uuid,
     gunModelName = usedGunInfo.modelName,
     gunCaliber = usedGunInfo.caliber,
@@ -483,6 +486,28 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
+<q-dialog v-model="imgDialog">
+      <q-card class="text-center" style="min-width: 600px;">
+        <q-card-section class="flex-center">
+          <div>Lista zdjęć w bazie</div>
+          <div v-for="(image,uuid) in images" :key="uuid">
+            <q-field @focus="fileUUID = image.uuid" color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-green-2 text-black" stack-label>
+              <q-tooltip v-if="image.type.includes('image')" :delay="750" @hide ="url = ''" @before-show ="getUrl (image.uuid)" anchor="center middle" self="center middle" transition-show="scale"
+              transition-hide="scale"><q-img :src="url" spinner-color="white" style="height: 400px; width: 400px" ratio="1"/></q-tooltip>
+            <div class="col-3 self-center text-bold text-left">{{image.name}}</div>
+            <div class="col-3 self-center text-bold text-center">{{image.date}}</div>
+            <div class="col-2 self-center text-bold text-center">{{image.size}}</div>
+            <div class="col-2 self-center text-bold text-center">{{image.type}}</div>
+          </q-field>
+          </div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn label="anuluj" v-close-popup/>
+          <q-btn label="Dodaj" color="primary" v-close-popup @click="addImageToGun (gunUUID, fileUUID)"/>
+        </q-card-actions>
+      </q-card>
+</q-dialog>
 <q-dialog position="top" v-model="forbidden" @keypress.enter="forbidden=false">
       <q-card class="bg-warning">
         <q-card-section>
@@ -493,7 +518,21 @@
 </q-dialog>
   </q-page>
 </template>
-
+<style>
+  .box{
+    transition-duration: 1s;
+    transition-timing-function: linear;
+    background-color: none;
+  }
+  .box:hover{
+    width: inherit;
+    background-color: orange;
+  }
+  .siz{
+    font-size: 10px;
+    padding: 0;
+  }
+</style>
 <script>
 
 import { scroll } from 'quasar'
@@ -507,9 +546,12 @@ Vue.prototype.$axios = axios
 export default {
   data () {
     return {
+      ok: false,
       options: stringOptions,
+      url: '',
       selection: [],
       gunListSelect: [],
+      imgDialog: false,
       listDownload: false,
       openGunList: false,
       addCaliber: false,
@@ -520,6 +562,7 @@ export default {
       forbidden: false,
       gunUUID: null,
       code: null,
+      fileUUID: null,
       usedGunInfo: [],
       ammoList: null,
       newGunType: false,
@@ -541,6 +584,7 @@ export default {
       filters: [],
       gunTypes: [],
       allGuns: [],
+      images: [],
       gunAdding: false,
       editGun: false,
       fail: false,
@@ -706,6 +750,14 @@ export default {
           this.gunTypes = response
         })
     },
+    getAllImages () {
+      fetch('http://' + this.local + '/files/getAllImages', {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.images = response
+        })
+    },
     getAllGuns () {
       fetch('http://' + this.local + '/armory/getGuns', {
         method: 'GET'
@@ -742,6 +794,20 @@ export default {
           this.ammoDescription = null
           this.showloading()
           this.getListCalibers()
+          this.autoClose()
+        } else {
+          this.fail = true
+          this.autoClose()
+        }
+      })
+    },
+    addImageToGun (gunUUID, uuid) {
+      fetch('http://' + this.local + '/armory/addImageToGun?gunUUID=' + gunUUID + '&fileUUID=' + uuid, {
+        method: 'PATCH'
+      }).then(response => {
+        if (response.status === 200) {
+          this.success = true
+          this.getAllGuns()
           this.autoClose()
         } else {
           this.fail = true
@@ -832,9 +898,20 @@ export default {
         this.options = this.gunTypes.filter(v => v.toLowerCase().indexOf(needle) > -1)
       })
     },
+    getUrl (uuid) {
+      axios({
+        url: 'http://' + this.local + '/files/getFile?uuid=' + uuid,
+        method: 'GET',
+        responseType: 'blob'
+      }).then(response => {
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        this.url = fileURL
+      })
+    },
     autoClose () {
       setTimeout(() => {
         this.success = false
+        this.imgDialog = false
         this.fail = false
         this.forbidden = false
         this.listDownload = false

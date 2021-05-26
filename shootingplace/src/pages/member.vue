@@ -553,7 +553,7 @@
             <q-item-section>
             <q-item-label>Dane Kontaktowe</q-item-label>
             <q-item-label caption lines="2">e-mail: {{member.email}}</q-item-label>
-            <q-item-label caption lines="2">Numer Telefonu: {{phoneNumber.toString().substr(0,3) + ' ' + phoneNumber.toString().substring(3,6) + ' ' + phoneNumber.toString().substring(6,9) + ' ' + phoneNumber.substring(9,12)}}</q-item-label>
+            <q-item-label caption lines="2">Numer Telefonu: {{member.phoneNumber.toString().substr(0,3) + ' ' + member.phoneNumber.toString().substring(3,6) + ' ' + member.phoneNumber.toString().substring(6,9) + ' ' + member.phoneNumber.substring(9,12)}}</q-item-label>
             <q-item-label>Adres</q-item-label>
             <q-item-label v-if="member.address.postOfficeCity!=null" caption lines="2">Miasto: {{member.address.postOfficeCity}}</q-item-label>
             <q-item-label v-if="member.address.zipCode!=null" caption lines="2">Kod Pocztowy: {{member.address.zipCode}}</q-item-label>
@@ -1556,7 +1556,6 @@ Vue.directive('temp', function (el) {
 export default {
   data () {
     return {
-      phoneNumber: '',
       editLicense: false,
       editLicenseDate: null,
       editLicenseNumber: null,
@@ -1786,7 +1785,6 @@ export default {
       }).then(response => response.json()).then(response => {
         this.showloading()
         this.member = response
-        this.phoneNumber = response.phoneNumber
       })
     },
     getMemberFromList (leg) {
@@ -2103,8 +2101,9 @@ export default {
       }).then(response => {
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
+        console.log(response.data)
         fileLink.href = fileURL
-        fileLink.setAttribute('download', this.name + '_' + this.name2 + '.csv')
+        fileLink.setAttribute('download', response.data.type)
         document.body.appendChild(fileLink)
         fileLink.click()
         this.downloaded = true

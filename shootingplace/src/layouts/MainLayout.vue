@@ -87,7 +87,7 @@ Vue.use(keycloak, {
   },
   onReady: (keycloak) => {
     this.userData = keycloak.loadUserInfo()
-    keycloak.loadUserInfo().success((data) => {
+    keycloak.loadUserInfo().success((userData) => {
       new Vue({
         router,
         render: h => h(App)
