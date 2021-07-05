@@ -228,17 +228,21 @@
                 noDomesticStarts=true"></q-btn>
                 </div>
                 <q-btn v-if="(((member.shootingPatent.patentNumber!=null&&member.license.paid==false))) " class="full-width" label="opłać licencję" @click="memberUUID=member.uuid,licensePayment=true"></q-btn>
-              <q-expansion-item class="bg-grey-3 text-center" v-if="member.history.licensePaymentHistory!=null" label="Daty Opłacenia Licencji">
-                <q-scroll-area class="full-width q-pa-none" style="min-height: 400px;">
-                <div v-for="(licensePaymentHistory,uuid) in member.history.licensePaymentHistory" :key="uuid" class="row" @dblclick="memberUUID=member.uuid,paymentUUID = licensePaymentHistory.uuid,editLicensePaymentDate = licensePaymentHistory.date,editLicensePaymentYear = licensePaymentHistory.validForYear,editLicensePayment=true">
-                  <q-field label="Opłacona dnia:" class="col" standout="bg-accent text-black" stack-label>
-                      <div class="self-center col full-width no-outline text-center text-black" tabindex="0">{{licensePaymentHistory.date}}</div>
-                  </q-field>
-                  <q-field label="Opłacona na rok:" class="col" standout="bg-accent text-black" stack-label>
-                      <div class="self-center col full-width no-outline text-center text-black" tabindex="0">{{licensePaymentHistory.validForYear}}</div>
-                  </q-field>
-                </div>
-                </q-scroll-area>
+              <q-expansion-item class="bg-grey-3 text-center" v-if="member.history.licensePaymentHistory.length>0" label="Daty Opłacenia Licencji">
+                    <q-scroll-area class="full-width q-pa-none" style="height: 375px;">
+                          <div v-for="(licensePayment,uuid) in member.history.licensePaymentHistory" :key="uuid" class="row" @dblclick="memberUUID=member.uuid,paymentUUID = licensePayment.uuid,editLicensePaymentDate = licensePayment.date,editLicensePaymentYear = licensePayment.validForYear,editLicensePayment=true">
+                              <div class="row full-width">
+                              <q-field class="col-6" label="Opłacona dnia : " standout="bg-accent text-black" stack-label>
+                                  <div class="self-center col full-width no-outline text-left text-black" tabindex="0">{{licensePayment.date}}</div>
+                              </q-field>
+                              <div class="col-6">
+                                <q-field class="col" standout="bg-accent text-black" label="Na rok : " stack-label>
+                                    <div class="self-center col full-width no-outline text-left text-black" tabindex="1">{{licensePayment.validForYear}}</div>
+                                </q-field>
+                              </div>
+                              </div>
+                          </div>
+                    </q-scroll-area>
               </q-expansion-item>
               </q-card-section>
               <q-card-section class="col-5 text-center">
@@ -427,6 +431,13 @@
       </div>
         <q-item v-if="member.pzss"><q-btn class="full-width q-pa-none" type="a" href="https://portal.pzss.org.pl/CLub/Player" target="_blank" label="Przejdź do portalu" color="primary"/></q-item>
         <q-item v-if="!member.pzss"><q-btn class="full-width q-pa-none" type="a" href="https://portal.pzss.org.pl/CLub/Player" target="_blank" label="Przejdź do portalu" color="primary" @click="memberUUID=member.uuid,pzssPortal = true"/></q-item>
+    </q-expansion-item>
+    <q-expansion-item label="Praca na rzecz Klubu" group="right-right-card" class="bg-white">
+      <div class="col">
+        <div><q-radio v-model="socialWork" :val="false" label="opłata"></q-radio><q-radio v-model="socialWork" :val="true" label="praca"></q-radio></div>
+        <div>tutaj będzie lista</div>
+        <q-item><q-btn label="dodaj" color="primary"/></q-item>
+      </div>
     </q-expansion-item>
     <q-expansion-item disable v-if="!member.erased" label="Przydziel Numer Karty" group="right-right-card" class="bg-white">
       <div class="row">
@@ -780,7 +791,7 @@
       <q-card>
         <q-card-section class="col items-center">
         <q-item-label class="text-bold text-center text-h6">Zmień dane podstawowe</q-item-label>
-        <q-item><q-input v-model="memberIdcard" hint="XXX 000000" label="Numer Dowodu" placeholder="XXX 000000" mask="AAA ######"/></q-item>
+        <q-item><q-input v-model="memberIdcard" label="Numer Dokumentu"/></q-item>
         <q-item><q-input v-model="memberFirstName" label="Imię" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 45" /></q-item>
         <q-item><q-input v-model="memberSecondName" label="Nazwisko" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 45" /></q-item>
         </q-card-section>
@@ -1556,6 +1567,7 @@ Vue.directive('temp', function (el) {
 export default {
   data () {
     return {
+      socialWork: true,
       editLicense: false,
       editLicenseDate: null,
       editLicenseNumber: null,
@@ -1890,9 +1902,11 @@ export default {
       })
     },
     updateMember (uuid, email, phoneNumber) {
+      const phone = String(phoneNumber)
+      phone.replace('+48', '')
       const data = {
         email: email,
-        phoneNumber: phoneNumber
+        phoneNumber: phone.replace('+48', '')
       }
       fetch('http://' + this.local + '/member/' + uuid, {
         method: 'PUT',

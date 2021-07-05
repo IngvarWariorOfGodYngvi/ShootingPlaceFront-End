@@ -7,8 +7,13 @@
       </div>
       <div class="row">
     <q-card class="col-10">
-      <div>
-        <q-btn class="col-1" style="text-8" label="dodaj do listy" icon="book" @click="getOther(),addAmmo=true" ></q-btn>
+      <div class="row">
+        <div class="col-3">
+          <q-btn class="col-1 full-width full-height" style="text-8" label="dodaj do listy" icon="book" @click="getOther(),addAmmo=true" ></q-btn>
+        </div>
+        <div v-if="ammoList.length >= 1 && ammoList[0].forceOpen==true" class="col-9">
+          <div class=" q-pa-md bg-red-3 text-center text-bold">UWAGA! LISTA OTWARTA PONOWNIE. NA KONIEC DNIA PAMIĘTAJ O JEJ ZAMKNIĘCIU!</div>
+        </div>
       </div>
       <div class="text-h5 text-bold" v-if="ammoList.length < 1">
         <q-item>
@@ -376,6 +381,9 @@ export default {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {
+          response.json().then(response => {
+            this.ammoList = response
+          })
           this.code = null
           this.openListAlert = true
           this.ammunitionListInfo = false
@@ -433,6 +441,7 @@ export default {
         if (response.status === 200) {
           this.listAdded = true
           this.getAmmoData()
+          this.getCLosedEvidence()
           this.showloading()
           this.autoClose()
         }

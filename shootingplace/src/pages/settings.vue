@@ -191,11 +191,13 @@
     </q-stepper>
   </div>
   <div class="q-pa-md">
-    <q-uploader style="max-width: 400px" method="POST" url="http://localhost:8080/shootingplace/files/upload" label="Dodaj plik" accept=".jpg, image/*" @rejected="onRejected" field-name="file" @added="file_selected"/>
+    <q-uploader multiple style="max-width: 400px" method="POST" :url="('http://' + local + '/files/upload')"
+    label="Dodaj plik" accept=".jpg, image/*" @rejected="onRejected" field-name="file" @added="file_selected"/>
   </div>
     <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
       <div class="col-3 self-center text-bold text-center">Nazwa pliku</div>
-      <div class="col-3 self-center text-bold text-center">Data utworzenia</div>
+      <div class="col-2 self-center text-bold text-center">Data utworzenia</div>
+      <div class="col-1 self-center text-bold text-center">Godzina utworzenia</div>
       <div class="col-2 self-center text-bold text-center">Rozmiar</div>
       <div class="col-2 self-center text-bold text-center">Typ</div>
       <div class="col-2 self-center text-center"><div>Pobierz plik</div></div>
@@ -203,9 +205,10 @@
   <div v-for="(file,uuid) in files" :key="uuid">
     <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
       <q-tooltip v-if="file.type.includes('image')" :delay="750" @hide ="url = ''" @before-show ="getUrl (file.uuid)" anchor="center middle" self="center middle" transition-show="scale"
-          transition-hide="scale"><q-img :src="url" spinner-color="white" style="height: 400px; width: 400px" /></q-tooltip>
+          transition-hide="scale" content-style="width: 30%; height: 70%"><q-img :src="url" spinner-color="white" style="height: 100%; width: 100%" /></q-tooltip>
       <div class="col-3 self-center text-bold text-left">{{file.name}}</div>
-      <div class="col-3 self-center text-bold text-center">{{file.date}}</div>
+      <div class="col-2 self-center text-bold text-center">{{file.date}}</div>
+      <div class="col-1 self-center text-bold text-center">{{file.time}}</div>
       <div class="col-2 self-center text-bold text-center">{{file.size}}</div>
       <div class="col-2 self-center text-bold text-center">{{file.type}}</div>
       <div class="col-2 q-pa-xs self-center text-center"><q-btn color="primary" @click="fileName = file.name,getFile (file.uuid)">pobierz plik</q-btn></div>
@@ -302,23 +305,6 @@ export default {
     },
     file_selected (file) {
       this.selected_file = file[0]
-    },
-    uploadFile () {
-      const file = new FormData()
-      file.append('file', this.selected_file)
-      axios({
-        url: 'http://' + this.local + '/shootingplace/files/upload',
-        method: 'POST',
-        data: file,
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'multipart/form-data'
-        }
-      }).then(response => {
-        this.success = true
-        this.autoClose()
-        console.log(JSON.stringify(response.data))
-      })
     },
     getAllFiles () {
       fetch('http://' + this.local + '/files/getAllFiles', {

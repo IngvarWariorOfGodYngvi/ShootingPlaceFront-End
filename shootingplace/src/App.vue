@@ -45,9 +45,9 @@ Vue.use(Keycloak, {
 })
 export default {
   name: 'App',
-  // prod: 'localhost:8081/#/',
-  prod: 'localhost:8080/strzelnica/#/',
-  // host: 'localhost:8080/shootingplace'
-  host: 'localhost:8080/shootingplace-1.0'
+  prod: 'localhost:8081/#/',
+  // prod: 'localhost:8080/strzelnica/#/',
+  host: 'localhost:8080/shootingplace'
+  // host: 'localhost:8080/shootingplace-1.0'
 }
 </script>

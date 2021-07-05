@@ -15,7 +15,8 @@ const routes = [
       { path: '/statistics', component: () => import('pages/statistics.vue') },
       { path: '/otherFunctions', component: () => import('pages/otherFunctions.vue') },
       { path: '/settings', component: () => import('pages/settings.vue') },
-      { path: '/armory', component: () => import('pages/armory.vue') }
+      { path: '/armory', component: () => import('pages/armory.vue') },
+      { path: '/armory/galery', component: () => import('pages/galery.vue') }
     ]
   },
 

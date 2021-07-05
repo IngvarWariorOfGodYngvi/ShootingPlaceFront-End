@@ -15,7 +15,7 @@
           <div id="title">{{$keycloak.keycloak.clientId}} </div>
         </q-toolbar-title>
 
-       <div><q-avatar @click="$keycloak.loadUserProfile" clickable v-ripple color="secondary" text-color="white" icon="perm_identity" />
+       <div><q-avatar v-ripple color="secondary" text-color="white" icon="perm_identity" />
         <q-menu>
         <div class="col q-pa-md">
             <q-btn
@@ -24,17 +24,7 @@
               push
               size="s"
               v-close-popup
-              @click="$keycloak.keycloak.logout"
-            />
-        </div>
-        <div class="col q-pa-md">
-            <q-btn
-              color="primary"
-              label="token"
-              push
-              size="s"
-              v-close-popup
-              @click="$keycloak.keycloak.updateToken"
+              @click="logout()"
             />
         </div>
       </q-menu>
@@ -44,22 +34,22 @@
 
     <q-drawer
       v-model="leftDrawerOpen"
-      show-if-above
       bordered
-      content-class="bg-grey-2"
-      style="width: 50px"
+      show-if-above
+      content-class="bg-grey-2 ecru full-height"
+      style="width: 50px;"
     >
       <q-list>
-        <q-item-label header>
-          <q-item class="flex flex-center" clickable tag="a" target="_self" :href="hrefTarget" width="max"><q-field class="full-width" standout><template v-slot:control><div class="fit flex flex-center text-center non-selectable q-pa-md">Strona główna</div></template></q-field></q-item>
-        </q-item-label>
+          <q-item @click="leftDrawerOpen=false" class="flex flex-center q-pa-md" clickable tag="a" target="_self" :href="hrefTarget" width="max">
+            <div class="text-h6 text-bold">STRONA GŁÓWNA</div>
+          </q-item>
         <EssentialLink
           v-for="link in essentialLinks"
           :key="link.title"
           v-bind="link"
         />
       </q-list>
-      <div class="q-pa-sm" dense>
+      <div class="q-pa-sm ecru" style="height: 28%" dense>
       <q-item-label class="text-bold" dense caption lines="3">Najwyższy numer legitymacji : {{number}}</q-item-label>
       <q-item-label class="text-bold" dense caption lines="3">Licencje ważne : {{quantity[1]}}</q-item-label>
       <q-item-label class="text-bold" dense caption lines="3">Licencje nieważne : {{quantity[0]}}</q-item-label>
@@ -69,32 +59,37 @@
     </q-drawer>
 
     <q-page-container>
-      <router-view />
+      <q-page>
+        <router-view/>
+      <q-page-sticky position="top-right" :offset="[30, 30]">
+      <q-fab
+        v-if="color!='primary'||tournamentCheck"
+        :color="color"
+        glossy
+        icon="keyboard_arrow_left"
+        direction="left"
+      >
+        <q-fab-action v-if="color!='primary'" external-label label-position="top" color="primary" icon="book" @click="redirectToAmmoList()"><q-tooltip anchor="top" content-class="text-h6">Otwarta lista amunicyjna</q-tooltip></q-fab-action>
+        <q-fab-action v-if="tournamentCheck" external-label label-position="top" color="secondary" icon="people" @click="redirectToCompetitionList()"><q-tooltip anchor="top" content-class="text-h6">Otwarte zawody</q-tooltip></q-fab-action>
+        <!-- <q-fab-action square external-label label-position="top" color="orange" icon="airplay" label="Airplay" /> -->
+        <!-- <q-fab-action square external-label label-position="top" color="accent" icon="room" label="Map" /> -->
+      </q-fab>
+      <q-tooltip anchor="">Masz powiadomienia</q-tooltip>
+          </q-page-sticky>
+          </q-page>
     </q-page-container>
   </q-layout>
 </template>
 
+<style>
+.ecru > * {
+  background-color: #F5F5DC;
+}
+</style>
+
 <script>
 import EssentialLink from 'components/EssentialLink.vue'
-import keycloak from '@dsb-norge/vue-keycloak-js'
-import Vue from 'vue'
 import App from 'src/App.vue'
-import router from 'src/router'
-
-Vue.use(keycloak, {
-  logout: {
-    redirectUri: 'http://localhost:8180/auth'
-  },
-  onReady: (keycloak) => {
-    this.userData = keycloak.loadUserInfo()
-    keycloak.loadUserInfo().success((userData) => {
-      new Vue({
-        router,
-        render: h => h(App)
-      }).$mount('#app')
-    })
-  }
-})
 export default {
   name: 'MainLayout',
 
@@ -106,12 +101,16 @@ export default {
     this.getMembersWithLicenseQuantity()
     this.getMembersQuantity()
     this.getActualYearMemberCounts()
+    this.check()
+    this.logoutInterval()
   },
   data () {
     return {
       leftDrawerOpen: false,
       number: null,
       members: null,
+      color: 'primary',
+      tournamentCheck: false,
       quantity: [],
       quantities: [],
       hrefTarget: 'http://' + App.prod,
@@ -183,6 +182,15 @@ export default {
         this.timer = 0
       }, 1000)
     },
+    redirectToAmmoList () {
+      window.location.href = 'http://' + App.prod + 'ammolist'
+    },
+    redirectToCompetitionList () {
+      window.location.href = 'http://' + App.prod + 'competition'
+    },
+    onClick () {
+      console.log('Clicked on a fab action')
+    },
     getNumber () {
       fetch('http://' + this.local + '/statistics/maxLegNumber', {
         method: 'GET'
@@ -219,6 +227,44 @@ export default {
         .then(response => {
           this.members = response
         })
+    },
+    check () {
+      this.checkAnyOpenAmmoList()
+      this.checkTournament()
+      setInterval(() => {
+        this.checkAnyOpenAmmoList()
+        this.checkTournament()
+      }, 120000)
+    },
+    checkAnyOpenAmmoList () {
+      fetch('http://' + this.local + '/ammoEvidence/checkAnyOpenEvidence', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => response.json())
+        .then(response => {
+          this.color = response
+        })
+    },
+    checkTournament () {
+      fetch('http://' + this.local + '/tournament/check', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => response.json())
+        .then(response => {
+          this.tournamentCheck = response
+        })
+    },
+    logout () {
+      this.$keycloak.keycloak.logout()
+    },
+    logoutInterval () {
+      setInterval(() => {
+        this.logout()
+      }, 600000)
     }
   }
 }

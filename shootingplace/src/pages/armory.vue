@@ -1,16 +1,24 @@
 <template>
   <q-page padding>
-      <div>
+      <div v-if="!persentation">
         <q-item>
           <div class="text-center col full-width no-outline text-h4 text-bold" tabindex="0">Magazyn Broni i Amunicji</div>
         </q-item>
       </div>
-      <q-card>
+      <div v-else>
+        <q-item>
+          <div class="text-center col full-width no-outline text-h4 text-bold" tabindex="0">Pokaz Broni</div>
+        </q-item>
+      </div>
+      <q-card v-if="!persentation">
         <q-card-section class="col">
           <div class="q-pa-md self-center col full-width no-outline text-h5 text-center text-bold">POSIADANA AMUNICJA</div>
           <div class="row q-pa-md">
           <q-input v-model="caliberName" placeholder="Nowy kaliber" filled></q-input>
           <q-btn @click="addCaliber = true">dodaj kaliber do bazy danych</q-btn>
+          <div class="col" align="right">
+            <q-btn class="text-black" type="a" :href="('http://' + prod + 'armory/galery')" target="_self" >Otwórz Galerię</q-btn>
+          </div>
           </div>
           <div class="col">
               <q-item class="col">
@@ -85,7 +93,7 @@
             </div>
         </q-card-section>
       </q-card>
-      <q-card>
+      <q-card v-if="!persentation">
         <q-card-section class="col">
             <div class="q-pa-md self-center col full-width no-outline text-h5 text-center text-bold">POSIADANA BROŃ</div>
           <div class="row q-pb-md">
@@ -124,12 +132,29 @@
                     <div clickable class="col-2 self-center text-bold text-left">{{gun.gunCertificateSerialNumber}}</div>
                     <div clickable class="col-2 self-center text-bold text-left">{{gun.basisForPurchaseOrAssignment}}</div>
                     <div v-if="gun.imgUUID!=null" clickable class="col-1 self-center text-center box"><q-icon name="menu"></q-icon><q-tooltip :delay="1000" @hide ="url = ''" @before-show ="getUrl (gun.imgUUID)" anchor="center middle" self="center middle" transition-show="scale" class="text-center"
-                      transition-hide="scale" content-style="width: 50%; height: 50%"><q-img :src="url" spinner-color="white" height="100%" width="100%" ratio="1" contain /></q-tooltip></div>
+                      transition-hide="scale" content-style="width: 30%; height: 70%"><q-img :src="url" spinner-color="white" style="height: 100%; width: 100%" ratio="1" contain /></q-tooltip></div>
                     </div>
                 </q-field>
                 </div>
                 </q-expansion-item>
         </q-card-section>
+      </q-card>
+      <q-card v-if="persentation" >
+        <div class="col" align="right">
+          <q-btn color="grey-3" class="text-black" @click="persentation=false">Zamknij pokaz</q-btn>
+        </div>
+        <div class="row">
+        <div v-for="(gunImage,id) in images" :key="id" class="col-4 q-pa-xl flex flex-center">
+        <q-img
+          :src="('http://' + local + '/files/getFile?uuid=' + gunImage.uuid)"
+          style="height: 100%; width: 100%" class="q-pa-md flex flex-center">
+          <q-tooltip :delay="500" anchor="center middle" self="center middle" transition-show="scale"
+                      transition-hide="scale" content-style="height: 800px; width: 800px"><q-img
+          :src="('http://' + local + '/files/getFile?uuid=' + gunImage.uuid)"
+          style="height: 100%; width: 100%" class="q-pa-md"/></q-tooltip>
+        </q-img>
+      </div>
+      </div>
       </q-card>
 <q-dialog v-model="addCaliberDialog">
 <q-card>
@@ -489,11 +514,11 @@
 <q-dialog v-model="imgDialog">
       <q-card class="text-center" style="min-width: 600px;">
         <q-card-section class="flex-center">
-          <div>Lista zdjęć w bazie</div>
+          <div class="text-h6 text-center">Lista zdjęć w bazie</div>
           <div v-for="(image,uuid) in images" :key="uuid">
             <q-field @focus="fileUUID = image.uuid" color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-green-2 text-black" stack-label>
-              <q-tooltip v-if="image.type.includes('image')" :delay="750" @hide ="url = ''" @before-show ="getUrl (image.uuid)" anchor="center middle" self="center middle" transition-show="scale"
-              transition-hide="scale"><q-img :src="url" spinner-color="white" style="height: 400px; width: 400px" ratio="1"/></q-tooltip>
+              <q-tooltip v-if="image.type.includes('image')" :delay="750" anchor="center middle" self="center middle" transition-show="scale"
+              transition-hide="scale" content-style="width: 30%; height: 70%"><q-img :src="('http://' + local + '/files/getFile?uuid=' + image.uuid)" spinner-color="white" style="height: 100%; width: 100%" ratio="1"/></q-tooltip>
             <div class="col-3 self-center text-bold text-left">{{image.name}}</div>
             <div class="col-3 self-center text-bold text-center">{{image.date}}</div>
             <div class="col-2 self-center text-bold text-center">{{image.size}}</div>
@@ -527,10 +552,7 @@
   .box:hover{
     width: inherit;
     background-color: orange;
-  }
-  .siz{
-    font-size: 10px;
-    padding: 0;
+    opacity: 100;
   }
 </style>
 <script>
@@ -546,9 +568,11 @@ Vue.prototype.$axios = axios
 export default {
   data () {
     return {
+      persentation: false,
       ok: false,
       options: stringOptions,
       url: '',
+      urls: [],
       selection: [],
       gunListSelect: [],
       imgDialog: false,
@@ -600,7 +624,8 @@ export default {
       gunComment: '',
       gunBasisForPurchaseOrAssignment: null,
       transportCertificate: false,
-      local: App.host
+      local: App.host,
+      prod: App.prod
     }
   },
   created () {
@@ -907,6 +932,19 @@ export default {
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         this.url = fileURL
       })
+    },
+    getUrls (uuid) {
+      let i
+      for (i = 0; i < this.images.length; i++) {
+        axios({
+          url: 'http://' + this.local + '/files/getFile?uuid=' + uuid,
+          method: 'GET',
+          responseType: 'blob'
+        }).then(response => {
+          const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+          this.url[i] = fileURL
+        })
+      }
     },
     autoClose () {
       setTimeout(() => {

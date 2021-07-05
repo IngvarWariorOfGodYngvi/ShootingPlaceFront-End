@@ -96,7 +96,8 @@
         <q-card>
             <q-card-section>
           <div class="q-pa-md text-center col full-width no-outline text-h5 text-bold">Dodatkowe Funkcje</div>
-              <q-item>
+          <div class="row">
+              <div class="q-pa-md">
                 <q-btn color="primary" label="pobierz listę wszystkich klubowiczów" @click="showloading (),getAllMembersList()"/>
               <q-radio v-model="tableCondition" :val="true">
                 dorośli
@@ -104,7 +105,12 @@
               <q-radio v-model="tableCondition" :val="false">
                 mołodzież
               </q-radio>
-              </q-item>
+              </div>
+              <p></p>
+              <div class="q-pa-md">
+                <q-btn color="primary" label="pobierz listę klubowiczów do wyborów" @click="showloading (),getAllMembersListToElection()"/>
+              </div>
+              </div>
               <p></p>
               <div class="row bg-red-4">
                 <div class="q-pa-md col"><q-btn class="full-width full-height" color="primary" label="lista klubowiczów do zgłoszenia na policję" @click="showloading (),getAllMembersWithLicenseNotValidAndContributionNotValid()"/></div>
@@ -587,6 +593,22 @@ export default {
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
         fileLink.setAttribute('download', 'Lista_klubowiczów_na_dzień ' + this.nowDate + '.pdf')
+        document.body.appendChild(fileLink)
+        fileLink.click()
+        this.listDownload = true
+        this.autoClose()
+      })
+    },
+    getAllMembersListToElection () {
+      axios({
+        url: 'http://' + this.local + '/files/downloadAllMembersToElection',
+        method: 'GET',
+        responseType: 'blob'
+      }).then(response => {
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        const fileLink = document.createElement('a')
+        fileLink.href = fileURL
+        fileLink.setAttribute('download', 'Lista_klubowiczów_na_wybory.pdf')
         document.body.appendChild(fileLink)
         fileLink.click()
         this.listDownload = true

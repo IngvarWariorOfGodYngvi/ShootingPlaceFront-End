@@ -24,11 +24,11 @@
       <q-card-section class="col-6 bg-grey-2">
       <div class="full-width">
         <q-form>
-      <q-item><q-input class="full-width" color="red" v-model="memberFirstName" label="Imię*" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled/></q-item>
-      <q-item><q-input class="full-width" color="red" v-model="memberSecondName" label="Nazwisko*" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 45" filled/></q-item>
-      <q-item><q-input class="full-width" color="red" v-model="memberIDCard" label="Numer Dowodu*" filled placeholder="XXX 000000" mask="AAA ######" @input="isPresentIDCard(memberIDCard)"/></q-item>
-      <q-item><q-input class="full-width" color="red" v-model="memberPesel" placeholder="tylko cyfry" label="Pesel*" mask="###########" filled @input="isValidPesel(memberPesel),isPresentPesel(memberPesel)"/></q-item>
-      <q-item><q-input class="full-width" color="red" type="tel" v-model="memberPhone" placeholder="tylko cyfry" prefix="+48 " label="Numer telefonu*" mask="### ### ###" filled onkeypress="return (event.charCode > 47 && event.charCode < 58)"/></q-item>
+      <q-item><q-input class="full-width" color="red" v-model="memberFirstName" label="Imię *" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled/></q-item>
+      <q-item><q-input class="full-width" color="red" v-model="memberSecondName" label="Nazwisko *" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 45" filled/></q-item>
+      <q-item><q-input class="full-width" color="red" v-model="memberIDCard" label="Numer Dokumentu *" filled @input="isPresentIDCard(memberIDCard)"/></q-item>
+      <q-item><q-input class="full-width" color="red" v-model="memberPesel" placeholder="tylko cyfry" label="Pesel *" mask="###########" filled @input="isValidPesel(memberPesel),isPresentPesel(memberPesel)"/></q-item>
+      <q-item><q-input class="full-width" color="red" type="tel" v-model="memberPhone" placeholder="tylko cyfry" prefix="+48 " label="Numer telefonu *" mask="### ### ###" filled onkeypress="return (event.charCode > 47 && event.charCode < 58)"/></q-item>
       <q-item><q-input class="full-width" filled color="green" type="email" v-model="memberEmail" label="email" @input="isPresentEmail(memberEmail)"/></q-item>
       <q-item><q-input class="full-width" filled color="green" v-model="memberLegitimation" label="Numer Legitymacji" onkeypress="return (event.charCode > 47 && event.charCode < 58)"/></q-item>
       <q-item><q-input class="full-width" filled v-model="memberJoinDate" mask="####/##/##" :rules="['date']" label="Data dołączenia do Klubu" hint="użyj kalendarza">
@@ -83,17 +83,17 @@
           </q-field>
         </q-item>
         <q-item>
-          <q-field v-if="memberIDCard.length<10" class="full-width bg-red-2" standout label="Numer Dowodu Osobistego" stack-label>
+          <q-field v-if="memberIDCard.length<10" class="full-width bg-red-2" standout label="Numer Dokumentu" stack-label>
             <template v-slot:control>
               <div class="self-center full-width no-outline" tabindex="1">{{memberIDCard}}</div>
             </template>
           </q-field>
-          <q-field v-if="memberIDCard.length==10 && !isIDCard" class="full-width bg-green-2" standout label="Numer Dowodu Osobistego" stack-label>
+          <q-field v-if="memberIDCard.length>=10 && !isIDCard" class="full-width bg-green-2" standout label="Numer Dokumentu" stack-label>
             <template v-slot:control>
               <div class="self-center full-width no-outline" tabindex="1">{{memberIDCard}}</div>
             </template>
           </q-field>
-          <q-field v-if="memberIDCard.length==10 && isIDCard" class="full-width bg-warning" standout label="Numer Dowodu Osobistego" stack-label>
+          <q-field v-if="memberIDCard.length>=10 && isIDCard" class="full-width bg-warning" standout label="Numer Dokumentu" stack-label>
             <template v-slot:control>
               <div class="self-center full-width no-outline" tabindex="1">TAKI DOWÓD ISTNIEJE JUŻ W BAZIE</div>
             </template>
