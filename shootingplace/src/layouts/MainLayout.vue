@@ -13,7 +13,7 @@
 
        <q-toolbar-title>
           <div class="row">
-            <!-- <div class="col" id="title">{{$keycloak.keycloak.clientId}} </div> -->
+            <div class="col" id="title">{{$keycloak.keycloak.clientId}} </div>
             <div class="row reverse text-caption full-width">
               <a v-if="distance<1200000" class="text-caption text-red text-bold" style="padding-left: 10px; margin: 0px;cursor: pointer;" color="red" @click="clear()"> Odśwież sesję</a>
               <div id="timer"></div>
@@ -23,7 +23,7 @@
 
        <div><q-avatar v-ripple color="secondary" text-color="white" icon="perm_identity" />
         <q-menu>
-        <!-- <div class="col q-pa-md">
+        <div class="col q-pa-md">
             <q-btn
               color="primary"
               label="Wyloguj"
@@ -32,7 +32,7 @@
               v-close-popup
               @click="logout()"
             />
-        </div> -->
+        </div>
       </q-menu>
         </div>
       </q-toolbar>
@@ -252,9 +252,9 @@ export default {
           this.tournamentCheck = response
         })
     },
-    // logout () {
-    //   this.$keycloak.keycloak.logout()
-    // },
+    logout () {
+      this.$keycloak.keycloak.logout()
+    },
     clear () {
       this.interval = true
       this.distance = 1200000
