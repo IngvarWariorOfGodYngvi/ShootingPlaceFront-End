@@ -6,7 +6,7 @@
         </q-item>
       </div>
       <div class="row">
-    <q-card class="col-10">
+    <q-card class="col-8">
       <div class="row">
         <div class="col-3">
           <q-btn class="col-1 full-width full-height" style="text-8" label="dodaj do listy" icon="book" @click="getOther(),addAmmo=true" ></q-btn>
@@ -36,22 +36,22 @@
       </q-item>
       <div v-for="(ammoList, uuid) in ammoList" :key="uuid">
             <div v-for="(ammoInEvidenceEntityList,uuid) in ammoList.ammoInEvidenceEntityList" :key="uuid">
-              <q-item>
+              <q-item dense>
                 <q-item-label class="text-h6">
-                  kaliber {{ammoInEvidenceEntityList.caliberName}}
+                  Kaliber {{ammoInEvidenceEntityList.caliberName}}
                 </q-item-label>
               </q-item>
                 <div class="col">
                   <div class="row" v-for="(ammoUsedToEvidenceEntityList,uuid) in ammoInEvidenceEntityList.ammoUsedToEvidenceEntityList" :key="uuid">
-                    <q-field color="black" class="col-10" standout="bg-accent text-black" label="osoba" stack-label>
+                    <q-field color="black" dense class="col-10" standout="bg-accent text-black" label="osoba" stack-label>
                         <div class="row text-black">{{ammoUsedToEvidenceEntityList.name}}</div>
                     </q-field>
-                    <q-field class="col-2" standout="bg-accent text-black" label="ilość" stack-label>
+                    <q-field class="col-2" dense standout="bg-accent text-black" label="ilość" stack-label>
                         <div class="row text-black">{{ammoUsedToEvidenceEntityList.counter}}</div>
                     </q-field>
                   </div>
                   <div class="row reverse">
-                    <q-field class="col-2 bg-grey-4" standout="bg-accent text-black" label="suma" stack-label>
+                    <q-field class="col-2 bg-grey-4" dense standout="bg-accent text-black" label="suma" stack-label>
                         <div class="text-black">{{ammoInEvidenceEntityList.quantity}}</div>
                     </q-field>
                   </div>
@@ -64,19 +64,44 @@
       <div>
         <q-item>
           <q-item-label class="text-h5 text-bold">
+           Dodaj Broń
+          </q-item-label>
+        </q-item>
+        <q-item>
+          <div class="col bg-grey-1"><q-input type="password" v-model="gunBarcode" dense class="full-width" color="black" filled label="zeskanuj tutaj broń" @keypress.enter="uuid=ammoList[0].uuid,showloading(),addGunToEvidence(uuid, gunBarcode)"></q-input></div>
+        </q-item>
+        <div>
+        <q-virtual-scroll :items="gunList" visible class="full-width q-pa-none" style="height: 70vh;">
+          <template v-slot="{ item, index }">
+            <q-item :key="index" dense>
+              <div class="row text-bold">
+                <div>{{index + 1 }} {{item.modelName}}</div>
+                <div>nr. ser. {{item.serialNumber}}</div>
+              </div>
+            </q-item>
+          </template>
+        </q-virtual-scroll>
+      </div>
+      </div>
+    </q-card>
+    <q-card class="col-2">
+      <div>
+        <q-item>
+          <q-item-label class="text-h5 text-bold">
             Zamknięte listy
           </q-item-label>
         </q-item>
-        <q-scroll-area style="height: 550px;">
-        <div v-for="(ammoListClose,id) in ammoListClose" :key="id">
-          <q-item>
-            <q-btn class="col full-width full-height" @click="date = ammoListClose.date,ammunitionListNumber = ammoListClose.number,uuid= ammoListClose.evidenceUUID,getEvidence(),ammunitionListInfo=true">
-              <div>{{ammoListClose.number}}</div>
-              <div>{{ammoListClose.date}}</div>
+        <q-virtual-scroll :items="ammoListClose" visible class="full-width q-pa-none" style="height: 70vh;">
+          <template v-slot="{ item, index }">
+            <q-item :key="index" dense
+            >
+             <q-btn class="col full-width full-height" @click="date = item.date,ammunitionListNumber = item.number,uuid= item.evidenceUUID,getEvidence(),ammunitionListInfo=true">
+              <div>{{item.number}}</div>
+              <div>{{item.date}}</div>
               </q-btn>
-          </q-item>
-        </div>
-        </q-scroll-area>
+            </q-item>
+          </template>
+        </q-virtual-scroll>
       </div>
     </q-card>
     </div>
@@ -119,9 +144,9 @@
       </q-card>
 </q-dialog>
 <q-dialog position="top" v-model="fail">
-      <q-card class="bg-warning">
+      <q-card >
         <q-card-section>
-          <div class="text-h6">Wystąpił jakiś problem</div>
+          <div class="text-h6">{{message}}</div>
         </q-card-section>
       </q-card>
 </q-dialog>
@@ -240,24 +265,10 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog position="top" v-model="closeList">
+    <q-dialog position="top" v-model="success">
       <q-card>
         <q-card-section>
-          <div class="text-h6">Lista została zamknięta</div>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
-    <q-dialog position="top" v-model="openListAlert">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Lista została otwarta</div>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
-    <q-dialog position="top" v-model="listAdded">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Dodano do listy</div>
+          <div class="text-h6">{{message}}</div>
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -283,12 +294,12 @@ export default {
       listDate: null,
       ammoList: [],
       ammoListClose: [],
+      gunList: [],
       date: '',
-      listAdded: false,
+      message: null,
+      success: false,
       fail: false,
       openList: false,
-      openListAlert: false,
-      closeList: false,
       forbidden: false,
       confirmation: false,
       code: null,
@@ -314,6 +325,7 @@ export default {
       permissionsOtherArbiterNumber: '',
       ordinal: '',
       permissionsOtherArbiterPermissionValidThru: '',
+      gunBarcode: null,
       options: stringOptions,
       local: App.host
     }
@@ -340,6 +352,8 @@ export default {
       }).then(response => {
         response.json().then(ammoList => {
           this.ammoList = ammoList
+          this.uuid = ammoList[0].uuid
+          this.getGunInAmmoEvidenceList(ammoList[0].uuid)
         })
       })
     },
@@ -349,6 +363,7 @@ export default {
       }).then(response => {
         response.json().then(ammoListClose => {
           this.ammoListClose = ammoListClose
+          this.gunList = null
         })
       })
     },
@@ -361,18 +376,50 @@ export default {
         })
       })
     },
+    getGunInAmmoEvidenceList (uuid) {
+      fetch('http://' + this.local + '/ammoEvidence/getGunInAmmoEvidenceList?evidenceUUID=' + uuid, {
+        method: 'GET'
+      }).then(response => {
+        if (response.status === 200) {
+          response.json().then(
+            response => {
+              this.gunList = response
+            }
+          )
+        } else {
+          response.json().then(
+            response => {
+              this.message = response
+              this.fail = true
+              this.autoClose()
+            }
+          )
+        }
+      })
+    },
     closeEvidence () {
       fetch('http://' + this.local + '/ammoEvidence/ammo?evidenceUUID=' + this.uuid, {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {
-          this.closeList = true
-          this.getAmmoData()
-          this.getCLosedEvidence()
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.message = response
+              this.success = true
+              this.uuid = null
+              this.getAmmoData()
+              this.getCLosedEvidence()
+              this.autoClose()
+            }
+          )
         } else {
-          this.fail = true
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.message = response
+              this.fail = true
+              this.autoClose()
+            }
+          )
         }
       })
     },
@@ -382,22 +429,27 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           response.json().then(response => {
-            this.ammoList = response
+            // this.ammoList = response
+            this.code = null
+            this.message = response
+            this.success = true
+            this.ammunitionListInfo = false
+            this.getAmmoData()
+            this.getCLosedEvidence()
+            this.autoClose()
           })
-          this.code = null
-          this.openListAlert = true
-          this.ammunitionListInfo = false
-          this.getAmmoData()
-          this.getCLosedEvidence()
-          this.autoClose()
         }
         if (response.status === 403) {
           this.forbidden = true
           this.autoClose()
         }
         if (response.status === 400) {
-          this.fail = true
-          this.autoClose()
+          response.json().then(response => {
+            this.message = response
+            this.fail = true
+            this.autoClose()
+          }
+          )
         }
       })
     },
@@ -439,24 +491,53 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          this.listAdded = true
-          this.getAmmoData()
-          this.getCLosedEvidence()
-          this.showloading()
-          this.autoClose()
+          response.json().then(response => {
+            this.message = response
+            this.success = true
+            this.getAmmoData()
+            this.getCLosedEvidence()
+            this.showloading()
+            this.autoClose()
+          })
         }
         if (response.status === 400) {
-          this.fail = true
-          this.ammoQuantity = null
-          this.autoClose()
+          response.json().then(response => {
+            this.message = response
+            this.fail = true
+            this.ammoQuantity = null
+            this.autoClose()
+          })
         }
         if (response.status === 406) {
           this.failArmory = true
           this.ammoQuantity = null
           this.autoClose()
         }
-      }
-      )
+      })
+    },
+    addGunToEvidence (evidenceUUID, barcode) {
+      fetch('http://' + this.local + '/ammoEvidence/addGunToList?evidenceUUID=' + evidenceUUID + '&barcode=' + barcode, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          response.json().then(response => {
+            this.message = response
+            this.success = true
+            this.getGunInAmmoEvidenceList(this.uuid)
+            this.showloading()
+            this.autoClose()
+          })
+        } else {
+          response.json().then(response => {
+            this.message = response
+            this.fail = true
+            this.autoClose()
+          })
+        }
+      })
     },
     getListCalibers () {
       fetch('http://' + this.local + '/armory/calibers', {
@@ -570,13 +651,15 @@ export default {
     autoClose () {
       setTimeout(() => {
         this.ammunitionListAlert = false
+        this.success = false
         this.fail = false
-        this.closeList = false
         this.forbidden = false
-        this.openListAlert = false
         this.failArmory = false
         this.addOtherAlert = false
-        this.listAdded = false
+        this.message = null
+        this.memberNameUUID = null
+        this.otherNameID = null
+        this.gunBarcode = null
       }, 2000)
     }
   }

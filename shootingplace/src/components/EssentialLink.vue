@@ -3,6 +3,7 @@
     clickable
     tag="a"
     :href="link"
+    dense
   >
     <q-item-section
       v-if="icon"

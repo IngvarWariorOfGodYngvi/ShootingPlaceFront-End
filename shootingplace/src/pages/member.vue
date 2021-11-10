@@ -6,10 +6,10 @@
           <div class="text-center col full-width no-outline text-h4 text-bold" tabindex="0">Lista Klubowiczów</div>
         </q-item>
       </div>
-      <q-card class=" row">
+      <q-card class="row">
         <div class="col-4">
           <q-item>
-            <q-select class="full-width bg-green-3" filled v-model="memberName" color="black" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filter" @input="allMember = false,getMember(filter)" label="Nazwisko - Imię - nr Leg">
+            <q-select class="full-width bg-green-3" filled v-model="memberName" color="black" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filter" @input="allMember = false,getMemberByLegitimationNumber(filter)" label="Nazwisko - Imię - nr Leg">
                   <template v-slot:no-option>
                     <q-item>
                       <q-item-section class="text-grey">
@@ -20,49 +20,56 @@
                 </q-select>
           </q-item>
           <q-item>
-            <div class="col-9 bg-grey-1"><q-input disable class="full-width" filled label="numer karty"></q-input><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">W trakcie tworzenia</q-tooltip></div>
-            <div class="col-3 text-grey"><q-btn disable class="text-grey full-width full-height" color="grey-1" label="wyszukaj"/><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">W trakcie tworzenia</q-tooltip></div>
+            <div class="col-9 bg-grey-1"><q-input type="password" v-model="barcode" dense class="full-width" filled label="numer karty" @keypress.enter="findMemberByBarCode(),allMember = false,memberName=null"></q-input></div>
+            <div class="col-3 text-grey"><q-btn class="text-black full-width full-height" label="wyszukaj" @click="findMemberByBarCode(),allMember = false,memberName=null"/></div>
           </q-item>
         </div>
         <div class=" col-8">
-          <q-card class="bg-grey-3 q-pa-md col">
-            <div>
-            <q-radio @input="memberName=null, member=null,getMembersNames (),getAllMemberDTOWithArgs()" v-model="allMember" :val="true" label="Wyświetl wszystkich"></q-radio>
-            <q-radio @input="memberName=null, member=null,allMember=true,getMembersNames (),getAllMemberDTOWithArgs()" v-model="adult" :val="true" label="Grupa Ogólna"></q-radio>
-            <q-radio @input="memberName=null, member=null,allMember=true,getMembersNames (),getAllMemberDTOWithArgs()" v-model="adult" :val="false" label="Grupa Młodzieżowa"></q-radio>
-            <q-radio @input="memberName=null, member=null,allMember=true,erase=false, getMembersNames (),getAllMemberDTOWithArgs()" color="green" v-model="active" :val="true" label="Aktywni"></q-radio>
-            <q-radio @input="memberName=null, member=null,allMember=true,getMembersNames (),getAllMemberDTOWithArgs()" color="warning" v-model="active" :val="false" label="Nieaktywni"></q-radio>
-            </div>
+          <q-card class="bg-grey-3 q-pa-xs col">
             <div class="row">
-            <q-checkbox @input="memberName=null, member=null,allMember=true,active = false, getMembersNames (),getAllMemberDTOWithArgs(),erasedType = erasedTypes[0]" color="red" v-model="erase" :val="false" label="Skreśleni"></q-checkbox>
-            <div v-for="erased in erasedTypes" :key="erased">
-              <div v-if="erase==true">
-              <q-radio @input="allMember=true" color="red" v-model="erasedType" :val="erased" :true-value="erased" :label="erased"></q-radio>
+            <q-checkbox dense @input="memberName=null, member=null,adult=null,active=null,erase=false,getMembersNames (),getAllMemberDTO()" v-model="allMember" label="Wyświetl wszystkich"></q-checkbox>
+            <div class="col full-width">
+              <div class="row flex flex-left full-width">
+                <q-radio @input="member=null,allMember=false,getMembersNames (),getAllMemberDTOWithArgs()" color="green" v-model="adult" :val="true" label="Grupa Ogólna"></q-radio>
+                <q-radio @input="member=null,allMember=false,getMembersNames (),getAllMemberDTOWithArgs()" color="warning" v-model="adult" :val="false" label="Grupa Młodzieżowa"></q-radio>
+              </div>
+              <div class="row flex flex-left full-width">
+                <q-radio @input="member=null,allMember=false,erase=false, getMembersNames (),getAllMemberDTOWithArgs()" color="green" v-model="active" :val="true" label="Aktywni"></q-radio>
+                <q-radio @input="member=null,allMember=false,getMembersNames (),getAllMemberDTOWithArgs()" color="warning" v-model="active" :val="false" label="Nieaktywni"></q-radio>
               </div>
             </div>
             </div>
-          <q-item-section class="col">
-          </q-item-section>
+            <div class="row">
+            <q-checkbox dense @input="memberName=null, member=null,allMember=!erase,active = false, getMembersNames (),getAllMemberDTOWithArgs(),erasedType = erasedTypes[0]" color="red" v-model="erase" :val="false" label="Skreśleni"></q-checkbox>
+            <!-- <div v-for="erased in erasedTypes" :key="erased">
+              <div v-if="erase==true">
+              <q-radio color="red" v-model="erasedType" :val="erased" :true-value="erased" :label="erased"></q-radio>
+              </div>
+            </div> -->
+            </div>
           </q-card>
           <q-card>
-          <div class="row text-bold">
-            <q-item class="bg-accent">Ilość klubowiczów</q-item>
-            <q-item v-if="adult&&!erase">Gr. Ogólna ogółem : {{quantities[0]}}</q-item>
-            <q-item v-if="adult&&!erase">Aktywni : {{quantities[1]}}</q-item>
-            <q-item v-if="adult&&!erase">Nieaktywni : {{quantities[2]}}</q-item>
-            <q-item v-if="!adult&&!erase">Gr. Młodzieżowa ogółem : {{quantities[3]}}</q-item>
-            <q-item v-if="!adult&&!erase">Aktywni : {{quantities[4]}}</q-item>
-            <q-item v-if="!adult&&!erase">Nieaktywni : {{quantities[5]}}</q-item>
-            <q-item v-if="erase">Skreśleni ogółem : {{quantities[6] + quantities[7]}}</q-item>
-            <q-item v-if="adult&&erase">Skreśleni Gr. Ogólna : {{quantities[6]}}</q-item>
-            <q-item v-if="!adult&&erase">Skreśleni Gr. Młodzieżowa : {{quantities[7]}}</q-item>
+          <div class="row text-bold text-center text-caption">
+            <q-item dense class="bg-accent">Ilość klubowiczów</q-item>
+            <q-item dense v-if="allMember||allMember==null">Ogółem : {{quantities[0] + quantities[3]}} ({{quantities[0]}} + {{quantities[3]}})</q-item>
+            <q-item dense v-if="allMember||allMember==null">Aktywni : {{quantities[4]+quantities[10]}} ({{quantities[4]}} + {{quantities[10]}})</q-item>
+            <q-item dense v-if="allMember||allMember==null">Nieaktywni : {{quantities[11]+quantities[5]}} ({{quantities[11]}} + {{quantities[5]}})</q-item>
+            <q-item dense v-if="(adult!=null&&adult)&&!erase">Gr. Ogólna ogółem : {{quantities[0]}}</q-item>
+            <q-item dense v-if="(adult!=null&&adult)&&!erase">Aktywni : {{quantities[10]}}</q-item>
+            <q-item dense v-if="(adult!=null&&adult)&&!erase">Nieaktywni : {{quantities[11]}}</q-item>
+            <q-item dense v-if="(adult!=null&&!adult)&&!erase">Gr. Młodzieżowa ogółem : {{quantities[3]}}</q-item>
+            <q-item dense v-if="(adult!=null&&!adult)&&!erase">Aktywni : {{quantities[4]}}</q-item>
+            <q-item dense v-if="(adult!=null&&!adult)&&!erase">Nieaktywni : {{quantities[10]}}</q-item>
+            <q-item dense v-if="erase">Skreśleni ogółem : {{quantities[6] + quantities[7]}}</q-item>
+            <q-item dense v-if="adult&&erase">Skreśleni Gr. Ogólna : {{quantities[6]}}</q-item>
+            <q-item dense v-if="!adult&&erase">Skreśleni Gr. Młodzieżowa : {{quantities[7]}}</q-item>
         </div>
           </q-card>
         </div>
       </q-card>
       <q-item></q-item>
-      <div v-if="member!=null && allMember==false">
-            <q-card bordered class="row">
+      <div v-if="member!=null">
+            <q-card v-if="member.active" bordered class="row bg-green-3">
           <q-card-section avatar class="col-1">
             <div>
               <q-tooltip v-if="(member.address.postOfficeCity===null||member.address.postOfficeCity==='')
@@ -78,6 +85,47 @@
             <q-avatar v-else-if="(member.email==null||member.email=='')
             ||(member.address.postOfficeCity===null||member.address.postOfficeCity==='')
             ||(member.address.street==null||member.address.street=='')" icon="warning" color="warning" text-color="white" />
+            <q-avatar v-else-if="!member.active" icon="perm_identity" color="red" text-color="white" />
+            <q-avatar v-else icon="perm_identity" color="green" text-color="white" />
+            </div>
+          </q-card-section>
+          <q-card-section class="col-4">
+          <q-item-label>{{member.secondName}} {{member.firstName}}</q-item-label>
+          <q-item-label v-if="member.history.contributionList.length > 0" caption lines="2">Składka ważna do: {{member.history.contributionList[0].validThru}}</q-item-label>
+          <q-item-label v-if="member.history.contributionList.length > 0" caption lines="2">Składka opłacona dnia: {{member.history.contributionList[0].paymentDay}}</q-item-label>
+          <q-item-label v-if="member.active" caption lines="2">Status: Aktywny</q-item-label>
+          <q-item-label v-if="!member.active" caption lines="2">Status: Nieaktywny</q-item-label>
+          </q-card-section>
+          <q-card-section class="col-3">
+          <q-item-label :id="member.legitimationNumber">Numer Legitymacji: {{member.legitimationNumber}}</q-item-label>
+          <q-item-label caption lines="2">Numer PESEL: {{member.pesel}}</q-item-label>
+          <q-item-label caption lines="2">Data Zapisu: {{member.joinDate}}</q-item-label>
+          </q-card-section>
+          <q-card-section class="col-4">
+            <div v-if="member.erased">
+          <q-item-label>Podstawa skreślenia z listy Klubowiczów</q-item-label>
+          <q-item-label caption lines="2">{{member.erasedEntity.erasedType}} {{member.erasedEntity.date}}</q-item-label>
+          <q-item-label v-if="member.erasedEntity.additionalDescription!=null" caption lines="2">{{member.erasedEntity.additionalDescription}}</q-item-label>
+            </div>
+          </q-card-section>
+            </q-card>
+            <q-card v-if="!member.active" bordered class="row bg-red-3">
+          <q-card-section avatar class="col-1">
+            <div>
+              <q-tooltip v-if="(member.address.postOfficeCity===null||member.address.postOfficeCity==='')
+                ||(member.address.street==null||member.address.street=='') || (member.weaponPermission.exist&&!member.license.valid) || (member.email==null||member.email=='') || (member.license.number!=null)&&(member.license.valid == false)" class="row" anchor="top middle" self="bottom middle" :offset="[12, 12]">
+                <q-badge v-if="(member.address.postOfficeCity===null||member.address.postOfficeCity==='')
+                ||(member.address.street==null||member.address.street=='')" transparent align="middle" color="orange" text-color="black">Brak Adresu</q-badge>
+                <q-badge v-if="(member.weaponPermission.exist&&!member.license.valid)" transparent align="middle" color="red" text-color="black">Jest Broń i Brak Licencji</q-badge>
+                <q-badge v-if="(member.email==null||member.email=='')" transparent align="middle" color="yellow" text-color="black">Brak E-mail</q-badge>
+                <q-badge v-if="(member.license.number!=null)&&(member.license.valid == false)" transparent align="middle" color="yellow" text-color="black">Brak aktualnej licencji</q-badge>
+              </q-tooltip>
+            <q-avatar v-if="member.weaponPermission.exist&&!member.license.valid" icon="warning" color="red" text-color="white"/>
+            <q-avatar v-else-if="member.license.number!=null&&!member.license.valid" icon="warning" color="yellow" text-color="white"/>
+            <q-avatar v-else-if="(member.email==null||member.email=='')
+            ||(member.address.postOfficeCity===null||member.address.postOfficeCity==='')
+            ||(member.address.street==null||member.address.street=='')" icon="warning" color="warning" text-color="white" />
+            <q-avatar v-else-if="!member.active" icon="perm_identity" color="red" text-color="white" />
             <q-avatar v-else icon="perm_identity" color="green" text-color="white" />
             </div>
           </q-card-section>
@@ -103,7 +151,7 @@
             </q-card>
 
         <q-card bordered class="row">
-              <q-card-section class="col-4">
+              <q-card-section class="col-3">
                   <q-field class="col" standout="bg-accent text-black" stack-label>
                       <div class="self-center col full-width no-outline text-center text-black" tabindex="0">Historia Składek</div>
                   </q-field>
@@ -143,7 +191,7 @@
                     </q-card>
                   </div>
                 </q-dialog>
-                  <q-expansion-item class="bg-grey-3 full-width q-pa-none text-center" label="Daty Składek">
+                  <q-expansion-item default-opened class="bg-grey-3 full-width q-pa-none text-center" label="Daty Składek">
                     <q-scroll-area class="full-width q-pa-none" style="height: 375px;">
                           <div v-for="(contributionList,uuid) in member.history.contributionList" :key="uuid" class="row">
                               <div class="row full-width" @dblclick="contributionUUID = contributionList.uuid,memberUUID = member.uuid,editContributionPaymentDate=contributionList.paymentDay,editContributionValidThruDate=contributionList.validThru,editContribution=true">
@@ -160,28 +208,29 @@
                     </q-scroll-area>
                   </q-expansion-item>
               </q-card-section>
-              <q-card-section class="col-3 items-center">
+              <q-card-section class="col-4 items-center">
               <q-item-section class="col" v-if="!member.license.number!=null||member.adult">
-                <div v-if="member.license.number!=null" class="col" clickable @dblclick="memberUUID = member.uuid,editLicenseNumber=member.license.number,editLicenseDate=member.license.validThru, editLicense=true">
+                <div v-if="member.shootingPatent.patentNumber!=null" class="col" clickable @dblclick="memberUUID = member.uuid,editLicenseNumber=member.license.number,editLicenseDate=member.license.validThru, editLicense=true">
                 <q-field class="col" standout="bg-accent text-black" stack-label>
                     <div class="self-center col full-width no-outline text-center text-black" tabindex="0">Licencja</div>
                 </q-field>
                 </div>
-                <div v-if="member.license.number==null" class="col">
+                <div v-if="member.shootingPatent.patentNumber==null" class="col">
                 <q-field class="col" standout="bg-accent text-black" stack-label>
                     <div class="self-center col full-width no-outline text-center text-black" tabindex="0">Licencja</div>
+                    <q-tooltip content-class="text-body2 text-center" self="top middle" anchor="top middle" :offset="[12, 12]">Klubowicz nie ma patentu<p>wprowadź patent aby móc dodać licencję</p></q-tooltip>
                 </q-field>
                 </div>
                 <div>
-                  <div class="row">
-                    <div class="col">
-                      <q-field class="col" v-if="member.license.number!=null" label="Numer Licencji" standout="bg-accent text-black" stack-label>
-                          <div class="self-center col full-width no-outline text-left text-black" tabindex="0">{{member.license.number}}</div>
-                      </q-field>
-                    </div>
-                <q-field  class="col" v-if="member.license.validThru!=null" label="Ważna do :" standout="bg-accent text-black" stack-label>
-                    <div class="self-center col full-width no-outline text-left text-black" tabindex="0">{{member.license.validThru}}</div>
-                </q-field>
+                <div class="row">
+                  <div class="col">
+                    <q-field class="col" v-if="member.license.number!=null" label="Numer Licencji" standout="bg-accent text-black" stack-label>
+                      <div class="self-center col full-width no-outline text-left text-black" tabindex="0">{{member.license.number}}</div>
+                    </q-field>
+                  </div>
+                    <q-field  class="col" v-if="member.license.validThru!=null" label="Ważna do :" standout="bg-accent text-black" stack-label>
+                      <div class="self-center col full-width no-outline text-left text-black" tabindex="0">{{member.license.validThru}}</div>
+                    </q-field>
                 </div>
                 <div v-if="member.license.pistolPermission == true || member.license.riflePermission == true || member.license.shotgunPermission == true" class="row">
                   <q-field  label="Dyscypliny" class="col" standout="bg-accent text-black" stack-label>
@@ -228,18 +277,53 @@
                 noDomesticStarts=true"></q-btn>
                 </div>
                 <q-btn v-if="(((member.shootingPatent.patentNumber!=null&&member.license.paid==false))) " class="full-width" label="opłać licencję" @click="memberUUID=member.uuid,licensePayment=true"></q-btn>
-              <q-expansion-item class="bg-grey-3 text-center" v-if="member.history.licensePaymentHistory.length>0" label="Daty Opłacenia Licencji">
+              <q-expansion-item default-opened class="bg-grey-3 text-center" v-if="member.history.licensePaymentHistory.length>0" label="Daty Opłacenia Licencji">
                     <q-scroll-area class="full-width q-pa-none" style="height: 375px;">
-                          <div v-for="(licensePayment,uuid) in member.history.licensePaymentHistory" :key="uuid" class="row" @dblclick="memberUUID=member.uuid,paymentUUID = licensePayment.uuid,editLicensePaymentDate = licensePayment.date,editLicensePaymentYear = licensePayment.validForYear,editLicensePayment=true">
+                          <div v-for="(licensePayment,uuid) in member.history.licensePaymentHistory" :key="uuid" class="row">
+                              <div dense v-if="licensePayment.new" class="full-width bg-warning">
+                                  <q-field dense standout="bg-accent text-black" stack-label>
+                                    <div class="self-center col full-width no-outline text-center text-black" tabindex="1">Licencja Nowa</div>
+                                  </q-field>
                               <div class="row full-width">
-                              <q-field class="col-6" label="Opłacona dnia : " standout="bg-accent text-black" stack-label>
-                                  <div class="self-center col full-width no-outline text-left text-black" tabindex="0">{{licensePayment.date}}</div>
-                              </q-field>
-                              <div class="col-6">
-                                <q-field class="col" standout="bg-accent text-black" label="Na rok : " stack-label>
-                                    <div class="self-center col full-width no-outline text-left text-black" tabindex="1">{{licensePayment.validForYear}}</div>
-                                </q-field>
+                                <div class="col-5" @dblclick="memberUUID=member.uuid,paymentUUID = licensePayment.uuid,editLicensePaymentDate = licensePayment.date,editLicensePaymentYear = licensePayment.validForYear,editLicensePayment=true">
+                                  <q-field label="Opłacona dnia : " standout="bg-accent text-black" stack-label>
+                                      <div class="self-center col full-width no-outline text-left text-black" tabindex="0">{{licensePayment.date}}</div>
+                                  </q-field>
+                                </div>
+                                <div class="col-4"  @dblclick="memberUUID=member.uuid,paymentUUID = licensePayment.uuid,editLicensePaymentDate = licensePayment.date,editLicensePaymentYear = licensePayment.validForYear,editLicensePayment=true">
+                                  <q-field standout="bg-accent text-black" label="Na rok : " stack-label>
+                                      <div class="self-center col full-width no-outline text-left text-black" tabindex="1">{{licensePayment.validForYear}}</div>
+                                  </q-field>
+                                </div>
+                                <div class="col-3" @dblclick="memberUUID=member.uuid,paymentUUID = licensePayment.uuid,togglePaymentAlert = true">
+                                  <q-field v-if="licensePayment.payInPZSSPortal" standout="bg-accent text-black" label="PZSS : " stack-label>
+                                      <div class="self-center col full-width no-outline text-left text-black" tabindex="1">Tak</div>
+                                  </q-field>
+                                  <q-field v-if="!licensePayment.payInPZSSPortal" class="bg-red-3" standout="bg-accent text-black" label="PZSS : " stack-label>
+                                      <div class="self-center col full-width no-outline text-left text-black" tabindex="1">Nie</div>
+                                  </q-field>
+                                </div>
                               </div>
+                              </div>
+                              <div v-if="!licensePayment.new" class="row full-width">
+                                <div class="col-5" @dblclick="memberUUID=member.uuid,paymentUUID = licensePayment.uuid,editLicensePaymentDate = licensePayment.date,editLicensePaymentYear = licensePayment.validForYear,editLicensePayment=true">
+                                  <q-field label="Opłacona dnia : " standout="bg-accent text-black" stack-label>
+                                      <div class="self-center col full-width no-outline text-left text-black" tabindex="0">{{licensePayment.date}}</div>
+                                  </q-field>
+                                </div>
+                                <div class="col-4"  @dblclick="memberUUID=member.uuid,paymentUUID = licensePayment.uuid,editLicensePaymentDate = licensePayment.date,editLicensePaymentYear = licensePayment.validForYear,editLicensePayment=true">
+                                  <q-field standout="bg-accent text-black" label="Na rok : " stack-label>
+                                      <div class="self-center col full-width no-outline text-left text-black" tabindex="1">{{licensePayment.validForYear}}</div>
+                                  </q-field>
+                                </div>
+                                <div class="col-3" @dblclick="memberUUID=member.uuid,paymentUUID = licensePayment.uuid,togglePaymentAlert = true">
+                                  <q-field v-if="licensePayment.payInPZSSPortal" standout="bg-accent text-black" label="PZSS : " stack-label>
+                                      <div class="self-center col full-width no-outline text-left text-black" tabindex="1">Tak</div>
+                                  </q-field>
+                                  <q-field v-if="!licensePayment.payInPZSSPortal" class="bg-red-3" standout="bg-accent text-black" label="PZSS : " stack-label>
+                                      <div class="self-center col full-width no-outline text-left text-black" tabindex="1">Nie</div>
+                                  </q-field>
+                                </div>
                               </div>
                           </div>
                     </q-scroll-area>
@@ -325,8 +409,8 @@
                   </q-card-section>
                   </q-card>
                   <div v-if="!member.erased" class="row">
-                  <q-input @keypress.enter="memberUUID=member.legitimationNumber, addAmmoConfirm=true" v-temp ref="search" filled class="full-width col" color="black" v-model="quantity" placeholder="Tylko cyfry" onkeypress="return (event.charCode > 44 && event.charCode < 58)" label="Ilość Amunicji"></q-input>
-                  <q-btn class="full-width col" color="primary" label="wydaj amunicję" @click="memberUUID=member.legitimationNumber, addAmmoConfirm=true"></q-btn>
+                  <q-input @keypress.enter="memberUUID=member.uuid,legNumber=member.legitimationNumber, addAmmoConfirm=true" ref="search" filled class="full-width col" color="black" v-model="quantity" placeholder="Tylko cyfry" onkeypress="return (event.charCode > 44 && event.charCode < 58)" label="Ilość Amunicji"></q-input>
+                  <q-btn class="full-width col" color="primary" label="wydaj amunicję" @click="memberUUID=member.uuid,legNumber=member.legitimationNumber, addAmmoConfirm=true"></q-btn>
                   </div>
                 </div>
 </q-expansion-item>
@@ -432,17 +516,24 @@
         <q-item v-if="member.pzss"><q-btn class="full-width q-pa-none" type="a" href="https://portal.pzss.org.pl/CLub/Player" target="_blank" label="Przejdź do portalu" color="primary"/></q-item>
         <q-item v-if="!member.pzss"><q-btn class="full-width q-pa-none" type="a" href="https://portal.pzss.org.pl/CLub/Player" target="_blank" label="Przejdź do portalu" color="primary" @click="memberUUID=member.uuid,pzssPortal = true"/></q-item>
     </q-expansion-item>
-    <q-expansion-item label="Praca na rzecz Klubu" group="right-right-card" class="bg-white">
+    <q-expansion-item disable label="Praca na rzecz Klubu" group="right-right-card" class="bg-white">
       <div class="col">
         <div><q-radio v-model="socialWork" :val="false" label="opłata"></q-radio><q-radio v-model="socialWork" :val="true" label="praca"></q-radio></div>
         <div>tutaj będzie lista</div>
         <q-item><q-btn label="dodaj" color="primary"/></q-item>
       </div>
     </q-expansion-item>
-    <q-expansion-item disable v-if="!member.erased" label="Przydziel Numer Karty" group="right-right-card" class="bg-white">
-      <div class="row">
-            <q-input filled class="col bg-orange" dark label-color="white" stack-label color="white" label="Zeskanuj Kartę Tutaj"></q-input>
-        <q-item><q-btn label="dodaj" color="primary"/></q-item>
+    <q-expansion-item label="Przydziel Numer Karty" group="right-right-card" class="bg-white">
+      <div v-if="!member.erased&&member.clubCardBarCode==null" class="row">
+        <q-input v-model="barcode" type="password" filled class="col bg-orange" dark label-color="white" stack-label color="white" label="Zeskanuj Kartę Tutaj" @keypress.enter="uuid = member.uuid,addBarcodeToMember(uuid, barcode)"></q-input>
+        <q-item><q-btn label="dodaj" color="primary" @click="uuid = member.uuid,addBarcodeToMember(uuid, barcode)"/></q-item>
+      </div>
+      <div v-else class="full-width text-center">
+        <q-item class="full-width text-center">
+          <div>Klubowicz ma przypisany numer karty</div>
+        </q-item>
+        <q-input v-model="barcode" type="password" filled class="col bg-orange" dark label-color="white" stack-label color="white" label="Zeskanuj Kartę Tutaj" @keypress.enter="uuid = member.uuid,addBarcodeToMember(uuid, barcode)"></q-input>
+        <q-item class="full-width"><q-btn label="Przydziel Nowy numer" color="primary" @click="uuid = member.uuid,addBarcodeToMember(uuid, barcode)"/></q-item>
       </div>
     </q-expansion-item>
     <q-expansion-item v-if="member.active" label="Przenieś do Nieaktywnych" group="right-right-card" class="bg-red">
@@ -511,8 +602,13 @@
                 <q-field class="col-3" standout="bg-accent text-black" label="Data" stack-label>
                     <div class="self-center full-width no-outline text-left text-black" tabindex="1">{{competitionHistory.date}}</div>
                 </q-field>
-                <q-field class="col" standout="bg-accent text-black" label="Konkurencja" stack-label>
+                <q-field v-if="competitionHistory.discipline != null" class="col" standout="bg-accent text-black" label="Konkurencja" stack-label>
                     <div class="self-center full-width no-outline text-left text-black" tabindex="2"> {{competitionHistory.discipline}} </div>
+                </q-field>
+                <q-field v-if="competitionHistory.discipline == null" class="col" standout="bg-accent text-black" label="Konkurencje" stack-label>
+                    <div v-for="(disc,id) in competitionHistory.disciplines" :key="id" class="self-center full-width no-outline text-left text-black" tabindex="2">
+                      <div>{{disc[0]}}</div>
+                    </div>
                 </q-field>
                 <q-field v-if="competitionHistory.wzss" class="col" standout="bg-accent text-black" label="WZSS" stack-label>
                     <div class="self-center full-width no-outline text-left text-black" tabindex="2">Tak</div>
@@ -548,7 +644,7 @@
         </q-card>
         <q-card bordered class="row bg-grey-2">
           <q-card-section class="col-4">
-            <q-item-section>
+            <q-item-section >
             <q-item-label>Dane Podstawowe</q-item-label>
             <q-item-label caption lines="2">Identyfikator: {{member.uuid}}</q-item-label>
             <q-item-label caption lines="2">Imię: {{member.firstName}}</q-item-label>
@@ -580,114 +676,123 @@
                 <q-item v-if="member.history.contributionList.length > 0"><q-btn class="full-width" label="Pobierz ostatnie potwierdzenie składki" color="secondary" @click="memberUUID=member.uuid,name=member.firstName,name2=member.secondName,contributionDownloadConfirm=true"/></q-item>
                 <q-item v-else><q-btn disable class="full-width" label="Pobierz ostatnie potwierdzenie składki" color="secondary" /><q-tooltip content-class="text-h6 bg-red" anchor="top middle" self="bottom middle" :offset="[12, 12]">BRAK SKŁADEK</q-tooltip></q-item>
                 <q-item v-if="!member.erased&&member.license.number!=null"><q-btn class="full-width" label="Pobierz wniosek o licencję" color="secondary" @click="memberUUID=member.uuid,name=member.firstName,name2=member.secondName,getApplicationForExtensionOfTheCompetitorsLicense ()"/></q-item>
-                <q-item v-else><q-btn disable class="full-width" label="Pobierz wniosek o licencję" color="secondary"/><q-tooltip content-class="text-h6 bg-red" anchor="top middle" self="bottom middle" :offset="[12, 12]">BRAK LICENCJI</q-tooltip></q-item>
+                <q-item v-if="!member.erased&&member.license.number==null"><q-btn disable class="full-width" label="Pobierz wniosek o licencję" color="secondary"/><q-tooltip content-class="text-h6 bg-red" anchor="top middle" self="bottom middle" :offset="[12, 12]">BRAK LICENCJI</q-tooltip></q-item>
                 <q-item v-if="member.active&&!member.erased"><q-btn class="full-width" label="Pobierz Zaświadczenie o przynależności" color="secondary" @click="memberUUID=member.uuid,name=member.firstName,name2=member.secondName,certificates=true"/></q-item>
                 <q-item v-if="!member.active&&!member.erased"><q-btn disable class="full-width" label="Pobierz Zaświadczenie o przynależności" color="secondary"/><q-tooltip content-class="text-h6 bg-red" anchor="top middle" self="bottom middle" :offset="[12, 12]">BRAK SKŁADEK</q-tooltip></q-item>
             </div>
           </q-card-section>
         </q-card>
       </div>
-      <div v-if="allMember==true">
-        <q-scroll-area class="full-width q-pa-none" style="height: 1000px;">
-        <div v-for="(memberDTO,uuid) in memberDTOArg" :key="uuid" class="col">
-          <div class="row">
-            <div v-if="!memberDTO.erased" class="col" @click="showloading(),allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
+      <div v-if="member==null">
+        <div v-if="memberDTOArg.length<1" class="text-center text-bold text-h5">
+          Brak Wyników
+        </div>
+        <q-virtual-scroll :items="memberDTOArg" visible class="full-width q-pa-none" style="height: 1000px;">
+    <template v-slot="{ item, index }">
+      <q-item :key="index" dense>
+        <q-item-section dense class="row">
+          <q-item-label dense class="row">
+            <div v-if="!item.erased" class="col" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
             <q-field class="col full-width" align="left" standout="bg-accent text-black" stack-label>
                 <div class="row q-pa-xs full-width">
-                  <div class="col self-center full-width no-outline text-left text-black" tabindex="0">{{memberDTO.secondName}} {{memberDTO.firstName}}</div>
-                  <div v-if="!memberDTO.pzss" class="col self-center full-width no-outline text-left text-black" tabindex="0">Nie wpisany do portalu PZSS</div>
+                  <div class="col self-center full-width no-outline text-left text-black" tabindex="0">{{item.secondName}} {{item.firstName}}</div>
+                  <div v-if="!item.pzss" class="col self-center full-width no-outline text-left text-black" tabindex="0">Nie wpisany do portalu PZSS</div>
                 </div>
             </q-field>
             </div>
-            <div v-if="!memberDTO.erased" class="col-2" @click="showloading(),allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
+            <div v-if="!item.erased" class="col-2" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
             <q-field class="col full-width" align="left" standout="bg-accent text-black" stack-label>
                 <div class="row q-pa-xs">
-                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">Numer leg. {{memberDTO.legitimationNumber}}</div>
+                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">Numer leg. {{item.legitimationNumber}}</div>
                 </div>
             </q-field>
             </div>
-            <div v-if="!memberDTO.erased && memberDTO.license.number!=null && memberDTO.license.valid" class="col-2" @click="showloading(),allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
+            <div v-if="!item.erased && item.license.number!=null && item.license.valid" class="col-2" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
             <q-field  class="col full-width" align="left" standout="bg-accent text-black" stack-label>
                 <div class="row q-pa-xs">
                   <div class="self-center full-width no-outline text-center text-black" tabindex="0">Licencja jest ważna</div>
                 </div>
             </q-field>
             </div>
-            <div v-if="memberDTO.license.number!=null && !memberDTO.license.valid && !memberDTO.erased" class="col-2" @click="showloading(),allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
+            <div v-if="item.license.number!=null && !item.license.valid && !item.erased" class="col-2" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
             <q-field  class="col full-width bg-yellow-3" align="left" standout="bg-accent text-black" stack-label>
                 <div class="row q-pa-xs">
                   <div class="self-center full-width no-outline text-center text-black" tabindex="0">Licencja jest nieważna</div>
                 </div>
             </q-field>
             </div>
-            <div v-if="memberDTO.license.number==null && !memberDTO.erased" class="col-2" @click="showloading(),allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
+            <div v-if="item.license.number==null && !item.erased" class="col-2" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
             <q-field class="col full-width" align="left" standout="bg-accent text-black" stack-label>
                 <div class="row q-pa-xs">
                   <div class="self-center full-width no-outline text-center text-black" tabindex="0">Nie posiada licencji</div>
                 </div>
             </q-field>
             </div>
-            <div v-if="memberDTO.active && !memberDTO.erased" class="col-3" @click="showloading(),allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
+            <div v-if="item.active && !item.erased" class="col-3" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
             <q-field class="col full-width bg-green-3" standout="bg-accent text-center text-black" stack-label>
                 <div class="row q-pa-xs full-width">
                   <div class="self-center full-width no-outline text-center text-black" tabindex="0">Klubowicz Aktywny</div>
                 </div>
             </q-field>
             </div>
-            <div v-if="!memberDTO.active && !memberDTO.erased"  class="col-3" @click="showloading(),allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
+            <div v-if="!item.active && !item.erased"  class="col-3" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
             <q-field class="col full-width bg-red-4" standout="bg-accent text-center text-black" stack-label>
                 <div class="row q-pa-xs full-width">
                   <div class="self-center full-width no-outline text-center text-black" tabindex="0">Klubowicz Nieaktywny - Sprawdź składki</div>
                 </div>
             </q-field>
             </div>
-            <div v-if="memberDTO.erased && memberDTO.erasedEntity.erasedType == erasedType" class="col-5" @click="showloading(),allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
+            <div v-if="item.erased" class="row full-width">
+            <div v-if="item.erased" class="col-5" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
             <q-field class="col full-width" align="left" standout="bg-accent text-black" stack-label>
                 <div class="row q-pa-xs full-width">
-                  <div class="col self-center full-width no-outline text-center text-black" tabindex="0">{{memberDTO.secondName}} {{memberDTO.firstName}}</div>
-                  <div v-if="!memberDTO.pzss" class="col self-center full-width no-outline text-center text-black" tabindex="0">Nie wpisany do portalu PZSS</div>
+                  <div class="col self-center full-width no-outline text-center text-black" tabindex="0">{{item.secondName}} {{item.firstName}}</div>
+                  <div v-if="!item.pzss" class="col self-center full-width no-outline text-center text-black" tabindex="0">Nie wpisany do portalu PZSS</div>
                 </div>
             </q-field>
             </div>
-            <div v-if="memberDTO.erased && memberDTO.erasedEntity.erasedType == erasedType" class="col-2" @click="showloading(),allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
+            <div v-if="item.erased" class="col-2" @click="showloading(),allMember=false,memberName =item.secondName + ' ' + item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
             <q-field class="col full-width" align="left" standout="bg-accent text-black" stack-label>
                 <div class="row q-pa-xs">
-                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">Numer leg. {{memberDTO.legitimationNumber}}</div>
+                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">Numer leg. {{item.legitimationNumber}}</div>
                 </div>
             </q-field>
             </div>
-            <div v-if="memberDTO.erased && memberDTO.license.number!=null && memberDTO.license.valid && memberDTO.erasedEntity.erasedType == erasedType" class="col-2" @click="showloading(),allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
+            <div v-if="item.erased && item.license.number!=null && item.license.valid" class="col-2" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
             <q-field class="col full-width" align="left" standout="bg-accent text-black" stack-label>
                 <div class="row q-pa-xs">
                   <div class="self-center full-width no-outline text-center text-black" tabindex="0">Licencja jest ważna</div>
                 </div>
             </q-field>
             </div>
-            <div v-if="memberDTO.erased && memberDTO.license.number!=null && !memberDTO.license.valid && memberDTO.erasedEntity.erasedType == erasedType" class="col-2" @click="showloading(),allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
+            <div v-if="item.erased && item.license.number!=null && !item.license.valid" class="col-2" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
             <q-field class="col full-width bg-yellow-3" align="left" standout="bg-accent text-black" stack-label>
                 <div class="row q-pa-xs">
                   <div class="self-center full-width no-outline text-center text-black" tabindex="0">Licencja jest nieważna</div>
                 </div>
             </q-field>
             </div>
-            <div v-if="memberDTO.erased && memberDTO.license.number==null && memberDTO.erasedEntity.erasedType == erasedType" class="col-2" @click="showloading(),allMember=false,memberName =memberDTO.secondName + ' '+memberDTO.firstName+' leg. '+memberDTO.legitimationNumber,getMemberFromList (memberDTO.legitimationNumber)">
+            <div v-if="item.erased && item.license.number==null" class="col-2" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
             <q-field  class="col full-width" align="left" standout="bg-accent text-black" stack-label>
                 <div class="row q-pa-xs">
                   <div class="self-center full-width no-outline text-center text-black" tabindex="0">Nie posiada licencji</div>
                 </div>
             </q-field>
             </div>
-            <div v-if="memberDTO.erased && memberDTO.erasedEntity.erasedType == erasedType" class="col">
+            <div v-if="item.erased" class="col">
             <q-field class="col full-width bg-grey-4" align="left" standout="bg-accent text-black" stack-label>
                 <div class="row q-pa-xs">
-                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">{{memberDTO.erasedEntity.erasedType}} {{memberDTO.erasedEntity.date}}</div>
-                  <div v-if="memberDTO.erasedEntity.additionalDescription!=null" class="self-center full-width no-outline" tabindex="0">{{memberDTO.erasedEntity.additionalDescription}}</div>
+                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">{{item.erasedEntity.erasedType}} {{item.erasedEntity.date}}</div>
+                  <div v-if="item.erasedEntity.additionalDescription!=null" class="self-center full-width no-outline text-black" tabindex="0">{{item.erasedEntity.additionalDescription}}</div>
                 </div>
             </q-field>
             </div>
             </div>
-        </div>
-        </q-scroll-area>
+          </q-item-label>
+        </q-item-section>
+      </q-item>
+    </template>
+        </q-virtual-scroll>
       </div>
 <q-dialog v-model="contribution" persistent>
       <q-card>
@@ -787,6 +892,18 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
+<q-dialog v-model="togglePaymentAlert" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <span class="q-ml-sm text-h6 text-justify text-center">Czy Licencja Klubowicza została opłacona w portalu PZSS?</span>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="nie" color="primary" v-close-popup />
+          <q-btn label="tak" color="primary" v-close-popup @click="toggleHistoryPaymentCode = true"/>
+        </q-card-actions>
+      </q-card>
+</q-dialog>
 <q-dialog v-model="basicDataConfirm" persistent>
       <q-card>
         <q-card-section class="col items-center">
@@ -844,7 +961,7 @@
         </q-card-section>
         <q-card-actions align="right">
           <q-btn flat label="anuluj" color="primary" v-close-popup />
-          <q-btn flat label="Dodaj" color="primary" v-close-popup @click="addLicense(memberUUID, licenseNumber, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission)" />
+          <q-btn flat label="Dodaj" color="primary" v-close-popup @click="addLicense(memberUUID, member.license.licenseNumber, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission)" />
         </q-card-actions>
       </q-card>
   </div>
@@ -1121,7 +1238,7 @@
 <q-dialog v-model="addAmmoConfirm" persistent @keypress.enter="addMemberAndAmmoToCaliber(),addAmmoConfirm=false">
       <q-card>
         <q-card-section class="row items-center">
-          <span class="q-ml-sm">Czy napewno chcesz dodać amunicję?</span>
+          <span class="q-ml-sm">Czy napewno chcesz wydać amunicję?</span>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -1205,82 +1322,6 @@
         </q-card-section>
       </q-card>
 </q-dialog>
-<q-dialog position="top" v-model="instructorAlert">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Nadano uprawnienia Instruktora</div>
-        </q-card-section>
-      </q-card>
-</q-dialog>
-<q-dialog position="top" v-model="shootingLeaderAlert">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Nadano uprawnienia Prowadzącego Strzelanie</div>
-        </q-card-section>
-      </q-card>
-</q-dialog>
-<q-dialog position="top" v-model="patentAlert">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Patent został zapisany</div>
-        </q-card-section>
-
-      </q-card>
-</q-dialog>
-<q-dialog position="top" v-model="licenseAlert">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Licencja została zapisana</div>
-        </q-card-section>
-      </q-card>
-</q-dialog>
-<q-dialog position="top" v-model="weapon">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Ustawiono pozwolenie/dopuszczenie</div>
-        </q-card-section>
-
-      </q-card>
-</q-dialog>
-<q-dialog position="top" v-model="dataAlert">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Zaktualizowano</div>
-        </q-card-section>
-      </q-card>
-</q-dialog>
-<q-dialog position="top" v-model="deactivateAlert">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Przeniesiono</div>
-        </q-card-section>
-
-      </q-card>
-</q-dialog>
-<q-dialog position="top" v-model="arbiterAlert">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Dodano sędziego</div>
-        </q-card-section>
-
-      </q-card>
-</q-dialog>
-<q-dialog position="top" v-model="arbiterProlongAlert">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Przedłużono datę ważności licencji Sędziego</div>
-        </q-card-section>
-
-      </q-card>
-</q-dialog>
-<q-dialog position="top" v-model="arbiterUpdateClassAlert">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Podniesiono klasę licencji Sędziego</div>
-        </q-card-section>
-
-      </q-card>
-</q-dialog>
 <q-dialog v-model="contributionAlert" @keypress.enter="contributionAlert=false">
       <q-card>
         <q-card-section>
@@ -1318,20 +1359,17 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog position="top" v-model="contributionRecordAlert">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Rekord w historii został dodany</div>
+<q-dialog v-model="toggleHistoryPaymentCode" persistent>
+      <q-card class="bg-red-5 text-center">
+        <q-card-section class="flex-center">
+          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
+          <div><q-input @keypress.enter="toggleHistoryPayment(paymentUUID)" autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input></div>
         </q-card-section>
 
-      </q-card>
-</q-dialog>
-<q-dialog position="top" v-model="contributionRemoveRecordAlert">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Rekord w historii został usunięty</div>
-        </q-card-section>
-
+        <q-card-actions align="right">
+          <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
+          <q-btn id="3" label="OK" color="black" v-close-popup @click="toggleHistoryPayment(paymentUUID)" />
+        </q-card-actions>
       </q-card>
 </q-dialog>
 <q-dialog v-model="eraseAlert">
@@ -1345,18 +1383,18 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog position="top" v-model="changeAdultAlert">
+<q-dialog position="top" v-model="failure">
       <q-card>
         <q-card-section>
-          <div class="text-h6">Klubowicz został przeniesiony do Grupy Powszechnej</div>
+          <div v-if="message!=null" class="text-h6">{{message}}</div>
         </q-card-section>
 
       </q-card>
 </q-dialog>
-<q-dialog position="top" v-model="failure">
+<q-dialog position="top" v-model="success">
       <q-card>
         <q-card-section>
-          <div class="text-h6">Nie można wykonać żądania. Sprawdź poprawność danych.</div>
+          <div v-if="message!=null" class="text-h6">{{message}}</div>
         </q-card-section>
 
       </q-card>
@@ -1365,14 +1403,6 @@
       <q-card class="bg-warning">
         <q-card-section>
           <div class="text-h6">Niewłaściwy kod. Spróbuj ponownie.</div>
-        </q-card-section>
-
-      </q-card>
-</q-dialog>
-<q-dialog position="top" v-model="ammoAdded">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Amunicja została wydana</div>
         </q-card-section>
 
       </q-card>
@@ -1580,10 +1610,10 @@ export default {
       editContributionPaymentDate: null,
       editContributionValidThruDate: null,
       editContributionCode: false,
+      togglePaymentAlert: false,
+      toggleHistoryPaymentCode: false,
       paymentUUID: null,
       member: null,
-      con: false,
-      ammoAdded: false,
       filters: [],
       certificateChoices: ['ZAŚWIADCZENIE ZWYKŁE', 'ZAŚWIADCZENIE DO POLICJI'],
       certificateChoice: null,
@@ -1592,20 +1622,16 @@ export default {
       memberWord: null,
       name: null,
       name2: null,
-      active: true,
-      adult: true,
+      active: null,
+      adult: null,
       erase: false,
       value: false,
       value1: false,
       value2: false,
       value3: false,
       value4: false,
-      arbiterAlert: false,
-      arbiterProlongAlert: false,
-      arbiterUpdateClassAlert: false,
       changeAdultConfirm: false,
       changeAdultCode: false,
-      changeAdultAlert: false,
       eraseAlert: false,
       backAlert: false,
       eraseConfirm: false,
@@ -1627,8 +1653,6 @@ export default {
       historyContributionRecord: Date.now,
       contributionRecordConfirm: false,
       contributionRecordConfirm1: false,
-      contributionRecordAlert: false,
-      contributionRemoveRecordAlert: false,
       contributionRemoveRecordQuerry: false,
       contributionRemoveRecordQuerryCode: false,
       code: null,
@@ -1637,13 +1661,6 @@ export default {
       patentConfirm: false,
       patentConfirm1: false,
       patentConfirm2: false,
-      patentAlert: false,
-      licenseAlert: false,
-      weapon: false,
-      dataAlert: false,
-      deactivateAlert: false,
-      instructorAlert: false,
-      shootingLeaderAlert: false,
       contribution: false,
       certificates: false,
       contributionCode: false,
@@ -1659,19 +1676,20 @@ export default {
       arbiterProlongConfirm: false,
       arbiterUpdateClassConfirm: false,
       failure: false,
+      success: false,
+      message: null,
+      barcode: null,
       number: '',
       legNumber: null,
       patentNumber: '',
       licenseNumber: '',
       validThru: '',
-      members: [],
       memberDTOArg: [],
       calibers: [],
-      ammos: [],
       quantities: [],
       erasedTypes: [],
       erasedType: null,
-      patentDate: Date.now,
+      patentDate: null,
       patentPistolPermission: false,
       patentRiflePermission: false,
       patentShotgunPermission: false,
@@ -1714,22 +1732,14 @@ export default {
       memberStreetNumber: '',
       memberFlatNumber: '',
       memberAdultConfirm: null,
-      showStartsHistory: false,
-      showJudgesHistory: false,
-      btn: false,
       search: '',
-      finder: '',
       memberUUID: null,
       caliberUUID: null,
       quantity: '',
-      model: null,
       dateVar: /\//gi,
-      contributionDate: Date.now,
       allMember: true,
-      confirm: false,
       certificateDownload: false,
       pzssPortal: false,
-      portal: false,
       forbidden: false,
       local: App.host
     }
@@ -1738,7 +1748,7 @@ export default {
     this.getMembersNames()
     this.getListCalibers()
     this.getMembersQuantity()
-    this.getAllMemberDTOWithArgs()
+    this.getAllMemberDTO()
     this.getListErasedType()
   },
   methods: {
@@ -1765,31 +1775,49 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          this.contributionRecordAlert = true
-          this.historyContributionRecord = Date.now
-          this.showloading()
-          this.getMember(uuid)
-          this.code = null
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.success = true
+              this.message = response
+              this.code = null
+              this.getMembersNames()
+              this.showloading()
+              this.getMemberByUUID(this.memberUUID)
+              this.autoClose()
+            })
         }
         if (response.status === 403) {
           this.forbidden = true
           this.code = null
           this.autoClose()
         }
-        if (response.status === 409) {
-          this.code = null
-          this.failure = true
-          this.autoClose()
+        if (response.status === 400) {
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.code = null
+              this.autoClose()
+            })
         }
-        this.autoClose()
       })
     },
-    getMember (uuid) {
+    getMemberByLegitimationNumber () {
       const memberNameWord = this.memberName.split(' ')
       const legNumber = memberNameWord.length
-      const memberNameUUID = memberNameWord[legNumber - 1]
-      fetch('http://' + this.local + '/member/' + memberNameUUID, {
+      const memberNameLegitimation = memberNameWord[legNumber - 1]
+      fetch('http://' + this.local + '/member/' + memberNameLegitimation, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => response.json()).then(response => {
+        this.showloading()
+        this.member = response
+      })
+    },
+    getMemberByUUID (uuid) {
+      fetch('http://' + this.local + '/member/uuid/' + uuid, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -1829,23 +1857,30 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          this.dataAlert = true
-          this.code = null
-          this.getMembersNames()
-          this.showloading()
-          this.getMember(this.memberUUID)
-          this.code = null
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.success = true
+              this.message = response
+              this.code = null
+              this.getMembersNames()
+              this.showloading()
+              this.getMemberByUUID(this.memberUUID)
+              this.autoClose()
+            })
         }
         if (response.status === 403) {
           this.forbidden = true
           this.code = null
           this.autoClose()
         }
-        if (response.status === 409) {
-          this.code = null
-          this.failure = true
-          this.autoClose()
+        if (response.status === 400) {
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.code = null
+              this.autoClose()
+            })
         }
       })
     },
@@ -1857,23 +1892,30 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          this.contributionRemoveRecordAlert = true
-          this.code = null
-          this.getMembersNames()
-          this.showloading()
-          this.getMember(this.legNumber)
-          this.autoClose()
-          this.code = null
+          response.json().then(
+            response => {
+              this.success = true
+              this.message = response
+              this.code = null
+              this.getMembersNames()
+              this.showloading()
+              this.getMemberByUUID(this.memberUUID)
+              this.autoClose()
+            })
         }
         if (response.status === 403) {
           this.forbidden = true
           this.code = null
           this.autoClose()
         }
-        if (response.status === 409) {
-          this.code = null
-          this.failure = true
-          this.autoClose()
+        if (response.status === 400) {
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.code = null
+              this.autoClose()
+            })
         }
       })
     },
@@ -1882,22 +1924,30 @@ export default {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {
-          this.contributionAlert = true
-          this.getMembersNames()
-          this.showloading()
-          this.getMember(this.legNumber)
-          this.code = null
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.success = true
+              this.message = response
+              this.contributionAlert = true
+              this.showloading()
+              this.getMemberByUUID(this.memberUUID)
+              this.autoClose()
+              this.code = null
+            })
         }
         if (response.status === 403) {
           this.forbidden = true
           this.code = null
           this.autoClose()
         }
-        if (response.status === 409) {
-          this.code = null
-          this.failure = true
-          this.autoClose()
+        if (response.status === 400) {
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.code = null
+              this.autoClose()
+            })
         }
       })
     },
@@ -1916,15 +1966,23 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          this.dataAlert = true
-          this.memberEmail = ''
-          this.memberPhoneNumber = ''
-          this.showloading()
-          this.getMember(uuid)
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.success = true
+              this.message = response
+              this.memberEmail = ''
+              this.memberPhoneNumber = ''
+              this.showloading()
+              this.getMemberByUUID(this.memberUUID)
+              this.autoClose()
+            })
         } else {
-          this.failure = true
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            })
         }
       })
     },
@@ -1942,16 +2000,24 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          this.dataAlert = true
-          this.memberIdcard = ''
-          this.memberSecondName = ''
-          this.memberFirstName = ''
-          this.showloading()
-          this.getMember(uuid)
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.success = true
+              this.message = response
+              this.memberIdcard = ''
+              this.memberSecondName = ''
+              this.memberFirstName = ''
+              this.showloading()
+              this.getMemberByUUID(this.memberUUID)
+              this.autoClose()
+            })
         } else {
-          this.failure = true
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            })
         }
       })
     },
@@ -1971,23 +2037,31 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          this.dataAlert = true
-          this.memberZipCode = ''
-          this.memberPostOfficeCity = ''
-          this.memberStreet = ''
-          this.memberStreetNumber = ''
-          this.memberFlatNumber = ''
-          this.showloading()
-          this.getMember(uuid)
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.success = true
+              this.message = response
+              this.memberZipCode = ''
+              this.memberPostOfficeCity = ''
+              this.memberStreet = ''
+              this.memberStreetNumber = ''
+              this.memberFlatNumber = ''
+              this.showloading()
+              this.getMemberByUUID(this.memberUUID)
+              this.autoClose()
+            })
         } else {
-          this.failure = true
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.failure = true
+              this.message = response
+              this.autoClose()
+            })
         }
       })
     },
     getMembersNames () {
-      fetch('http://' + this.local + '/member/getMembersNames?active=' + this.active + '&adult=' + this.adult + '&erase=' + this.erase, {
+      fetch('http://' + this.local + '/member/getAllNames', {
         method: 'GET'
       }).then(response => response.json())
         .then(filters => {
@@ -1995,7 +2069,18 @@ export default {
         })
     },
     getAllMemberDTOWithArgs () {
-      fetch('http://' + this.local + '/member/getAllMemberDTOWithArgs?active=' + this.active + '&adult=' + this.adult + '&erase=' + this.erase, {
+      const active = this.active
+      const adult = this.adult
+      const erase = this.erase
+      fetch('http://' + this.local + '/member/getAllMemberDTOWithArgs?active=' + active + '&adult=' + adult + '&erase=' + erase, {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.memberDTOArg = response.sort()
+        })
+    },
+    getAllMemberDTO () {
+      fetch('http://' + this.local + '/member/getAllMemberDTO', {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -2019,27 +2104,36 @@ export default {
         })
     },
     addMemberAndAmmoToCaliber () {
-      fetch('http://' + this.local + '/ammoEvidence/ammo?caliberUUID=' + this.caliberUUID + '&legitimationNumber=' + this.memberUUID + '&counter=' + this.quantity + '&otherID=0', {
+      fetch('http://' + this.local + '/ammoEvidence/ammo?caliberUUID=' + this.caliberUUID + '&legitimationNumber=' + this.legNumber + '&counter=' + this.quantity + '&otherID=0', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         }
       }).then(response => {
         if (response.status === 200) {
-          this.ammoAdded = true
-          this.caliberUUID = null
-          this.quantity = null
-          this.showloading()
-          this.getListCalibers()
-          this.getMember(this.uuid)
-          this.autoClose()
-        } else {
-          this.quantity = null
+          response.json().then(response => {
+            this.message = response
+            this.success = true
+            this.getListCalibers()
+            this.showloading()
+            this.getMemberByUUID(this.memberUUID)
+            this.autoClose()
+          })
+        }
+        if (response.status === 400) {
+          response.json().then(response => {
+            this.message = response
+            this.failure = true
+            this.quantity = null
+            this.autoClose()
+          })
+        }
+        if (response.status === 406) {
           this.failure = true
+          this.quantity = null
           this.autoClose()
         }
-      }
-      )
+      })
     },
     getContributionPDF (memberUUID, contributionUUID) {
       axios({
@@ -2140,18 +2234,26 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          this.patentAlert = true
-          this.patentNumber = null
-          this.patentPistolPermission = false
-          this.patentRiflePermission = false
-          this.patentShotgunPermission = false
-          this.patentDate = null
-          this.showloading()
-          this.getMember(uuid)
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.message = response
+              this.success = true
+              this.patentNumber = null
+              this.patentPistolPermission = false
+              this.patentRiflePermission = false
+              this.patentShotgunPermission = false
+              this.patentDate = null
+              this.showloading()
+              this.getMemberByUUID(this.memberUUID)
+              this.autoClose()
+            })
         } else {
-          this.failure = true
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            })
         }
       })
     },
@@ -2170,17 +2272,26 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          this.licenseAlert = true
-          this.licenseNumber = ''
-          this.licensePistolPermission = false
-          this.licenseRiflePermission = false
-          this.licenseShotgunPermission = false
-          this.showloading()
-          this.getMember(uuid)
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.success = true
+              this.message = response
+              this.licenseNumber = ''
+              this.licensePistolPermission = false
+              this.licenseRiflePermission = false
+              this.licenseShotgunPermission = false
+              this.showloading()
+              this.getMemberByUUID(this.memberUUID)
+              this.autoClose()
+            })
         } else {
-          this.failure = true
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            }
+          )
         }
       })
     },
@@ -2198,52 +2309,54 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          this.licenseAlert = true
-          this.licensePistolPermission = false
-          this.licenseRiflePermission = false
-          this.licenseShotgunPermission = false
-          this.showloading()
-          this.getMember(uuid)
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.success = true
+              this.message = response
+              this.licensePistolPermission = false
+              this.licenseRiflePermission = false
+              this.licenseShotgunPermission = false
+              this.showloading()
+              this.getMemberByUUID(this.memberUUID)
+              this.autoClose()
+            }
+          )
         } else {
-          this.failure = true
-          this.autoClose()
-        }
-      })
-    },
-    removeLicenseHistoryPayment () {
-      fetch('http://' + this.local + '/license/editPayment?memberUUID=' + this.memberUUID + '&paymentUUID=' + this.paymentUUID + '&paymentDate=' + this.editLicensePaymentDate + '&year=' + this.editLicensePaymentYear + '&pinCode=' + this.code, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          this.licenseAlert = true
-          this.showloading()
-          this.getMember(this.memberUUID)
-          this.autoClose()
-        } else {
-          this.failure = true
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            }
+          )
         }
       })
     },
     editLicenseHistoryPayment () {
-      fetch('http://' + this.local + '/license/editPayment?memberUUID=' + this.memberUUID + '&paymentUUID=' + this.paymentUUID + '&paymentDate=' + this.editLicensePaymentDate + '&year=' + this.editLicensePaymentYear + '&pinCode=' + this.code, {
+      fetch('http://' + this.local + '/license/editPayment?memberUUID=' + this.memberUUID + '&paymentUUID=' + this.paymentUUID + '&paymentDate=' + this.editLicensePaymentDate.replace(/\//gi, '-') + '&year=' + this.editLicensePaymentYear + '&pinCode=' + this.code, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         }
       }).then(response => {
         if (response.status === 200) {
-          this.licenseAlert = true
-          this.showloading()
-          this.getMember(this.memberUUID)
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.message = response
+              this.success = true
+              this.code = null
+              this.showloading()
+              this.getMemberByUUID(this.memberUUID)
+              this.autoClose()
+            })
         } else {
-          this.failure = true
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.code = null
+              this.autoClose()
+            })
         }
       })
     },
@@ -2255,13 +2368,50 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          this.licenseAlert = true
-          this.showloading()
-          this.getMember(uuid)
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.message = response
+              this.success = true
+              this.showloading()
+              this.getMemberByUUID(this.memberUUID)
+              this.autoClose()
+            })
         } else {
-          this.failure = true
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            })
+        }
+      })
+    },
+    toggleHistoryPayment (uuid) {
+      fetch('http://' + this.local + '/license/paymentToggle?paymentUUID=' + uuid + '&pinCode=' + this.code, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          response.json().then(
+            response => {
+              this.message = response
+              this.success = true
+              this.showloading()
+              this.getMemberByUUID(this.memberUUID)
+              this.autoClose()
+            })
+        } if (response.status === 403) {
+          this.forbidden = true
           this.autoClose()
+        } if (response.status === 400) {
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            })
         }
       })
     },
@@ -2273,21 +2423,30 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          this.licenseAlert = true
-          this.editLicenseNumber = null
-          this.editLicenseDate = null
-          this.code = null
-          this.showloading()
-          this.getMember(this.memberUUID)
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.message = response
+              this.success = true
+              this.editLicenseNumber = null
+              this.editLicenseDate = null
+              this.code = null
+              this.showloading()
+              this.getMemberByUUID(this.memberUUID)
+              this.autoClose()
+            })
         }
         if (response.status === 403) {
           this.forbidden = true
           this.autoClose()
         }
         if (response.status === 400) {
-          this.failure = true
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.code = null
+              this.autoClose()
+            })
         }
       })
     },
@@ -2304,15 +2463,22 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          this.weapon = true
-          this.weaponPermissionNumber = null
-          this.showloading()
-          this.getMember(uuid)
-          this.autoClose()
-        }
-        if (response.status === 400) {
-          this.failure = true
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.message = response
+              this.success = true
+              this.weaponPermissionNumber = null
+              this.showloading()
+              this.getMemberByUUID(this.memberUUID)
+              this.autoClose()
+            })
+        } else {
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            })
         }
       })
     },
@@ -2329,15 +2495,22 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          this.weapon = true
-          this.admissionToPossess = null
-          this.showloading()
-          this.getMember(uuid)
-          this.autoClose()
-        }
-        if (response.status === 400) {
-          this.failure = true
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.message = response
+              this.success = true
+              this.admissionToPossess = null
+              this.showloading()
+              this.getMemberByUUID(this.memberUUID)
+              this.autoClose()
+            })
+        } else {
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            })
         }
       })
     },
@@ -2349,15 +2522,23 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          this.admission = false
-          this.permission = false
-          this.showloading()
-          this.getMember(this.memberUUID)
-          this.autoClose()
-        }
-        if (response.status === 400) {
-          this.failure = true
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.message = response
+              this.success = true
+              this.admission = false
+              this.permission = false
+              this.showloading()
+              this.getMemberByUUID(this.memberUUID)
+              this.autoClose()
+            })
+        } else {
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            })
         }
       })
     },
@@ -2366,18 +2547,28 @@ export default {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {
-          this.showloading()
-          this.reload()
+          response.json().then(
+            response => {
+              this.message = response
+              this.success = true
+              this.code = null
+              this.showloading()
+              this.getMemberByUUID(this.memberUUID)
+              this.autoClose()
+            })
         }
         if (response.status === 403) {
           this.forbidden = true
           this.code = null
           this.autoClose()
         }
-        if (response.status === 404) {
-          this.failure = true
-          this.code = null
-          this.autoClose()
+        if (response.status === 400) {
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            })
         }
       })
     },
@@ -2396,27 +2587,26 @@ export default {
         body: JSON.stringify(data)
       }).then(response => {
         if (response.status === 200) {
-          if (this.value) { this.instructorAlert = true }
-          if (this.value1) { this.shootingLeaderAlert = true }
-          if (this.value2) { this.arbiterAlert = true }
-          if (this.value3) { this.arbiterProlongAlert = true }
-          if (this.value4) { this.arbiterUpdateClassAlert = true }
-          this.value = false
-          this.value1 = false
-          this.value2 = false
-          this.value3 = false
-          this.value4 = false
-          this.permissionsShootingLeaderNumber = ''
-          this.permissionsInstructorNumber = ''
-          this.permissionsArbiterNumber = ''
-          this.permissionsArbiterPermissionValidThru = ''
-          this.ordinal = ''
-          this.showloading()
-          this.getMember(this.memberUUID)
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.message = response
+              this.success = true
+              this.permissionsShootingLeaderNumber = ''
+              this.permissionsInstructorNumber = ''
+              this.permissionsArbiterNumber = ''
+              this.permissionsArbiterPermissionValidThru = ''
+              this.ordinal = ''
+              this.showloading()
+              this.getMemberByUUID(this.memberUUID)
+              this.autoClose()
+            })
         } else {
-          this.failure = true
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            })
         }
       })
     },
@@ -2428,13 +2618,21 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          this.arbiterUpdateClassAlert = true
-          this.showloading()
-          this.getMember(this.memberUUID)
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.message = response
+              this.success = true
+              this.showloading()
+              this.getMemberByUUID(this.memberUUID)
+              this.autoClose()
+            })
         } else {
-          this.failure = true
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            })
         }
       })
     },
@@ -2442,32 +2640,128 @@ export default {
       fetch('http://' + this.local + '/member/erase/' + uuid + '?additionalDescription=' + this.reason + '&erasedDate=' + this.erasedDate.replace(/\//gi, '-') + '&erasedType=' + this.erasedReasontype + '&pinCode=' + this.code, {
         method: 'PATCH'
       }).then(response => {
-        if (response.status === 204) {
-          this.eraseAlert = true
-          this.reason = null
-          this.showloading()
-          this.reload()
-        } else { this.failure = true }
+        if (response.status === 200) {
+          response.json().then(
+            response => {
+              this.message = response
+              this.success = true
+              this.reason = null
+              this.code = null
+              this.showloading()
+              this.getMemberByUUID(this.memberUUID)
+              this.autoClose()
+            })
+        } else {
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.code = null
+              this.autoClose()
+            })
+        }
       })
     },
     changeAdult (uuid) {
       fetch('http://' + this.local + '/member/adult/' + uuid + '?pinCode=' + this.code, {
         method: 'PATCH'
       }).then(response => {
-        this.changeAdultAlert = true
-        this.getMembersNames()
-        this.showloading()
-        this.getMember(uuid)
-        this.autoClose()
+        if (response.status === 200) {
+          response.json().then(
+            response => {
+              this.message = response
+              this.success = true
+              this.code = null
+              this.getMembersNames()
+              this.showloading()
+              this.getMemberByUUID(this.memberUUID)
+              this.autoClose()
+            })
+        } else {
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.code = null
+              this.autoClose()
+            })
+        }
       })
     },
     changePzss (uuid) {
       fetch('http://' + this.local + '/member/pzss/' + uuid, {
         method: 'PATCH'
       }).then(response => {
-        this.getMembersNames()
-        this.showloading()
-        this.getMember(uuid)
+        if (response.status === 200) {
+          response.json().then(
+            response => {
+              this.success = true
+              this.message = response
+              this.getMembersNames()
+              this.showloading()
+              this.getMemberByUUID(this.memberUUID)
+              this.autoClose()
+            }
+          )
+        } else {
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            }
+          )
+        }
+      })
+    },
+    addBarcodeToMember (uuid, barcode) {
+      fetch('http://' + this.local + '/member/addBarCode?uuid=' + uuid + '&barcode=' + barcode, {
+        method: 'PUT'
+      }).then(response => {
+        if (response.status === 200) {
+          response.json().then(
+            response => {
+              this.success = true
+              this.message = response
+              this.getMembersNames()
+              this.showloading()
+              this.getMemberByUUID(uuid)
+              this.autoClose()
+            }
+          )
+        } else {
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            }
+          )
+        }
+      })
+    },
+    findMemberByBarCode () {
+      fetch('http://' + this.local + '/member/findByBarCode?barcode=' + this.barcode, {
+        method: 'GET'
+      }).then(response => {
+        if (response.status === 200) {
+          response.json().then(
+            response => {
+              this.member = response
+              this.showloading()
+              this.barcode = null
+              this.memberUUID = response.uuid
+            }
+          )
+        } else {
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            }
+          )
+        }
       })
     },
     filter (val, update) {
@@ -2489,23 +2783,13 @@ export default {
     },
     autoClose () {
       setTimeout(() => {
-        this.contributionRecordAlert = false
-        this.contributionRemoveRecordAlert = false
-        this.dataAlert = false
         this.failure = false
-        this.changeAdultAlert = false
+        this.success = false
         this.forbidden = false
-        this.instructorAlert = false
-        this.shootingLeaderAlert = false
-        this.arbiterAlert = false
-        this.arbiterProlongAlert = false
-        this.arbiterUpdateClassAlert = false
-        this.patentAlert = false
-        this.licenseAlert = false
-        this.weapon = false
-        this.deactivateAlert = false
-        this.ammoAdded = false
         this.downloaded = false
+        this.message = null
+        this.barcode = null
+        this.code = null
       }, 2000)
     }
   },

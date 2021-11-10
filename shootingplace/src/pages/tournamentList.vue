@@ -2,7 +2,7 @@
   <q-page padding>
       <div>
         <q-item>
-          <div class="text-center col full-width no-outline text-h4 text-bold" tabindex="0">Lista Zawodów</div>
+          <div class="text-center col full-width no-outline text-h4 text-bold" tabindex="0">Zawody</div>
         </q-item>
       </div>
       <q-card class="row">
@@ -80,6 +80,17 @@
             </div>
         </q-card-section>
       </q-card>
+      <q-card class="col">
+        <q-card-section class="col">
+          <div class="text-center text-bold text-h5">Pozostałe</div>
+            <div v-for="(competitions,uuid) in competitions" :key="uuid" class="col">
+              <div v-if="competitions.discipline == null" class="bg-grey-5">
+                <q-radio v-if="competitions.countingMethod == 'COMSTOCK'" :val="competitions.uuid" v-model="competitionRadio">{{competitions.name}} ({{competitions.countingMethod}})</q-radio>
+                <q-radio v-else :val="competitions.uuid" v-model="competitionRadio">{{competitions.name}}</q-radio>
+              </div>
+            </div>
+        </q-card-section>
+      </q-card>
         <q-card-actions align="right">
             <q-item><q-btn
                 label="Dodaj konkurencję"
@@ -104,10 +115,10 @@
                 <q-field standout="bg-accent text-black" stack-label>
                     <div class="text-bold self-center full-width no-outline text-black" tabindex="0">Sędzia główny</div>
                 </q-field>
-                <q-field v-if="tournaments.mainArbiter!=null" class="col" standout="bg-accent text-black" stack-label label="Sędzia Główny Zawodów">
+                <q-field v-if="tournaments.mainArbiter!=null" class="col" standout="bg-accent text-black">
                     <div class="self-center col full-width no-outline text-black" tabindex="0">{{tournaments.mainArbiter.firstName}} {{tournaments.mainArbiter.secondName}} {{tournaments.mainArbiter.memberPermissions.arbiterClass}}</div>
                 </q-field>
-                <q-field v-if="tournaments.otherMainArbiter!=null" class="col" standout="bg-accent text-black" stack-label label="Sędzia Główny Zawodów">
+                <q-field v-if="tournaments.otherMainArbiter!=null" class="col" standout="bg-accent text-black">
                     <div class="self-center col full-width no-outline text-black" tabindex="0">{{tournaments.otherMainArbiter.firstName}} {{tournaments.otherMainArbiter.secondName}} {{tournaments.otherMainArbiter.permissionsEntity.arbiterClass}}</div>
                 </q-field>
                 </div>
@@ -116,12 +127,12 @@
                     <div class="text-bold self-center full-width no-outline text-black" tabindex="0">Sędziowie stanowiskowi</div>
                 </q-field>
                 <div v-if="tournaments.arbitersList.length>0">
-                <q-field v-for="(arbiters,uuid) in tournaments.arbitersList" :key="uuid" standout="bg-accent text-black" stack-label label="Sędzia Stanowiskowy">
+                <q-field v-for="(arbiters,uuid) in tournaments.arbitersList" :key="uuid" standout="bg-accent text-black">
                     <div class="self-center full-width no-outline text-black" tabindex="0">{{arbiters.firstName}} {{arbiters.secondName}} {{arbiters.memberPermissions.arbiterClass}}</div>
                 </q-field>
                 </div>
                 <div v-if="tournaments.otherArbitersList.length>0">
-                <q-field v-for="(otherArbitersList,id) in tournaments.otherArbitersList" :key="id" standout="bg-accent text-black" stack-label label="Sędzia Stanowiskowy spoza klubu">
+                <q-field v-for="(otherArbitersList,id) in tournaments.otherArbitersList" :key="id" standout="bg-accent text-black" >
                     <div class="text-bold self-center full-width no-outline text-black" tabindex="0">{{otherArbitersList.firstName}} {{otherArbitersList.secondName}} {{otherArbitersList.permissionsEntity.arbiterClass}}</div>
                 </q-field>
                 </div>
@@ -132,10 +143,10 @@
                 <q-field standout="bg-accent text-black" stack-label>
                     <div class="text-bold self-center full-width no-outline text-black" tabindex="0">Sędzia komisji RTS</div>
                 </q-field>
-                <q-field v-if="tournaments.commissionRTSArbiter!=null" class="col" standout="bg-accent text-black" stack-label label="Przewodniczący Komisji RTS">
+                <q-field v-if="tournaments.commissionRTSArbiter!=null" class="col" standout="bg-accent text-black">
                     <div class="self-center col full-width no-outline text-black" tabindex="0">{{tournaments.commissionRTSArbiter.firstName}} {{tournaments.commissionRTSArbiter.secondName}} {{tournaments.commissionRTSArbiter.memberPermissions.arbiterClass}}</div>
                 </q-field>
-                <q-field v-if="tournaments.otherCommissionRTSArbiter!=null" class="col" standout="bg-accent text-black" stack-label label="Przewodniczący Komisji RTS">
+                <q-field v-if="tournaments.otherCommissionRTSArbiter!=null" class="col" standout="bg-accent text-black">
                     <div class="self-center col full-width no-outline text-black" tabindex="0">{{tournaments.otherCommissionRTSArbiter.firstName}} {{tournaments.otherCommissionRTSArbiter.secondName}} {{tournaments.otherCommissionRTSArbiter.permissionsEntity.arbiterClass}}</div>
                 </q-field>
                 </div>
@@ -144,12 +155,12 @@
                     <div class="text-bold self-center full-width no-outline text-black" tabindex="0">Sędziowie biura obiczeń</div>
                 </q-field>
                 <div v-if="tournaments.arbitersRTSList.length>0">
-                <q-field v-for="(arbitersRTSList,uuid) in tournaments.arbitersRTSList" :key="uuid" standout="bg-accent text-black" stack-label label="Sędzia biura obliczeń">
+                <q-field v-for="(arbitersRTSList,uuid) in tournaments.arbitersRTSList" :key="uuid" standout="bg-accent text-black">
                     <div class="self-center full-width no-outline text-black" tabindex="0">{{arbitersRTSList.firstName}} {{arbitersRTSList.secondName}} {{arbitersRTSList.memberPermissions.arbiterClass}}</div>
                 </q-field>
                 </div>
                 <div v-if="tournaments.otherArbitersRTSList.length>0">
-                <q-field v-for="(otherArbitersRTSList,id) in tournaments.otherArbitersRTSList" :key="id" standout="bg-accent text-black" stack-label label="Sędzia biura obliczeń spoza klubu">
+                <q-field v-for="(otherArbitersRTSList,id) in tournaments.otherArbitersRTSList" :key="id" standout="bg-accent text-black">
                     <div class="text-bold self-center full-width no-outline text-black" tabindex="0">{{otherArbitersRTSList.firstName}} {{otherArbitersRTSList.secondName}} {{otherArbitersRTSList.permissionsEntity.arbiterClass}}</div>
                 </q-field>
                 </div>
@@ -170,7 +181,26 @@
               </div>
             </div>
         <q-card class="full-width">
-                      <q-item><div class="text-h6 self-center row full-width no-outline" tabindex="0">Dodawnie zawodników</div></q-item>
+          <div class="row bg-grey-3">
+            <div class="text-h6 col-6 text-center self-center no-outline" tabindex="0">Dodawanie zawodników</div>
+            <div class="col">Wydaj Broń na zawody
+              <div class="full-width bg-grey-1">
+                <q-input type="password" v-model="barcode" color="black" bg-color="grey-4" dense filled label="zeskanuj kod tutaj" @keypress.enter="tournamentUUID = tournaments.uuid, addGunToTournament(barcode)"></q-input>
+                <div>
+                  <q-expansion-item exact label="Lista Broni Na Zawodach" dense class="text-left text-h6 text-bold bg-grey-3" @click="tournamentUUID = tournaments.uuid, getGunInTournament()">
+                    <q-virtual-scroll :items="gunsUsed" visible class="full-width q-pa-none text-caption" style="height: 200px;">
+                      <template v-slot="{ item, index }">
+                        <q-item :key="index" dense>
+                         <div class="col">{{item.gunName}}</div>
+                         <div class="col-4">{{item.gunSerialNumber}}</div>
+                        </q-item>
+                      </template>
+                    </q-virtual-scroll>
+                  </q-expansion-item>
+                </div>
+              </div>
+            </div>
+          </div>
           <div class="row">
                 <q-card-section class="col-6">
                   <div class="col">
@@ -197,184 +227,236 @@
                   <div class="col">
                 <q-select @focus.self="tournamentUUID = tournaments.uuid, getCompetitionsInTournament()" @input="tournamentUUID = tournaments.uuid,getCompetitionID ()" filled v-model="competition" :options="options2" label="Wybierz Konkurencję"></q-select>
                 </div>
-                <div class="row">
-                  <q-btn class="col full-width" v-if="tournaments.open" label="Usuń z listy" @click="removeMemberFromCompetition(valUUID, finder),finder = null"></q-btn>
-                  <q-btn class="col full-width" v-if="tournaments.open" label="Dodaj do listy" @click="addMemberToCompetition(valUUID), (finder = null)"></q-btn>
+                <div>
+                  <div class="row">
+                    <q-btn class="col full-width" v-if="tournaments.open" label="Usuń z listy" @click="removeMemberFromCompetition(valUUID, finder),finder = null"></q-btn>
+                    <q-btn class="col full-width" v-if="tournaments.open" label="Dodaj do listy" @click="addMemberToCompetition(valUUID), (finder = null)"></q-btn>
+                  </div>
+                  <div>
+                    <p></p>
+                    <q-btn class="col full-width" label="Drukuj metryki" color="primary" @click="tournamentUUID = tournaments.uuid,getScoreInfoByLegitimation()"/>
+                  </div>
                 </div>
                 </q-card-section>
                 </div>
               <q-item v-for="(competitionsList,uuid) in tournaments.competitionsList" :key="uuid" >
                 <div class="col">
-                <q-card-section class="col-9">
                   <q-item v-if="competitionsList.countingMethod == 'COMSTOCK'" class="full-width text-h5 text-bold text-center">{{competitionsList.name}} ({{competitionsList.countingMethod}})</q-item>
                   <q-item v-else class="full-width text-h5 text-bold text-center">{{competitionsList.name}}</q-item>
-                  <div>
-                      <div class="row">
-                        <q-field class="col-1" standout="bg-accent text-black" stack-label>
-                            <div class="self-center full-width col no-outline text-center text-black" tabindex="0">amunicja</div>
-                        </q-field>
-                        <q-field class="col-5" standout="bg-accent text-black">
-                          <div class="row full-width">
-                            <div class="col self-center full-width no-outline text-center text-black" tabindex="1">Zawodnik</div>
-                            <div class="col self-center full-width no-outline text-center text-black" tabindex="1">Klub</div>
-                          </div>
-                        </q-field>
-                        <q-field class="col" standout="bg-accent text-black">
-                            <div class="self-center full-width col no-outline text-center text-black" tabindex="2">Wynik</div>
+                      <div dense class="row">
+                        <q-field dense class="col" standout="bg-accent text-black" stack-label>
+                            <div class="col-2 self-center no-outline text-left text-black" tabindex="0">lp amunicja</div>
+                            <div class="col-2 self-center no-outline text-left text-black" tabindex="1">Zawodnik</div>
+                            <div class="col-2 self-center no-outline text-left text-black" tabindex="1">Klub</div>
+                            <div class="col self-center no-outline text-center text-black" tabindex="2">Wynik</div>
                         </q-field>
                       </div>
-                  <div class="text-body2" v-for="(scoreList,uuid) in competitionsList.scoreList" :key="uuid">
-                    <div v-if="competitionsList.countingMethod == 'COMSTOCK'" class="row">
-                      <q-btn v-if="scoreList.ammunition == false && scoreList.gun == false && scoreList.member!=null" class="col-1" style="text-8" icon="book" @click="compName=competitionsList.name,scoreUUID = scoreList.uuid,memberLeg = scoreList.member.legitimationNumber,otherID = 0, getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Wydaj broń lub amunicję {{scoreList.member.secondName}}</q-tooltip></q-btn>
-                      <q-btn v-if="scoreList.ammunition == true && scoreList.gun == false && scoreList.member!=null" class="col-1" color="green" style="text-8" icon="book" @click="compName=competitionsList.name,scoreUUID = scoreList.uuid,memberLeg = scoreList.member.legitimationNumber,otherID = 0, getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Amunicja wydana</q-tooltip></q-btn>
-                      <q-btn v-if="scoreList.ammunition == false && scoreList.gun == true && scoreList.member!=null" class="col-1" color="yellow" style="text-8" icon="book" @click="compName=competitionsList.name,scoreUUID = scoreList.uuid,memberLeg = scoreList.member.legitimationNumber,otherID = 0, getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Broń wydana</q-tooltip></q-btn>
-                      <q-btn v-if="scoreList.ammunition == true && scoreList.gun == true && scoreList.member!=null" glossy class="col-1" color="green" text-color="yellow" style="text-8" icon="book" @click="compName=competitionsList.name,scoreUUID = scoreList.uuid,memberLeg = scoreList.member.legitimationNumber,otherID = 0, getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Broń i Amunicja wydana</q-tooltip></q-btn>
-                      <q-btn v-if="scoreList.ammunition == false && scoreList.gun == false && scoreList.otherPersonEntity!=null" class="col-1" style="text-8" icon="book" @click="compName=competitionsList.name,scoreUUID = scoreList.uuid,otherID = scoreList.otherPersonEntity.id,memberLeg=0, getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Wydaj broń lub amunicję {{scoreList.otherPersonEntity.secondName}}</q-tooltip></q-btn>
-                      <q-btn v-if="scoreList.ammunition == true && scoreList.gun == false && scoreList.otherPersonEntity!=null" class="col-1" color="green" style="text-8" icon="book" @click="compName=competitionsList.name,scoreUUID = scoreList.uuid,otherID = scoreList.otherPersonEntity.id,memberLeg=0, getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Amunicja wydana</q-tooltip></q-btn>
-                      <q-btn v-if="scoreList.ammunition == false && scoreList.gun == true && scoreList.otherPersonEntity!=null" class="col-1" color="yellow" style="text-8" icon="book" @click="compName=competitionsList.name,scoreUUID = scoreList.uuid,otherID = scoreList.otherPersonEntity.id,memberLeg=0, getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Broń wydana</q-tooltip></q-btn>
-                      <q-btn v-if="scoreList.ammunition == true && scoreList.gun == true && scoreList.otherPersonEntity!=null" class="col-1" color="green" text-color="yellow" style="text-8" icon="book" @click="compName=competitionsList.name,scoreUUID = scoreList.uuid,otherID = scoreList.otherPersonEntity.id,memberLeg=0, getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Broń i Amunicja wydana</q-tooltip></q-btn>
-                      <div v-if="scoreList.otherPersonEntity == null" class="col-5" @dblclick="tournamentUUID = tournaments.uuid,memberUUID=scoreList.member.uuid,otherID = '0',date=tournaments.date,name=scoreList.member.secondName,startNumber=scoreList.metricNumber,getScoreInfo(),scoreInfo=true">
-                        <q-field standout="bg-accent text-black" stack-label>
-                            <q-tooltip v-if="!scoreList.member.active" content-class="bg-red text-subtitle2" anchor="top middle" >UREGULUJ SKŁADKI</q-tooltip>
-                            <div class="q-pa-xs row full-width">
-                            <div v-if="scoreList.otherPersonEntity == null" class="self-center full-width col no-outline text-black" tabindex="0">{{scoreList.member.secondName}} {{scoreList.member.firstName}}</div>
-                            <div v-if="scoreList.otherPersonEntity == null" class="self-center full-width col no-outline text-black" tabindex="0">{{scoreList.member.club.name}}</div>
+                  <q-virtual-scroll :items="competitionsList.scoreList" visible class="full-width q-pa-none">
+                    <template dense v-slot="{ item, index }">
+                      <div :key="index" dense>
+                      <div dense v-if="competitionsList.countingMethod == 'COMSTOCK'" class="row text-body2">
+                      <div class="col-1">
+                      <div class="row" v-if="item.ammunition == false && item.gun == false && item.member!=null" ><div class="col-5 self-center">{{index+1}}.</div><q-btn dense class="col" style="text-8" icon="book" @click="tournamentUUID = tournaments.uuid,compName=competitionsList.name,scoreUUID = item.uuid,memberLeg = item.member.legitimationNumber,otherID = 0,getScoreUUID(competitionsList.name), getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Wydaj broń lub amunicję {{item.member.secondName}}</q-tooltip></q-btn></div>
+                      <div class="row" v-if="item.ammunition == true && item.gun == false && item.member!=null"><div class="col-5 self-center">{{index+1}}.</div><q-btn dense class="col" color="green" style="text-8" icon="book" @click="tournamentUUID = tournaments.uuid,compName=competitionsList.name,scoreUUID = item.uuid,memberLeg = item.member.legitimationNumber,otherID = 0,getScoreUUID(competitionsList.name), getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Amunicja wydana</q-tooltip></q-btn></div>
+                      <div class="row" v-if="item.ammunition == false && item.gun == true && item.member!=null"><div class="col-5 self-center">{{index+1}}.</div><q-btn dense class="col" color="yellow" style="text-8" icon="book" @click="tournamentUUID = tournaments.uuid,compName=competitionsList.name,scoreUUID = item.uuid,memberLeg = item.member.legitimationNumber,otherID = 0,getScoreUUID(competitionsList.name), getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Broń wydana</q-tooltip></q-btn></div>
+                      <div class="row" v-if="item.ammunition == true && item.gun == true && item.member!=null"><div class="col-5 self-center">{{index+1}}.</div><q-btn dense glossy class="col" color="green" text-color="yellow" style="text-8" icon="book" @click="tournamentUUID = tournaments.uuid,compName=competitionsList.name,scoreUUID = item.uuid,memberLeg = item.member.legitimationNumber,otherID = 0,getScoreUUID(competitionsList.name), getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Broń i Amunicja wydana</q-tooltip></q-btn></div>
+                      <div class="row" v-if="item.ammunition == false && item.gun == false && item.otherPersonEntity!=null"><div class="col-5 self-center">{{index+1}}.</div><q-btn dense class="col" style="text-8" icon="book" @click="tournamentUUID = tournaments.uuid,compName=competitionsList.name,scoreUUID = item.uuid,otherID = item.otherPersonEntity.id,memberLeg=0,getScoreUUID(competitionsList.name), getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Wydaj broń lub amunicję {{item.otherPersonEntity.secondName}}</q-tooltip></q-btn></div>
+                      <div class="row" v-if="item.ammunition == true && item.gun == false && item.otherPersonEntity!=null"><div class="col-5 self-center">{{index+1}}.</div><q-btn dense class="col" color="green" style="text-8" icon="book" @click="tournamentUUID = tournaments.uuid,compName=competitionsList.name,scoreUUID = item.uuid,otherID = item.otherPersonEntity.id,memberLeg=0,getScoreUUID(competitionsList.name), getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Amunicja wydana</q-tooltip></q-btn></div>
+                      <div class="row" v-if="item.ammunition == false && item.gun == true && item.otherPersonEntity!=null"><div class="col-5 self-center">{{index+1}}.</div><q-btn dense class="col" color="yellow" style="text-8" icon="book" @click="tournamentUUID = tournaments.uuid,compName=competitionsList.name,scoreUUID = item.uuid,otherID = item.otherPersonEntity.id,memberLeg=0,getScoreUUID(competitionsList.name), getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Broń wydana</q-tooltip></q-btn></div>
+                      <div class="row" v-if="item.ammunition == true && item.gun == true && item.otherPersonEntity!=null"><div class="col-5 self-center">{{index+1}}.</div><q-btn dense class="col" color="green" text-color="yellow" style="text-8" icon="book" @click="tournamentUUID = tournaments.uuid,compName=competitionsList.name,scoreUUID = item.uuid,otherID = item.otherPersonEntity.id,memberLeg=0,getScoreUUID(competitionsList.name), getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Broń i Amunicja wydana</q-tooltip></q-btn></div>
+                      </div>
+                      <div v-if="item.otherPersonEntity == null" class="col" @dblclick="tournamentUUID = tournaments.uuid,memberName=null,otherName=null,memberUUID=item.member.uuid,otherID = '0',date=tournaments.date,name=item.member.secondName,memberLeg = item.member.legitimationNumber,startNumber=item.metricNumber,getScoreInfo(),metricsInfo=true">
+                        <q-field dense standout="bg-accent text-black" stack-label>
+                            <q-tooltip v-if="!item.member.active" content-class="bg-red text-subtitle2" anchor="top middle" >UREGULUJ SKŁADKI</q-tooltip>
+                            <div class="q-pa-xs row full-width text-caption">
+                            <div v-if="item.otherPersonEntity == null" class="col no-outline text-black" tabindex="0">{{item.member.secondName}} {{item.member.firstName}}</div>
+                            <div v-if="item.otherPersonEntity == null" class="col-5 no-outline text-black" tabindex="0">{{item.member.club.name}}</div>
                             </div>
                         </q-field>
                       </div>
-                      <div v-if="scoreList.member == null" class="col-5" @dblclick="tournamentUUID = tournaments.uuid,memberUUID=null,otherID = scoreList.otherPersonEntity.id,date=tournaments.date,name=scoreList.otherPersonEntity.secondName,startNumber=scoreList.metricNumber,getScoreInfo(),scoreInfo=true">
-                      <q-field standout="bg-accent text-black" stack-label >
-                          <div class="q-pa-xs row full-width">
-                          <div v-if="scoreList.member == null" class="self-center full-width col no-outline text-black" tabindex="0">{{scoreList.otherPersonEntity.secondName}} {{scoreList.otherPersonEntity.firstName}}</div>
-                          <div v-if="scoreList.member == null" class="self-center full-width col no-outline text-black" tabindex="0">{{scoreList.otherPersonEntity.club.name}}</div>
+                      <div v-if="item.member == null" class="col" @dblclick="tournamentUUID = tournaments.uuid,memberName=null,otherName=null,memberUUID='0',otherID = item.otherPersonEntity.id,date=tournaments.date,name=item.otherPersonEntity.secondName,startNumber=item.metricNumber,getScoreInfo(),metricsInfo=true">
+                      <q-field dense standout="bg-accent text-black" stack-label >
+                          <div class="q-pa-xs row full-width text-caption">
+                          <div v-if="item.member == null" class="col no-outline text-black" tabindex="0">{{item.otherPersonEntity.secondName}} {{item.otherPersonEntity.firstName}}</div>
+                          <div v-if="item.member == null" class="col-5 no-outline text-black" tabindex="0">{{item.otherPersonEntity.club.name}}</div>
                           </div>
                       </q-field>
                       </div>
-                      <div class="col-1" @dblclick="scoreUUID = scoreList.uuid,toggleDSQDNF=true">
-                        <q-field class="text-center" standout="bg-accent text-black" stack-label label="metryka">
-                            <div class="self-center full-width col no-outline text-center text-black" tabindex="0">{{scoreList.metricNumber}}</div>
+                      <div class="col-1" @dblclick="scoreUUID = item.uuid,toggleDSQDNF=true">
+                        <q-field dense class="text-center" standout="bg-accent text-black" stack-label label="metryka">
+                            <div class="self-center full-width col no-outline text-center text-black text-caption" tabindex="0">{{item.metricNumber}}</div>
                         </q-field>
                       </div>
-                      <q-field class="box col-1 cursor-pointer" standout="bg-accent text-black" label="trafienia" stack-label>
+                      <q-field dense v-if="competitionsList.disciplines==null" class="box col-1 cursor-pointer" standout="bg-accent text-black" label="trafienia" stack-label>
                         <q-popup-edit v-model="outerTen">
-                          <q-input v-if="alfa == '' && charlie == '' && delta == ''" @focus="scoreUUID = scoreList.uuid" input-class="text-center" v-model="outerTen" @keypress.enter="scoreUUID = scoreList.uuid, onEnter(scoreUUID)" dense autofocus stack-label label="trafienia" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
-                          <q-input @focus="scoreUUID = scoreList.uuid" @keypress.enter="scoreUUID = scoreList.uuid, onEnter(scoreUUID)" input-class="text-center" v-model="alfa" stack-label label="Alfa" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
-                          <q-input @focus="scoreUUID = scoreList.uuid" @keypress.enter="scoreUUID = scoreList.uuid, onEnter(scoreUUID)" input-class="text-center" v-model="charlie" stack-label label="Charlie" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
-                          <q-input @focus="scoreUUID = scoreList.uuid" @keypress.enter="scoreUUID = scoreList.uuid, onEnter(scoreUUID)" input-class="text-center" v-model="delta" stack-label label="Delta" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+                          <q-input v-if="alfa == '' && charlie == '' && delta == ''" @focus="scoreUUID = item.uuid" input-class="text-center" v-model="outerTen" @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)" dense autofocus stack-label label="trafienia" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+                          <q-input @focus="scoreUUID = item.uuid" @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)" input-class="text-center" v-model="alfa" stack-label label="Alfa" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+                          <q-input @focus="scoreUUID = item.uuid" @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)" input-class="text-center" v-model="charlie" stack-label label="Charlie" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+                          <q-input @focus="scoreUUID = item.uuid" @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)" input-class="text-center" v-model="delta" stack-label label="Delta" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
                           <div class="q-pa-xs">
                             <q-btn color="primary" label="Anuluj" v-close-popup @click="outerTen='',alfa='',charlie='',delta=''"></q-btn>
-                            <q-btn color="primary" label="Zapisz" v-close-popup @click="scoreUUID = scoreList.uuid, setScore(scoreList.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
+                            <q-btn color="primary" label="Zapisz" v-close-popup @click="scoreUUID = item.uuid, setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
                           </div>
                         </q-popup-edit>
-                        <div class="self-center full-width col no-outline text-center text-black" tabindex="0">{{scoreList.outerTen}}</div>
+                        <div class="self-center full-width col no-outline text-center text-black" tabindex="0">{{item.outerTen}}</div>
                       </q-field>
-                    <q-field class="box col-1 cursor-pointer" standout="bg-accent text-black" label="czas" stack-label>
+                      <div v-if="competitionsList.disciplines!=null" class="row">
+                      <q-field dense v-if="competitionsList.disciplines.includes('Pistolet')" class="box col cursor-pointer" standout="bg-accent text-black" label="p" stack-label>
+                        <q-popup-edit v-model="outerTen">
+                          <q-input v-if="alfa == '' && charlie == '' && delta == ''" @focus="scoreUUID = item.uuid" input-class="text-center" v-model="outerTen" @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)" dense autofocus stack-label label="trafienia" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+                          <q-input @focus="scoreUUID = item.uuid" @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)" input-class="text-center" v-model="alfa" stack-label label="Alfa" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+                          <q-input @focus="scoreUUID = item.uuid" @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)" input-class="text-center" v-model="charlie" stack-label label="Charlie" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+                          <q-input @focus="scoreUUID = item.uuid" @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)" input-class="text-center" v-model="delta" stack-label label="Delta" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+                          <div class="q-pa-xs">
+                            <q-btn color="primary" label="Anuluj" v-close-popup @click="outerTen='',alfa='',charlie='',delta=''"></q-btn>
+                            <q-btn color="primary" label="Zapisz" v-close-popup @click="scoreUUID = item.uuid, setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
+                          </div>
+                        </q-popup-edit>
+                        <div class="self-center full-width col no-outline text-center text-black text-caption" tabindex="0">{{item.outerTen}}</div>
+                      </q-field>
+                      <q-field dense v-if="competitionsList.disciplines.includes('Karabin')" class="box col cursor-pointer" standout="bg-accent text-black" label="k" stack-label>
+                        <q-popup-edit v-model="outerTen">
+                          <q-input v-if="alfa == '' && charlie == '' && delta == ''" @focus="scoreUUID = item.uuid" input-class="text-center" v-model="outerTen" @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)" dense autofocus stack-label label="trafienia" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+                          <q-input @focus="scoreUUID = item.uuid" @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)" input-class="text-center" v-model="alfa" stack-label label="Alfa" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+                          <q-input @focus="scoreUUID = item.uuid" @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)" input-class="text-center" v-model="charlie" stack-label label="Charlie" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+                          <q-input @focus="scoreUUID = item.uuid" @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)" input-class="text-center" v-model="delta" stack-label label="Delta" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+                          <div class="q-pa-xs">
+                            <q-btn color="primary" label="Anuluj" v-close-popup @click="outerTen='',alfa='',charlie='',delta=''"></q-btn>
+                            <q-btn color="primary" label="Zapisz" v-close-popup @click="scoreUUID = item.uuid, setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
+                          </div>
+                        </q-popup-edit>
+                        <div class="self-center full-width col no-outline text-center text-black text-caption" tabindex="0">{{item.outerTen}}</div>
+                      </q-field>
+                      <q-field dense v-if="competitionsList.disciplines.includes('Strzelba')" class="box col cursor-pointer" standout="bg-accent text-black" label="s" stack-label>
+                        <q-popup-edit v-model="outerTen">
+                          <q-input v-if="alfa == '' && charlie == '' && delta == ''" @focus="scoreUUID = item.uuid" input-class="text-center" v-model="outerTen" @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)" dense autofocus stack-label label="trafienia" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+                          <q-input @focus="scoreUUID = item.uuid" @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)" input-class="text-center" v-model="alfa" stack-label label="Alfa" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+                          <q-input @focus="scoreUUID = item.uuid" @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)" input-class="text-center" v-model="charlie" stack-label label="Charlie" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+                          <q-input @focus="scoreUUID = item.uuid" @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)" input-class="text-center" v-model="delta" stack-label label="Delta" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+                          <div class="q-pa-xs">
+                            <q-btn color="primary" label="Anuluj" v-close-popup @click="outerTen='',alfa='',charlie='',delta=''"></q-btn>
+                            <q-btn color="primary" label="Zapisz" v-close-popup @click="scoreUUID = item.uuid, setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
+                          </div>
+                        </q-popup-edit>
+                        <div class="self-center full-width col no-outline text-center text-black text-caption" tabindex="0">{{item.outerTen}}</div>
+                      </q-field>
+                      </div>
+                    <q-field dense class="box col-1 cursor-pointer" standout="bg-accent text-black" label="czas" stack-label>
                       <q-popup-edit v-model="innerTen">
-                        <q-input @focus="scoreUUID = scoreList.uuid" input-class="text-center" v-model="innerTen" @keypress.enter="scoreUUID = scoreList.uuid, onEnter(scoreUUID)" dense autofocus stack-label label="czas" onkeypress="return (event.charCode > 47 && event.charCode < 58) || event.charCode 44 || event.charCode 46" />
+                        <q-input @focus="scoreUUID = item.uuid" input-class="text-center" v-model="innerTen" @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)" dense autofocus stack-label label="czas" onkeypress="return (event.charCode > 47 && event.charCode < 58) || event.charCode 44 || event.charCode 46" />
                         <div class="q-pa-xs">
                           <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
-                          <q-btn color="primary" label="Zapisz" v-close-popup @click="scoreUUID = scoreList.uuid, setScore(scoreList.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
+                          <q-btn color="primary" label="Zapisz" v-close-popup @click="scoreUUID = item.uuid, setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
                         </div>
                       </q-popup-edit>
-                      <div class="self-center full-width col no-outline text-center text-black" tabindex="0">{{scoreList.innerTen}}</div>
+                      <div class="self-center full-width col no-outline text-center text-black text-caption" tabindex="0">{{item.innerTen}}</div>
                     </q-field>
-                    <q-field class="box col-1 cursor-pointer" standout="bg-accent text-black" label="procedury" stack-label>
+                    <q-field dense class="box col-1 cursor-pointer" standout="bg-accent text-black" label="procedury" stack-label>
                       <q-popup-edit v-model="procedures">
-                        <q-input @focus="scoreUUID = scoreList.uuid" input-class="text-center" v-model="procedures" @keypress.enter="scoreUUID = scoreList.uuid, onEnter(scoreUUID)" dense autofocus stack-label label="procedury + 3 sek" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+                        <q-input @focus="scoreUUID = item.uuid" input-class="text-center" v-model="procedures" @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)" dense autofocus stack-label label="procedury + 3 sek" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
                         <div class="q-pa-xs row full-width">
                           <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
-                          <q-btn color="primary" label="Zapisz" v-close-popup @click="scoreUUID = scoreList.uuid, setScore(scoreList.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
+                          <q-btn color="primary" label="Zapisz" v-close-popup @click="scoreUUID = item.uuid, setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
                         </div>
                       </q-popup-edit>
-                      <div class="self-center full-width col no-outline text-center text-black" tabindex="0">{{scoreList.procedures}}</div>
+                      <div class="self-center full-width col no-outline text-center text-black text-caption" tabindex="0">{{item.procedures}}</div>
                     </q-field>
-                    <q-field class="col-1" standout="bg-accent text-black" label="HF" stack-label>
-                      <q-tooltip v-if="scoreList.alfa>0||scoreList.charlie>0||scoreList.delta>0" anchor="top middle" self="bottom middle" :offset="[12, 12]">
-                        <div v-if="scoreList.alfa>0">alfa: {{scoreList.alfa}}</div>
-                        <div v-if="scoreList.charlie>0">charlie: {{scoreList.charlie}}</div>
-                        <div v-if="scoreList.delta>0">delta: {{scoreList.delta}}</div>
+                    <q-field dense class="col-1" standout="bg-accent text-black" label="HF" stack-label>
+                      <q-tooltip v-if="item.alfa>0||item.charlie>0||item.delta>0" anchor="top middle" self="bottom middle" :offset="[12, 12]">
+                        <div v-if="item.alfa>0">alfa: {{item.alfa}}</div>
+                        <div v-if="item.charlie>0">charlie: {{item.charlie}}</div>
+                        <div v-if="item.delta>0">delta: {{item.delta}}</div>
                       </q-tooltip>
-                        <div class="self-center full-width col no-outline text-center text-black" tabindex="0">{{scoreList.hf}} </div>
+                        <div class="self-center full-width col no-outline text-center text-black text-caption" tabindex="0">{{item.hf}} </div>
                     </q-field>
                     <div class="col-1">
-                    <q-field standout="bg-accent text-black" label="Wynik" clickable stack-label >
-                      <div v-if="scoreList.dnf||scoreList.dsq" class="self-center full-width col no-outline text-center text-black" tabindex="0">
-                          <div v-if="scoreList.dnf">DNF</div>
-                          <div v-if="scoreList.dsq">DSQ</div>
-                          </div>
-                        <div v-else class="self-center full-width col no-outline text-center text-black" tabindex="0">{{scoreList.score}}</div>
+                    <q-field dense standout="bg-accent text-black" label="Wynik" clickable stack-label >
+                      <q-popup-edit v-model="scoreLabel">
+                        <q-input @focus="scoreUUID = item.uuid" input-class="text-center" v-model="scoreLabel" @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)" dense autofocus stack-label label="Wynik" onkeypress="return (event.charCode > 47 && event.charCode < 58) || event.charCode 44 || event.charCode 46"/>
+                        <div class="q-pa-xs">
+                          <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
+                          <q-btn color="primary" label="Zapisz" v-close-popup @click="scoreUUID = item.uuid, setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
+                        </div>
+                      </q-popup-edit>
+                      <div v-if="item.dnf||item.dsq" class="self-center full-width col no-outline text-center text-black text-caption" tabindex="0">
+                          <div v-if="item.dnf">DNF</div>
+                          <div v-if="item.dsq">DSQ</div>
+                      </div>
+                      <div v-else class="self-center full-width col no-outline text-center text-black text-caption" tabindex="0">{{item.score}}</div>
                     </q-field>
                     </div>
                     </div>
-                    <div v-else class="row">
-                      <q-btn v-if="scoreList.ammunition == false && scoreList.gun == false && scoreList.member!=null" class="col-1" style="text-8" icon="book" @click="compName=competitionsList.name,scoreUUID = scoreList.uuid,memberLeg = scoreList.member.legitimationNumber,otherID = 0, getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Wydaj broń lub amunicję {{scoreList.member.secondName}}</q-tooltip></q-btn>
-                      <q-btn v-if="scoreList.ammunition == true && scoreList.gun == false && scoreList.member!=null" class="col-1" color="green" style="text-8" icon="book" @click="compName=competitionsList.name,scoreUUID = scoreList.uuid,memberLeg = scoreList.member.legitimationNumber,otherID = 0, getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Amunicja wydana</q-tooltip></q-btn>
-                      <q-btn v-if="scoreList.ammunition == false && scoreList.gun == true && scoreList.member!=null" class="col-1" color="yellow" style="text-8" icon="book" @click="compName=competitionsList.name,scoreUUID = scoreList.uuid,memberLeg = scoreList.member.legitimationNumber,otherID = 0, getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Broń wydana</q-tooltip></q-btn>
-                      <q-btn v-if="scoreList.ammunition == true && scoreList.gun == true && scoreList.member!=null" glossy class="col-1" color="green" text-color="yellow" style="text-8" icon="book" @click="compName=competitionsList.name,scoreUUID = scoreList.uuid,memberLeg = scoreList.member.legitimationNumber,otherID = 0, getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Broń i Amunicja wydana</q-tooltip></q-btn>
-                      <q-btn v-if="scoreList.ammunition == false && scoreList.gun == false && scoreList.otherPersonEntity!=null" class="col-1" style="text-8" icon="book" @click="compName=competitionsList.name,scoreUUID = scoreList.uuid,otherID = scoreList.otherPersonEntity.id,memberLeg=0, getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Wydaj broń lub amunicję {{scoreList.otherPersonEntity.secondName}}</q-tooltip></q-btn>
-                      <q-btn v-if="scoreList.ammunition == true && scoreList.gun == false && scoreList.otherPersonEntity!=null" class="col-1" color="green" style="text-8" icon="book" @click="compName=competitionsList.name,scoreUUID = scoreList.uuid,otherID = scoreList.otherPersonEntity.id,memberLeg=0, getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Amunicja wydana</q-tooltip></q-btn>
-                      <q-btn v-if="scoreList.ammunition == false && scoreList.gun == true && scoreList.otherPersonEntity!=null" class="col-1" color="yellow" style="text-8" icon="book" @click="compName=competitionsList.name,scoreUUID = scoreList.uuid,otherID = scoreList.otherPersonEntity.id,memberLeg=0, getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Broń wydana</q-tooltip></q-btn>
-                      <q-btn v-if="scoreList.ammunition == true && scoreList.gun == true && scoreList.otherPersonEntity!=null" class="col-1" color="green" text-color="yellow" style="text-8" icon="book" @click="compName=competitionsList.name,scoreUUID = scoreList.uuid,otherID = scoreList.otherPersonEntity.id,memberLeg=0, getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Broń i Amunicja wydana</q-tooltip></q-btn>
-                      <div class="col" v-if="scoreList.otherPersonEntity == null" @dblclick="tournamentUUID = tournaments.uuid,memberUUID=scoreList.member.uuid,otherID = '0',date=tournaments.date,name=scoreList.member.secondName + ' ' + scoreList.member.firstName,startNumber=scoreList.metricNumber,getScoreInfo(),scoreInfo=true">
-                        <q-field standout="bg-accent text-black" stack-label>
-                            <q-tooltip v-if="!scoreList.member.active" content-class="bg-red text-subtitle2" anchor="top middle" >UREGULUJ SKŁADKI</q-tooltip>
-                            <div class="q-pa-xs row full-width">
-                            <div v-if="scoreList.otherPersonEntity == null" class="self-center full-width col no-outline text-black" tabindex="0">{{scoreList.member.secondName}} {{scoreList.member.firstName}} </div>
-                            <div v-if="scoreList.otherPersonEntity == null" class="self-center full-width col no-outline text-black" tabindex="0">{{scoreList.member.club.name}}</div>
+                    <div dense v-else class="row text-body2">
+                      <div class="col-1">
+                      <div class="row" v-if="item.ammunition == false && item.gun == false && item.member!=null" ><div class="col-5 self-center">{{index+1}}.</div><q-btn dense class="col" style="text-8" icon="book" @click="tournamentUUID = tournaments.uuid,compName=competitionsList.name,scoreUUID = item.uuid,memberLeg = item.member.legitimationNumber,otherID = 0,getScoreUUID(competitionsList.name), getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Wydaj broń lub amunicję {{item.member.secondName}}</q-tooltip></q-btn></div>
+                      <div class="row" v-if="item.ammunition == true && item.gun == false && item.member!=null"><div class="col-5 self-center">{{index+1}}.</div><q-btn dense class="col" color="green" style="text-8" icon="book" @click="tournamentUUID = tournaments.uuid,compName=competitionsList.name,scoreUUID = item.uuid,memberLeg = item.member.legitimationNumber,otherID = 0,getScoreUUID(competitionsList.name), getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Amunicja wydana</q-tooltip></q-btn></div>
+                      <div class="row" v-if="item.ammunition == false && item.gun == true && item.member!=null"><div class="col-5 self-center">{{index+1}}.</div><q-btn dense class="col" color="yellow" style="text-8" icon="book" @click="tournamentUUID = tournaments.uuid,compName=competitionsList.name,scoreUUID = item.uuid,memberLeg = item.member.legitimationNumber,otherID = 0,getScoreUUID(competitionsList.name), getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Broń wydana</q-tooltip></q-btn></div>
+                      <div class="row" v-if="item.ammunition == true && item.gun == true && item.member!=null"><div class="col-5 self-center">{{index+1}}.</div><q-btn dense glossy class="col" color="green" text-color="yellow" style="text-8" icon="book" @click="tournamentUUID = tournaments.uuid,compName=competitionsList.name,scoreUUID = item.uuid,memberLeg = item.member.legitimationNumber,otherID = 0,getScoreUUID(competitionsList.name), getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Broń i Amunicja wydana</q-tooltip></q-btn></div>
+                      <div class="row" v-if="item.ammunition == false && item.gun == false && item.otherPersonEntity!=null"><div class="col-5 self-center">{{index+1}}.</div><q-btn dense class="col" style="text-8" icon="book" @click="tournamentUUID = tournaments.uuid,compName=competitionsList.name,scoreUUID = item.uuid,otherID = item.otherPersonEntity.id,memberLeg=0,getScoreUUID(competitionsList.name), getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Wydaj broń lub amunicję {{item.otherPersonEntity.secondName}}</q-tooltip></q-btn></div>
+                      <div class="row" v-if="item.ammunition == true && item.gun == false && item.otherPersonEntity!=null"><div class="col-5 self-center">{{index+1}}.</div><q-btn dense class="col" color="green" style="text-8" icon="book" @click="tournamentUUID = tournaments.uuid,compName=competitionsList.name,scoreUUID = item.uuid,otherID = item.otherPersonEntity.id,memberLeg=0,getScoreUUID(competitionsList.name), getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Amunicja wydana</q-tooltip></q-btn></div>
+                      <div class="row" v-if="item.ammunition == false && item.gun == true && item.otherPersonEntity!=null"><div class="col-5 self-center">{{index+1}}.</div><q-btn dense class="col" color="yellow" style="text-8" icon="book" @click="tournamentUUID = tournaments.uuid,compName=competitionsList.name,scoreUUID = item.uuid,otherID = item.otherPersonEntity.id,memberLeg=0,getScoreUUID(competitionsList.name), getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Broń wydana</q-tooltip></q-btn></div>
+                      <div class="row" v-if="item.ammunition == true && item.gun == true && item.otherPersonEntity!=null"><div class="col-5 self-center">{{index+1}}.</div><q-btn dense class="col" color="green" text-color="yellow" style="text-8" icon="book" @click="tournamentUUID = tournaments.uuid,compName=competitionsList.name,scoreUUID = item.uuid,otherID = item.otherPersonEntity.id,memberLeg=0,getScoreUUID(competitionsList.name), getListCalibers(),addAmmo=true" ><q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Broń i Amunicja wydana</q-tooltip></q-btn></div>
+                      </div>
+                      <div class="col" v-if="item.otherPersonEntity == null" @dblclick="tournamentUUID = tournaments.uuid,memberName=null,otherName=null,memberUUID=item.member.uuid,memberLeg = item.member.legitimationNumber,otherID = '0',date=tournaments.date,name=item.member.secondName + ' ' + item.member.firstName,startNumber=item.metricNumber,getScoreInfo(),metricsInfo=true">
+                        <q-field dense standout="bg-accent text-black" stack-label>
+                            <q-tooltip v-if="!item.member.active" content-class="bg-red text-subtitle2" anchor="top middle" >UREGULUJ SKŁADKI</q-tooltip>
+                            <div class="q-pa-xs row full-width text-caption">
+                              <div v-if="item.otherPersonEntity == null" class="col no-outline text-black" tabindex="0">{{item.member.secondName}} {{item.member.firstName}} </div>
+                              <div v-if="item.otherPersonEntity == null" class="col-5 no-outline text-black" tabindex="0">{{item.member.club.name}}</div>
                             </div>
                         </q-field>
                       </div>
-                    <div class="col" v-if="scoreList.member == null" @dblclick="tournamentUUID = tournaments.uuid,memberUUID=null,otherID = scoreList.otherPersonEntity.id,date=tournaments.date,name=scoreList.otherPersonEntity.secondName + ' ' + scoreList.otherPersonEntity.firstName,startNumber=scoreList.metricNumber,getScoreInfo(),scoreInfo=true">
-                    <q-field standout="bg-accent text-black" stack-label >
-                        <div class="q-pa-xs row full-width">
-                        <div v-if="scoreList.member == null" class="self-center full-width col no-outline text-black" tabindex="0">{{scoreList.otherPersonEntity.secondName}} {{scoreList.otherPersonEntity.firstName}}  </div>
-                        <div v-if="scoreList.member == null" class="self-center full-width col no-outline text-black" tabindex="0"> {{scoreList.otherPersonEntity.club.name}}</div>
+                    <div class="col" v-if="item.member == null" @dblclick="tournamentUUID = tournaments.uuid,memberName=null,otherName=null,memberUUID='0',otherID = item.otherPersonEntity.id,date=tournaments.date,name=item.otherPersonEntity.secondName + ' ' + item.otherPersonEntity.firstName,startNumber=item.metricNumber,getScoreInfo(),metricsInfo=true">
+                    <q-field dense standout="bg-accent text-black" stack-label >
+                        <div class="q-pa-xs row full-width text-caption">
+                        <div v-if="item.member == null" class="col no-outline text-black" tabindex="0">{{item.otherPersonEntity.secondName}} {{item.otherPersonEntity.firstName}}  </div>
+                        <div v-if="item.member == null" class="col-5 no-outline text-black" tabindex="0"> {{item.otherPersonEntity.club.name}}</div>
                         </div>
                     </q-field>
                     </div>
-                    <div class="col-1" @dblclick="scoreUUID = scoreList.uuid,metric = scoreList.metricNumber,toggleDSQDNF=true">
-                        <q-field class="text-center" standout="bg-accent text-black" stack-label label="metryka">
-                            <div class="self-center full-width col no-outline text-center text-black" tabindex="0">{{scoreList.metricNumber}}</div>
+                    <div dense class="col-1" @dblclick="scoreUUID = item.uuid,metric = item.metricNumber,toggleDSQDNF=true">
+                        <q-field dense class="text-center" standout="bg-accent text-black" stack-label label="metryka">
+                            <div class="self-center full-width col no-outline text-center text-black text-caption" tabindex="0">{{item.metricNumber}}</div>
                         </q-field>
                       </div>
-                      <q-field class="box col-2 cursor-pointer" standout="bg-accent text-black" label="10 ogólnie" stack-label>
+                      <q-field dense class="box col-2 cursor-pointer" standout="bg-accent text-black" label="10 ogólnie" stack-label>
                           <q-popup-edit v-model="outerTen">
-                              <q-input @focus="scoreUUID = scoreList.uuid" input-class="text-center" v-model="outerTen" @keypress.enter="scoreUUID = scoreList.uuid, onEnter(scoreUUID)" dense autofocus stack-label label="ilość 10 ogólnie" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+                              <q-input @focus="scoreUUID = item.uuid" input-class="text-center" v-model="outerTen" @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)" dense autofocus stack-label label="ilość 10 ogólnie" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
                               <div class="q-pa-xs">
                                 <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
-                                <q-btn color="primary" label="Zapisz" v-close-popup @click="scoreUUID = scoreList.uuid, setScore(scoreList.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
+                                <q-btn color="primary" label="Zapisz" v-close-popup @click="scoreUUID = item.uuid, setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
                               </div>
                             </q-popup-edit>
-                            <div class="self-center full-width col no-outline text-center text-black" tabindex="0">{{scoreList.outerTen}}</div>
+                            <div class="self-center full-width col no-outline text-center text-black text-caption" tabindex="0">{{item.outerTen}}</div>
                       </q-field>
-                    <q-field class="box col-2 cursor-pointer" standout="bg-accent text-black" label="10 wewnętrzne" stack-label>
+                    <q-field dense class="box col-2 cursor-pointer" standout="bg-accent text-black" label="10 wewnętrzne" stack-label>
                         <q-popup-edit v-model="innerTen">
-                              <q-input @focus="scoreUUID = scoreList.uuid" input-class="text-center" v-model="innerTen" @keypress.enter="scoreUUID = scoreList.uuid, onEnter(scoreUUID)" dense autofocus stack-label label="ilość 10 wewnętrznych" onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
+                              <q-input @focus="scoreUUID = item.uuid" input-class="text-center" v-model="innerTen" @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)" dense autofocus stack-label label="ilość 10 wewnętrznych" onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                               <div class="q-pa-xs">
                                 <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
-                                <q-btn color="primary" label="Zapisz" v-close-popup @click="scoreUUID = scoreList.uuid, setScore(scoreList.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
+                                <q-btn color="primary" label="Zapisz" v-close-popup @click="scoreUUID = item.uuid, setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
                               </div>
                             </q-popup-edit>
-                        <div class="self-center full-width col no-outline text-center text-black" tabindex="0">{{scoreList.innerTen}}</div>
+                        <div class="self-center full-width col no-outline text-center text-black text-caption" tabindex="0">{{item.innerTen}}</div>
                     </q-field>
-                    <q-field class="box col-1 cursor-pointer" standout="bg-accent text-black" label="Wynik" stack-label>
+                    <q-field dense class="box col-1 cursor-pointer" standout="bg-accent text-black" label="Wynik" stack-label>
                         <q-popup-edit v-model="scoreLabel">
-                              <q-input @focus="scoreUUID = scoreList.uuid" input-class="text-center" v-model="scoreLabel" @keypress.enter="scoreUUID = scoreList.uuid, onEnter(scoreUUID)" dense autofocus stack-label label="Wynik" onkeypress="return (event.charCode > 47 && event.charCode < 58) || event.charCode 44 || event.charCode 46"/>
-                              <div class="q-pa-xs">
-                                <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
-                                <q-btn color="primary" label="Zapisz" v-close-popup @click="scoreUUID = scoreList.uuid, setScore(scoreList.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
-                              </div>
-                            </q-popup-edit>
-                        <div v-if="scoreList.dnf||scoreList.dsq" class="self-center full-width col no-outline text-center text-black" tabindex="0">
-                          <div v-if="scoreList.dnf">DNF</div>
-                          <div v-if="scoreList.dsq">DSQ</div>
+                          <q-input @focus="scoreUUID = item.uuid" input-class="text-center" v-model="scoreLabel" @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)" dense autofocus stack-label label="Wynik" onkeypress="return (event.charCode > 47 && event.charCode < 58) || event.charCode 44 || event.charCode 46"/>
+                            <div class="q-pa-xs">
+                              <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
+                              <q-btn color="primary" label="Zapisz" v-close-popup @click="scoreUUID = item.uuid, setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
+                            </div>
+                        </q-popup-edit>
+                        <div v-if="item.dnf||item.dsq" class="self-center full-width col no-outline text-center text-black" tabindex="0">
+                          <div v-if="item.dnf">DNF</div>
+                          <div v-if="item.dsq">DSQ</div>
                           </div>
-                        <div v-else class="self-center full-width col no-outline text-center text-black" tabindex="0">{{scoreList.score}}</div>
+                        <div v-else class="self-center full-width col no-outline text-center text-black text-caption" tabindex="0">{{item.score}}</div>
                     </q-field>
                     </div>
-                  </div>
-                  </div>
-                </q-card-section>
+                      </div>
+                    </template>
+                  </q-virtual-scroll>
                 </div>
               </q-item>
         </q-card>
@@ -387,13 +469,14 @@
             Zamknięte Zawody
           </q-item-label>
         </q-item>
-        <div v-for="(tournamentsClosed,id) in tournamentsClosed" :key="id">
-          <div class="col">
-          <q-item>
-            <q-btn class="col" :label="tournamentsClosed.date" @click="tournamentClosedName=tournamentsClosed.name,tournamentUUID = tournamentsClosed.tournamentUUID,name= tournamentsClosed.name,date = tournamentsClosed.date,closedTournamentInfo=true,getStatistics ()"></q-btn>
-          </q-item>
-          </div>
-        </div>
+        <q-virtual-scroll :items="tournamentsClosed" style="height: 600px;">
+          <template v-slot="{ item, index }">
+            <q-item :key="index" dense class="col">
+              <q-btn class="col" :label="item.date" @click="tournamentClosedName=item.name,tournamentUUID = item.tournamentUUID,name= item.name,date = item.date,closedTournamentInfo=true,getStatistics ()"></q-btn>
+            </q-item>
+            <p></p>
+          </template>
+        </q-virtual-scroll>
       </div>
     </q-card>
     </div>
@@ -411,9 +494,17 @@
               <q-item class="col"><q-input onkeypress="return (event.charCode > 44 && event.charCode < 58)" class="bg-grey-4 center justify" filled v-if="meters" style="width: 100px" v-model="choice" stack-label label="ilość metrów"></q-input></q-item>
             </div>
             <div class="row bg-grey-2">
-              <q-radio class="col" color="orange" @input="choice2 = '', choice3 = '', choice4 = '', choice5 = '', choice6 = '', choice7 = '', choice8 = '', choice9 = '' " v-model="choice1" :val="'Pistolet'" label="Pistolet"></q-radio>
-              <q-radio class="col" color="orange" @input="choice2 = '', choice3 = '', choice4 = '', choice5 = '', choice6 = '', choice7 = '', choice8 = '', choice9 = '' " v-model="choice1" :val="'Karabin'" label="Karabin"></q-radio>
-              <q-radio class="col" color="orange" @input="choice2 = '', choice3 = '', choice4 = '', choice5 = '', choice6 = '', choice7 = '', choice8 = '', choice9 = '', meters = false, choice = '' " v-model="choice1" :val="'Strzelba'" label="Strzelba"></q-radio>
+              <q-checkbox v-model="dynamic" label="konkurencja dynamiczna"></q-checkbox>
+              <div v-if="!dynamic">
+                <q-radio class="col" color="orange" @input="choice2 = '', choice3 = '', choice4 = '', choice5 = '', choice6 = '', choice7 = '', choice8 = '', choice9 = '' " v-model="choice1" :val="'Pistolet'" label="Pistolet"></q-radio>
+                <q-radio class="col" color="orange" @input="choice2 = '', choice3 = '', choice4 = '', choice5 = '', choice6 = '', choice7 = '', choice8 = '', choice9 = '' " v-model="choice1" :val="'Karabin'" label="Karabin"></q-radio>
+                <q-radio class="col" color="orange" @input="choice2 = '', choice3 = '', choice4 = '', choice5 = '', choice6 = '', choice7 = '', choice8 = '', choice9 = '', meters = false, choice = '' " v-model="choice1" :val="'Strzelba'" label="Strzelba"></q-radio>
+              </div>
+              <div v-else>
+                <q-checkbox class="col" color="orange" @input="choice2 = '', choice3 = '', choice4 = '', choice5 = '', choice6 = '', choice7 = '', choice8 = '', choice9 = '' " v-model="dynamicChoice" :val="'Pistolet'" label="Pistolet"></q-checkbox>
+                <q-checkbox class="col" color="orange" @input="choice2 = '', choice3 = '', choice4 = '', choice5 = '', choice6 = '', choice7 = '', choice8 = '', choice9 = '' " v-model="dynamicChoice" :val="'Karabin'" label="Karabin"></q-checkbox>
+                <q-checkbox class="col" color="orange" @input="choice2 = '', choice3 = '', choice4 = '', choice5 = '', choice6 = '', choice7 = '', choice8 = '', choice9 = '', meters = false, choice = '' " v-model="dynamicChoice" :val="'Strzelba'" label="Strzelba"></q-checkbox>
+              </div>
             </div>
             <div class="col bg-grey-2">
               <q-checkbox class="row" v-if="choice1 == 'Strzelba' " :val="''" true-value=" maszynowa" false-value="" color="orange" v-model="choice2" label="maszynowa"></q-checkbox>
@@ -459,14 +550,30 @@
           <q-item-section v-if="notUsed">
               <q-item><q-label class="text-h6 text-bold text-justify">Można nadać własną nazwę zawodów bez używania kreatora</q-label></q-item>
             <div class="row bg-grey-2">
-              <q-radio class="col" color="black" @input="choice2 = '', choice3 = '', choice4 = '', choice5 = '', choice6 = '', choice7 = '', choice8 = '', choice9 = '' " v-model="choice1" :val="'Pistolet'" label="Pistolet"></q-radio>
-              <q-radio class="col" color="black" @input="choice2 = '', choice3 = '', choice4 = '', choice5 = '', choice6 = '', choice7 = '', choice8 = '', choice9 = '' " v-model="choice1" :val="'Karabin'" label="Karabin"></q-radio>
-              <q-radio class="col" color="black" @input="choice2 = '', choice3 = '', choice4 = '', choice5 = '', choice6 = '', choice7 = '', choice8 = '', choice9 = '' " v-model="choice1" :val="'Strzelba'" label="Strzelba"></q-radio>
-              <q-input @focus="choice10 = ' '" onkeypress="return (event.charCode > 44 && event.charCode < 58)" class="full-width col center justify" filled style="width: 100px" v-model="choice10" stack-label label="Ilość strzałów" ></q-input>
+              <q-checkbox v-model="dynamic" @input="choice12 = 'COMSTOCK'" label="konkurencja dynamiczna"></q-checkbox>
+              <div v-if="!dynamic">
+                <q-radio class="col" color="orange" @input="choice2 = '', choice3 = '', choice4 = '', choice5 = '', choice6 = '', choice7 = '', choice8 = '', choice9 = '' " v-model="choice1" :val="'Pistolet'" label="Pistolet"></q-radio>
+                <q-radio class="col" color="orange" @input="choice2 = '', choice3 = '', choice4 = '', choice5 = '', choice6 = '', choice7 = '', choice8 = '', choice9 = '' " v-model="choice1" :val="'Karabin'" label="Karabin"></q-radio>
+                <q-radio class="col" color="orange" @input="choice2 = '', choice3 = '', choice4 = '', choice5 = '', choice6 = '', choice7 = '', choice8 = '', choice9 = '', meters = false, choice = '' " v-model="choice1" :val="'Strzelba'" label="Strzelba"></q-radio>
+              </div>
+              <div v-else>
+                <q-checkbox class="col" color="orange" @input="choice2 = '', choice3 = '', choice4 = '', choice5 = '', choice6 = '', choice7 = '', choice8 = '', choice9 = '' " v-model="dynamicChoice" :val="'Pistolet'" label="Pistolet"></q-checkbox>
+                <q-checkbox class="col" color="orange" @input="choice2 = '', choice3 = '', choice4 = '', choice5 = '', choice6 = '', choice7 = '', choice8 = '', choice9 = '' " v-model="dynamicChoice" :val="'Karabin'" label="Karabin"></q-checkbox>
+                <q-checkbox class="col" color="orange" @input="choice2 = '', choice3 = '', choice4 = '', choice5 = '', choice6 = '', choice7 = '', choice8 = '', choice9 = '', meters = false, choice = '' " v-model="dynamicChoice" :val="'Strzelba'" label="Strzelba"></q-checkbox>
+              </div>
+                <q-input v-if="!dynamic" @focus="choice10 = ' '" onkeypress="return (event.charCode > 44 && event.charCode < 58)" class="full-width col center justify" filled style="width: 100px" v-model="choice10" stack-label label="Ilość strzałów pistolet" ></q-input>
+              <div v-if="dynamic" class="row">
+                <q-input v-if="dynamicChoice.includes('Pistolet')" onkeypress="return (event.charCode > 44 && event.charCode < 58)" class="full-width col center justify" filled v-model="dynamicChoice1" stack-label label="Ilość strzałów pistolet" ></q-input>
+                <q-input v-if="dynamicChoice.includes('Karabin')" onkeypress="return (event.charCode > 44 && event.charCode < 58)" class="full-width col center justify" filled v-model="dynamicChoice2" stack-label label="Ilość strzałów karabin" ></q-input>
+                <q-input v-if="dynamicChoice.includes('Strzelba')" onkeypress="return (event.charCode > 44 && event.charCode < 58)" class="full-width col center justify" filled v-model="dynamicChoice3" stack-label label="Ilość strzałów strzelba" ></q-input>
+              {{dynamicChoice1}}
+              {{dynamicChoice2}}
+              {{dynamicChoice3}}
+              </div>
             </div>
               <div class="row">
                 <q-item class="items-center">Metoda Liczenia : </q-item>
-                <q-radio class="col" color="black" v-model="choice12" :val="'NORMAL'" label="Normalnie"></q-radio>
+                <q-radio v-if="!dynamic" class="col" color="black" v-model="choice12" :val="'NORMAL'" label="Normalnie"></q-radio>
                 <q-radio class="col" color="black" v-model="choice12" :val="'COMSTOCK'" label="Comstock"></q-radio>
               </div>
              <q-input class="full-width bg-grey-4 center justify" filled v-model="competitionName " stack-label label="wprowadź własną nazwę" ></q-input>
@@ -815,15 +922,11 @@
 
       </q-card>
     </q-dialog>
-    <q-dialog v-model="failure" @keypress.enter="failure=false">
+    <q-dialog v-model="failure" position="top" @keypress.enter="failure=false">
       <q-card>
         <q-card-section>
-          <div class="text-h6">Nie można dodać konkurencji. Sprawdź poprawność danych.</div>
+          <div class="text-h6">{{message}}</div>
         </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup/>
-        </q-card-actions>
       </q-card>
     </q-dialog>
     <q-dialog v-model="toggleDSQDNF">
@@ -989,7 +1092,7 @@
 
         <q-card-actions align="right">
           <q-btn flat label="anuluj" color="primary" v-close-popup />
-          <q-btn flat label="Wydaj" color="primary" v-close-popup @click="addMemberAndAmmoToCaliber(),ammoQuantity=null,addAmmoConfirm=false,addAmmo=false" />
+          <q-btn flat label="Wydaj" color="primary" v-close-popup @click="addMemberAndAmmoToCaliber(),addAmmoConfirm=false,ammoQuantity=null,addAmmo=false" />
         </q-card-actions>
       </q-card>
 </q-dialog>
@@ -1005,7 +1108,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="statistics" persistent>
+<q-dialog v-model="statistics">
       <q-card >
         <q-card-section class="col items-center">
           <span class="q-ml-sm text-h6 text-bold">STATYSTYKI ZAWODÓW</span>
@@ -1023,12 +1126,16 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="scoreInfo" persistent>
+<q-dialog v-model="metricsInfo">
       <q-card >
         <q-card-section class="col">
           <div class="q-ml-sm text-h6 text-center text-bold">POBIERZ METRYKI STARTOWE ZAWODNIKA</div>
           <div class="q-ml-sm text-h6 text-center text-bold">{{name}}</div>
-          <ol><li v-for="info in infoScore" :key="info"><q-checkbox v-model="compList" :val="info" :label="info"></q-checkbox></li></ol>
+          <ol class="col">
+            <li class="row" v-for="info in infoScore" :key="info">
+              <q-checkbox color="secondary" class="col" v-model="compList" :val="info" :label="info"/>
+              <div><q-btn class="col-3" color="primary" label="Wydaj amunicję" @click="compName=info,getListCalibers(),getScoreUUID(info),addAmmo=true"/></div>
+            </li></ol>
           <div class="row q-pa-xs">
             <q-btn @click="getMemberMetrics(compList),info=[],compList=[]" class="col q-pa-xs" color="secondary">wydrukuj wybrane metryki zawodnika</q-btn>
             <q-item></q-item>
@@ -1037,7 +1144,7 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn @click="info=[],compList=[]" label="zamknij" color="primary" v-close-popup />
+          <q-btn @click="compName='',compList=[]" label="zamknij" color="primary" v-close-popup />
         </q-card-actions>
       </q-card>
 </q-dialog>
@@ -1054,7 +1161,30 @@
           <div>ile razy była pobrana amunicja : {{statistic[3]}}</div>
           <div>ile razy była pobrana broń : {{statistic[4]}}</div>
           </div>
-          <div><q-item><q-btn @click="getAnnouncementFromCompetition()" class="full-width" color="primary">pobierz komunikat</q-btn></q-item></div>
+          <!-- <div><q-item><q-btn @click="getAnnouncementFromCompetition()" class="full-width" color="primary">pobierz komunikat</q-btn></q-item></div> -->
+          <div>
+            <q-item>
+              <q-btn-dropdown align="center" class="full-width" label="pobierz komunikat" color="primary">
+                <q-list>
+                  <q-item v-close-popup class="q-pa-none">
+                    <q-item-section>
+                      <q-btn @click="getAnnouncementFromCompetition()" class="full-width" label="pobierz .pdf" color="secondary"></q-btn>
+                    </q-item-section>
+                  </q-item>
+                  <q-item v-close-popup class="q-pa-none">
+                    <q-item-section>
+                      <q-btn class="full-width" label="pobierz .xslx" color="secondary"></q-btn>
+                    </q-item-section>
+                  </q-item>
+                  <q-item v-close-popup class="q-pa-none">
+                    <q-item-section>
+                      <q-btn @click="getAnnouncementFromCompetitionXLSX()" class="full-width" label="przykładowy plik .xslx" color="secondary"></q-btn>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </q-btn-dropdown>
+            </q-item>
+          </div>
           <div><q-item><q-btn @click="getJudgeFromTournament ()" class="full-width" color="primary">pobierz listę sędziów</q-btn></q-item></div>
           <div><q-item><q-btn @click="openList=true" class="full-width" color="primary">otwórz zawody</q-btn></q-item></div>
         </q-card-section>
@@ -1091,6 +1221,14 @@
   </q-card-section>
   </q-card>
 </q-dialog>
+<q-dialog position="top" v-model="success">
+      <q-card>
+        <q-card-section>
+          <div v-if="message!=null" class="text-h6">{{message}}</div>
+        </q-card-section>
+
+      </q-card>
+</q-dialog>
   </q-page>
 </template>
 <style>
@@ -1118,10 +1256,12 @@ export default {
       uuid: null,
       valUUID: null,
       code: null,
+      barcode: null,
       openList: false,
       toggle: false,
       listDownload: false,
       forbidden: false,
+      success: false,
       tournamentUUID: null,
       tournamentConfirm: false,
       tournamentAlert: false,
@@ -1149,6 +1289,10 @@ export default {
       dataFail: false,
       arbiterFailure: false,
       clubs: [],
+      dynamicChoice: [],
+      dynamicChoice1: '',
+      dynamicChoice2: '',
+      dynamicChoice3: '',
       choice: '',
       choice1: '',
       choice2: '',
@@ -1159,7 +1303,7 @@ export default {
       choice7: '',
       choice8: '',
       choice9: '',
-      choice10: '',
+      choice10: [],
       choice11: '',
       choice12: '',
       options2: [],
@@ -1173,10 +1317,13 @@ export default {
       calibers: [],
       statistic: [],
       infoScore: [],
+      gunsUsed: [],
+      dynamic: false,
       caliberUUID: null,
       tournamentName: '',
       tournamentDate: '',
       scoreUUID: null,
+      singleScore: null,
       options: stringOptions,
       finder: '',
       mainArbiter: null,
@@ -1212,7 +1359,7 @@ export default {
       memberLeg: null,
       gunAdded: false,
       statistics: false,
-      scoreInfo: false,
+      metricsInfo: false,
       startNumber: null,
       compName: null,
       date: '',
@@ -1235,6 +1382,7 @@ export default {
       tournamentClosedName: null,
       competitionListUUID: null,
       wzss: true,
+      message: null,
       filterOptions: stringOptions,
       local: App.host
     }
@@ -1333,6 +1481,55 @@ export default {
           this.infoScore = response
         })
     },
+    getScoreInfoByLegitimation () {
+      if (this.memberName === null || this.otherName === null) {
+        this.dataFail = true
+        this.autoClose()
+      } else {
+        const memberNameWord = this.memberName.split(' ')
+        const legNumber = memberNameWord.length
+        const memberlegNumber = memberNameWord[legNumber - 1]
+        const otherNameWord = this.otherName.split(' ')
+        const idNumber = otherNameWord.length
+        const otherNameID = otherNameWord[idNumber - 1]
+        fetch('http://' + this.local + '/competitionMembersList/getMemberStartsByLegitimation?tournamentUUID=' + this.tournamentUUID + '&legNumber=' + memberlegNumber + '&otherID=' + otherNameID, {
+          method: 'GET'
+        }).then(response => response.json())
+          .then(response => {
+            if (response.length > 0) {
+              this.infoScore = response
+              this.memberLeg = memberlegNumber
+              this.otherID = otherNameID
+              this.metricsInfo = true
+            } else {
+              this.dataFail = true
+              this.autoClose()
+            }
+          })
+      }
+    },
+    getScoreUUID (compName) {
+      let memberlegNumber
+      let otherNameID
+      if (this.memberName !== null || this.otherName !== null) {
+        const memberNameWord = this.memberName.split(' ')
+        const legNumber = memberNameWord.length
+        memberlegNumber = memberNameWord[legNumber - 1]
+        const otherNameWord = this.otherName.split(' ')
+        const idNumber = otherNameWord.length
+        otherNameID = otherNameWord[idNumber - 1]
+      } else {
+        memberlegNumber = this.memberLeg
+        otherNameID = this.otherID
+      }
+      fetch('http://' + this.local + '/competitionMembersList/getScoreIdByNumberAndCompetitionName?tournamentUUID=' + this.tournamentUUID + '&legNumber=' + memberlegNumber + '&otherID=' + otherNameID + '&competitionName=' + compName, {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.singleScore = response
+          this.scoreUUID = response.uuid
+        })
+    },
     getCompetitionID () {
       fetch('http://' + this.local + '/competitionMembersList/getID?name=' + this.competition + '&tournamentUUID=' + this.tournamentUUID, {
         method: 'GET'
@@ -1349,7 +1546,16 @@ export default {
           this.filtersOtherArbiters = filtersOtherArbiters
         })
     },
+    getGunInTournament () {
+      fetch('http://' + this.local + '/tournament/getGunInTournament?tournamentUUID=' + this.tournamentUUID, {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.gunsUsed = response
+        })
+    },
     addMemberAndAmmoToCaliber () {
+      const quantity = this.ammoQuantity
       fetch('http://' + this.local + '/ammoEvidence/ammo?caliberUUID=' + this.caliberUUID + '&legitimationNumber=' + this.memberLeg + '&counter=' + this.ammoQuantity + '&otherID=' + this.otherID, {
         method: 'POST',
         headers: {
@@ -1357,7 +1563,16 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          this.toggleAmmunitionInScore(this.scoreUUID)
+          if (this.singleScore !== null) {
+            if (this.singleScore.ammunition && quantity < 0) {
+              this.toggleAmmunitionInScore(this.scoreUUID)
+            }
+            if (!this.singleScore.ammunition && quantity > 0) {
+              this.toggleAmmunitionInScore(this.scoreUUID)
+            }
+          } else {
+            this.toggleAmmunitionInScore(this.scoreUUID)
+          }
           this.showloading()
           this.autoClose()
         } else {
@@ -1410,12 +1625,17 @@ export default {
           this.tournamentAlert = true
           this.showloading()
           this.getListTournaments()
+          this.autoClose()
         }
       })
     },
     createCompetition () {
       let name = null
-      if (this.choice10 !== null && this.choice10 !== '') {
+      let numberOfManyShotsTable = null
+      if (this.choice10 !== null && this.choice10.lenght > 1) {
+        this.choice10 = this.choice10 + ' strzałów'
+      } else {
+        numberOfManyShotsTable = [this.dynamicChoice1, this.dynamicChoice2, this.dynamicChoice3]
         this.choice10 = this.choice10 + ' strzałów'
       }
       if (this.choice !== null && this.choice !== '') {
@@ -1430,13 +1650,18 @@ export default {
         name =
         this.choice + this.choice1 + this.choice2 + this.choice3 + this.choice4 + this.choice5 + this.choice6 + this.choice7 + this.choice8 + this.choice9 + this.choice10 + this.choice11
       }
+      if (this.choice11.replace(/ /, '') === '') {
+        this.choice11 = 'OPEN'
+      }
       const choice10 = this.choice10.replace(/ strzałów/g, '')
       const data = {
         name: name,
         discipline: this.choice1.replace(/ /g, ''),
+        disciplines: this.dynamicChoice,
         numberOfShots: choice10,
         type: this.choice11.replace(/ /, ''),
-        countingMethod: this.choice12
+        countingMethod: this.choice12,
+        numberOfManyShots: numberOfManyShotsTable
       }
       fetch('http://' + this.local + '/competition', {
         method: 'POST',
@@ -1456,7 +1681,7 @@ export default {
           this.choice7 = ''
           this.choice8 = ''
           this.choice9 = ''
-          this.choice10 = null
+          this.choice10 = []
           this.choice11 = ''
           this.choice12 = ''
           this.newCompetitionAlert = true
@@ -1800,15 +2025,25 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          this.addArbiterAlert = true
-          this.mainArbiter = null
-          this.otherMainArbiterName = null
-          this.showloading()
-          this.getListTournaments()
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.success = true
+              this.message = response
+              this.mainArbiter = null
+              this.otherMainArbiterName = null
+              this.showloading()
+              this.getListTournaments()
+              this.autoClose()
+            }
+          )
         } else {
-          this.arbiterFailure = true
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            }
+          )
         }
       })
     },
@@ -1826,15 +2061,25 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          this.addArbiterAlert = true
-          this.countArbiter = null
-          this.otherRTSArbiterName = null
-          this.showloading()
-          this.getListTournaments()
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.success = true
+              this.message = response
+              this.countArbiter = null
+              this.otherRTSArbiterName = null
+              this.showloading()
+              this.getListTournaments()
+              this.autoClose()
+            }
+          )
         } else {
-          this.arbiterFailure = true
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            }
+          )
         }
       })
     },
@@ -1852,15 +2097,25 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          this.addArbiterAlert = true
-          this.otherArbiter = null
-          this.otherArbitersList = null
-          this.showloading()
-          this.getListTournaments()
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.success = true
+              this.message = response
+              this.otherArbiter = null
+              this.otherArbitersList = null
+              this.showloading()
+              this.getListTournaments()
+              this.autoClose()
+            }
+          )
         } else {
-          this.arbiterFailure = true
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            }
+          )
         }
       })
     },
@@ -1878,16 +2133,26 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          this.addArbiterAlert = true
-          this.otherArbiter = null
-          this.otherArbitersList = null
-          this.otherRTSArbitersList = null
-          this.showloading()
-          this.getListTournaments()
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.success = true
+              this.message = response
+              this.otherArbiter = null
+              this.otherArbitersList = null
+              this.otherRTSArbitersList = null
+              this.showloading()
+              this.getListTournaments()
+              this.autoClose()
+            }
+          )
         } else {
-          this.arbiterFailure = true
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            }
+          )
         }
       })
     },
@@ -2015,6 +2280,22 @@ export default {
         this.autoClose()
       })
     },
+    getAnnouncementFromCompetitionXLSX () {
+      axios({
+        url: 'http://' + this.local + '/files/downloadAnnouncementFromCompetitionXLSX/' + this.tournamentUUID,
+        method: 'GET',
+        responseType: 'blob'
+      }).then(response => {
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        const fileLink = document.createElement('a')
+        fileLink.href = fileURL
+        fileLink.setAttribute('download', this.date + '-Dziesiątka-' + this.name + '.xlsx')
+        document.body.appendChild(fileLink)
+        fileLink.click()
+        this.listDownload = true
+        this.autoClose()
+      })
+    },
     getJudgeFromTournament () {
       axios({
         url: 'http://' + this.local + '/files/downloadJudge/' + this.tournamentUUID,
@@ -2071,6 +2352,31 @@ export default {
           this.clubs = response
         })
     },
+    addGunToTournament (barcode) {
+      fetch('http://' + this.local + '/tournament/addGunToTournament?barcode=' + barcode + '&tournamentUUID=' + this.tournamentUUID, {
+        method: 'POST'
+      }).then(response => {
+        if (response.status === 200) {
+          response.json().then(
+            response => {
+              this.success = true
+              this.message = response
+              this.showloading()
+              this.getListCalibers()
+              this.autoClose()
+            }
+          )
+        } else {
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            }
+          )
+        }
+      })
+    },
     autoClose () {
       setTimeout(() => {
         this.tournamentAlert = false
@@ -2081,6 +2387,7 @@ export default {
         this.addCompetitionAlert = false
         this.newCompetitionAlert = false
         this.memberFailure = false
+        this.failure = false
         this.dataFail = false
         this.arbiterFailure = false
         this.gunAdded = false
@@ -2090,6 +2397,9 @@ export default {
         this.tournamentOpenAlert = false
         this.listDownload = false
         this.toggle = false
+        this.message = null
+        this.success = false
+        this.barcode = null
       }, 2000)
     }
   },

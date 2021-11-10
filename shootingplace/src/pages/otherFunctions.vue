@@ -5,7 +5,8 @@
           <div class="text-center col full-width no-outline text-h4 text-bold" tabindex="0">Pozostałe Funkcje</div>
         </q-item>
       </div>
-      <q-card class="row">
+      <q-expansion-item label="Lista osób spoza klubu" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
+      <q-card class="row text-body2">
         <q-card-section class="col">
       <div class="q-pa-md text-center col full-width no-outline text-h5 text-bold" tabindex="0">Lista osób spoza klubu</div>
           <q-scroll-area class="full-width q-pa-none" style="height: 400px;">
@@ -42,7 +43,10 @@
            </q-scroll-area>
     </q-card-section>
         </q-card>
-        <q-card>
+      </q-expansion-item>
+      <p></p>
+      <q-expansion-item label="Lista znanych klubów" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
+        <q-card class="text-body2">
           <q-card-section>
           <div class="q-pa-md text-center col full-width no-outline text-h5 text-bold" tabindex="0">Lista znanych klubów</div>
             <q-scroll-area class="full-width q-pa-none" style="height: 400px;">
@@ -72,7 +76,10 @@
             </q-scroll-area>
           </q-card-section>
         </q-card>
-        <q-card>
+      </q-expansion-item>
+      <p></p>
+      <q-expansion-item label="Lista Konkurencji" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
+        <q-card class="text-body2">
           <q-card-section>
           <div class="q-pa-md text-center col full-width no-outline text-h5 text-bold" tabindex="0">Lista Konkurencji</div>
             <q-scroll-area class="full-width q-pa-none" style="height: 400px;">
@@ -93,64 +100,202 @@
             </q-scroll-area>
           </q-card-section>
         </q-card>
-        <q-card>
+      </q-expansion-item>
+      <p></p>
+      <q-expansion-item label="Dodatkowe Funkcje" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
+        <q-card class="text-body2">
             <q-card-section>
           <div class="q-pa-md text-center col full-width no-outline text-h5 text-bold">Dodatkowe Funkcje</div>
           <div class="row">
-              <div class="q-pa-md">
-                <q-btn color="primary" label="pobierz listę wszystkich klubowiczów" @click="showloading (),getAllMembersList()"/>
+            <q-select class="full-width" filled v-model="choose" :options="chooseSelect" @input="policeList=[],toEraseList=[]" label="Wybierz Opcję">
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                      Brak wyników
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+              <div v-if="choose == chooseSelect[0]" class="q-pa-md">
               <q-radio v-model="tableCondition" :val="true">
                 dorośli
               </q-radio>
               <q-radio v-model="tableCondition" :val="false">
                 mołodzież
               </q-radio>
+                <q-item>
+                  <q-btn v-if="tableCondition" color="primary" label="pobierz listę wszystkich klubowiczów dorosłych" @click="showloading (),getAllMembersList()"/>
+                  <q-btn v-if="!tableCondition" color="primary" label="pobierz listę wszystkich klubowiczów młodzieżowych" @click="showloading (),getAllMembersList()"/>
+                </q-item>
+                <q-item>
+                  <q-btn color="primary" label="wyświetl listę numerów telefonów" @click="showloading (),getMembersPhoneNumbers (),membersPhoneNumbers = true"/>
+                  <q-btn color="primary" label="wyświetl listę email" @click="showloading (),getMembersEmails (),membersEmails = true"/>
+                </q-item>
               </div>
               <p></p>
-              <div class="q-pa-md">
-                <q-btn color="primary" label="pobierz listę klubowiczów do wyborów" @click="showloading (),getAllMembersListToElection()"/>
-              </div>
               </div>
               <p></p>
-              <div class="row bg-red-4">
-                <div class="q-pa-md col"><q-btn class="full-width full-height" color="primary" label="lista klubowiczów do zgłoszenia na policję" @click="showloading (),getAllMembersWithLicenseNotValidAndContributionNotValid()"/></div>
-                <div class="q-pa-md col"><q-btn class="full-width full-height" color="primary" label="wyświetl listę numerów telefonów klubowiczów do zgłoszenia na policję" @click="showloading (),getMembersToPolicePhoneNumbers (),membersPhoneNumbers = true"/></div>
-                <div class="q-pa-md col"><q-btn class="full-width full-height" color="primary" label="wyświetl listę email klubowiczów do zgłoszenia na policję" @click="showloading (),getMembersToPoliceEmails (),membersEmails = true"/></div>
+              <div v-if="choose == chooseSelect[1]" class="row">
+                <div class="row full-width">
+                  <div class="q-pa-md col-6"><q-btn class="full-width" color="primary" label="wyświetl listę osób" @click="showloading (),getMembersToReportToThePolice()"/></div>
+                  <div class="q-pa-md col"><q-btn class="full-width" color="primary" label="pobierz listę .pdf" @click="showloading (),generateListOfMembersToReportToPolice()"/></div>
+                </div>
+                <div class="row full-width">
+                  <div v-if="policeList.length>0" class="col-8">
+                  <div class="row full-width">
+                    <div class="col-1">Lp</div>
+                    <div class="col-6">Nazwisko i Imię</div>
+                    <div class="col text-center">Numer legitymacji</div>
+                    <div class="col text-center">Numer licencji</div>
+                    <div class="col text-center">Licencja ważna do</div>
+                  </div>
+                  <q-virtual-scroll :items="policeList" visible class="full-width q-pa-none">
+                    <template v-slot="{ item, index }">
+                      <div :key="index" dense class="row">
+                        <div class="col-1">{{index+1}}</div>
+                        <div class="col-6">{{item.secondName}} {{item.firstName}}</div>
+                        <div class="col text-center">{{item.legitimationNumber}}</div>
+                        <div class="col text-center">{{item.license.number}}</div>
+                        <div class="col text-center">{{item.license.validThru}}</div>
+                      </div>
+                    </template>
+                  </q-virtual-scroll>
+                  </div>
+                  <div v-if="policeList.length>0" class="col-4">
+                    <div class="row full-width">
+                      <div class="col-1"></div>
+                      <div class="col">Numer Telefonu</div>
+                      <div class="col">Email</div>
+                    </div>
+                    <q-virtual-scroll :items="policeList" visible class="full-width q-pa-none">
+                      <template v-slot="{ item, index }">
+                        <div :key="index" dense class="row">
+                          <div class="col-1"></div>
+                          <div class="col-4">{{item.phoneNumber}}</div>
+                          <div class="col">{{item.email}}</div>
+                        </div>
+                      </template>
+                    </q-virtual-scroll>
+                  </div>
+                </div>
               </div>
               <p></p>
-              <div class="row bg-yellow-4">
-                <div class="q-pa-md col"><q-btn class="full-width full-height" color="primary" label="lista klubowiczów do skreślenia" @click="showloading (),getAllMembersToErase ()"/></div>
-                <div class="q-pa-md col"><q-btn class="full-width full-height" color="primary" label="wyświetl listę numerów telefonów klubowiczów do skreślenia" @click="showloading (),getMembersToErasePhoneNumbers(),membersPhoneNumbers = true"/></div>
-                <div class="q-pa-md col"><q-btn class="full-width full-height" color="primary" label="wyświetl listę email klubowiczów do skreślenia" @click="showloading (),getMembersToEraseEmails (),membersEmails = true"/></div>
+              <div v-if="choose == chooseSelect[2]" class="row">
+                <div class="row full-width">
+                  <div class="q-pa-md col-6"><q-btn class="full-width" color="primary" label="wyświetl listę osób" @click="showloading (),getMembersToErase()"/></div>
+                  <div class="q-pa-md col"><q-btn class="full-width" color="primary" label="pobierz listę .pdf" @click="showloading (),getAllMembersToErase()"/></div>
+                </div>
+                <div class="row full-width">
+                  <div v-if="toEraseList.length>0" class="col-8">
+                  <div class="row full-width">
+                    <div class="col-1">Lp</div>
+                    <div class="col-6">Nazwisko i Imię</div>
+                    <div class="col text-center">Numer legitymacji</div>
+                    <div class="col text-center">Numer licencji</div>
+                    <div class="col text-center">Licencja ważna do</div>
+                  </div>
+                  <q-virtual-scroll :items="toEraseList" visible class="full-width q-pa-none">
+                    <template v-slot="{ item, index }">
+                      <div :key="index" dense class="row">
+                        <div class="col-1">{{index+1}}</div>
+                        <div class="col-6">{{item.secondName}} {{item.firstName}}</div>
+                        <div class="col text-center">{{item.legitimationNumber}}</div>
+                        <div class="col text-center">{{item.license.number}}</div>
+                        <div class="col text-center">{{item.license.validThru}}</div>
+                      </div>
+                    </template>
+                  </q-virtual-scroll>
+                  </div>
+                  <div v-if="toEraseList.length>0" class="col-4">
+                    <div class="row full-width">
+                      <div class="col-1"></div>
+                      <div class="col">Numer Telefonu</div>
+                      <div class="col">Email</div>
+                    </div>
+                    <q-virtual-scroll :items="toEraseList" visible class="full-width q-pa-none">
+                      <template v-slot="{ item, index }">
+                        <div :key="index" dense class="row">
+                          <div class="col-1"></div>
+                          <div class="col-4">{{item.phoneNumber}}</div>
+                          <div class="col">{{item.email}}</div>
+                        </div>
+                      </template>
+                    </q-virtual-scroll>
+                  </div>
+                </div>
               </div>
-              <p></p>
-              <q-item class="q-pa-md">
-                <q-btn color="primary" label="lista klubowiczów z aktualną licencją i bez składek" @click="showloading (),getAllMembersWithLicenseValidAndContributionNotValid()"/>
-              </q-item>
-              <q-item class="q-pa-md">
-                <q-btn color="primary" label="lista klubowiczów skreślonych" @click="showloading (),getAllErasedMembers ()"/>
-              </q-item>
-              <div class="row">
-                <div class="q-pa-md col full-width"><q-btn class="full-width full-height" color="primary" label="wyświetl listę numerów telefonów klubowiczów bez patentu" @click="showloading (),getMembersPhoneNumbersWithNoPatent (),membersPhoneNumbers = true"/></div>
-                <div class="q-pa-md col full-width"><q-btn class="full-width full-height" color="primary" label="wyświetl listę email klubowiczów bez patentu" @click="showloading (),getMembersEmailsWithNoPatent (),membersEmails = true"/></div>
+              <div v-if="choose == chooseSelect[3]" class="row">
+                <div class="row full-width">
+                  <div class="q-pa-md col-6"><q-btn class="full-width" color="primary" label="wyświetl listę osób" @click="showloading (),getMembersErased()"/></div>
+                  <div class="q-pa-md col"><q-btn class="full-width" color="primary" label="pobierz listę .pdf" @click="showloading (),getErasedMembers ()"/></div>
+                </div>
+                <div class="row full-width">
+                  <div v-if="erasedList.length>0" class="col-8">
+                  <div class="row full-width">
+                    <div class="col-1">Lp</div>
+                    <div class="col-6">Nazwisko i Imię</div>
+                    <div class="col text-center">Numer legitymacji</div>
+                    <div class="col text-center">Data Usunięcia</div>
+                    <div class="col text-center">Przyczyna</div>
+                  </div>
+                  <q-virtual-scroll :items="erasedList" visible class="full-width q-pa-none">
+                    <template v-slot="{ item, index }">
+                      <div :key="index" dense class="row">
+                        <div class="col-1">{{index+1}}</div>
+                        <div class="col-6">{{item.secondName}} {{item.firstName}}</div>
+                        <div class="col text-center">{{item.legitimationNumber}}</div>
+                        <div class="col text-center">{{item.erasedEntity.date}}</div>
+                        <div class="col text-center">{{item.erasedEntity.erasedType}}</div>
+                      </div>
+                    </template>
+                  </q-virtual-scroll>
+                  </div>
+                  <div v-if="erasedList.length>0" class="col-4">
+                    <div class="row full-width">
+                      <div class="col-1"></div>
+                      <div class="col">Dodatkowy Opis</div>
+                    </div>
+                    <q-virtual-scroll :items="erasedList" visible class="full-width q-pa-none">
+                      <template v-slot="{ item, index }">
+                        <div :key="index" dense class="row">
+                          <div class="col-1"></div>
+                          <div class="col">{{item.erasedEntity.additionalDescription}}</div>
+                        </div>
+                      </template>
+                    </q-virtual-scroll>
+                  </div>
+                </div>
               </div>
-              <div class="row">
-                <div class="q-pa-md col full-width"><q-btn class="full-width full-height" color="primary" label="wyświetl listę numerów telefonów nieaktywnych klubowiczów" @click="showloading (),getMembersPhoneNumbersNoActive (),membersPhoneNumbers = true"/></div>
-                <div class="q-pa-md col full-width"><q-btn class="full-width full-height" color="primary" label="wyświetl listę email nieaktywnych klubowiczów" @click="showloading (),getMembersEmailsNoActive (),membersEmails = true"/></div>
+              <div v-if="choose == chooseSelect[4]" class="row">
+                <div class="row full-width">
+                 <div class="row">
+                   <div class="q-pa-md col full-width"><q-btn class="full-width full-height" color="primary" label="wyświetl listę numerów telefonów klubowiczów bez patentu" @click="showloading (),getMembersPhoneNumbersWithNoPatent (),membersPhoneNumbers = true"/></div>
+                   <div class="q-pa-md col full-width"><q-btn class="full-width full-height" color="primary" label="wyświetl listę email klubowiczów bez patentu" @click="showloading (),getMembersEmailsWithNoPatent (),membersEmails = true"/></div>
+                 </div>
+                </div>
               </div>
-              <div class="row">
-                  <div class="q-pa-md"><q-btn color="primary" label="wyświetl listę numerów telefonów" @click="showloading (),getMembersPhoneNumbers (),membersPhoneNumbers = true"/></div>
-                  <div class="q-pa-md"><q-btn color="primary" label="wyświetl listę email" @click="showloading (),getMembersEmails (),membersEmails = true"/></div>
-              <q-radio v-model="condition" :val="true">
-                dorośli
-              </q-radio>
-              <q-radio v-model="condition" :val="false">
-                mołodzież
-              </q-radio>
+              <div v-if="choose == chooseSelect[5]" class="row">
+                <div class="row full-width">
+                  <div class="row">
+                    <div class="q-pa-md col full-width"><q-btn class="full-width full-height" color="primary" label="wyświetl listę numerów telefonów nieaktywnych klubowiczów" @click="showloading (),getMembersPhoneNumbersNoActive (),membersPhoneNumbers = true"/></div>
+                    <div class="q-pa-md col full-width"><q-btn class="full-width full-height" color="primary" label="wyświetl listę email nieaktywnych klubowiczów" @click="showloading (),getMembersEmailsNoActive (),membersEmails = true"/></div>
+                  </div>
+                </div>
+              </div>
+              <div v-if="choose == chooseSelect[6]" class="row">
+                <div class="row full-width">
+                  <div class="row">
+                    <div class="q-pa-md col full-width"><q-btn color="primary" label="lista klubowiczów z aktualną licencją i bez składek" @click="showloading (),getAllMembersWithLicenseValidAndContributionNotValid()"/></div>
+                  </div>
+                </div>
+              </div>
+              <div v-if="choose == chooseSelect[7]" class="q-pa-md">
+                <q-btn color="primary" label="pobierz listę obecności klubowiczów" @click="showloading (),getAllMembersListToElection()"/>
               </div>
               <!-- <div class="q-pa-md"><q-btn color="primary" label="mejla ślij" @click="sendMail ()"/></div> -->
             </q-card-section>
           </q-card>
+      </q-expansion-item>
     <q-dialog v-model="dataFail">
       <q-card>
         <q-card-section>
@@ -315,8 +460,12 @@ Vue.prototype.$axios = axios
 export default {
   data () {
     return {
+      toEraseList: [],
+      erasedList: [],
       others: [],
       clubs: [],
+      choose: null,
+      chooseSelect: ['Listy Klubowiczów', 'Lista do zgłoszenia na Policję', 'Lista do skreślenia', 'Lista skreślonych', 'Osoby bez Patentu', 'Osoby nieaktywne', 'Lista Osób z Licencją i bez składek', 'Lista Obecności'],
       othersID: null,
       otherPerson: [],
       club: '',
@@ -338,6 +487,7 @@ export default {
       clubURL: null,
       clubInfo: false,
       clubInfoModel: [],
+      policeList: [],
       doneAlert: false,
       editClub: false,
       dataFail: false,
@@ -396,8 +546,32 @@ export default {
           this.clubs = clubs
         })
     },
+    getMembersToReportToThePolice () {
+      fetch('http://' + this.local + '/member/getMembersToReportToThePolice', {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.policeList = response
+        })
+    },
+    getMembersToErase () {
+      fetch('http://' + this.local + '/member/getMembersToErase', {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.toEraseList = response
+        })
+    },
+    getMembersErased () {
+      fetch('http://' + this.local + '/member/erased', {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.erasedList = response
+        })
+    },
     getMembersEmails () {
-      fetch('http://' + this.local + '/member/membersEmails?condition=' + this.condition, {
+      fetch('http://' + this.local + '/member/membersEmails?condition=' + this.tableCondition, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -405,7 +579,7 @@ export default {
         })
     },
     getMembersPhoneNumbers () {
-      fetch('http://' + this.local + '/member/phoneNumbers?condition=' + this.condition, {
+      fetch('http://' + this.local + '/member/phoneNumbers?condition=' + this.tableCondition, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -608,23 +782,23 @@ export default {
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
-        fileLink.setAttribute('download', 'Lista_klubowiczów_na_wybory.pdf')
+        fileLink.setAttribute('download', 'Lista_obecności_klubowiczów.pdf')
         document.body.appendChild(fileLink)
         fileLink.click()
         this.listDownload = true
         this.autoClose()
       })
     },
-    getAllMembersWithLicenseNotValidAndContributionNotValid () {
+    generateListOfMembersToReportToPolice () {
       axios({
-        url: 'http://' + this.local + '/files/downloadAllMembersWithNoValidLicenseNoContribution/',
+        url: 'http://' + this.local + '/files/generateListOfMembersToReportToPolice',
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
-        fileLink.setAttribute('download', 'Lista_klubowiczów_z_licencją_bez_składek_' + this.nowDate + '.pdf')
+        fileLink.setAttribute('download', 'Lista_klubowiczów_do_zgłoszenia_na_policję.pdf')
         document.body.appendChild(fileLink)
         fileLink.click()
         this.listDownload = true
@@ -663,7 +837,7 @@ export default {
         this.autoClose()
       })
     },
-    getAllErasedMembers () {
+    getErasedMembers () {
       axios({
         url: 'http://' + this.local + '/files/downloadAllErasedMembers',
         method: 'GET',

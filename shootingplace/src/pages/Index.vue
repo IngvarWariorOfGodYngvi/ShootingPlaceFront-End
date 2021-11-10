@@ -43,6 +43,16 @@
         </q-item>
       </div>
       <div class="q-pa-xs">
+        <q-item class="flex flex-center q-pa-none" clickable tag="a" target="_self" :href="app + 'competition'" width="max">
+          <q-field class="col" standout="bg-accent text-black" stack-label>
+            <template v-slot:prepend>
+            <q-icon name="book" />
+          </template>
+              <div class="self-center col full-width no-outline text-left text-black" tabindex="1">Zawody</div>
+          </q-field>
+        </q-item>
+      </div>
+      <div class="q-pa-xs">
         <q-item class="flex flex-center q-pa-none" clickable tag="a" target="_self" :href="app + 'memberwithpermission'" width="max">
           <q-field class="col" standout="bg-accent text-black" stack-label>
             <template v-slot:prepend>
