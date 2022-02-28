@@ -9,7 +9,7 @@
       <q-card class="row">
         <div class="col-4">
           <q-item>
-            <q-select class="full-width bg-green-3" filled v-model="memberName" color="black" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filter" @input="allMember = false,getMemberByLegitimationNumber(filter)" label="Nazwisko - Imię - nr Leg">
+            <q-select class="full-width bg-green-3" filled v-model="memberName" color="black" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filter" @input="allMember = false,getMemberByLegitimationNumber()" label="Nazwisko - Imię - nr Leg">
                   <template v-slot:no-option>
                     <q-item>
                       <q-item-section class="text-grey">
@@ -52,14 +52,14 @@
           <div class="row text-bold text-center text-caption">
             <q-item dense class="bg-accent">Ilość klubowiczów</q-item>
             <q-item dense v-if="allMember||allMember==null">Ogółem : {{quantities[0] + quantities[3]}} ({{quantities[0]}} + {{quantities[3]}})</q-item>
-            <q-item dense v-if="allMember||allMember==null">Aktywni : {{quantities[4]+quantities[10]}} ({{quantities[4]}} + {{quantities[10]}})</q-item>
+            <q-item dense v-if="allMember||allMember==null">Aktywni : {{quantities[10]+quantities[4]}} ({{quantities[10]}} + {{quantities[4]}})</q-item>
             <q-item dense v-if="allMember||allMember==null">Nieaktywni : {{quantities[11]+quantities[5]}} ({{quantities[11]}} + {{quantities[5]}})</q-item>
             <q-item dense v-if="(adult!=null&&adult)&&!erase">Gr. Ogólna ogółem : {{quantities[0]}}</q-item>
             <q-item dense v-if="(adult!=null&&adult)&&!erase">Aktywni : {{quantities[10]}}</q-item>
             <q-item dense v-if="(adult!=null&&adult)&&!erase">Nieaktywni : {{quantities[11]}}</q-item>
             <q-item dense v-if="(adult!=null&&!adult)&&!erase">Gr. Młodzieżowa ogółem : {{quantities[3]}}</q-item>
             <q-item dense v-if="(adult!=null&&!adult)&&!erase">Aktywni : {{quantities[4]}}</q-item>
-            <q-item dense v-if="(adult!=null&&!adult)&&!erase">Nieaktywni : {{quantities[10]}}</q-item>
+            <q-item dense v-if="(adult!=null&&!adult)&&!erase">Nieaktywni : {{quantities[5]}}</q-item>
             <q-item dense v-if="erase">Skreśleni ogółem : {{quantities[6] + quantities[7]}}</q-item>
             <q-item dense v-if="adult&&erase">Skreśleni Gr. Ogólna : {{quantities[6]}}</q-item>
             <q-item dense v-if="!adult&&erase">Skreśleni Gr. Młodzieżowa : {{quantities[7]}}</q-item>
@@ -70,8 +70,8 @@
       <q-item></q-item>
       <div v-if="member!=null">
             <q-card v-if="member.active" bordered class="row bg-green-3">
-          <q-card-section avatar class="col-1">
-            <div>
+          <q-card-section v-if="member.imageUUID!=null" avatar class="col-2">
+            <div style="width:25vh;height:15vw">
               <q-tooltip v-if="(member.address.postOfficeCity===null||member.address.postOfficeCity==='')
                 ||(member.address.street==null||member.address.street=='') || (member.weaponPermission.exist&&!member.license.valid) || (member.email==null||member.email=='') || (member.license.number!=null)&&(member.license.valid == false)" class="row" anchor="top middle" self="bottom middle" :offset="[12, 12]">
                 <q-badge v-if="(member.address.postOfficeCity===null||member.address.postOfficeCity==='')
@@ -80,21 +80,31 @@
                 <q-badge v-if="(member.email==null||member.email=='')" transparent align="middle" color="yellow" text-color="black">Brak E-mail</q-badge>
                 <q-badge v-if="(member.license.number!=null)&&(member.license.valid == false)" transparent align="middle" color="yellow" text-color="black">Brak aktualnej licencji</q-badge>
               </q-tooltip>
-            <q-avatar v-if="member.weaponPermission.exist&&!member.license.valid" icon="warning" color="red" text-color="white"/>
-            <q-avatar v-else-if="member.license.number!=null&&!member.license.valid" icon="warning" color="yellow" text-color="white"/>
+            <q-avatar v-if="member.weaponPermission.exist&&!member.license.valid" class="full" square color="red" text-color="white"><q-img fit=none height="100%" width="100%" img-style="width:100%;height:100%" class="text-body1" alt="zdęcie profilowe" :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/></q-avatar>
+            <q-avatar v-else-if="member.license.number!=null&&!member.license.valid" class="full" square color="yellow" text-color="white"><q-img fit=none height="100%" width="100%" img-style="width:100%;height:100%" class="text-body1" alt="zdęcie profilowe" :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/></q-avatar>
             <q-avatar v-else-if="(member.email==null||member.email=='')
             ||(member.address.postOfficeCity===null||member.address.postOfficeCity==='')
-            ||(member.address.street==null||member.address.street=='')" icon="warning" color="warning" text-color="white" />
-            <q-avatar v-else-if="!member.active" icon="perm_identity" color="red" text-color="white" />
-            <q-avatar v-else icon="perm_identity" color="green" text-color="white" />
+            ||(member.address.street==null||member.address.street=='')" class="full" square color="warning" text-color="white"><q-img fit=none height="100%" width="100%" img-style="width:100%;height:100%" class="text-body1" alt="zdęcie profilowe" :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/></q-avatar>
+            <q-avatar v-else-if="!member.active" class="full" square color="red" text-color="white"><q-img fit=none height="100%" width="100%" img-style="width:100%;height:100%" class="text-body1" alt="zdęcie profilowe" :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/></q-avatar>
+            <q-avatar v-else class="full" square >
+              <q-img fit=none height="100%" width="100%" img-class="full" class="text-body1" alt="zdęcie profilowe" :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/>
+            </q-avatar>
             </div>
+          </q-card-section>
+          <q-card-section v-else avatar class="col-2">
+            <q-uploader style="width:100%;heigth:100%" method="POST" :url="('http://' + local + '/files/member/' + member.uuid)"
+    label="Dodaj zdjęcie / max 400KB" max-file-size="409600" accept=".jpg, image/*" @rejected="onRejected" field-name="file" @uploaded="getMemberByUUID(member.uuid)"/>
           </q-card-section>
           <q-card-section class="col-4">
           <q-item-label>{{member.secondName}} {{member.firstName}}</q-item-label>
+          <q-item-label v-if="member.adult" caption lines="2">Grupa: Ogólna</q-item-label>
+          <q-item-label v-if="!member.adult" caption lines="2">Grupa: Młodzieżowa</q-item-label>
           <q-item-label v-if="member.history.contributionList.length > 0" caption lines="2">Składka ważna do: {{member.history.contributionList[0].validThru}}</q-item-label>
           <q-item-label v-if="member.history.contributionList.length > 0" caption lines="2">Składka opłacona dnia: {{member.history.contributionList[0].paymentDay}}</q-item-label>
           <q-item-label v-if="member.active" caption lines="2">Status: Aktywny</q-item-label>
           <q-item-label v-if="!member.active" caption lines="2">Status: Nieaktywny</q-item-label>
+          <div v-if="member.imageUUID!=null"><q-btn color="primary" label="zmień zdjęcie"><q-popup-edit v-model="picture"><q-uploader style="width:100%;heigth:100%" method="POST" :url="('http://' + local + '/files/member/' + member.uuid)"
+    label="Dodaj zdjęcie / max 400KB" max-file-size="409600" accept=".jpg, image/*" @rejected="onRejected" field-name="file" @uploaded="getMemberByUUID(member.uuid)"/></q-popup-edit></q-btn></div>
           </q-card-section>
           <q-card-section class="col-3">
           <q-item-label :id="member.legitimationNumber">Numer Legitymacji: {{member.legitimationNumber}}</q-item-label>
@@ -110,8 +120,8 @@
           </q-card-section>
             </q-card>
             <q-card v-if="!member.active" bordered class="row bg-red-3">
-          <q-card-section avatar class="col-1">
-            <div>
+          <q-card-section v-if="member.imageUUID!=null" avatar class="col-2">
+            <div style="width:25vh;height:15vw">
               <q-tooltip v-if="(member.address.postOfficeCity===null||member.address.postOfficeCity==='')
                 ||(member.address.street==null||member.address.street=='') || (member.weaponPermission.exist&&!member.license.valid) || (member.email==null||member.email=='') || (member.license.number!=null)&&(member.license.valid == false)" class="row" anchor="top middle" self="bottom middle" :offset="[12, 12]">
                 <q-badge v-if="(member.address.postOfficeCity===null||member.address.postOfficeCity==='')
@@ -120,14 +130,18 @@
                 <q-badge v-if="(member.email==null||member.email=='')" transparent align="middle" color="yellow" text-color="black">Brak E-mail</q-badge>
                 <q-badge v-if="(member.license.number!=null)&&(member.license.valid == false)" transparent align="middle" color="yellow" text-color="black">Brak aktualnej licencji</q-badge>
               </q-tooltip>
-            <q-avatar v-if="member.weaponPermission.exist&&!member.license.valid" icon="warning" color="red" text-color="white"/>
-            <q-avatar v-else-if="member.license.number!=null&&!member.license.valid" icon="warning" color="yellow" text-color="white"/>
+            <q-avatar v-if="member.weaponPermission.exist&&!member.license.valid" class="full" square color="red" text-color="white"><q-img fit=none height="100%" width="100%" img-style="width:100%;height:100%" class="text-body1" alt="zdęcie profilowe" :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/></q-avatar>
+            <q-avatar v-else-if="member.license.number!=null&&!member.license.valid" class="full" square color="yellow" text-color="white"><q-img fit=none height="100%" width="100%" img-style="width:100%;height:100%" class="text-body1" alt="zdęcie profilowe" :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/></q-avatar>
             <q-avatar v-else-if="(member.email==null||member.email=='')
             ||(member.address.postOfficeCity===null||member.address.postOfficeCity==='')
-            ||(member.address.street==null||member.address.street=='')" icon="warning" color="warning" text-color="white" />
-            <q-avatar v-else-if="!member.active" icon="perm_identity" color="red" text-color="white" />
-            <q-avatar v-else icon="perm_identity" color="green" text-color="white" />
+            ||(member.address.street==null||member.address.street=='')" class="full" square color="warning" text-color="white"><q-img fit=none height="100%" width="100%" img-style="width:100%;height:100%" class="text-body1" alt="zdęcie profilowe" :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/></q-avatar>
+            <q-avatar v-else-if="!member.active" class="full" square color="red" text-color="white"><q-img fit=none height="100%" width="100%" img-style="width:100%;height:100%" class="text-body1" alt="zdęcie profilowe" :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/></q-avatar>
+            <q-avatar v-else class="full" square color="green" text-color="white"><q-img fit=none height="100%" width="100%" img-style="width:100%;height:100%" class="text-body1" alt="zdęcie profilowe" :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/></q-avatar>
             </div>
+          </q-card-section>
+          <q-card-section v-else avatar class="col-2">
+            <q-uploader style="width:100%;heigth:100%" method="POST" :url="('http://' + local + '/files/member/' + member.uuid)"
+    label="Dodaj zdjęcie / max 400KB" max-file-size="409600" accept=".jpg, image/*" @rejected="onRejected" field-name="file" @uploaded="getMemberByUUID(member.uuid)"/>
           </q-card-section>
           <q-card-section class="col-4">
           <q-item-label>{{member.secondName}} {{member.firstName}}</q-item-label>
@@ -135,6 +149,8 @@
           <q-item-label v-if="member.history.contributionList.length > 0" caption lines="2">Składka opłacona dnia: {{member.history.contributionList[0].paymentDay}}</q-item-label>
           <q-item-label v-if="member.active" caption lines="2">Status: Aktywny</q-item-label>
           <q-item-label v-if="!member.active" caption lines="2">Status: Nieaktywny</q-item-label>
+          <div v-if="member.imageUUID!=null"><q-btn color="primary" label="zmień zdjęcie"><q-popup-edit v-model="picture"><q-uploader style="width:100%;heigth:100%" method="POST" :url="('http://' + local + '/files/member/' + member.uuid)"
+    label="Dodaj zdjęcie / max 400KB" max-file-size="409600" accept=".jpg, image/*" @rejected="onRejected" field-name="file" @uploaded="getMemberByUUID(member.uuid)"/></q-popup-edit></q-btn></div>
           </q-card-section>
           <q-card-section class="col-3">
           <q-item-label :id="member.legitimationNumber">Numer Legitymacji: {{member.legitimationNumber}}</q-item-label>
@@ -506,7 +522,7 @@
     <q-expansion-item v-if="!member.erased" label="Portal PZSS" group="right-right-card" class="bg-white">
       <div class="row">
         <q-field v-if="member.pzss" class="col q-pa-md" bg-color="green-3" standout="bg-green-3 text-black" stack-label>
-            <div class="self-center full-width no-outline text-center text-black" tabindex="0">Wprowadzony do portalu</div>
+            <div class="self-center full-width no-outline text-center text-black" tabindex="0" @dblclick="memberUUID=member.uuid,pzssPortal=true">Wprowadzony do portalu</div>
         </q-field>
         <q-field v-if="!member.pzss" class="col q-pa-md" bg-color="red-3" standout="bg-red-3 text-black" stack-label>
             <div class="self-center full-width no-outline text-center text-black" tabindex="0">Nie Wprowadzony do Portalu</div>
@@ -684,15 +700,17 @@
         </q-card>
       </div>
       <div v-if="member==null">
+        <!-- <q-skeleton type="text" /> -->
         <div v-if="memberDTOArg.length<1" class="text-center text-bold text-h5">
           Brak Wyników
         </div>
-        <q-virtual-scroll :items="memberDTOArg" visible class="full-width q-pa-none" style="height: 1000px;">
+        <q-virtual-scroll :items="memberDTOArg" visible class="full-width q-pa-none q-virtual-scroll--skip" style="height: 1000px;">
     <template v-slot="{ item, index }">
       <q-item :key="index" dense>
         <q-item-section dense class="row">
           <q-item-label dense class="row">
             <div v-if="!item.erased" class="col" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
+              <q-tooltip delay="500">coś</q-tooltip>
             <q-field class="col full-width" align="left" standout="bg-accent text-black" stack-label>
                 <div class="row q-pa-xs full-width">
                   <div class="col self-center full-width no-outline text-left text-black" tabindex="0">{{item.secondName}} {{item.firstName}}</div>
@@ -1431,6 +1449,9 @@
                 </template>
               </q-input>
             </div>
+            <div>
+              <q-checkbox label="Oznacz jako opłacona" />
+            </div>
           </div>
             <div class="q-pa-md row full-width bg-grey-3">
               <q-btn class="full-width" label="wprowadź zmiany" color="primary" v-close-popup @click="editLicenseCode=true"/>
@@ -1551,11 +1572,11 @@
             </div>
           </div>
           <div class="row full-width bg-red-3">
-            <!-- <div class="col-6 q-pa-md">
-              <q-btn class="full-width" label="usuń wpłatę" color="red" @click="editLicensePaymentCode=true"></q-btn>
-            </div> -->
             <div class="col q-pa-md bg-grey-3">
               <q-btn class="full-width" label="wprowadź zmiany" color="primary" v-close-popup @click="editLicensePaymentCode=true"/>
+            </div>
+            <div class="col q-pa-md bg-red-3">
+              <q-btn class="full-width" label="Usuń wpłatę" color="red" v-close-popup @click="deleteLicensePaymentCode=true"/>
             </div>
           </div>
         </q-card-section>
@@ -1578,8 +1599,41 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
+<q-dialog v-model="deleteLicensePaymentCode" persistent>
+      <q-card class="bg-red-5 text-center">
+        <q-card-section class="flex-center">
+          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
+          <h3><span class="q-ml-sm">Usuń wpłatę</span></h3>
+          <div><q-input @keypress.enter="deleteLicenseHistoryPayment(),code=null,deleteLicensePaymentCode=false" autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input></div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
+          <q-btn id="3" label="Wprowadź zmiany" color="black" v-close-popup @click="deleteLicenseHistoryPayment(), code=null" />
+        </q-card-actions>
+      </q-card>
+</q-dialog>
+<q-dialog v-model="good" seamless position="top-right">
+      <q-card>
+        <q-card-section class="flex-center">
+          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn label="anuluj" color="black" v-close-popup/>
+          <q-btn label="Wprowadź zmiany" color="black" v-close-popup />
+        </q-card-actions>
+      </q-card>
+</q-dialog>
   </q-page>
 </template>
+<style>
+
+.full {
+  width: 100%;
+  height: 100%;
+}
+</style>
 
 <script>
 
@@ -1597,6 +1651,8 @@ Vue.directive('temp', function (el) {
 export default {
   data () {
     return {
+      good: false,
+      picture: false,
       socialWork: true,
       editLicense: false,
       editLicenseDate: null,
@@ -1606,6 +1662,7 @@ export default {
       editLicensePaymentDate: null,
       editLicensePaymentYear: null,
       editLicensePaymentCode: false,
+      deleteLicensePaymentCode: false,
       editContribution: false,
       editContributionPaymentDate: null,
       editContributionValidThruDate: null,
@@ -1741,6 +1798,7 @@ export default {
       certificateDownload: false,
       pzssPortal: false,
       forbidden: false,
+      selected_file: '',
       local: App.host
     }
   },
@@ -2064,8 +2122,8 @@ export default {
       fetch('http://' + this.local + '/member/getAllNames', {
         method: 'GET'
       }).then(response => response.json())
-        .then(filters => {
-          this.filters = filters
+        .then(response => {
+          this.filters = response
         })
     },
     getAllMemberDTOWithArgs () {
@@ -2335,6 +2393,34 @@ export default {
     editLicenseHistoryPayment () {
       fetch('http://' + this.local + '/license/editPayment?memberUUID=' + this.memberUUID + '&paymentUUID=' + this.paymentUUID + '&paymentDate=' + this.editLicensePaymentDate.replace(/\//gi, '-') + '&year=' + this.editLicensePaymentYear + '&pinCode=' + this.code, {
         method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          response.json().then(
+            response => {
+              this.message = response
+              this.success = true
+              this.code = null
+              this.showloading()
+              this.getMemberByUUID(this.memberUUID)
+              this.autoClose()
+            })
+        } else {
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.code = null
+              this.autoClose()
+            })
+        }
+      })
+    },
+    deleteLicenseHistoryPayment () {
+      fetch('http://' + this.local + '/license/removePayment?paymentUUID=' + this.paymentUUID + '&pinCode=' + this.code, {
+        method: 'DELETE',
         headers: {
           'Content-Type': 'application/json'
         }
@@ -2780,6 +2866,14 @@ export default {
     },
     reload () {
       window.location.reload()
+    },
+    onRejected () {
+      this.failure = true
+      this.message = 'Nie można dodać, sprawdź rozmiar pliku i jego typ'
+      this.autoClose()
+    },
+    file_selected (file) {
+      this.selected_file = file[0]
     },
     autoClose () {
       setTimeout(() => {

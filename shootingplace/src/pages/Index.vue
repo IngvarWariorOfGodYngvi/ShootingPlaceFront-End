@@ -1,8 +1,8 @@
 <template>
   <q-page>
     <div class="row">
-    <div class="q-pa-md col-5">
-      <div class="q-pa-xs">
+    <div class="q-pa-md col-6">
+      <div @click="showloading()" class="q-pa-xs">
         <q-item class="flex flex-center q-pa-none" clickable tag="a" target="_self" :href="app + 'member'" width="max">
           <q-field class="col" standout="bg-accent text-black" stack-label>
             <template v-slot:prepend>
@@ -12,7 +12,7 @@
           </q-field>
         </q-item>
       </div>
-      <div class="q-pa-xs">
+      <div @click="showloading()" class="q-pa-xs">
         <q-item class="flex flex-center q-pa-none" clickable tag="a" target="_self" :href="app + 'license'" width="max">
           <q-field class="col" standout="bg-accent text-black" stack-label>
             <template v-slot:prepend>
@@ -22,7 +22,7 @@
           </q-field>
         </q-item>
       </div>
-      <div class="q-pa-xs">
+      <div @click="showloading()" class="q-pa-xs">
         <q-item class="flex flex-center q-pa-none" clickable tag="a" target="_self" :href="app + 'member/adding'" width="max">
           <q-field class="col" standout="bg-accent text-black" stack-label>
             <template v-slot:prepend>
@@ -32,7 +32,7 @@
           </q-field>
         </q-item>
       </div>
-      <div class="q-pa-xs">
+      <div @click="showloading()" class="q-pa-xs">
         <q-item class="flex flex-center q-pa-none" clickable tag="a" target="_self" :href="app + 'ammolist'" width="max">
           <q-field class="col" standout="bg-accent text-black" stack-label>
             <template v-slot:prepend>
@@ -42,7 +42,7 @@
           </q-field>
         </q-item>
       </div>
-      <div class="q-pa-xs">
+      <div @click="showloading()" class="q-pa-xs">
         <q-item class="flex flex-center q-pa-none" clickable tag="a" target="_self" :href="app + 'competition'" width="max">
           <q-field class="col" standout="bg-accent text-black" stack-label>
             <template v-slot:prepend>
@@ -52,7 +52,7 @@
           </q-field>
         </q-item>
       </div>
-      <div class="q-pa-xs">
+      <div @click="showloading()" class="q-pa-xs">
         <q-item class="flex flex-center q-pa-none" clickable tag="a" target="_self" :href="app + 'memberwithpermission'" width="max">
           <q-field class="col" standout="bg-accent text-black" stack-label>
             <template v-slot:prepend>
@@ -62,27 +62,27 @@
           </q-field>
         </q-item>
       </div>
-      <div class="q-pa-xs">
+      <div @click="showloading()" class="q-pa-xs">
          <q-item class="flex flex-center q-pa-none" clickable tag="a" target="_self" :href="app + 'armory'" width="max">
           <q-field class="col" standout="bg-accent text-black" stack-label>
             <template v-slot:prepend>
             <q-icon name="book" />
           </template>
-              <div class="self-center col full-width no-outline text-left text-black" tabindex="1">Magazyn Broni i Amunicji</div>
+              <div class="self-center col full-width no-outline text-left text-black" tabindex="1">Zbrojownia</div>
           </q-field>
         </q-item>
       </div>
-      <div class="q-pa-xs">
+      <div @click="showloading()" class="q-pa-xs">
         <q-item class="flex flex-center q-pa-none" clickable tag="a" target="_self" :href="app + 'statistics'" width="max">
           <q-field class="col" standout="bg-accent text-black" stack-label>
             <template v-slot:prepend>
             <q-icon name="book" />
           </template>
-              <div class="self-center col full-width no-outline text-left text-black" tabindex="1">Statystyki i Wyliczenia</div>
+              <div class="self-center col full-width no-outline text-left text-black" tabindex="1">Statystyki</div>
           </q-field>
         </q-item>
       </div>
-      <div class="q-pa-xs">
+      <div @click="showloading()" class="q-pa-xs">
         <q-item class="flex flex-center q-pa-none" clickable tag="a" target="_self" :href="app + 'otherFunctions'" width="max">
           <q-field class="col" standout="bg-accent text-black" stack-label>
             <template v-slot:prepend>
@@ -92,7 +92,7 @@
           </q-field>
         </q-item>
       </div>
-      <div class="q-pa-xs q-pt-xl">
+      <div @click="showloading()" class="q-pa-xs q-pt-xl">
         <q-item class="flex flex-center q-pa-none" clickable tag="a" target="_self" :href="app + 'settings'" width="max">
           <q-field class="col" standout="bg-accent text-black" stack-label>
             <template v-slot:prepend>
@@ -104,10 +104,7 @@
       </div>
     </div>
     <div class="col flex flex-center full-width q-pa-xl">
-    <img
-      alt="logo"
-      src="~assets/logo.jpg"
-    >
+    <img alt="logo" src="~assets/logo.jpg">
     </div>
     </div>
   </q-page>
@@ -120,6 +117,15 @@ export default {
   data () {
     return {
       app: 'http://' + App.prod
+    }
+  },
+  methods: {
+    showloading () {
+      this.$q.loading.show({ message: 'Dzieje się coś ważnego... Poczekaj' })
+      this.timer = setTimeout(() => {
+        this.$q.loading.hide()
+        this.timer = 0
+      }, 500)
     }
   }
 }

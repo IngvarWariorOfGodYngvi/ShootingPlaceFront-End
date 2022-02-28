@@ -11,7 +11,7 @@
           @click="leftDrawerOpen = !leftDrawerOpen"
         />
 
-       <q-toolbar-title>
+       <!-- <q-toolbar-title>
           <div class="row">
             <div class="col" id="title">{{$keycloak.keycloak.clientId}} </div>
             <div class="row reverse text-caption full-width">
@@ -19,9 +19,9 @@
               <div id="timer"></div>
             </div>
           </div>
-        </q-toolbar-title>
+        </q-toolbar-title> -->
 
-       <div><q-avatar v-ripple color="secondary" text-color="white" icon="perm_identity" />
+       <!-- <div><q-avatar v-ripple color="secondary" text-color="white" icon="perm_identity" />
         <q-menu>
         <div class="col q-pa-md">
             <q-btn
@@ -34,7 +34,7 @@
             />
         </div>
       </q-menu>
-        </div>
+        </div> -->
       </q-toolbar>
     </q-header>
 
@@ -42,7 +42,7 @@
       v-model="leftDrawerOpen"
       bordered
       show-if-above
-      content-class="bg-grey-2 ecru full-height"
+      content-style="height: 100vh"
       style="width: 50px;"
     >
       <q-list >
@@ -57,7 +57,7 @@
         />
         </div>
       </q-list>
-      <div class="q-pa-sm ecru" style="height: 28%" dense>
+      <div class="q-pa-sm" style="height: 28%" dense>
       <q-item-label v-if="quantities[8]>0" class="text-bold text-red" dense caption lines="3">Nieopłaconyh licencji : {{quantities[8]}}</q-item-label>
       <q-item-label class="text-bold" dense caption lines="3">Najwyższy numer legitymacji : {{number}}</q-item-label>
       <q-item-label class="text-bold" dense caption lines="3">Licencje ważne : {{quantities[1]}}</q-item-label>
@@ -121,6 +121,7 @@ export default {
       distance: 1200000,
       number: null,
       members: null,
+      barcode: null,
       color: 'primary',
       tournamentCheck: false,
       quantities: [],
@@ -158,12 +159,12 @@ export default {
           link: 'http://' + App.prod + 'memberwithpermission'
         },
         {
-          title: 'Magazyn Broni i Amunicji',
+          title: 'Zbrojownia',
           icon: 'book',
           link: 'http://' + App.prod + 'armory'
         },
         {
-          title: 'Statystyki i Wyliczenia',
+          title: 'Statystyki',
           icon: 'book',
           link: 'http://' + App.prod + 'statistics'
         },
@@ -171,6 +172,11 @@ export default {
           title: 'Pozostałe Funkcje',
           icon: 'menu',
           link: 'http://' + App.prod + 'otherFunctions'
+        },
+        {
+          title: 'Ustawienia',
+          icon: 'settings',
+          link: 'http://' + App.prod + 'settings'
         }
       ],
       programName: 'Program'
@@ -189,6 +195,9 @@ export default {
     },
     redirectToCompetitionList () {
       window.location.href = 'http://' + App.prod + 'competition'
+    },
+    redirectToMembersList () {
+      window.location.href = 'http://' + App.prod + 'member'
     },
     onClick () {
       console.log('Clicked on a fab action')
@@ -252,9 +261,9 @@ export default {
           this.tournamentCheck = response
         })
     },
-    logout () {
-      this.$keycloak.keycloak.logout()
-    },
+    // logout () {
+    //   this.$keycloak.keycloak.logout()
+    // },
     clear () {
       this.interval = true
       this.distance = 1200000

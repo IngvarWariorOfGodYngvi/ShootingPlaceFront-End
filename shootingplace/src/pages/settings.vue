@@ -242,8 +242,8 @@
     </q-field>
     <q-virtual-scroll :items="files" visible class="full-width q-pa-none" style="height: 80vh;">
       <template v-slot="{ item, index }">
-        <div :key="index" dense>
-          <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
+        <div :key="index" dense @click.left.ctrl="uuid=item.uuid,deleteConfirm=true">
+          <q-field @click.left.ctrl="deleteConfirm=true" color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
             <q-tooltip v-if="item.type.includes('image')" :delay="750" @hide ="url = ''" @before-show ="getUrl (item.uuid)" anchor="center middle" self="center middle" transition-show="scale"
                 transition-hide="scale" content-style="width: 30%; height: 70%"><q-img :src="url" spinner-color="white" style="height: 100%; width: 100%" /></q-tooltip>
             <div class="col-5 self-center text-bold text-justify">{{item.name}}</div>
@@ -275,13 +275,33 @@
         </q-card-section>
       </q-card>
   </q-dialog>
-  <q-dialog position="top" v-model="success">
-      <q-card class="text-center">
+<q-dialog position="top" v-model="success" @keypress.enter="success=false">
+      <q-card>
         <q-card-section>
-          <div class="text-h6">Wykonano żądanie</div>
+          <div v-if="message!=null" class="text-h6">{{message}}</div>
+        </q-card-section>
+
+      </q-card>
+</q-dialog>
+    <q-dialog v-model="failure" position="top" @keypress.enter="failure=false">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">{{message}}</div>
         </q-card-section>
       </q-card>
-  </q-dialog>
+</q-dialog>
+    <q-dialog v-model="deleteConfirm">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Czy na pewno usunąć plik?</div>
+        </q-card-section>
+
+        <q-card-section class="row">
+          <q-btn class="col" v-close-popup color="red" @click="deleteFile(uuid),getAllFiles()">tak</q-btn>
+          <q-btn class="col" v-close-popup>nie</q-btn>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   <q-dialog v-model="acceptCodeUser" persistent @keypress.enter="createUser (),acceptCodeUser=false,code=null">
       <q-card class="bg-red-5 text-center">
         <q-card-section class="flex-center">
@@ -320,7 +340,6 @@ export default {
       policeAddressError: false,
       superUsers: [],
       users: [],
-      success: false,
       acceptCodeUser: false,
       formData: null,
       code: null,
@@ -338,6 +357,10 @@ export default {
       userCode: null,
       userCodeConfirm: null,
       superUserMessage: null,
+      message: null,
+      failure: false,
+      success: false,
+      deleteConfirm: false,
       userMessage: null,
       clubMessage: null,
       clubName: null,
@@ -534,6 +557,31 @@ export default {
         fileLink.setAttribute('download', this.fileName)
         document.body.appendChild(fileLink)
         fileLink.click()
+      })
+    },
+    deleteFile (uuid) {
+      fetch('http://' + this.local + '/files/deleteFile?uuid=' + uuid, {
+        method: 'DELETE'
+      }).then(response => {
+        if (response.status === 200) {
+          response.json().then(
+            response => {
+              this.showloading()
+              this.message = response
+              this.success = true
+              this.getAllFiles()
+              this.autoClose()
+            }
+          )
+        } else {
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            }
+          )
+        }
       })
     },
     redirect () {

@@ -2,7 +2,7 @@
   <q-page padding>
       <div>
         <q-item>
-          <div class="text-center col full-width no-outline text-h4 text-bold" tabindex="0">Statystyki i Wyliczenia</div>
+          <div class="text-center col full-width no-outline text-h4 text-bold" tabindex="0">Statystyki</div>
         </q-item>
       </div>
       <q-expansion-item label="Składki" dense class="text-left text-h6 text-bold bg-grey-3" group="list">

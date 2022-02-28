@@ -49,6 +49,7 @@
         <q-card class="text-body2">
           <q-card-section>
           <div class="q-pa-md text-center col full-width no-outline text-h5 text-bold" tabindex="0">Lista znanych klubów</div>
+          <div class="q-pb-md"><q-btn @click="createClub=true">utwórz nowy klub</q-btn></div>
             <q-scroll-area class="full-width q-pa-none" style="height: 400px;">
             <div v-for="(club,id) in clubs" :key="id">
               <div v-if="club.name!='BRAK'" class="row">
@@ -296,7 +297,7 @@
             </q-card-section>
           </q-card>
       </q-expansion-item>
-    <q-dialog v-model="dataFail">
+    <q-dialog v-model="failure">
       <q-card>
         <q-card-section>
           <div class="text-h6">Coś poszło nie tak</div>
@@ -346,11 +347,12 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog position="top" v-model="doneAlert">
+    <q-dialog position="top" v-model="success">
       <q-card>
         <q-card-section>
-          <div class="text-h6">Wykonano żądanie</div>
+          <div v-if="message!=null" class="text-h6">{{message}}</div>
         </q-card-section>
+
       </q-card>
     </q-dialog>
 
@@ -400,20 +402,61 @@
         <div>Dyscyplina: {{competition.discipline}}</div>
         <div>Ilość Strzałów: {{competition.numberOfShots}}</div>
         <div>Rodzaj: {{competition.type}}</div>
-        <div class="row">Metoda Liczenia <div v-if="competition.countingMethod == 'NORMAL'">: Normalnie</div><div v-else>{{competition.countingMethod}}</div></div>
+        <div class="row">Metoda Liczenia: <div v-if="competition.countingMethod == 'NORMAL'">: Normalnie</div><div v-else>{{competition.countingMethod}}</div></div>
         <div>Numer Kolejności na Listach: {{competition.ordering}}</div>
+        <div>Ilość Strzałów próbnych: {{competition.practiceShots}}</div>
+        <div>Kaliber: {{competition.caliberUUID}}</div>
         <q-field class="col-2 cursor-pointer" standout="bg-accent text-black" label="ZMIEŃ NUMER KOLEJNOŚCI NA LISTACH">
-            <q-popup-edit :cover="false" @keypress.enter="compID=competition.uuid,updateOrderingCompetition()">
-                <q-input v-model="orderNumber" input-class="text-center" dense autofocus stack-label label="zmień na inny numer" onkeypress="return (event.charCode > 47 && event.charCode < 58)" @keypress.enter="compID=competition.uuid,updateOrderingCompetition()"/>
+            <q-popup-edit @keypress.enter="compID=competition.uuid,updateCompetition()">
+                <q-input v-model="orderNumber" input-class="text-center" dense autofocus stack-label label="zmień na inny numer" onkeypress="return (event.charCode > 47 && event.charCode < 58)" @keypress.enter="compID=competition.uuid,updateCompetition()"/>
                 <div class="q-pa-xs">
                   <q-btn align="left" color="primary" label="Anuluj" v-close-popup></q-btn>
-                  <q-btn align="right" color="primary" label="Zmień" v-close-popup @click="compID=competition.uuid,updateOrderingCompetition()"></q-btn>
+                  <q-btn align="right" color="primary" label="Zmień" v-close-popup @click="compID=competition.uuid,updateCompetition()"></q-btn>
+                </div>
+            </q-popup-edit>
+        </q-field>
+        <q-field class="col-2 cursor-pointer" standout="bg-accent text-black" label="ZMIEŃ ILOŚĆ STRZAŁÓW PRÓBNYCH">
+            <q-popup-edit @keypress.enter="compID=competition.uuid,updateCompetition()">
+                <q-input v-model="practiceShots" input-class="text-center" dense autofocus stack-label label="zmień na inny numer" onkeypress="return (event.charCode > 47 && event.charCode < 58)" @keypress.enter="compID=competition.uuid,updateCompetition()"/>
+                <div class="q-pa-xs">
+                  <q-btn align="left" color="primary" label="Anuluj" v-close-popup></q-btn>
+                  <q-btn align="right" color="primary" label="Zmień" v-close-popup @click="compID=competition.uuid,updateCompetition()"></q-btn>
+                </div>
+            </q-popup-edit>
+        </q-field>
+        <q-field class="col-2 cursor-pointer" standout="bg-accent text-black" label="ZMIEŃ KALIBER">
+            <q-popup-edit @keypress.enter="compID=competition.uuid,updateCompetition()">
+                <q-input v-model="caliberUUID" input-class="text-center" dense autofocus stack-label label="zmień na inny numer" onkeypress="return (event.charCode > 47 && event.charCode < 58)" @keypress.enter="compID=competition.uuid,updateCompetition()"/>
+                <div class="q-pa-xs">
+                  <q-btn align="left" color="primary" label="Anuluj" v-close-popup></q-btn>
+                  <q-btn align="right" color="primary" label="Zmień" v-close-popup @click="compID=competition.uuid,updateCompetition()"></q-btn>
                 </div>
             </q-popup-edit>
         </q-field>
         </q-card-section>
         <q-card-actions align="right">
           <q-btn flat label="zamknij" color="primary" v-close-popup/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="createClub">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6" style="min-width: 500px">Utwórz nowy Klub</div>
+        </q-card-section>
+        <q-card-section>
+                <q-item><q-input v-model="clubName" class="full-width" filled label="Nazwa"></q-input></q-item>
+                <q-item><q-input v-model="clubFullName" class="full-width" filled label="Pełna nazwa do dokumentów"></q-input></q-item>
+                <q-item v-if="clubID == 1"><q-input v-model="clubLicenseNumber" class="full-width" filled label="Numer licencji Klubowej"></q-input></q-item>
+                <q-item><q-input v-model="clubPhoneNumber" type="tel" class="full-width" mask="### ### ###" filled label="Telefon"></q-input></q-item>
+                <q-item><q-input v-model="clubEmail" type="email" class="full-width" filled label="email"></q-input></q-item>
+                <q-item><q-input v-model="clubAddress" type="address" class="full-width" filled label="Adres"></q-input></q-item>
+                <q-item><q-input v-model="clubURL" type="url" class="full-width" filled label="Strona internetowa"></q-input></q-item>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="anuluj" color="primary" v-close-popup/>
+          <q-btn flat label="ok" color="primary" v-close-popup @click="createNewClub()"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -487,10 +530,11 @@ export default {
       clubURL: null,
       clubInfo: false,
       clubInfoModel: [],
+      createClub: false,
       policeList: [],
-      doneAlert: false,
+      success: false,
       editClub: false,
-      dataFail: false,
+      failure: false,
       alert: false,
       editOtherPerson: false,
       otherPersonFirstName: null,
@@ -499,12 +543,15 @@ export default {
       otherPersonEmail: null,
       condition: true,
       tableCondition: true,
+      practiceShots: null,
+      caliberUUID: null,
       emails: null,
       phoneNumbers: null,
       membersEmails: false,
       membersPhoneNumbers: false,
       memberName: null,
       memberUUID: null,
+      message: null,
       nowDate: Date.now(),
       filterOptions: stringOptions,
       local: App.host
@@ -658,11 +705,6 @@ export default {
           this.competitions = response
         })
     },
-    sendMail () {
-      fetch('http://' + this.local + '/email/', {
-        method: 'POST'
-      }).then(response => response.json())
-    },
     updateClub () {
       const data = {
         name: this.clubName,
@@ -681,7 +723,8 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          this.doneAlert = true
+          this.message = response
+          this.success = true
           this.clubName = null
           this.clubFullName = null
           this.clubLicenseNumber = null
@@ -692,28 +735,94 @@ export default {
           this.getAllClubs()
           this.autoClose()
         } else {
-          this.dataFail = true
+          this.failure = true
           this.autoClose()
         }
       })
     },
-    updateOrderingCompetition () {
-      fetch('http://' + this.local + '/competition/ordering?uuid=' + this.compID + '&orderNumber=' + this.orderNumber, {
-        method: 'PUT',
+    createNewClub () {
+      const data = {
+        name: this.clubName,
+        fullName: this.clubFullName,
+        licenseNumber: this.clubLicenseNumber,
+        phoneNumber: this.clubPhoneNumber,
+        email: this.clubEmail,
+        address: this.clubAddress,
+        url: this.clubURL
+      }
+      fetch('http://' + this.local + '/club/create', {
+        method: 'POST',
+        body: JSON.stringify(data),
         headers: {
           'Content-Type': 'application/json'
         }
       }).then(response => {
         if (response.status === 200) {
-          this.competition.ordering = this.orderNumber
-          this.doneAlert = true
-          this.orderNumber = null
-          this.compID = null
-          this.getCompetitions()
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.success = true
+              this.message = response
+              this.clubName = null
+              this.clubFullName = null
+              this.clubLicenseNumber = null
+              this.clubEmail = null
+              this.clubAddress = null
+              this.clubURL = null
+              this.getOther()
+              this.getAllClubs()
+              this.autoClose()
+            }
+          )
         } else {
-          this.dataFail = true
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            }
+          )
+        }
+      })
+    },
+    updateCompetition () {
+      const data = {
+        ordering: this.orderNumber,
+        practiceShots: this.practiceShots,
+        caliberUUID: this.caliberUUID
+      }
+      fetch('http://' + this.local + '/competition/update?uuid=' + this.compID, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          response.json().then(
+            response => {
+              if (this.orderNumber !== null) {
+                this.competition.ordering = this.orderNumber
+              }
+              if (this.practiceShots !== null) {
+                this.competition.practiceShots = this.practiceShots
+              }
+              if (this.caliberUUID !== null) {
+                this.competition.caliberUUID = this.caliberUUID
+              }
+              this.message = response
+              this.success = true
+              this.showloading()
+              this.getCompetitions()
+              this.autoClose()
+            })
+        } else {
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            }
+          )
         }
       })
     },
@@ -733,10 +842,10 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           this.getOther()
-          this.doneAlert = true
+          this.success = true
           this.autoClose()
         } else {
-          this.dataFail = true
+          this.failure = true
           this.autoClose()
         }
       })
@@ -746,13 +855,13 @@ export default {
         method: 'POST'
       }).then(response => {
         if (response.status === 200) {
-          this.doneAlert = true
+          this.success = true
           this.othersID = null
           this.getOther()
           this.getAllClubs()
           this.autoClose()
         } else {
-          this.dataFail = true
+          this.failure = true
           this.autoClose()
         }
       })
@@ -896,8 +1005,8 @@ export default {
     },
     autoClose () {
       setTimeout(() => {
-        this.doneAlert = false
-        this.dataFail = false
+        this.success = false
+        this.failure = false
         this.listDownload = false
       }, 2000)
     }

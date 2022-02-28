@@ -2,12 +2,59 @@
   <q-page padding>
       <div v-if="!persentation">
         <q-item>
-          <div class="text-center col full-width no-outline text-h4 text-bold" tabindex="0">Magazyn Broni i Amunicji</div>
+          <div class="text-center col full-width no-outline text-h4 text-bold" tabindex="0">Zbrojownia</div>
         </q-item>
       </div>
       <div class="col" align="left">
         <q-btn class="text-black" type="a" :href="('http://' + prod + 'armory/galery')" target="_self" >Otwórz Pokaz Broni</q-btn>
       </div>
+      <p></p>
+      <q-expansion-item dense label="Broń" class="text-h6 text-bold bg-grey-3">
+      <q-card>
+        <q-card-section>
+          <q-btn v-if="open" @click="open = !open">zamknij wszystko</q-btn>
+          <q-btn v-if="!open" @click="open = !open">otwórz wszystko</q-btn>
+          <q-expansion-item :value="open" v-for="(item ,index) in allGuns" :key="index" :label="item.typeName + ' ' + item.gunEntityList.length + ' sztuki'" expand-separator dense class="text-h6 text-bold bg-grey-3">
+              <div class="row bg-white">
+            <div v-for="(item,index) in item.gunEntityList" :key="index" @click="wydaj" @dblclick="gunUUID = item.uuid,getGunUsedHistory(),gunInfo=true,usedGunInfo=item" clickable class="col-2 bg-white q-pa-xs">
+              <q-popup-edit anchor="center start" self="center middle">
+                <div class="text-black text-bold text-body2 full-width full-height q-pa-none" style="width:100%;height:100%" @dblclick="gunUUID = item.uuid,getGunUsedHistory(),gunInfo=true,usedGunInfo=item">
+                  <div class="col text-left">
+                  <div>{{item.modelName}}</div>
+                  <div class="text-justify full-width">{{item.serialNumber}} | {{item.gunCertificateSerialNumber}} | {{item.recordInEvidenceBook}}</div>
+                  <div>{{item.caliber}} | {{item.gunType}}</div>
+                </div>
+                  <div class="col">
+                    <q-radio v-model="nameOrCard" :val="true">Nazwisko</q-radio>
+                    <q-radio v-model="nameOrCard" :val="false">Numer karty</q-radio>
+                    <q-select v-if="nameOrCard" class="full-width" filled v-model="memberName" color="black" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filter" @input="allMember = false,getMemberByLegitimationNumber(filter)" label="Nazwisko - Imię - nr Leg">
+                      <template v-slot:no-option>
+                        <q-item>
+                          <q-item-section class="text-grey">
+                            Brak wyników - sprawdź w nieaktywnych
+                          </q-item-section>
+                        </q-item>
+                      </template>
+                    </q-select>
+                    <q-input v-if="!nameOrCard" filled label="Numer Karty" color="black"></q-input>
+                  <q-btn>przycisk1</q-btn>
+                  <q-btn>przycisk2</q-btn>
+                  </div>
+                </div>
+              </q-popup-edit>
+              <q-field dense clickable class="col q-ma-xs text-caption text-bold" color="black" standout="bg-accent text-black">
+                <div class="col text-left">
+                  <div>{{item.modelName}}</div>
+                  <div>{{item.serialNumber}} | {{item.gunCertificateSerialNumber}}</div>
+                </div>
+              </q-field>
+            </div>
+            </div>
+          </q-expansion-item>
+        <p></p>
+        </q-card-section>
+      </q-card>
+      </q-expansion-item>
       <p></p>
       <q-expansion-item label="Dodawanie amunicji" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
       <q-card v-if="!persentation">
@@ -192,7 +239,7 @@
                     <div class="col-2 self-center text-bold text-left">podstawa wpisu</div>
                 </q-field>
                 <p></p>
-                <q-expansion-item v-for="(gunType,id) in allGuns" :key="id" :label="gunType.typeName" class="bg-grey-4 col full-width no-outline text-h6 text-center text-bold">
+                <q-expansion-item v-for="(gunType,id) in allGuns" :key="id" :label="gunType.typeName + ' ' + gunType.gunEntityList.length + ' sztuki'" class="bg-grey-4 col full-width no-outline text-h6 text-center text-bold">
                 <div v-for="(gun,uuid) in gunType.gunEntityList" :key="uuid" @dblclick="gunUUID = gun.uuid,getGunUsedHistory(),gunInfo=true,usedGunInfo=gun" clickable class="bg-white">
                 <q-field clickable color="black" class="bg-white" standout="bg-warning text-black" stack-label>
                     <div class="row full-width">
@@ -276,18 +323,58 @@
 </q-card>
 </q-dialog>
 <q-dialog v-model="gunInfo">
-<q-card>
-  <q-card-section>
+<q-card style="width: 100%; max-width: 70vw;">
+  <div class="row">
+  <q-card-section class="col">
     <div class="text-h6">Informacje dodatkowe o broni</div>
+    <div>Nazwa : {{usedGunInfo.modelName}}</div>
+    <div>Kaliber : {{usedGunInfo.caliber}}</div>
+    <div>Rodzaj : {{usedGunInfo.gunType}}</div>
+    <div>Numer seryjny : {{usedGunInfo.serialNumber}}</div>
+    <div>RIlość magazynków : {{usedGunInfo.numberOfMagazines}}</div>
+    <div>Numer Świadectwa : {{usedGunInfo.gunCertificateSerialNumber}}</div>
+    <div>Pozycja w książce : {{usedGunInfo.recordInEvidenceBook}}</div>
     <div>Rok produkcji : {{usedGunInfo.productionYear}}</div>
+    <div>Podstawa wpisu : {{usedGunInfo.basisForPurchaseOrAssignment}}</div>
     <div>Wyposażenie dodatkowe : {{usedGunInfo.additionalEquipment}}</div>
     <div>Uwagi : {{usedGunInfo.comment}}</div>
     <div>Numer Kodu Kreskowego : {{usedGunInfo.barcode}}</div>
   </q-card-section>
-  <q-card-section>
-    <q-btn color="red" @click="gunUUID = usedGunInfo.uuid, acceptCode=true">usuń z ewidencji</q-btn>
-    <q-btn @click="gunUUID = usedGunInfo.uuid, getAllImages(),imgDialog = true">wybierz zdjęcie dla broni</q-btn>
-    <q-btn @click="gunUUID = usedGunInfo.uuid,
+  <q-card-section class="col">
+    <q-virtual-scroll :items="gunUsedInfo" style="height: 100%;">
+      <template v-slot:before>
+        <q-item>
+          <div class="row full-width">
+            <q-field class="full-width" color="black" label="" standout="bg-accent text-black" stack-label>
+              <div class="col">Data</div>
+              <div class="col">Cel</div>
+              <div class="col">Pobierający</div>
+              <div class="col">Zdający</div>
+            </q-field>
+          </div>
+        </q-item>
+      </template>
+      <template v-slot="{ item, index }">
+        <q-item :key="index" dense>
+          <div class="row full-width">
+            <q-field class="full-width" color="black" label="" standout="bg-accent text-black" stack-label>
+              <div class="col">{{item.date}}</div>
+              <div class="col">{{item.usedType}}</div>
+              <div class="col">{{item.usedType}}</div>
+              <div class="col">{{item.usedType}}</div>
+              <div class="col">{{item.usedType}}</div>
+           </q-field>
+          </div>
+        </q-item>
+      </template>
+    </q-virtual-scroll>
+  </q-card-section>
+  </div>
+  <q-card-section class="row">
+    <div class="col q-pa-md">
+    <q-btn class="col" color="red" @click="gunUUID = usedGunInfo.uuid, acceptCode=true">usuń z ewidencji</q-btn>
+    <q-btn class="col" @click="gunUUID = usedGunInfo.uuid, getAllImages(),imgDialog = true">wybierz zdjęcie dla broni</q-btn>
+    <q-btn class="col" @click="gunUUID = usedGunInfo.uuid,
     gunModelName = usedGunInfo.modelName,
     gunCaliber = usedGunInfo.caliber,
     gunType = usedGunInfo.gunType,
@@ -301,30 +388,7 @@
     gunBasisForPurchaseOrAssignment = usedGunInfo.basisForPurchaseOrAssignment,
     gunBarcode = usedGunInfo.barcode,
     editGun=true">edytuj</q-btn>
-  </q-card-section>
-  <q-card-section>
-    <q-virtual-scroll :items="gunUsedInfo" style="height: 200px;">
-      <template v-slot:before>
-        <q-item>
-          <div class="row full-width">
-            <q-field class="full-width" color="black" label="" standout="bg-accent text-black" stack-label>
-              <div class="col">Data</div>
-              <div class="col">Dodzaj zmiany</div>
-            </q-field>
-          </div>
-        </q-item>
-      </template>
-      <template v-slot="{ item, index }">
-        <q-item :key="index" dense>
-          <div class="row full-width">
-            <q-field class="full-width" color="black" label="" standout="bg-accent text-black" stack-label>
-              <div class="col">{{item.date}}</div>
-              <div class="col">{{item.usedType}}</div>
-           </q-field>
-          </div>
-        </q-item>
-      </template>
-    </q-virtual-scroll>
+    </div>
   </q-card-section>
 
   <q-card-actions align="right">
@@ -488,6 +552,7 @@
     <q-item><q-input filled class="full-width col" v-model="gunBasisForPurchaseOrAssignment" label="podstawa wpisu"></q-input></q-item>
     <q-item><q-input filled class="full-width col" v-model="gunAdditionalEquipment" label="wyposażenie dodatkowe"></q-input></q-item>
     <q-item><q-input filled class="full-width col" v-model="gunComment" label="uwagi"></q-input></q-item>
+    <q-item><q-input filled class="full-width col" v-model="gunBarcode" label="kod kreskowy"></q-input></q-item>
   </q-card-section>
 
   <q-card-actions align="right">
@@ -710,6 +775,7 @@ export default {
       calibers: [],
       history: [],
       filters: [],
+      filters1: [],
       gunTypes: [],
       allGuns: [],
       images: [],
@@ -718,6 +784,9 @@ export default {
       editGun: false,
       failure: false,
       barcode: null,
+      wydaj: false,
+      nameOrCard: false,
+      memberName: null,
       gunModelName: null,
       gunCaliber: null,
       gunType: null,
@@ -725,13 +794,14 @@ export default {
       gunProductionYear: null,
       gunNumberOfMagazines: '',
       gunCertificateSerialNumber: null,
-      gunAdditionalEquipment: '',
+      gunAdditionalEquipment: null,
       gunRecordInEvidenceBook: null,
       gunComment: '',
-      gunBarcode: '',
+      gunBarcode: null,
       gunBasisForPurchaseOrAssignment: null,
       transportCertificate: false,
       gunsHistory: [],
+      open: false,
       local: App.host,
       prod: App.prod
     }
@@ -739,8 +809,9 @@ export default {
   created () {
     this.getListCalibers()
     this.getListCalibersSelect()
-    this.getGunType()
+    this.getGunTypes()
     this.getAllGuns()
+    this.getMembersNames()
   },
   methods: {
     showloading () {
@@ -818,20 +889,32 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          this.success = true
-          this.getAllGuns()
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.message = response
+              this.success = true
+              this.showloading()
+              this.getAllGuns()
+              this.autoClose()
+            }
+          )
         } else {
-          this.failure = true
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            }
+          )
         }
       })
     },
     removeGun () {
-      fetch('http://' + this.local + '/armory/remove?gunUUID=' + this.gunUUID, {
+      fetch('http://' + this.local + '/armory/remove?gunUUID=' + this.gunUUID + '&pinCode=' + this.code, {
         method: 'PUT'
       }).then(response => {
         if (response.status === 200) {
+          this.message = response
           this.success = true
           this.getAllGuns()
           this.autoClose()
@@ -847,6 +930,7 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           this.success = true
+          this.message = response
           this.getAllGuns()
           this.autoClose()
         } else {
@@ -882,29 +966,40 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          this.success = true
-          this.gunAdding = false
-          this.gunModelName = null
-          this.gunCaliber = null
-          this.gunType = null
-          this.gunSerialNumber = null
-          this.gunProductionYear = null
-          this.gunNumberOfMagazines = ''
-          this.gunCertificateSerialNumber = null
-          this.gunAdditionalEquipment = ''
-          this.gunRecordInEvidenceBook = null
-          this.gunComment = ''
-          this.gunBarcode = null
-          this.gunBasisForPurchaseOrAssignment = null
-          this.getAllGuns()
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.message = response
+              this.success = true
+              this.gunAdding = false
+              this.gunModelName = null
+              this.gunCaliber = null
+              this.gunType = null
+              this.gunSerialNumber = null
+              this.gunProductionYear = null
+              this.gunNumberOfMagazines = ''
+              this.gunCertificateSerialNumber = null
+              this.gunAdditionalEquipment = ''
+              this.gunRecordInEvidenceBook = null
+              this.gunComment = ''
+              this.gunBarcode = null
+              this.gunBasisForPurchaseOrAssignment = null
+              this.showloading()
+              this.getAllGuns()
+              this.autoClose()
+            }
+          )
         } else {
-          this.failure = true
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            }
+          )
         }
       })
     },
-    getGunType () {
+    getGunTypes () {
       fetch('http://' + this.local + '/armory/gunType', {
         method: 'GET'
       }).then(response => response.json())
@@ -1014,14 +1109,25 @@ export default {
       fetch('http://' + this.local + '/armory/calibers?caliber=' + this.caliberName, {
         method: 'POST'
       }).then(response => {
-        if (response.status === 201) {
-          this.addedCaliber = true
-          this.getListCalibers()
-          this.getListCalibersSelect()
-          this.autoClose()
+        if (response.status === 200) {
+          response.json().then(
+            response => {
+              this.success = true
+              this.message = response
+              this.showloading()
+              this.getListCalibers()
+              this.getListCalibersSelect()
+              this.autoClose()
+            }
+          )
         } else {
-          this.failure = true
-          this.autoClose()
+          response.json().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            }
+          )
         }
       })
     },
@@ -1069,14 +1175,14 @@ export default {
       if (val === '') {
         update(() => {
           const needle = val.toLowerCase()
-          this.options = this.filters.filter(v => v.toLowerCase().indexOf(needle) > -1)
+          this.options = this.filters1.filter(v => v.toLowerCase().indexOf(needle) > -1)
         })
         return
       }
 
       update(() => {
         const needle = val.toLowerCase()
-        this.options = this.filters.filter(v => v.toLowerCase().indexOf(needle) > -1)
+        this.options = this.filters1.filter(v => v.toLowerCase().indexOf(needle) > -1)
       })
     },
     filterGunTypes (val, update) {
@@ -1115,6 +1221,14 @@ export default {
           this.url[i] = fileURL
         })
       }
+    },
+    getMembersNames () {
+      fetch('http://' + this.local + '/member/getAllNames', {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.filters1 = response
+        })
     },
     autoClose () {
       setTimeout(() => {
