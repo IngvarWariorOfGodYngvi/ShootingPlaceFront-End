@@ -71,7 +71,7 @@
               </q-item>
           </div>
               <div class="row" v-for="(caliber,id) in calibers" :key="id">
-              <q-item class="col">
+              <q-item  @dblclick="caliberUUID = caliber.uuid, caliberInfo=true" class="col">
                 <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
                     <div class="self-center col full-width no-outline text-center text-bold" style="text-center">{{caliber.name}}</div>
                     <div class="self-center col full-width no-outline text-center text-bold" style="text-center">{{caliber.quantity}}</div>
@@ -707,6 +707,14 @@
 
       </q-card>
 </q-dialog>
+<q-dialog v-model="caliberInfo" @keypress.enter="caliberInfo=false">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Caliber ID {{caliberUUID}}</div>
+        </q-card-section>
+
+      </q-card>
+</q-dialog>
   </q-page>
 </template>
 <style>
@@ -734,6 +742,7 @@ Vue.prototype.$axios = axios
 export default {
   data () {
     return {
+      caliberInfo: false,
       persentation: false,
       ok: false,
       options: stringOptions,
