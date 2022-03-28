@@ -1,0 +1,36 @@
+.thead-sticky tr > * {
+  position: sticky;
+  opacity: 1;
+  z-index: 1;
+  background-color: white;
+}
+.thead-sticky tr:last-child > * {
+  top: 0;
+}
+.rounded > * {
+  border-radius: 10px;
+}
+.full {
+  width: 100%;
+  height: 100%;
+}
+.box{
+  transition-duration: 1s;
+  transition-timing-function: linear;
+  background-color: none;
+}
+.box:hover{
+  width: inherit;
+  background-color: orange;
+  opacity: 100;
+}
+.box:focus-within{
+  background-color:orange;
+}
+.box:hover{
+  background-color: orange;
+}
+.siz{
+  font-size: 10px;
+  padding: 0;
+}

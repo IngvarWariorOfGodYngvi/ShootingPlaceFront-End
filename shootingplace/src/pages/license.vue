@@ -198,7 +198,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog position="top" v-model="failure">
+    <q-dialog :position="'top'" v-model="failure">
       <q-card>
         <q-card-section>
           <div v-if="message!=null" class="text-h6">{{message}}</div>
@@ -207,7 +207,7 @@
 
       </q-card>
 </q-dialog>
-<q-dialog position="top" v-model="success">
+<q-dialog :position="'top'" v-model="success">
       <q-card>
         <q-card-section>
           <div v-if="message!=null" class="text-h6">{{message}}</div>

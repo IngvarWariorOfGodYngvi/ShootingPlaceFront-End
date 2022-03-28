@@ -1,4 +1,3 @@
-/* eslint-disable no-var */
 <template>
   <q-page padding>
       <div>
@@ -525,7 +524,7 @@
             <div class="self-center full-width no-outline text-center text-black" tabindex="0" @dblclick="memberUUID=member.uuid,pzssPortal=true">Wprowadzony do portalu</div>
         </q-field>
         <q-field v-if="!member.pzss" class="col q-pa-md" bg-color="red-3" standout="bg-red-3 text-black" stack-label>
-            <div class="self-center full-width no-outline text-center text-black" tabindex="0">Nie Wprowadzony do Portalu</div>
+            <div class="self-center full-width no-outline text-center text-black" tabindex="0" @dblclick="memberUUID=member.uuid,pzssPortal=true">Nie Wprowadzony do Portalu</div>
         </q-field>
         <q-item class="q-pa-md"><q-btn label="pobierz plik .csv" @click="name = member.firstName, name2 = member.secondName,memberUUID = member.uuid, getCSVFile()"></q-btn></q-item>
       </div>
@@ -699,116 +698,255 @@
           </q-card-section>
         </q-card>
       </div>
-      <div v-if="member==null">
+      <div v-if="member==null" class="full-width">
         <!-- <q-skeleton type="text" /> -->
         <div v-if="memberDTOArg.length<1" class="text-center text-bold text-h5">
           Brak Wyników
         </div>
-        <q-virtual-scroll :items="memberDTOArg" visible class="full-width q-pa-none q-virtual-scroll--skip" style="height: 1000px;">
+        <members-list>
+        </members-list>
+        <!-- <q-virtual-scroll :items="memberDTOArg" type="table" visible class="row full-width q-pa-none" style="height: 90vh;">
+          <template v-slot:before>
+        <thead class="thead-custom-sticky text-left">
+          <tr>
+            <th class="row text-center">
+              <div class="col">Imię i nazwisko</div>
+              <div v-if="!erase" class="col text-right">Wpis do portalu PZSS</div>
+              <div v-if="!erase" class="col text-right">Zdjęcie</div>
+              <div class="col text-right">Numer Legitymacji</div>
+              <div class="col-2">Licencja</div>
+              <div v-if="!erase" class="col-3">Status</div>
+              <div v-else class="col-5">podstawa skreślenia</div>
+            </th>
+          </tr>
+        </thead>
+          </template>
     <template v-slot="{ item, index }">
-      <q-item :key="index" dense>
+      <tr :key="index" dense>
         <q-item-section dense class="row">
-          <q-item-label dense class="row">
+          <q-item-label dense class="row full-width">
+            <td v-if="!item.erased" class="row full-width">
             <div v-if="!item.erased" class="col" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
-              <q-tooltip delay="500">coś</q-tooltip>
-            <q-field class="col full-width" align="left" standout="bg-accent text-black" stack-label>
-                <div class="row q-pa-xs full-width">
-                  <div class="col self-center full-width no-outline text-left text-black" tabindex="0">{{item.secondName}} {{item.firstName}}</div>
-                  <div v-if="!item.pzss" class="col self-center full-width no-outline text-left text-black" tabindex="0">Nie wpisany do portalu PZSS</div>
-                </div>
-            </q-field>
-            </div>
-            <div v-if="!item.erased" class="col-2" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
-            <q-field class="col full-width" align="left" standout="bg-accent text-black" stack-label>
-                <div class="row q-pa-xs">
-                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">Numer leg. {{item.legitimationNumber}}</div>
+            <q-field class="col" align="left" dense standout="bg-accent text-black" stack-label>
+                <div class="row q-pa-xs fit text-center self-center">
+                  <div class="col self-center no-outline text-left text-black" tabindex="0">{{item.secondName}} {{item.firstName}}</div>
+                  <div v-if="!item.pzss" class="col-4 self-center no-outline text-center text-black" tabindex="0">Nie wpisany do portalu PZSS</div>
+                  <div v-if="item.image===null" class="col-2 self-center no-outline text-center text-black" tabindex="0">brak zdjęcia</div>
+                  <div v-else class="col-2 self-center no-outline text-center text-black" tabindex="0"></div>
+                  <div class="col-2 self-center no-outline text-right text-black" tabindex="0">nr leg. {{item.legitimationNumber}}</div>
                 </div>
             </q-field>
             </div>
             <div v-if="!item.erased && item.license.number!=null && item.license.valid" class="col-2" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
-            <q-field  class="col full-width" align="left" standout="bg-accent text-black" stack-label>
-                <div class="row q-pa-xs">
-                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">Licencja jest ważna</div>
+            <q-field class="col full-width bg-green-3" align="left" dense standout="bg-accent text-black" stack-label>
+                <div class="row q-pa-xs self-center">
+                  <div class="self-center no-outline text-center text-black" tabindex="0">Aktualna nr {{item.license.number}}</div>
                 </div>
             </q-field>
             </div>
             <div v-if="item.license.number!=null && !item.license.valid && !item.erased" class="col-2" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
-            <q-field  class="col full-width bg-yellow-3" align="left" standout="bg-accent text-black" stack-label>
-                <div class="row q-pa-xs">
-                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">Licencja jest nieważna</div>
+            <q-field  class="col full-width bg-yellow-3" align="left" dense standout="bg-accent text-black" stack-label>
+                <div class="row q-pa-xs self-center">
+                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">Nieaktualna nr {{item.license.number}}</div>
                 </div>
             </q-field>
             </div>
             <div v-if="item.license.number==null && !item.erased" class="col-2" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
-            <q-field class="col full-width" align="left" standout="bg-accent text-black" stack-label>
-                <div class="row q-pa-xs">
-                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">Nie posiada licencji</div>
+            <q-field class="col full-width" align="left" dense standout="bg-accent text-black" stack-label>
+                <div class="col q-pa-xs self-center">
+                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">BRAK</div>
                 </div>
             </q-field>
             </div>
             <div v-if="item.active && !item.erased" class="col-3" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
-            <q-field class="col full-width bg-green-3" standout="bg-accent text-center text-black" stack-label>
+            <q-field class="col full-width bg-green-3" dense standout="bg-accent text-center text-black" stack-label>
                 <div class="row q-pa-xs full-width">
                   <div class="self-center full-width no-outline text-center text-black" tabindex="0">Klubowicz Aktywny</div>
                 </div>
             </q-field>
             </div>
             <div v-if="!item.active && !item.erased"  class="col-3" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
-            <q-field class="col full-width bg-red-4" standout="bg-accent text-center text-black" stack-label>
+            <q-field class="col full-width bg-red-4" dense standout="bg-accent text-center text-black" stack-label>
                 <div class="row q-pa-xs full-width">
                   <div class="self-center full-width no-outline text-center text-black" tabindex="0">Klubowicz Nieaktywny - Sprawdź składki</div>
                 </div>
             </q-field>
             </div>
-            <div v-if="item.erased" class="row full-width">
-            <div v-if="item.erased" class="col-5" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
-            <q-field class="col full-width" align="left" standout="bg-accent text-black" stack-label>
+            </td>
+            <td v-if="item.erased" class="row full-width">
+            <div class="col" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
+            <q-field class="col full-width" align="left" dense standout="bg-accent text-black" stack-label>
                 <div class="row q-pa-xs full-width">
-                  <div class="col self-center full-width no-outline text-center text-black" tabindex="0">{{item.secondName}} {{item.firstName}}</div>
-                  <div v-if="!item.pzss" class="col self-center full-width no-outline text-center text-black" tabindex="0">Nie wpisany do portalu PZSS</div>
+                  <div class="col self-center full-width no-outline text-justify text-black" tabindex="0">{{item.secondName}} {{item.firstName}}</div>
+                  <div class="col self-center full-width no-outline text-right text-black" tabindex="0">nr leg. {{item.legitimationNumber}}</div>
                 </div>
             </q-field>
             </div>
-            <div v-if="item.erased" class="col-2" @click="showloading(),allMember=false,memberName =item.secondName + ' ' + item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
-            <q-field class="col full-width" align="left" standout="bg-accent text-black" stack-label>
-                <div class="row q-pa-xs">
-                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">Numer leg. {{item.legitimationNumber}}</div>
+            <div v-if="item.license.number!=null && item.license.valid" class="col-2" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
+            <q-field class="col" align="left" dense standout="bg-accent text-black" stack-label>
+                <div class="col q-pa-xs self-center">
+                  <div class="self-center no-outline text-center text-black" tabindex="0">Aktualna nr {{item.license.number}}</div>
                 </div>
             </q-field>
             </div>
-            <div v-if="item.erased && item.license.number!=null && item.license.valid" class="col-2" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
-            <q-field class="col full-width" align="left" standout="bg-accent text-black" stack-label>
-                <div class="row q-pa-xs">
-                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">Licencja jest ważna</div>
+            <div v-if="item.license.number!=null && !item.license.valid" class="col-2" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
+            <q-field class="col bg-yellow-3" align="left" dense standout="bg-accent text-black" stack-label>
+              <div class="col  q-pa-xs self-center">
+                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">Nieaktualna nr {{item.license.number}}</div>
                 </div>
             </q-field>
             </div>
-            <div v-if="item.erased && item.license.number!=null && !item.license.valid" class="col-2" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
-            <q-field class="col full-width bg-yellow-3" align="left" standout="bg-accent text-black" stack-label>
-                <div class="row q-pa-xs">
-                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">Licencja jest nieważna</div>
+            <div v-if="item.license.number==null" class="col-2" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
+            <q-field  class="col" align="left" dense standout="bg-accent text-black" stack-label>
+                <div class="col q-pa-xs self-center">
+                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">BRAK</div>
                 </div>
             </q-field>
             </div>
-            <div v-if="item.erased && item.license.number==null" class="col-2" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
-            <q-field  class="col full-width" align="left" standout="bg-accent text-black" stack-label>
-                <div class="row q-pa-xs">
-                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">Nie posiada licencji</div>
-                </div>
-            </q-field>
-            </div>
-            <div v-if="item.erased" class="col">
-            <q-field class="col full-width bg-grey-4" align="left" standout="bg-accent text-black" stack-label>
+            <div class="col-5">
+            <q-field class="col bg-grey-4" align="left" dense standout="bg-accent text-black" stack-label>
                 <div class="row q-pa-xs">
                   <div class="self-center full-width no-outline text-center text-black" tabindex="0">{{item.erasedEntity.erasedType}} {{item.erasedEntity.date}}</div>
-                  <div v-if="item.erasedEntity.additionalDescription!=null" class="self-center full-width no-outline text-black" tabindex="0">{{item.erasedEntity.additionalDescription}}</div>
+                  <div v-if="item.erasedEntity.additionalDescription!=null" class="self-center full-width no-outline text-left text-black" tabindex="0">{{item.erasedEntity.additionalDescription}}</div>
                 </div>
             </q-field>
             </div>
-            </div>
+            </td>
           </q-item-label>
         </q-item-section>
-      </q-item>
+      </tr>
+    </template>
+        </q-virtual-scroll> -->
+            <q-virtual-scroll :virtual-scroll-item-size="48"
+      :virtual-scroll-sticky-size-start="48"
+      :virtual-scroll-sticky-size-end="32" :items="memberDTOArg" type="table" visible class="row full-width q-pa-none" style="height: 90vh;">
+          <template v-slot:before>
+        <thead class="thead-sticky text-left">
+          <tr>
+            <th class="text-center full-width">Imię i nazwisko</th>
+            <th v-if="!erase" class="text-center full-width">Wpis do portalu PZSS</th>
+            <th v-if="!erase" class="text-center full-width">Zdjęcie</th>
+            <th class="text-left full-width">Numer Legitymacji</th>
+            <th class="text-center full-width">Licencja</th>
+            <th v-if="!erase" class="text-center full-width">Status</th>
+            <th v-else class="text-center full-width">podstawa skreślenia</th>
+          </tr>
+        </thead>
+          </template>
+    <template v-slot="{ item, index }">
+      <tr v-if="!item.erased" :key="index" dense class="rounded" style="cursor:pointer" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
+        <td>{{item.secondName}} {{item.firstName}}</td>
+        <td v-if="!item.pzss" class="bg-warning">Nie wpisany do portalu PZSS</td>
+        <td v-else></td>
+        <td v-if="item.image===null" class="bg-warning">brak zdjęcia</td>
+        <td v-else></td>
+        <td class="text-left">nr leg. {{item.legitimationNumber}}</td>
+        <td v-if="!item.erased && item.license.number!=null && item.license.valid" class="bg-green-3 text-center"><div>Aktualna</div><q-div class="text-caption">nr {{item.license.number}}</q-div></td>
+        <td v-if="item.license.number!=null && !item.license.valid && !item.erased" class="bg-warning text-center"><div>Nieaktualna</div><q-div class="text-caption">nr {{item.license.number}}</q-div></td>
+        <td v-if="item.license.number==null && !item.erased" class="text-center">BRAK</td>
+        <td v-if="item.active && !item.erased" class="bg-green-3">Klubowicz Aktywny</td>
+        <td v-if="!item.active && !item.erased" class="bg-red-3"><div>Klubowicz Nieaktywny</div><div> - Sprawdź składki</div></td>
+      </tr>
+      <tr v-if="item.erased" :key="index" dense style="cursor:pointer" class="full-width" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
+        <td>{{item.secondName}} {{item.firstName}}</td>
+        <td class="text-left">nr leg. {{item.legitimationNumber}}</td>
+        <td v-if="item.license.number!=null && item.license.valid" class="bg-green-3 text-center"><div>Aktualna</div><q-div class="text-caption">nr {{item.license.number}}</q-div></td>
+        <td v-if="item.license.number!=null && !item.license.valid" class="bg-warning text-center"><div>Nieaktualna</div><q-div class="text-caption">nr {{item.license.number}}</q-div></td>
+        <td v-if="item.license.number==null" class="text-center">BRAK</td>
+        <td class="bg-grey-3"><div class="self-center full-width no-outline text-center text-black" tabindex="0">{{item.erasedEntity.erasedType}} {{item.erasedEntity.date}}</div>
+                  <div v-if="item.erasedEntity.additionalDescription!=null" class="self-center full-width no-outline text-left text-black" tabindex="0">{{item.erasedEntity.additionalDescription}}</div></td>
+      </tr>
+        <!-- <q-item-section dense class="row">
+          <q-item-label dense class="row full-width">
+            <td v-if="!item.erased" class="row full-width">
+            <div v-if="!item.erased" class="col" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
+            <q-field class="col" align="left" dense standout="bg-accent text-black" stack-label>
+                <div class="row q-pa-xs fit text-center self-center">
+                  <div class="col self-center no-outline text-left text-black" tabindex="0">{{item.secondName}} {{item.firstName}}</div>
+                  <div v-if="!item.pzss" class="col-4 self-center no-outline text-center text-black" tabindex="0">Nie wpisany do portalu PZSS</div>
+                  <div v-if="item.image===null" class="col-2 self-center no-outline text-center text-black" tabindex="0">brak zdjęcia</div>
+                  <div v-else class="col-2 self-center no-outline text-center text-black" tabindex="0"></div>
+                  <div class="col-2 self-center no-outline text-right text-black" tabindex="0">nr leg. {{item.legitimationNumber}}</div>
+                </div>
+            </q-field>
+            </div>
+            <div v-if="!item.erased && item.license.number!=null && item.license.valid" class="col-2" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
+            <q-field class="col full-width bg-green-3" align="left" dense standout="bg-accent text-black" stack-label>
+                <div class="row q-pa-xs self-center">
+                  <div class="self-center no-outline text-center text-black" tabindex="0">Aktualna nr {{item.license.number}}</div>
+                </div>
+            </q-field>
+            </div>
+            <div v-if="item.license.number!=null && !item.license.valid && !item.erased" class="col-2" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
+            <q-field  class="col full-width bg-yellow-3" align="left" dense standout="bg-accent text-black" stack-label>
+                <div class="row q-pa-xs self-center">
+                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">Nieaktualna nr {{item.license.number}}</div>
+                </div>
+            </q-field>
+            </div>
+            <div v-if="item.license.number==null && !item.erased" class="col-2" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
+            <q-field class="col full-width" align="left" dense standout="bg-accent text-black" stack-label>
+                <div class="col q-pa-xs self-center">
+                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">BRAK</div>
+                </div>
+            </q-field>
+            </div>
+            <div v-if="item.active && !item.erased" class="col-3" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
+            <q-field class="col full-width bg-green-3" dense standout="bg-accent text-center text-black" stack-label>
+                <div class="row q-pa-xs full-width">
+                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">Klubowicz Aktywny</div>
+                </div>
+            </q-field>
+            </div>
+            <div v-if="!item.active && !item.erased"  class="col-3" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
+            <q-field class="col full-width bg-red-4" dense standout="bg-accent text-center text-black" stack-label>
+                <div class="row q-pa-xs full-width">
+                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">Klubowicz Nieaktywny - Sprawdź składki</div>
+                </div>
+            </q-field>
+            </div>
+            </td>
+            <td v-if="item.erased" class="row full-width">
+            <div class="col" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
+            <q-field class="col full-width" align="left" dense standout="bg-accent text-black" stack-label>
+                <div class="row q-pa-xs full-width">
+                  <div class="col self-center full-width no-outline text-justify text-black" tabindex="0">{{item.secondName}} {{item.firstName}}</div>
+                  <div class="col self-center full-width no-outline text-right text-black" tabindex="0">nr leg. {{item.legitimationNumber}}</div>
+                </div>
+            </q-field>
+            </div>
+            <div v-if="item.license.number!=null && item.license.valid" class="col-2" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
+            <q-field class="col" align="left" dense standout="bg-accent text-black" stack-label>
+                <div class="col q-pa-xs self-center">
+                  <div class="self-center no-outline text-center text-black" tabindex="0">Aktualna nr {{item.license.number}}</div>
+                </div>
+            </q-field>
+            </div>
+            <div v-if="item.license.number!=null && !item.license.valid" class="col-2" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
+            <q-field class="col bg-yellow-3" align="left" dense standout="bg-accent text-black" stack-label>
+              <div class="col  q-pa-xs self-center">
+                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">Nieaktualna nr {{item.license.number}}</div>
+                </div>
+            </q-field>
+            </div>
+            <div v-if="item.license.number==null" class="col-2" @click="showloading(),allMember=false,memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber,getMemberFromList (item.legitimationNumber)">
+            <q-field  class="col" align="left" dense standout="bg-accent text-black" stack-label>
+                <div class="col q-pa-xs self-center">
+                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">BRAK</div>
+                </div>
+            </q-field>
+            </div>
+            <div class="col-5">
+            <q-field class="col bg-grey-4" align="left" dense standout="bg-accent text-black" stack-label>
+                <div class="row q-pa-xs">
+                  <div class="self-center full-width no-outline text-center text-black" tabindex="0">{{item.erasedEntity.erasedType}} {{item.erasedEntity.date}}</div>
+                  <div v-if="item.erasedEntity.additionalDescription!=null" class="self-center full-width no-outline text-left text-black" tabindex="0">{{item.erasedEntity.additionalDescription}}</div>
+                </div>
+            </q-field>
+            </div>
+            </td>
+          </q-item-label>
+        </q-item-section> -->
     </template>
         </q-virtual-scroll>
       </div>
@@ -840,7 +978,7 @@
       </q-card>
 </q-dialog>
 <q-dialog v-model="contributionCode" persistent>
-      <q-card class="bg-red-5 text-center">
+      <q-card class="bg-green-5 text-center">
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
           <q-input @keypress.enter="prolongContribution(memberUUID),contributionCode=false" autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input>
@@ -897,7 +1035,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="pzssPortal" persistent>
+<q-dialog v-model="pzssPortal">
       <q-card>
         <q-card-section class="row items-center">
           <q-avatar icon="add" color="primary"/>
@@ -1333,7 +1471,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog position="top" v-model="downloaded">
+<q-dialog :position="'top'" v-model="downloaded">
       <q-card>
         <q-card-section>
           <div class="text-h6">Pobrano</div>
@@ -1401,7 +1539,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog position="top" v-model="failure">
+<q-dialog :position="'top'" v-model="failure">
       <q-card>
         <q-card-section>
           <div v-if="message!=null" class="text-h6">{{message}}</div>
@@ -1409,7 +1547,7 @@
 
       </q-card>
 </q-dialog>
-<q-dialog position="top" v-model="success">
+<q-dialog :position="'top'" v-model="success">
       <q-card>
         <q-card-section>
           <div v-if="message!=null" class="text-h6">{{message}}</div>
@@ -1417,7 +1555,7 @@
 
       </q-card>
 </q-dialog>
-<q-dialog position="top" v-model="forbidden">
+<q-dialog :position="'top'" v-model="forbidden">
       <q-card class="bg-warning">
         <q-card-section>
           <div class="text-h6">Niewłaściwy kod. Spróbuj ponownie.</div>
@@ -1613,1280 +1751,11 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog v-model="good" seamless position="top-right">
-      <q-card>
-        <q-card-section class="flex-center">
-          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn label="anuluj" color="black" v-close-popup/>
-          <q-btn label="Wprowadź zmiany" color="black" v-close-popup />
-        </q-card-actions>
-      </q-card>
-</q-dialog>
   </q-page>
 </template>
-<style>
+<style src="../style/style.scss" lang="scss">
 
-.full {
-  width: 100%;
-  height: 100%;
-}
 </style>
 
-<script>
-
-import { scroll } from 'quasar'
-const { getScrollTarget, setScrollPosition } = scroll
-const stringOptions = []
-import Vue from 'vue'
-import axios from 'axios'
-import App from 'src/App.vue'
-Vue.prototype.$axios = axios
-Vue.directive('temp', function (el) {
-  el.focus()
-})
-
-export default {
-  data () {
-    return {
-      good: false,
-      picture: false,
-      socialWork: true,
-      editLicense: false,
-      editLicenseDate: null,
-      editLicenseNumber: null,
-      editLicenseCode: false,
-      editLicensePayment: false,
-      editLicensePaymentDate: null,
-      editLicensePaymentYear: null,
-      editLicensePaymentCode: false,
-      deleteLicensePaymentCode: false,
-      editContribution: false,
-      editContributionPaymentDate: null,
-      editContributionValidThruDate: null,
-      editContributionCode: false,
-      togglePaymentAlert: false,
-      toggleHistoryPaymentCode: false,
-      paymentUUID: null,
-      member: null,
-      filters: [],
-      certificateChoices: ['ZAŚWIADCZENIE ZWYKŁE', 'ZAŚWIADCZENIE DO POLICJI'],
-      certificateChoice: null,
-      options: stringOptions,
-      memberName: null,
-      memberWord: null,
-      name: null,
-      name2: null,
-      active: null,
-      adult: null,
-      erase: false,
-      value: false,
-      value1: false,
-      value2: false,
-      value3: false,
-      value4: false,
-      changeAdultConfirm: false,
-      changeAdultCode: false,
-      eraseAlert: false,
-      backAlert: false,
-      eraseConfirm: false,
-      eraseBackConfirm: false,
-      eraseCode: false,
-      resurrectCode: false,
-      backConfirm: false,
-      activeCode: false,
-      contributionRecord: '',
-      contributionUUID: null,
-      basicDataConfirm: false,
-      basicDataConfirm1: false,
-      contributionAlert: false,
-      contributionDownloadConfirm: false,
-      contributionConfirmDownloadAlert: false,
-      personalCardDownloadConfirm: false,
-      addressConfirm: false,
-      addressConfirm1: false,
-      historyContributionRecord: Date.now,
-      contributionRecordConfirm: false,
-      contributionRecordConfirm1: false,
-      contributionRemoveRecordQuerry: false,
-      contributionRemoveRecordQuerryCode: false,
-      code: null,
-      addAmmoConfirm: false,
-      alert: false,
-      patentConfirm: false,
-      patentConfirm1: false,
-      patentConfirm2: false,
-      contribution: false,
-      certificates: false,
-      contributionCode: false,
-      contributionHistoryCode: false,
-      deactivate: false,
-      eraseWeapon: false,
-      eraseAssest: false,
-      licenseConfirm: false,
-      licensePayment: false,
-      instructorConfirm: false,
-      shootingLeaderConfirm: false,
-      arbiterConfirm: false,
-      arbiterProlongConfirm: false,
-      arbiterUpdateClassConfirm: false,
-      failure: false,
-      success: false,
-      message: null,
-      barcode: null,
-      number: '',
-      legNumber: null,
-      patentNumber: '',
-      licenseNumber: '',
-      validThru: '',
-      memberDTOArg: [],
-      calibers: [],
-      quantities: [],
-      erasedTypes: [],
-      erasedType: null,
-      patentDate: null,
-      patentPistolPermission: false,
-      patentRiflePermission: false,
-      patentShotgunPermission: false,
-      patentPistolPermission1: false,
-      patentRiflePermission1: false,
-      patentShotgunPermission1: false,
-      licensePistolPermission: false,
-      licenseRiflePermission: false,
-      licenseShotgunPermission: false,
-      licensePistolPermission1: false,
-      licenseRiflePermission1: false,
-      licenseShotgunPermission1: false,
-      updateLicenseConfirm: false,
-      prolongLicenseConfirm: false,
-      noDomesticStarts: false,
-      downloaded: false,
-      permissionsInstructorNumber: '',
-      permissionsShootingLeaderNumber: '',
-      permissionsArbiterNumber: '',
-      permissionsArbiterPermissionValidThru: '',
-      ordinal: '',
-      reason: null,
-      erasedReasontype: null,
-      erasedDate: null,
-      weaponPermissionNumber: null,
-      isExist: true,
-      admissionToPossess: null,
-      admissionToPossessIsExist: true,
-      admission: false,
-      permission: false,
-      secondName: '',
-      memberEmail: '',
-      memberPhoneNumber: '',
-      memberIdcard: '',
-      memberSecondName: '',
-      memberFirstName: '',
-      memberPostOfficeCity: '',
-      memberZipCode: '',
-      memberStreet: '',
-      memberStreetNumber: '',
-      memberFlatNumber: '',
-      memberAdultConfirm: null,
-      search: '',
-      memberUUID: null,
-      caliberUUID: null,
-      quantity: '',
-      dateVar: /\//gi,
-      allMember: true,
-      certificateDownload: false,
-      pzssPortal: false,
-      forbidden: false,
-      selected_file: '',
-      local: App.host
-    }
-  },
-  created () {
-    this.getMembersNames()
-    this.getListCalibers()
-    this.getMembersQuantity()
-    this.getAllMemberDTO()
-    this.getListErasedType()
-  },
-  methods: {
-    showloading () {
-      this.$q.loading.show({ message: 'Dzieje się coś ważnego... Poczekaj' })
-      this.timer = setTimeout(() => {
-        this.$q.loading.hide()
-        this.timer = 0
-      }, 1000)
-    },
-    handleScroll (search) {
-      const word = search.split(' ')
-      const ele = document.getElementById(word[0])
-      const target = getScrollTarget(ele)
-      const offset = ele.offsetTop - ele.scrollHeight
-      const duration = 500
-      setScrollPosition(target, offset, duration)
-    },
-    addHistoryContributionRecord (uuid, date) {
-      fetch('http://' + this.local + '/contribution/history/' + uuid + '?date=' + date.replace(/\//gi, '-') + '&pinCode=' + this.code, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.json().then(
-            response => {
-              this.success = true
-              this.message = response
-              this.code = null
-              this.getMembersNames()
-              this.showloading()
-              this.getMemberByUUID(this.memberUUID)
-              this.autoClose()
-            })
-        }
-        if (response.status === 403) {
-          this.forbidden = true
-          this.code = null
-          this.autoClose()
-        }
-        if (response.status === 400) {
-          response.json().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.code = null
-              this.autoClose()
-            })
-        }
-      })
-    },
-    getMemberByLegitimationNumber () {
-      const memberNameWord = this.memberName.split(' ')
-      const legNumber = memberNameWord.length
-      const memberNameLegitimation = memberNameWord[legNumber - 1]
-      fetch('http://' + this.local + '/member/' + memberNameLegitimation, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => response.json()).then(response => {
-        this.showloading()
-        this.member = response
-      })
-    },
-    getMemberByUUID (uuid) {
-      fetch('http://' + this.local + '/member/uuid/' + uuid, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => response.json()).then(response => {
-        this.showloading()
-        this.member = response
-      })
-    },
-    getMemberFromList (leg) {
-      fetch('http://' + this.local + '/member/' + leg, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => response.json()).then(response => {
-        this.showloading()
-        this.member = response
-      })
-    },
-    getMembersQuantity () {
-      fetch('http://' + this.local + '/member/membersQuantity', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => response.json())
-        .then(response => {
-          this.quantities = response
-        })
-    },
-    editContributionRecord () {
-      fetch('http://' + this.local + '/contribution/edit?memberUUID=' + this.memberUUID + '&contributionUUID=' + this.contributionUUID + '&paymentDay=' + this.editContributionPaymentDate.replace(/\//gi, '-') + '&validThru=' + this.editContributionValidThruDate.replace(/\//gi, '-') + '&pinCode=' + this.code, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.json().then(
-            response => {
-              this.success = true
-              this.message = response
-              this.code = null
-              this.getMembersNames()
-              this.showloading()
-              this.getMemberByUUID(this.memberUUID)
-              this.autoClose()
-            })
-        }
-        if (response.status === 403) {
-          this.forbidden = true
-          this.code = null
-          this.autoClose()
-        }
-        if (response.status === 400) {
-          response.json().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.code = null
-              this.autoClose()
-            })
-        }
-      })
-    },
-    removeContributionRecord () {
-      fetch('http://' + this.local + '/contribution/remove/' + this.memberUUID + '?contributionUUID=' + this.contributionUUID + '&pinCode=' + this.code, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.json().then(
-            response => {
-              this.success = true
-              this.message = response
-              this.code = null
-              this.getMembersNames()
-              this.showloading()
-              this.getMemberByUUID(this.memberUUID)
-              this.autoClose()
-            })
-        }
-        if (response.status === 403) {
-          this.forbidden = true
-          this.code = null
-          this.autoClose()
-        }
-        if (response.status === 400) {
-          response.json().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.code = null
-              this.autoClose()
-            })
-        }
-      })
-    },
-    prolongContribution (uuid) {
-      fetch('http://' + this.local + '/contribution/' + uuid + '?pinCode=' + this.code, {
-        method: 'PATCH'
-      }).then(response => {
-        if (response.status === 200) {
-          response.json().then(
-            response => {
-              this.success = true
-              this.message = response
-              this.contributionAlert = true
-              this.showloading()
-              this.getMemberByUUID(this.memberUUID)
-              this.autoClose()
-              this.code = null
-            })
-        }
-        if (response.status === 403) {
-          this.forbidden = true
-          this.code = null
-          this.autoClose()
-        }
-        if (response.status === 400) {
-          response.json().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.code = null
-              this.autoClose()
-            })
-        }
-      })
-    },
-    updateMember (uuid, email, phoneNumber) {
-      const phone = String(phoneNumber)
-      phone.replace('+48', '')
-      const data = {
-        email: email,
-        phoneNumber: phone.replace('+48', '')
-      }
-      fetch('http://' + this.local + '/member/' + uuid, {
-        method: 'PUT',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.json().then(
-            response => {
-              this.success = true
-              this.message = response
-              this.memberEmail = ''
-              this.memberPhoneNumber = ''
-              this.showloading()
-              this.getMemberByUUID(this.memberUUID)
-              this.autoClose()
-            })
-        } else {
-          response.json().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.autoClose()
-            })
-        }
-      })
-    },
-    updateIDCardAndName (uuid, idcard, firstName, secondName) {
-      const data = {
-        idcard: idcard,
-        firstName: firstName,
-        secondName: secondName
-      }
-      fetch('http://' + this.local + '/member/' + uuid, {
-        method: 'PUT',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.json().then(
-            response => {
-              this.success = true
-              this.message = response
-              this.memberIdcard = ''
-              this.memberSecondName = ''
-              this.memberFirstName = ''
-              this.showloading()
-              this.getMemberByUUID(this.memberUUID)
-              this.autoClose()
-            })
-        } else {
-          response.json().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.autoClose()
-            })
-        }
-      })
-    },
-    updateAddress (uuid, memberZipCode, memberPostOfficeCity, memberStreet, memberStreetNumber, memberFlatNumber) {
-      const data = {
-        zipCode: memberZipCode,
-        postOfficeCity: memberPostOfficeCity,
-        street: memberStreet,
-        streetNumber: memberStreetNumber,
-        flatNumber: memberFlatNumber
-      }
-      fetch('http://' + this.local + '/address/' + uuid, {
-        method: 'PUT',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.json().then(
-            response => {
-              this.success = true
-              this.message = response
-              this.memberZipCode = ''
-              this.memberPostOfficeCity = ''
-              this.memberStreet = ''
-              this.memberStreetNumber = ''
-              this.memberFlatNumber = ''
-              this.showloading()
-              this.getMemberByUUID(this.memberUUID)
-              this.autoClose()
-            })
-        } else {
-          response.json().then(
-            response => {
-              this.failure = true
-              this.message = response
-              this.autoClose()
-            })
-        }
-      })
-    },
-    getMembersNames () {
-      fetch('http://' + this.local + '/member/getAllNames', {
-        method: 'GET'
-      }).then(response => response.json())
-        .then(response => {
-          this.filters = response
-        })
-    },
-    getAllMemberDTOWithArgs () {
-      const active = this.active
-      const adult = this.adult
-      const erase = this.erase
-      fetch('http://' + this.local + '/member/getAllMemberDTOWithArgs?active=' + active + '&adult=' + adult + '&erase=' + erase, {
-        method: 'GET'
-      }).then(response => response.json())
-        .then(response => {
-          this.memberDTOArg = response.sort()
-        })
-    },
-    getAllMemberDTO () {
-      fetch('http://' + this.local + '/member/getAllMemberDTO', {
-        method: 'GET'
-      }).then(response => response.json())
-        .then(response => {
-          this.memberDTOArg = response
-        })
-    },
-    getListCalibers () {
-      fetch('http://' + this.local + '/armory/calibers', {
-        method: 'GET'
-      }).then(response => response.json())
-        .then(response => {
-          this.calibers = response
-        })
-    },
-    getListErasedType () {
-      fetch('http://' + this.local + '/member/erasedType', {
-        method: 'GET'
-      }).then(response => response.json())
-        .then(response => {
-          this.erasedTypes = response
-        })
-    },
-    addMemberAndAmmoToCaliber () {
-      fetch('http://' + this.local + '/ammoEvidence/ammo?caliberUUID=' + this.caliberUUID + '&legitimationNumber=' + this.legNumber + '&counter=' + this.quantity + '&otherID=0', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.json().then(response => {
-            this.message = response
-            this.success = true
-            this.getListCalibers()
-            this.showloading()
-            this.getMemberByUUID(this.memberUUID)
-            this.autoClose()
-          })
-        }
-        if (response.status === 400) {
-          response.json().then(response => {
-            this.message = response
-            this.failure = true
-            this.quantity = null
-            this.autoClose()
-          })
-        }
-        if (response.status === 406) {
-          this.failure = true
-          this.quantity = null
-          this.autoClose()
-        }
-      })
-    },
-    getContributionPDF (memberUUID, contributionUUID) {
-      axios({
-        url: 'http://' + this.local + '/files/downloadContribution/' + this.memberUUID + '?contributionUUID=' + this.contributionUUID,
-        method: 'GET',
-        responseType: 'blob'
-      }).then(response => {
-        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        const fileLink = document.createElement('a')
-        fileLink.href = fileURL
-        fileLink.setAttribute('download', 'Składka_' + this.name + '_' + this.name2 + '.pdf')
-        document.body.appendChild(fileLink)
-        fileLink.click()
-        this.contributionUUID = null
-        this.downloaded = true
-        this.autoClose()
-      })
-    },
-    getPersonalCardPDF (memberUUID) {
-      axios({
-        url: 'http://' + this.local + '/files/downloadPersonalCard/' + this.memberUUID,
-        method: 'GET',
-        responseType: 'blob'
-      }).then(response => {
-        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        const fileLink = document.createElement('a')
-        fileLink.href = fileURL
-        fileLink.setAttribute('download', 'Karta_Członkowska_' + this.name + '_' + this.name2 + '.pdf')
-        document.body.appendChild(fileLink)
-        fileLink.click()
-        this.downloaded = true
-        this.autoClose()
-      })
-    },
-    getApplicationForExtensionOfTheCompetitorsLicense () {
-      axios({
-        url: 'http://' + this.local + '/files/downloadApplication/' + this.memberUUID,
-        method: 'GET',
-        responseType: 'blob'
-      }).then(response => {
-        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        const fileLink = document.createElement('a')
-        fileLink.href = fileURL
-        fileLink.setAttribute('download', 'Wniosek_' + this.name + '_' + this.name2 + '.pdf')
-        document.body.appendChild(fileLink)
-        fileLink.click()
-        this.downloaded = true
-        this.autoClose()
-      })
-    },
-    getdownloadCertificateOfClubMembership () {
-      axios({
-        url: 'http://' + this.local + '/files/downloadCertificateOfClubMembership/' + this.memberUUID + '?reason=' + this.certificateChoice,
-        method: 'GET',
-        responseType: 'blob'
-      }).then(response => {
-        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        const fileLink = document.createElement('a')
-        fileLink.href = fileURL
-        fileLink.setAttribute('download', 'Zaświadczenie_' + this.name + '_' + this.name2 + '.pdf')
-        document.body.appendChild(fileLink)
-        fileLink.click()
-        this.certificateChoice = null
-        this.downloaded = true
-        this.autoClose()
-      })
-    },
-    getCSVFile () {
-      axios({
-        url: 'http://' + this.local + '/files/downloadCSVFile/' + this.memberUUID,
-        method: 'GET',
-        responseType: 'blob'
-      }).then(response => {
-        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        const fileLink = document.createElement('a')
-        console.log(response.data)
-        fileLink.href = fileURL
-        fileLink.setAttribute('download', response.data.type)
-        document.body.appendChild(fileLink)
-        fileLink.click()
-        this.downloaded = true
-        this.autoClose()
-      })
-    },
-    addPatent (uuid, patentNumber, patentPistolPermission, patentRiflePermission, patentShotgunPermission, patentDate) {
-      const data = {
-        patentNumber: patentNumber,
-        pistolPermission: patentPistolPermission,
-        riflePermission: patentRiflePermission,
-        shotgunPermission: patentShotgunPermission,
-        dateOfPosting: patentDate.replace(this.dateVar, '-')
-      }
-      fetch('http://' + this.local + '/patent/' + uuid, {
-        method: 'PUT',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.json().then(
-            response => {
-              this.message = response
-              this.success = true
-              this.patentNumber = null
-              this.patentPistolPermission = false
-              this.patentRiflePermission = false
-              this.patentShotgunPermission = false
-              this.patentDate = null
-              this.showloading()
-              this.getMemberByUUID(this.memberUUID)
-              this.autoClose()
-            })
-        } else {
-          response.json().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.autoClose()
-            })
-        }
-      })
-    },
-    addLicense (uuid, licenseNumber, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission) {
-      const data1 = {
-        number: licenseNumber,
-        pistolPermission: licensePistolPermission,
-        riflePermission: licenseRiflePermission,
-        shotgunPermission: licenseShotgunPermission
-      }
-      fetch('http://' + this.local + '/license/' + this.memberUUID, {
-        method: 'PUT',
-        body: JSON.stringify(data1),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.json().then(
-            response => {
-              this.success = true
-              this.message = response
-              this.licenseNumber = ''
-              this.licensePistolPermission = false
-              this.licenseRiflePermission = false
-              this.licenseShotgunPermission = false
-              this.showloading()
-              this.getMemberByUUID(this.memberUUID)
-              this.autoClose()
-            })
-        } else {
-          response.json().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.autoClose()
-            }
-          )
-        }
-      })
-    },
-    prolongLicense (uuid, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission) {
-      const data = {
-        pistolPermission: licensePistolPermission,
-        riflePermission: licenseRiflePermission,
-        shotgunPermission: licenseShotgunPermission
-      }
-      fetch('http://' + this.local + '/license/' + uuid, {
-        method: 'PATCH',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.json().then(
-            response => {
-              this.success = true
-              this.message = response
-              this.licensePistolPermission = false
-              this.licenseRiflePermission = false
-              this.licenseShotgunPermission = false
-              this.showloading()
-              this.getMemberByUUID(this.memberUUID)
-              this.autoClose()
-            }
-          )
-        } else {
-          response.json().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.autoClose()
-            }
-          )
-        }
-      })
-    },
-    editLicenseHistoryPayment () {
-      fetch('http://' + this.local + '/license/editPayment?memberUUID=' + this.memberUUID + '&paymentUUID=' + this.paymentUUID + '&paymentDate=' + this.editLicensePaymentDate.replace(/\//gi, '-') + '&year=' + this.editLicensePaymentYear + '&pinCode=' + this.code, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.json().then(
-            response => {
-              this.message = response
-              this.success = true
-              this.code = null
-              this.showloading()
-              this.getMemberByUUID(this.memberUUID)
-              this.autoClose()
-            })
-        } else {
-          response.json().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.code = null
-              this.autoClose()
-            })
-        }
-      })
-    },
-    deleteLicenseHistoryPayment () {
-      fetch('http://' + this.local + '/license/removePayment?paymentUUID=' + this.paymentUUID + '&pinCode=' + this.code, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.json().then(
-            response => {
-              this.message = response
-              this.success = true
-              this.code = null
-              this.showloading()
-              this.getMemberByUUID(this.memberUUID)
-              this.autoClose()
-            })
-        } else {
-          response.json().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.code = null
-              this.autoClose()
-            })
-        }
-      })
-    },
-    addLicenseHistoryPayment (uuid) {
-      fetch('http://' + this.local + '/license/history/' + uuid, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.json().then(
-            response => {
-              this.message = response
-              this.success = true
-              this.showloading()
-              this.getMemberByUUID(this.memberUUID)
-              this.autoClose()
-            })
-        } else {
-          response.json().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.autoClose()
-            })
-        }
-      })
-    },
-    toggleHistoryPayment (uuid) {
-      fetch('http://' + this.local + '/license/paymentToggle?paymentUUID=' + uuid + '&pinCode=' + this.code, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.json().then(
-            response => {
-              this.message = response
-              this.success = true
-              this.showloading()
-              this.getMemberByUUID(this.memberUUID)
-              this.autoClose()
-            })
-        } if (response.status === 403) {
-          this.forbidden = true
-          this.autoClose()
-        } if (response.status === 400) {
-          response.json().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.autoClose()
-            })
-        }
-      })
-    },
-    forceUpdateLicence () {
-      fetch('http://' + this.local + '/license/forceUpdate?memberUUID=' + this.memberUUID + '&number=' + this.editLicenseNumber + '&date=' + this.editLicenseDate.replace(/\//gi, '-') + '&pinCode=' + this.code, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.json().then(
-            response => {
-              this.message = response
-              this.success = true
-              this.editLicenseNumber = null
-              this.editLicenseDate = null
-              this.code = null
-              this.showloading()
-              this.getMemberByUUID(this.memberUUID)
-              this.autoClose()
-            })
-        }
-        if (response.status === 403) {
-          this.forbidden = true
-          this.autoClose()
-        }
-        if (response.status === 400) {
-          response.json().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.code = null
-              this.autoClose()
-            })
-        }
-      })
-    },
-    changeWeaponPermission (uuid, weaponPermissionNumber, isExist) {
-      const data = {
-        number: weaponPermissionNumber,
-        exist: isExist
-      }
-      fetch('http://' + this.local + '/weapon/weapon/' + uuid, {
-        method: 'PUT',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.json().then(
-            response => {
-              this.message = response
-              this.success = true
-              this.weaponPermissionNumber = null
-              this.showloading()
-              this.getMemberByUUID(this.memberUUID)
-              this.autoClose()
-            })
-        } else {
-          response.json().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.autoClose()
-            })
-        }
-      })
-    },
-    changeWeaponAdmission (uuid, admissionToPossess, admissionToPossessIsExist) {
-      const data = {
-        admissionToPossessAWeapon: admissionToPossess,
-        admissionToPossessAWeaponIsExist: admissionToPossessIsExist
-      }
-      fetch('http://' + this.local + '/weapon/weapon/' + uuid, {
-        method: 'PUT',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.json().then(
-            response => {
-              this.message = response
-              this.success = true
-              this.admissionToPossess = null
-              this.showloading()
-              this.getMemberByUUID(this.memberUUID)
-              this.autoClose()
-            })
-        } else {
-          response.json().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.autoClose()
-            })
-        }
-      })
-    },
-    removeWeaponPermissionOrAdmission () {
-      fetch('http://' + this.local + '/weapon/weapon/' + this.memberUUID + '?admission=' + this.admission + '&permission=' + this.permission, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.json().then(
-            response => {
-              this.message = response
-              this.success = true
-              this.admission = false
-              this.permission = false
-              this.showloading()
-              this.getMemberByUUID(this.memberUUID)
-              this.autoClose()
-            })
-        } else {
-          response.json().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.autoClose()
-            })
-        }
-      })
-    },
-    changeActive (uuid) {
-      fetch('http://' + this.local + '/member/' + uuid + '?pinCode=' + this.code, {
-        method: 'PATCH'
-      }).then(response => {
-        if (response.status === 200) {
-          response.json().then(
-            response => {
-              this.message = response
-              this.success = true
-              this.code = null
-              this.showloading()
-              this.getMemberByUUID(this.memberUUID)
-              this.autoClose()
-            })
-        }
-        if (response.status === 403) {
-          this.forbidden = true
-          this.code = null
-          this.autoClose()
-        }
-        if (response.status === 400) {
-          response.json().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.autoClose()
-            })
-        }
-      })
-    },
-    updateMemberPermissions (uuid, permissionsShootingLeaderNumber, permissionsInstructorNumber, permissionsArbiterNumber, permissionsArbiterPermissionValidThru) {
-      const data = {
-        shootingLeaderNumber: this.permissionsShootingLeaderNumber,
-        instructorNumber: this.permissionsInstructorNumber,
-        arbiterNumber: this.permissionsArbiterNumber,
-        arbiterPermissionValidThru: this.permissionsArbiterPermissionValidThru.replace(this.dateVar, '-')
-      }
-      fetch('http://' + this.local + '/permissions/' + uuid + '?ordinal=' + this.ordinal, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      }).then(response => {
-        if (response.status === 200) {
-          response.json().then(
-            response => {
-              this.message = response
-              this.success = true
-              this.permissionsShootingLeaderNumber = ''
-              this.permissionsInstructorNumber = ''
-              this.permissionsArbiterNumber = ''
-              this.permissionsArbiterPermissionValidThru = ''
-              this.ordinal = ''
-              this.showloading()
-              this.getMemberByUUID(this.memberUUID)
-              this.autoClose()
-            })
-        } else {
-          response.json().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.autoClose()
-            })
-        }
-      })
-    },
-    updateMemberArbiterClass (uuid) {
-      fetch('http://' + this.local + '/permissions/arbiter/' + uuid, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.json().then(
-            response => {
-              this.message = response
-              this.success = true
-              this.showloading()
-              this.getMemberByUUID(this.memberUUID)
-              this.autoClose()
-            })
-        } else {
-          response.json().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.autoClose()
-            })
-        }
-      })
-    },
-    eraseMember (uuid) {
-      fetch('http://' + this.local + '/member/erase/' + uuid + '?additionalDescription=' + this.reason + '&erasedDate=' + this.erasedDate.replace(/\//gi, '-') + '&erasedType=' + this.erasedReasontype + '&pinCode=' + this.code, {
-        method: 'PATCH'
-      }).then(response => {
-        if (response.status === 200) {
-          response.json().then(
-            response => {
-              this.message = response
-              this.success = true
-              this.reason = null
-              this.code = null
-              this.showloading()
-              this.getMemberByUUID(this.memberUUID)
-              this.autoClose()
-            })
-        } else {
-          response.json().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.code = null
-              this.autoClose()
-            })
-        }
-      })
-    },
-    changeAdult (uuid) {
-      fetch('http://' + this.local + '/member/adult/' + uuid + '?pinCode=' + this.code, {
-        method: 'PATCH'
-      }).then(response => {
-        if (response.status === 200) {
-          response.json().then(
-            response => {
-              this.message = response
-              this.success = true
-              this.code = null
-              this.getMembersNames()
-              this.showloading()
-              this.getMemberByUUID(this.memberUUID)
-              this.autoClose()
-            })
-        } else {
-          response.json().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.code = null
-              this.autoClose()
-            })
-        }
-      })
-    },
-    changePzss (uuid) {
-      fetch('http://' + this.local + '/member/pzss/' + uuid, {
-        method: 'PATCH'
-      }).then(response => {
-        if (response.status === 200) {
-          response.json().then(
-            response => {
-              this.success = true
-              this.message = response
-              this.getMembersNames()
-              this.showloading()
-              this.getMemberByUUID(this.memberUUID)
-              this.autoClose()
-            }
-          )
-        } else {
-          response.json().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.autoClose()
-            }
-          )
-        }
-      })
-    },
-    addBarcodeToMember (uuid, barcode) {
-      fetch('http://' + this.local + '/member/addBarCode?uuid=' + uuid + '&barcode=' + barcode, {
-        method: 'PUT'
-      }).then(response => {
-        if (response.status === 200) {
-          response.json().then(
-            response => {
-              this.success = true
-              this.message = response
-              this.getMembersNames()
-              this.showloading()
-              this.getMemberByUUID(uuid)
-              this.autoClose()
-            }
-          )
-        } else {
-          response.json().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.autoClose()
-            }
-          )
-        }
-      })
-    },
-    findMemberByBarCode () {
-      fetch('http://' + this.local + '/member/findByBarCode?barcode=' + this.barcode, {
-        method: 'GET'
-      }).then(response => {
-        if (response.status === 200) {
-          response.json().then(
-            response => {
-              this.member = response
-              this.showloading()
-              this.barcode = null
-              this.memberUUID = response.uuid
-            }
-          )
-        } else {
-          response.json().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.autoClose()
-            }
-          )
-        }
-      })
-    },
-    filter (val, update) {
-      if (val === '') {
-        update(() => {
-          const needle = val.toLowerCase()
-          this.options = this.filters.filter(v => v.toLowerCase().indexOf(needle) > -1)
-        })
-        return
-      }
-
-      update(() => {
-        const needle = val.toLowerCase()
-        this.options = this.filters.filter(v => v.toLowerCase().indexOf(needle) > -1)
-      })
-    },
-    reload () {
-      window.location.reload()
-    },
-    onRejected () {
-      this.failure = true
-      this.message = 'Nie można dodać, sprawdź rozmiar pliku i jego typ'
-      this.autoClose()
-    },
-    file_selected (file) {
-      this.selected_file = file[0]
-    },
-    autoClose () {
-      setTimeout(() => {
-        this.failure = false
-        this.success = false
-        this.forbidden = false
-        this.downloaded = false
-        this.message = null
-        this.barcode = null
-        this.code = null
-      }, 2000)
-    }
-  },
-  name: 'member'
-}
+<script src="../scripts/member.js">
 </script>

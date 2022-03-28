@@ -605,7 +605,7 @@
   </q-card-actions>
 </q-card>
 </q-dialog>
-<q-dialog position="top" v-model="failure">
+<q-dialog :position="'top'" v-model="failure">
       <q-card>
         <q-card-section>
           <div v-if="message!=null" class="text-h6">{{message}}</div>
@@ -613,7 +613,7 @@
 
       </q-card>
 </q-dialog>
-<q-dialog position="top" v-model="success">
+<q-dialog :position="'top'" v-model="success">
       <q-card>
         <q-card-section>
           <div v-if="message!=null" class="text-h6">{{message}}</div>
@@ -637,7 +637,7 @@
   </q-card>
 </q-dialog>
 
-<q-dialog position="top" v-model="listDownload">
+<q-dialog :position="'top'" v-model="listDownload">
   <q-card>
     <q-card-section class="col">
     <div class="self-center col full-width no-outline text-center text-h5 text-bold">Pobrano Listę</div>
@@ -645,18 +645,22 @@
 
   </q-card>
 </q-dialog>
-<q-dialog v-model="addCaliber">
-  <q-card>
-    <q-card-section class="col">
+<q-dialog v-model="addCaliber" @keypress.enter="addNewCaliber(),code=null,addCaliber=false">
+  <q-card class="bg-green-5 text-center">
+    <!-- <q-card-section class="col">
     <div class="self-center col full-width no-outline text-center text-h5 text-bold">Czy na pewno kaliber {{caliberName}} do bazy?</div>
-  </q-card-section>
+  </q-card-section> -->
+    <q-card-section class="flex-center">
+      <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
+      <div><q-input autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input></div>
+    </q-card-section>
     <q-card-actions align="right">
-      <q-btn label="anuluj" color="primary" flat v-close-popup/>
-      <q-btn label="Dodaj" color="primary" v-close-popup @click="addNewCaliber()" />
+      <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
+      <q-btn label="Dodaj" color="black" v-close-popup @click="addNewCaliber(),code=null" />
     </q-card-actions>
   </q-card>
 </q-dialog>
-<q-dialog position="top" v-model="addedCaliber">
+<q-dialog :position="'top'" v-model="addedCaliber">
   <q-card>
     <q-card-section class="col">
     <div class="self-center col full-width no-outline text-center text-h5 text-bold">Dodano nowy kaliber do bazy</div>
@@ -699,7 +703,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog position="top" v-model="forbidden" @keypress.enter="forbidden=false">
+<q-dialog :position="'top'" v-model="forbidden" @keypress.enter="forbidden=false">
       <q-card class="bg-warning">
         <q-card-section>
           <div class="text-h6">Niewłaściwy kod. Spróbuj ponownie.</div>
@@ -710,24 +714,14 @@
 <q-dialog v-model="caliberInfo" @keypress.enter="caliberInfo=false">
       <q-card>
         <q-card-section>
-          <div class="text-h6">Caliber ID {{caliberUUID}}</div>
+          <div class="text-h6">Caliber ID <q-btn @click="copyClipboard()" borderless icon-right="content_copy"><div itemtype="text" id="copybtn">{{caliberUUID}}</div></q-btn></div>
         </q-card-section>
 
       </q-card>
 </q-dialog>
   </q-page>
 </template>
-<style>
-  .box{
-    transition-duration: 1s;
-    transition-timing-function: linear;
-    background-color: none;
-  }
-  .box:hover{
-    width: inherit;
-    background-color: orange;
-    opacity: 100;
-  }
+<style src="../style/style.scss" lang="scss">
 </style>
 <script>
 
@@ -829,6 +823,9 @@ export default {
         this.$q.loading.hide()
         this.timer = 0
       }, 1000)
+    },
+    copyClipboard () {
+      navigator.clipboard.writeText(this.caliberUUID)
     },
     createTodayDate () {
       const date = new Date()
@@ -1115,7 +1112,7 @@ export default {
       })
     },
     addNewCaliber () {
-      fetch('http://' + this.local + '/armory/calibers?caliber=' + this.caliberName, {
+      fetch('http://' + this.local + '/armory/calibers?caliber=' + this.caliberName + '&pinCode=' + this.code, {
         method: 'POST'
       }).then(response => {
         if (response.status === 200) {
@@ -1247,6 +1244,7 @@ export default {
         this.forbidden = false
         this.listDownload = false
         this.addedCaliber = false
+        this.addCaliber = false
         this.message = null
         this.barcode = null
       }, 2000)

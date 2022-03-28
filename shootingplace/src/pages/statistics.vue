@@ -52,9 +52,27 @@
               </div>
         </q-card-section>
         <q-card-section class="col-8">
-                      <div v-if="quantitySum.length <1" class="q-pa-md self-center col full-width no-outline text-bold text-center text-h6">^ Brak wyników składek - Wybierz daty ^</div>
-            <div v-if="quantitySum.length >0" class="q-pa-md self-center col full-width no-outline text-bold text-center text-h6">ilość składek : {{quantitySum.length}}</div>
-            <q-scroll-area v-if="quantitySum.length >0" class="full-width q-pa-none" style="height: 500px;">
+            <div v-if="quantitySum.length >0" class="q-pa-md self-center col full-width no-outline text-bold text-center text-h6">Ilość składek : {{quantitySum.length}}</div>
+            <q-virtual-scroll :items="quantitySum" type="table" class="full-width q-pa-none" style="height: 500px;">
+              <template v-slot:before>
+        <thead class="thead-sticky text-left">
+          <tr>
+            <th class="text-center full-width">Imię i nazwisko</th>
+            <th class="text-left full-width">Numer Legitymacji</th>
+            <th class="text-center full-width">Licencja</th>
+            <th class="text-center full-width">Status</th>
+          </tr>
+        </thead>
+          </template>
+          <template v-slot="{ item, index }">
+            <tr :key="index" dense class="rounded" style="cursor:pointer">
+              <td>{{item.secondName}} {{item.firstName}}</td>
+              <td>{{item.legitimationNumber}}</td>
+              <td>{{item.license.number}}</td>
+              <td v-if="item.active">Aktywny</td>
+              <td v-else>Nieaktywny</td>
+            </tr>
+          </template>
             <ol>
             <li v-for="(member,uuid) in quantitySum" :key="uuid" class="self-center col full-width no-outline text-center">
               <q-field color="black" class="self-center col full-width no-outline text-center" standout="bg-accent text-black" stack-label>
@@ -64,7 +82,7 @@
               <p></p>
             </li>
             </ol>
-            </q-scroll-area>
+            </q-virtual-scroll>
         </q-card-section>
         </div>
         </q-card>
@@ -519,7 +537,7 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog position="top" v-model="failure">
+<q-dialog :position="'top'" v-model="failure">
       <q-card>
         <q-card-section>
           <div v-if="message!=null" class="text-h6">{{message}}</div>
@@ -528,7 +546,7 @@
 
       </q-card>
 </q-dialog>
-<q-dialog position="top" v-model="success">
+<q-dialog :position="'top'" v-model="success">
       <q-card>
         <q-card-section>
           <div v-if="message!=null" class="text-h6">{{message}}</div>
@@ -536,7 +554,7 @@
 
       </q-card>
 </q-dialog>
-<q-dialog position="top" v-model="forbidden">
+<q-dialog :position="'top'" v-model="forbidden">
       <q-card class="bg-warning">
         <q-card-section>
           <div class="text-h6">Niewłaściwy kod. Spróbuj ponownie.</div>
@@ -546,7 +564,9 @@
 </q-dialog>
   </q-page>
 </template>
+<style src="../style/style.scss" lang="scss">
 
+</style>
 <script>
 
 import { scroll } from 'quasar'

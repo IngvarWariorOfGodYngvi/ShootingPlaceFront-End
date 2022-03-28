@@ -293,6 +293,9 @@
               <div v-if="choose == chooseSelect[7]" class="q-pa-md">
                 <q-btn color="primary" label="pobierz listę obecności klubowiczów" @click="showloading (),getAllMembersListToElection()"/>
               </div>
+              <div v-if="choose == chooseSelect[8]" class="q-pa-md">
+                <q-btn color="primary" label="pobierz Raport Sędziowania" @click="showloading (),getJudgingReport()"/>
+              </div>
               <!-- <div class="q-pa-md"><q-btn color="primary" label="mejla ślij" @click="sendMail ()"/></div> -->
             </q-card-section>
           </q-card>
@@ -347,7 +350,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog position="top" v-model="success">
+    <q-dialog :position="'top'" v-model="success">
       <q-card>
         <q-card-section>
           <div v-if="message!=null" class="text-h6">{{message}}</div>
@@ -481,7 +484,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-<q-dialog position="top" v-model="listDownload">
+<q-dialog :position="'top'" v-model="listDownload">
   <q-card>
     <q-card-section class="col">
     <div class="self-center col full-width no-outline text-center text-h5 text-bold">Pobrano Listę</div>
@@ -508,7 +511,7 @@ export default {
       others: [],
       clubs: [],
       choose: null,
-      chooseSelect: ['Listy Klubowiczów', 'Lista do zgłoszenia na Policję', 'Lista do skreślenia', 'Lista skreślonych', 'Osoby bez Patentu', 'Osoby nieaktywne', 'Lista Osób z Licencją i bez składek', 'Lista Obecności'],
+      chooseSelect: ['Listy Klubowiczów', 'Lista do zgłoszenia na Policję', 'Lista do skreślenia', 'Lista skreślonych', 'Osoby bez Patentu', 'Osoby nieaktywne', 'Lista Osób z Licencją i bez składek', 'Lista Obecności', 'Raport Sędziowania'],
       othersID: null,
       otherPerson: [],
       club: '',
@@ -892,6 +895,22 @@ export default {
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
         fileLink.setAttribute('download', 'Lista_obecności_klubowiczów.pdf')
+        document.body.appendChild(fileLink)
+        fileLink.click()
+        this.listDownload = true
+        this.autoClose()
+      })
+    },
+    getJudgingReport () {
+      axios({
+        url: 'http://' + this.local + '/files/downloadJudgingReport',
+        method: 'GET',
+        responseType: 'blob'
+      }).then(response => {
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        const fileLink = document.createElement('a')
+        fileLink.href = fileURL
+        fileLink.setAttribute('download', 'Raport sędziowania.pdf')
         document.body.appendChild(fileLink)
         fileLink.click()
         this.listDownload = true

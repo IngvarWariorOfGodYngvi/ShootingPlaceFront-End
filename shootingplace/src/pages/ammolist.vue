@@ -105,7 +105,7 @@
       </div>
     </q-card>
     </div>
-<q-dialog position="top" v-model="ammunitionListAlert">
+<q-dialog :position="'top'" v-model="ammunitionListAlert">
       <q-card>
         <q-card-section>
           <div class="text-h6">Pobrano listę z dnia {{date}}</div>
@@ -143,14 +143,14 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog position="top" v-model="fail">
+<q-dialog :position="'top'" v-model="fail">
       <q-card >
         <q-card-section>
           <div class="text-h6">{{message}}</div>
         </q-card-section>
       </q-card>
 </q-dialog>
-<q-dialog position="top" v-model="failArmory">
+<q-dialog :position="'top'" v-model="failArmory">
       <q-card class="bg-warning">
         <q-card-section>
           <div class="text-h6">Nie można wydać amunicji - Sprawdź stan magazynu</div>
@@ -226,7 +226,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-        <q-dialog position="top" v-model="addOtherAlert">
+        <q-dialog :position="'top'" v-model="addOtherAlert">
       <q-card>
         <q-card-section>
           <div class="text-h6">Zapisano do bazy</div>
@@ -246,7 +246,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog position="top" v-model="forbidden">
+    <q-dialog :position="'top'" v-model="forbidden">
       <q-card class="bg-warning">
         <q-card-section>
           <div class="text-h6">Niewłaściwy kod. Spróbuj ponownie.</div>
@@ -265,7 +265,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog position="top" v-model="success">
+    <q-dialog :position="'top'" v-model="success">
       <q-card>
         <q-card-section>
           <div class="text-h6">{{message}}</div>

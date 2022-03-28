@@ -475,14 +475,14 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog position="top" v-model="memberAlert">
+<q-dialog :position="'top'" v-model="memberAlert">
       <q-card>
         <q-card-section>
           <div class="text-h6 text-bold">Osoba została dodana do bazy klubu</div>
         </q-card-section>
       </q-card>
 </q-dialog>
-<q-dialog position="top" v-model="licenseAndPatentAlert">
+<q-dialog :position="'top'" v-model="licenseAndPatentAlert">
       <q-card>
         <q-card-section v-if="licenseNumber==null">
           <div class="text-h6">Uprawnienia patentu zostały nadane</div>
@@ -492,63 +492,63 @@
         </q-card-section>
       </q-card>
 </q-dialog>
-<q-dialog position="top" v-model="weaponAlert">
+<q-dialog :position="'top'" v-model="weaponAlert">
       <q-card>
         <q-card-section>
           <div class="text-h6">Dodano Pozwolenie na Broń</div>
         </q-card-section>
       </q-card>
 </q-dialog>
-<q-dialog position="top" v-model="instructorAlert">
+<q-dialog :position="'top'" v-model="instructorAlert">
       <q-card>
         <q-card-section>
           <div class="text-h6">Dodano Uprawnienia Instruktora</div>
         </q-card-section>
       </q-card>
 </q-dialog>
-<q-dialog position="top" v-model="shootingLeaderAlert">
+<q-dialog :position="'top'" v-model="shootingLeaderAlert">
       <q-card>
         <q-card-section>
           <div class="text-h6">Dodano Uprawnienia Prowadzącego Strzelanie</div>
         </q-card-section>
       </q-card>
 </q-dialog>
-<q-dialog position="top" v-model="arbiterAlert">
+<q-dialog :position="'top'" v-model="arbiterAlert">
       <q-card>
         <q-card-section>
           <div class="text-h6">Dodano Licencję Sędziego</div>
         </q-card-section>
       </q-card>
 </q-dialog>
-<q-dialog position="top" v-model="contributionConfirmDownloadAlert">
+<q-dialog :position="'top'" v-model="contributionConfirmDownloadAlert">
       <q-card>
         <q-card-section>
           <div class="text-h6">Pobrano potwierdzenie składki</div>
         </q-card-section>
       </q-card>
 </q-dialog>
-<q-dialog position="top" v-model="personalCardDownloadAlert">
+<q-dialog :position="'top'" v-model="personalCardDownloadAlert">
       <q-card>
         <q-card-section>
           <div class="text-h6">Pobrano kartę Klubowicza</div>
         </q-card-section>
       </q-card>
 </q-dialog>
-<q-dialog position="top" v-model="csvfile">
+<q-dialog :position="'top'" v-model="csvfile">
       <q-card>
         <q-card-section>
           <div class="text-h6">Pobrano plik .CSV</div>
         </q-card-section>
       </q-card>
 </q-dialog>
-<q-dialog position="top" v-model="success">
+<q-dialog :position="'top'" v-model="success">
       <q-card>
         <q-card-section>
           <div class="text-h6 text-center">{{message}}</div>
         </q-card-section>
       </q-card>
 </q-dialog>
-<q-dialog position="top" v-model="failure">
+<q-dialog :position="'top'" v-model="failure">
       <q-card>
         <q-card-section>
           <div class="text-h6 text-center">{{message}}</div>
@@ -593,14 +593,14 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog position="top" v-model="forbidden">
+<q-dialog :position="'top'" v-model="forbidden">
       <q-card class="bg-warning">
         <q-card-section>
           <div class="text-h6">Niewłaściwy kod. Spróbuj ponownie.</div>
         </q-card-section>
       </q-card>
 </q-dialog>
-<q-dialog position="top" v-model="conflict">
+<q-dialog :position="'top'" v-model="conflict">
       <q-card class="bg-warning">
         <q-card-section>
           <div class="text-h6">Wystąpił konflikt. Nie można wykonać żądania.</div>

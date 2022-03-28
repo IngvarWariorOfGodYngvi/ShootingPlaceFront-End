@@ -268,14 +268,14 @@
       <div class="col-2 q-pa-xs self-center text-center"><q-btn color="primary" @click="fileName = file.name,getFile (file.uuid)">pobierz plik</q-btn></div>
     </q-field>
   </div> -->
-  <q-dialog position="top" v-model="dataFail">
+  <q-dialog :position="'top'" v-model="dataFail">
       <q-card class="bg-red-5 text-center">
         <q-card-section>
           <div class="text-h6">Coś poszło nie tak</div>
         </q-card-section>
       </q-card>
   </q-dialog>
-<q-dialog position="top" v-model="success" @keypress.enter="success=false">
+<q-dialog :position="'top'" v-model="success" @keypress.enter="success=false">
       <q-card>
         <q-card-section>
           <div v-if="message!=null" class="text-h6">{{message}}</div>
@@ -283,7 +283,7 @@
 
       </q-card>
 </q-dialog>
-    <q-dialog v-model="failure" position="top" @keypress.enter="failure=false">
+    <q-dialog v-model="failure" :position="'top'" @keypress.enter="failure=false">
       <q-card>
         <q-card-section>
           <div class="text-h6">{{message}}</div>
