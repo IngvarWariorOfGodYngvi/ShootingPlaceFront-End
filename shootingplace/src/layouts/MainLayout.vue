@@ -5,15 +5,12 @@
         <q-btn
           flat
           dense
-          round
+          class="q-pa-none text-h6"
           icon="menu"
           aria-label="Menu"
+          label="PROGRAM"
           @click="leftDrawerOpen = !leftDrawerOpen"
         />
-
-        <q-toolbar-title>
-          Program
-        </q-toolbar-title>
 
        <!-- <q-toolbar-title>
           <div class="row">

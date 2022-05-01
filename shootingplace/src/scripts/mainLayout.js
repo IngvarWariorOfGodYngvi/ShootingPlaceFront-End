@@ -1,10 +1,12 @@
 import EssentialLink from 'components/EssentialLink.vue'
+import membersQuantities from 'components/MembersQuantities.vue'
 import App from 'src/App.vue'
 export default {
   name: 'MainLayout',
 
   components: {
-    EssentialLink
+    EssentialLink,
+    membersQuantities
   },
   created () {
     // this.clockTimer()
