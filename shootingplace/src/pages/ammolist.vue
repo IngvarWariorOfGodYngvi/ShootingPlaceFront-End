@@ -97,7 +97,7 @@
             >
              <q-btn class="col full-width full-height" @click="date = item.date,ammunitionListNumber = item.number,uuid= item.evidenceUUID,getEvidence(),ammunitionListInfo=true">
               <div>{{item.number}}</div>
-              <div>{{item.date}}</div>
+              <div>{{convertDate(item.date)}}</div>
               </q-btn>
             </q-item>
           </template>
@@ -345,6 +345,19 @@ export default {
         this.$q.loading.hide()
         this.timer = 0
       }, 1000)
+    },
+    convertDate (date) {
+      const current = new Date(date)
+      let month = current.getMonth() + 1
+      let day = current.getDate()
+      if (day < 10) {
+        day = '0' + day
+      }
+      if (month < 10) {
+        month = '0' + (month)
+      }
+      const formattedDate = day + '-' + (month) + '-' + current.getFullYear()
+      return formattedDate
     },
     getAmmoData () {
       fetch('http://' + this.local + '/ammoEvidence/evidence?state=true', {

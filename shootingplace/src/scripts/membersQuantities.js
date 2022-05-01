@@ -9,10 +9,18 @@ export default {
     return {
       quantities: [],
       members: null,
+      number: '',
       local: App.host
     }
   },
   methods: {
+    getNumber () {
+      fetch('http://' + this.local + '/statistics/maxLegNumber', {
+        method: 'GET'
+      }).then(response => response.json()).then(response => {
+        this.number = response
+      })
+    },
     getMembersQuantity () {
       fetch('http://' + this.local + '/member/membersQuantity', {
         method: 'GET',
@@ -38,7 +46,9 @@ export default {
     check () {
       this.getMembersQuantity()
       this.getActualYearMemberCounts()
+      this.getNumber()
       setInterval(() => {
+        this.getNumber()
         this.getMembersQuantity()
         this.getActualYearMemberCounts()
       }, 30000)

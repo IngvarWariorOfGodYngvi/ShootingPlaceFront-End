@@ -8,9 +8,9 @@
       <q-expansion-item label="Składki" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
         <q-card class="text-body2">
             <div class="row">
-        <q-card-section class="col-4">
+        <q-card-section class="col-3">
             <q-item class="col">
-              <q-input class="full-width" color="black" filled v-model="firstDate" label="Data początkowa">
+              <q-input class="full-width" color="black" dense filled v-model="firstDate" mask="####-##-##" label="Data początkowa">
                 <template v-slot:append>
                   <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -25,7 +25,7 @@
               </q-input>
             </q-item>
             <q-item class="col">
-              <q-input class="full-width" color="black" filled v-model="secondDate" label="Data końcowa">
+              <q-input class="full-width" color="black" dense filled v-model="secondDate" mask="####-##-##" label="Data końcowa">
                 <template v-slot:append>
                   <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -39,49 +39,41 @@
                 </template>
               </q-input>
             </q-item>
-           <div class="q-pa-md row-reverse" align="right">
+           <div class="row-reverse" align="right">
              <div class="row-reverse">
-              <q-radio @input="getSum()" class="q-pa-md" v-model="adultCondition" :val="false">
+              <q-radio @input="rearangeSumTable ()" class="q-pa-md" v-model="adultCondition" :val="false">
                 mołodzież
               </q-radio>
-              <q-radio @input="getSum()" class="q-pa-md" v-model="adultCondition" :val="true">
+              <q-radio @input="rearangeSumTable ()" class="q-pa-md" v-model="adultCondition" :val="true">
                 dorośli
               </q-radio>
              </div>
-              <q-btn @click="getSum ()" align="rigth">Wyszukaj</q-btn>
+              <q-btn @click="getSum(),rearangeSumTable ()" align="rigth">Wyszukaj</q-btn>
               </div>
         </q-card-section>
-        <q-card-section class="col-8">
-            <div v-if="quantitySum.length >0" class="q-pa-md self-center col full-width no-outline text-bold text-center text-h6">Ilość składek : {{quantitySum.length}}</div>
-            <q-virtual-scroll :items="quantitySum" type="table" class="full-width q-pa-none" style="height: 500px;">
+        <q-card-section class="col">
+            <div v-if="quantitySumRearangeTable.length >0" class="q-pa-md self-center col full-width no-outline text-bold text-center text-h6">Ilość Składek : {{quantitySumRearangeTable.length}}</div>
+            <q-virtual-scroll v-if="quantitySumRearangeTable.length >0" :items="quantitySumRearangeTable" type="table" dense class="q-pa-none" style="height: 40vh;">
               <template v-slot:before>
         <thead class="thead-sticky text-left">
           <tr>
-            <th class="text-center full-width">Imię i nazwisko</th>
-            <th class="text-left full-width">Numer Legitymacji</th>
-            <th class="text-center full-width">Licencja</th>
-            <th class="text-center full-width">Status</th>
+            <th class="text-left" ><div>{{quantitySumRearangeTable.length}} Nazwisko i Imię</div></th>
+            <th class="text-left" style="width: 20%"><div>Numer</div><div>Legitymacji</div></th>
+            <th class="text-left" style="width: 20%"><div>Numer</div><div>Licencji</div></th>
+            <th class="text-left" style="width: 20%">Status</th>
           </tr>
         </thead>
           </template>
           <template v-slot="{ item, index }">
             <tr :key="index" dense class="rounded" style="cursor:pointer">
-              <td>{{item.secondName}} {{item.firstName}}</td>
-              <td>{{item.legitimationNumber}}</td>
-              <td>{{item.license.number}}</td>
-              <td v-if="item.active">Aktywny</td>
-              <td v-else>Nieaktywny</td>
+              <td class="xyz"><b>{{index+1}}</b> {{item.secondName}} {{item.firstName}}</td>
+              <td>nr. leg {{item.legitimationNumber}}</td>
+              <td v-if="item.license.number != null" class="text-left">{{item.license.number}}</td>
+              <td v-if="item.license.number == null" class="text-left text-grey-8"><div>Brak Licencji</div></td>
+              <td v-if="item.active" class="bg-green-3 text-left"><div>Aktywny</div></td>
+              <td v-if="!item.active" class="bg-warning text-left"><div>Nieaktywny</div></td>
             </tr>
           </template>
-            <ol>
-            <li v-for="(member,uuid) in quantitySum" :key="uuid" class="self-center col full-width no-outline text-center">
-              <q-field color="black" class="self-center col full-width no-outline text-center" standout="bg-accent text-black" stack-label>
-                  <div class="self-center col full-width no-outline text-left">{{member.secondName}} {{member.firstName}}</div>
-                  <div class="self-center col full-width no-outline text-left">leg. {{member.legitimationNumber}}</div>
-              </q-field>
-              <p></p>
-            </li>
-            </ol>
             </q-virtual-scroll>
         </q-card-section>
         </div>
@@ -91,9 +83,9 @@
       <q-expansion-item label="Zapisy do klubu" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
         <q-card class="text-body2">
             <div class="row">
-        <q-card-section class="col-4">
+        <q-card-section class="col-3">
             <q-item class="col">
-              <q-input class="full-width" color="black" filled v-model="firstDateJoinDate" label="Data początkowa">
+              <q-input class="full-width" color="black" dense filled v-model="firstDateJoinDate" mask="####-##-##" label="Data początkowa">
                 <template v-slot:append>
                   <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -108,7 +100,7 @@
               </q-input>
             </q-item>
             <q-item class="col">
-              <q-input class="full-width" color="black" filled v-model="secondDateJoinDate" label="Data końcowa">
+              <q-input class="full-width" color="black" dense filled v-model="secondDateJoinDate" mask="####-##-##" label="Data końcowa">
                 <template v-slot:append>
                   <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -126,46 +118,33 @@
               <q-btn @click="getSumJoinDate ()">Wyszukaj</q-btn>
             </div>
         </q-card-section>
-        <q-card-section class="col-8">
-            <div v-if="quantitySumJoinDate.length <1" class="q-pa-md self-center col full-width no-outline text-bold text-center text-h6">^ Brak wyników zapisów - Wybierz daty ^</div>
-            <div v-if="quantitySumJoinDate.length >0" class="q-pa-md self-center col full-width no-outline text-bold text-center text-h6">ilość zapisów : {{quantitySumJoinDate.length}}</div>
-            <q-scroll-area v-if="quantitySumJoinDate.length >0" class="full-width q-pa-none" style="height: 500px;">
-               <q-field color="black" class="self-center col full-width no-outline" standout="bg-accent text-black" stack-label>
-                  <div class="self-center col full-width no-outline text-left">Nazwisko i Imię</div>
-                  <div class="self-center col full-width no-outline text-left">Numer legitymacji</div>
-                  <div class="self-center col full-width no-outline text-left">Data dołączenia do klubu</div>
-                  <div class="self-center col full-width no-outline text-left">Grupa</div>
-                  <div class="self-center col full-width no-outline text-left">Status</div>
-              </q-field>
-            <div v-for="(member,uuid) in quantitySumJoinDate" :key="uuid" >
-              <p></p>
-              <q-field v-if="!member.erased&&member.active" color="black" class="self-center col full-width no-outline" standout="bg-accent text-black" stack-label>
-                  <div class="self-center col full-width no-outline text-left">{{member.secondName}} {{member.firstName}}</div>
-                  <div class="self-center col full-width no-outline text-left">leg. {{member.legitimationNumber}}</div>
-                  <div class="self-center col full-width no-outline text-left">{{member.joinDate}}</div>
-                  <div v-if="member.adult" class="self-center col full-width no-outline text-left">Ogólna</div>
-                  <div v-if="!member.adult" class="self-center col full-width no-outline text-left">Młodzieżowa</div>
-                  <div class="self-center col full-width no-outline text-left">Klubowicz aktywny</div>
-              </q-field>
-              <q-field v-if="!member.erased&&!member.active" color="black" class="self-center col full-width no-outline bg-yellow-3" standout="bg-accent text-black" stack-label>
-                  <div class="self-center col full-width no-outline text-left">{{member.secondName}} {{member.firstName}}</div>
-                  <div class="self-center col full-width no-outline text-left">leg. {{member.legitimationNumber}}</div>
-                  <div class="self-center col full-width no-outline text-left">{{member.joinDate}}</div>
-                  <div v-if="member.adult" class="self-center col full-width no-outline text-left">Ogólna</div>
-                  <div v-if="!member.adult" class="self-center col full-width no-outline text-left">Młodzieżowa</div>
-                  <div class="self-center col full-width no-outline text-left">Klubowicz aktywny</div>
-              </q-field>
-              <q-field v-if="member.erased" color="black" class="self-center col full-width no-outline bg-red-3" standout="bg-accent text-black" stack-label>
-                  <div class="self-center col full-width no-outline text-left">{{member.secondName}} {{member.firstName}}</div>
-                  <div class="self-center col full-width no-outline text-left">leg. {{member.legitimationNumber}}</div>
-                  <div class="self-center col full-width no-outline text-left">{{member.joinDate}}</div>
-                  <div v-if="member.adult" class="self-center col full-width no-outline text-left">Ogólna</div>
-                  <div v-if="!member.adult" class="self-center col full-width no-outline text-left">Młodzieżowa</div>
-                  <div class="self-center col full-width no-outline text-left">Klubowicz aktywny</div>
-              </q-field>
-              <p></p>
-            </div>
-            </q-scroll-area>
+        <q-card-section class="col">
+            <div v-if="quantitySumJoinDateRearangeTable.length <1" class="q-pa-md self-center col full-width no-outline text-bold text-center text-h6">^ Brak wyników zapisów - Wybierz daty ^</div>
+            <div v-if="quantitySumJoinDateRearangeTable.length >0" class="q-pa-md self-center col full-width no-outline text-bold text-center text-h6">Ilość Zapisów : {{quantitySumJoinDateRearangeTable.length}}</div>
+        <q-virtual-scroll v-if="quantitySumJoinDateRearangeTable.length >0" :items="quantitySumJoinDateRearangeTable" type="table" dense class="row full-width" style="height: 50vh;">
+          <template v-slot:before>
+        <thead class="thead-sticky text-left">
+          <tr>
+            <th class="text-left"><div>{{quantitySumJoinDateRearangeTable.length}} Nazwisko i Imię</div></th>
+            <th class="text-left" style="width: 15%"><div>Numer</div><div>Legitymacji</div></th>
+            <th class="text-left" style="width: 15%"><div>Data dołączenia do</div><div>Klubu</div></th>
+            <th class="text-left" style="width: 15%">Grupa</th>
+            <th class="text-left" style="width: 15%">Status</th>
+          </tr>
+        </thead>
+          </template>
+    <template v-slot="{ item, index }">
+      <tr :key="index" class="rounded" style="cursor:pointer" >
+        <td class="text-left xyz"><b>{{index+1}}</b> {{item.secondName}} {{item.firstName}}</td>
+        <td class="text-left">nr leg. {{item.legitimationNumber}}</td>
+        <td class="text-left">{{item.joinDate}}</td>
+        <td v-if="item.adult" class="text-left"><div>Ogólna</div></td>
+        <td v-if="!item.adult" class="text-left"><div>Młodzieżowa</div></td>
+        <td v-if="item.active" class="bg-green-3 text-left"><div>Aktywny</div></td>
+        <td v-if="!item.active" class="bg-warning text-left"><div>Nieaktywny</div></td>
+      </tr>
+      </template>
+      </q-virtual-scroll>
         </q-card-section>
         </div>
         </q-card>
@@ -176,7 +155,7 @@
             <div class="row">
         <q-card-section class="col-3">
             <q-item class="col">
-              <q-input class="full-width" color="black" filled v-model="firstDateLicense" label="Data początkowa">
+              <q-input class="full-width" color="black" dense filled v-model="firstDateLicense" mask="####-##-##" label="Data początkowa">
                 <template v-slot:append>
                   <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -191,7 +170,7 @@
               </q-input>
             </q-item>
             <q-item class="col">
-              <q-input class="full-width" color="black" filled v-model="secondDateLicense" label="Data końcowa">
+              <q-input class="full-width" color="black" dense filled v-model="secondDateLicense" mask="####-##-##" label="Data końcowa">
                 <template v-slot:append>
                   <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -209,105 +188,49 @@
               <q-btn @click="getSumLicensed ()" >Wyszukaj</q-btn>
             </div>
             <div class="row" align="right">
-              <q-radio @input="paid = null, newLicense = null" v-model="allLicense" :val="true">Wszystkie</q-radio>
-              <q-radio @input="allLicense = false, newLicense = null" v-model="paid" :val="true">Opłacone</q-radio>
-              <q-radio @input="allLicense = false, newLicense = null" v-model="paid" :val="false">Nieopłacone</q-radio>
-              <q-radio @input="allLicense = false, paid = null" v-model="newLicense" :val="true">Nowe</q-radio>
+              <q-radio @input="paid = null, newLicense = null, getSumLicensed ()" v-model="allLicense" :val="true">Wszystkie</q-radio>
+              <q-radio @input="allLicense = false, newLicense = null, rearangeSumLicensedTable()" v-model="paid" :val="true">Opłacone</q-radio>
+              <q-radio @input="allLicense = false, newLicense = null, rearangeSumLicensedTable ()" v-model="paid" :val="false">Nieopłacone</q-radio>
+              <q-radio @input="allLicense = false, paid = null, rearangeSumLicensedTable ()" v-model="newLicense" :val="true">Nowe</q-radio>
             </div>
             <div v-if="licenseArray.length > 0" class="row" align="right">
               <q-btn color="primary" @click="toggleLicenseAlert = true">Zatwierdź opłacenie zaznaczonych</q-btn>
             </div>
         </q-card-section>
         <q-card-section class="col">
-            <div v-if="quantitySumLicense.length <1" class="q-pa-md self-center col full-width no-outline text-bold text-center text-h6">^ Brak wyników opłaconych licencji - Wybierz daty ^</div>
-            <div v-if="quantitySumLicense.length >0" class="q-pa-md self-center col full-width no-outline text-bold text-center text-h6">Ilość licencji : {{quantitySumLicense.length}}</div>
-            <q-scroll-area v-if="quantitySumLicense.length >0" class="full-width q-pa-none" style="height: 500px;">
-              <q-field color="black" class="self-center col full-width no-outline" standout="bg-accent text-black" stack-label>
-                  <div class="self-center col no-outline text-left">Nazwisko i Imię</div>
-                  <div class="self-center col no-outline text-right">Numer legitymacji</div>
-                  <div class="self-center col no-outline text-center">Grupa</div>
-                  <div class="self-center col no-outline text-center">Status</div>
-                  <div class="self-center col-2 no-outline text-center">Data</div>
-                  <div class="self-center col no-outline text-center">Nowa</div>
-                  <div class="self-center col-1 no-outline text-left">Opłacone w PZSS</div>
-              </q-field>
-              <div v-if="paid==null&&allLicense" class="self-center col full-width no-outline">
-                <div v-for="(member,uuid) in quantitySumLicense" :key="uuid">
-                  <p></p>
-                  <div>
-                    <q-field color="black" class="self-center col full-width no-outline" standout="bg-accent text-black" stack-label>
-                        <div class="self-center col no-outline text-left">{{member.secondName}} {{member.firstName}}</div>
-                        <div class="self-center col no-outline text-center">leg. {{member.legitimationNumber}}</div>
-                        <div v-if="member.adult" class="self-center col-2 no-outline text-center">Ogólna</div>
-                        <div v-if="!member.adult" class="self-center col-2 no-outline text-center">Młodzieżowa</div>
-                        <div v-if="member.active" class="self-center col no-outline text-center">Aktywny</div>
-                        <div v-if="!member.active" class="self-center col no-outline text-center">Nieaktywny</div>
-                        <div class="self-center col-2 no-outline text-center">{{member.date}}</div>
-                        <div v-if="member.new" class="self-center col no-outline text-center bg-warning">Tak</div>
-                        <div v-if="!member.new" class="self-center col no-outline text-center">Nie</div>
-                        <div v-if="!member.payInPZSSPortal" @dblclick="paid=false,allLicense=false" class="self-center col-1 no-outline text-center bg-red-3">Nie</div>
-                        <div v-if="member.payInPZSSPortal" @dblclick="paid=true,allLicense=false" class="self-center col-1 no-outline text-center bg-green-3">Tak</div>
-                    </q-field>
-                  </div>
-                  <p></p>
-                </div>
-              </div>
-              <div v-if="paid&&!allLicense" class="self-center col full-width no-outline">
-                <div v-for="(member,uuid) in quantitySumLicense" :key="uuid">
-                  <p></p>
-                  <q-field v-if="member.payInPZSSPortal" color="black" class="self-center col full-width no-outline bg-green-2" standout="bg-accent text-black" stack-label>
-                      <div class="self-center col no-outline text-left">{{member.secondName}} {{member.firstName}}</div>
-                      <div class="self-center col no-outline text-center">leg. {{member.legitimationNumber}}</div>
-                      <div v-if="member.adult" class="self-center col-2 no-outline text-center">Ogólna</div>
-                      <div v-if="!member.adult" class="self-center col-2 no-outline text-center">Młodzieżowa</div>
-                      <div v-if="member.active" class="self-center col no-outline text-center">Aktywny</div>
-                      <div v-if="!member.active" class="self-center col no-outline text-center">Nieaktywny</div>
-                      <div class="self-center col no-outline text-center">{{member.date}}</div>
-                      <div v-if="member.new" class="self-center col no-outline text-center bg-warning">Tak</div>
-                      <div v-if="!member.new" class="self-center col no-outline text-center">Nie</div>
-                      <div v-if="member.payInPZSSPortal" class="self-center col-1 no-outline text-center">Tak</div>
-                  </q-field>
-                  <p></p>
-                </div>
-              </div>
-              <div v-if="!paid&&!allLicense&&!newLicense" class="self-center col full-width no-outline">
-                <div v-for="(member,uuid) in quantitySumLicense" :key="uuid">
-                  <p></p>
-                  <q-field v-if="!member.payInPZSSPortal" color="black" class="self-center col full-width no-outline bg-red-2" standout="bg-accent text-black" stack-label>
-                      <q-checkbox v-model="licenseArray" :val="member.licenseUUID"></q-checkbox>
-                      <div class="self-center col no-outline text-left">{{member.secondName}} {{member.firstName}}</div>
-                      <div class="self-center col no-outline text-center">leg. {{member.legitimationNumber}}</div>
-                      <div v-if="member.adult" class="self-center col-2 no-outline text-center">Ogólna</div>
-                      <div v-if="!member.adult" class="self-center col-2 no-outline text-center">Młodzieżowa</div>
-                      <div v-if="member.active" class="self-center col no-outline text-center">Aktywny</div>
-                      <div v-if="!member.active" class="self-center col no-outline text-center">Nieaktywny</div>
-                      <div class="self-center col no-outline text-left">{{member.date}}</div>
-                      <div v-if="member.new" class="self-center col no-outline text-center bg-warning">Tak</div>
-                      <div v-if="!member.new" class="self-center col no-outline text-center">Nie</div>
-                      <div v-if="!member.payInPZSSPortal" class="self-center col-1 text-center">Nie</div>
-                  </q-field>
-                  <p></p>
-                </div>
-              </div>
-              <div v-if="newLicense==true" class="self-center col full-width no-outline">
-                <div v-for="(member,uuid) in quantitySumLicense" :key="uuid">
-                  <p></p>
-                    <q-field v-if="member.new" color="black" class="self-center col full-width no-outline" standout="bg-accent text-black" stack-label>
-                        <div class="self-center col no-outline text-left">{{member.secondName}} {{member.firstName}}</div>
-                        <div class="self-center col no-outline text-center">leg. {{member.legitimationNumber}}</div>
-                        <div v-if="member.adult" class="self-center col-2 no-outline text-center">Ogólna</div>
-                        <div v-if="!member.adult" class="self-center col-2 no-outline text-center">Młodzieżowa</div>
-                        <div v-if="member.active" class="self-center col no-outline text-center">Aktywny</div>
-                        <div v-if="!member.active" class="self-center col no-outline text-center">Nieaktywny</div>
-                        <div class="self-center col-2 no-outline text-center">{{member.date}}</div>
-                        <div v-if="member.new" class="self-center col no-outline text-center bg-warning">Tak</div>
-                        <div v-if="!member.payInPZSSPortal" @dblclick="paid=false,allLicense=false" class="self-center col-1 no-outline text-center bg-red-3">Nie</div>
-                        <div v-if="member.payInPZSSPortal" @dblclick="paid=true,allLicense=false" class="self-center col-1 no-outline text-center bg-green-3">Tak</div>
-                    </q-field>
-                  <p></p>
-                </div>
-              </div>
-            </q-scroll-area>
+            <div v-if="quantitySumLicenseRearangeTable.length <1" class="q-pa-md self-center col full-width no-outline text-bold text-center text-h6">^ Brak wyników opłaconych licencji - Wybierz daty ^</div>
+            <div v-if="quantitySumLicenseRearangeTable.length >0" class="q-pa-md self-center col full-width no-outline text-bold text-center text-h6">Ilość Licencji : {{quantitySumLicenseRearangeTable.length}}</div>
+            <q-virtual-scroll v-if="quantitySumLicenseRearangeTable.length >0" :items="quantitySumLicenseRearangeTable" type="table" dense class="row full-width" style="height: 50vh;">
+          <template v-slot:before>
+        <thead class="thead-sticky text-left">
+          <tr>
+            <th class="text-left"><div>{{quantitySumLicenseRearangeTable.length}}Nazwisko i Imię</div></th>
+            <th class="text-left" style="width: 10%;"><div>Numer</div><div>Legitymacji</div></th>
+            <th class="text-left" style="width: 10%;">Grupa</th>
+            <th class="text-left" style="width: 10%;">Status</th>
+            <th class="text-left" style="width: 15%;">Data</th>
+            <th class="text-left" style="width: 15%;"><div>Nowa /</div><div>Przedłużenie</div></th>
+            <th class="text-left" style="width: 15%;"><div>Opłacone w</div><div>PZSS</div></th>
+          </tr>
+        </thead>
+          </template>
+    <template v-slot="{ item, index }">
+      <tr :key="index" class="rounded" style="cursor:pointer" >
+        <td v-if="paid==false" class="text-left xyz"><q-checkbox dense v-model="licenseArray" :val="item.licenseUUID" :label="(index+1) + ' ' +item.secondName + ' ' + item.firstName "></q-checkbox></td>
+        <td v-else class="text-left xyz"><b>{{index+1}}</b> {{item.secondName}} {{item.firstName}} </td>
+        <td class="text-left">nr leg. {{item.legitimationNumber}}</td>
+        <td v-if="item.adult" class="text-left"><div>Ogólna</div></td>
+        <td v-if="!item.adult" class="text-left"><div>Młodzieżowa</div></td>
+        <td v-if="item.active" class="bg-green-3 text-left"><div>Aktywny</div></td>
+        <td v-if="!item.active" class="bg-warning text-left"><div>Nieaktywny</div></td>
+        <td class="text-left">{{item.date}}</td>
+        <td v-if="item.new" class="bg-warning">Nowa</td>
+        <td v-if="!item.new" >Przedłużenie</td>
+        <td v-if="item.payInPZSSPortal" class="bg-green-3">Opłacone</td>
+        <td v-if="!item.payInPZSSPortal" class="bg-red-3">Nieopłacone</td>
+      </tr>
+      </template>
+      </q-virtual-scroll>
         </q-card-section>
         </div>
         </q-card>
@@ -316,9 +239,9 @@
       <q-expansion-item label="Osoby skreślone" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
         <q-card class="text-body2">
             <div class="row">
-        <q-card-section class="col-4">
+        <q-card-section class="col-3">
             <q-item class="col">
-              <q-input class="full-width" color="black" filled v-model="firstDateErased" label="Data początkowa">
+              <q-input class="full-width" color="black" dense filled v-model="firstDateErased" mask="####-##-##" label="Data początkowa">
                 <template v-slot:append>
                   <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -333,7 +256,7 @@
               </q-input>
             </q-item>
             <q-item class="col">
-              <q-input class="full-width" color="black" filled v-model="secondDateErased" label="Data końcowa">
+              <q-input class="full-width" color="black" dense filled v-model="secondDateErased" mask="####-##-##" label="Data końcowa">
                 <template v-slot:append>
                   <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -351,29 +274,30 @@
                 <q-btn @click="getSumErased ()">Wyszukaj</q-btn>
               </div>
         </q-card-section>
-        <q-card-section class="col-8">
+        <q-card-section class="col">
             <div v-if="quantitySumErased.length <1" class="q-pa-md self-center col full-width no-outline text-bold text-center text-h6">^ Brak wyników skreślonych - Wybierz daty ^</div>
             <div v-if="quantitySumErased.length >0" class="q-pa-md self-center col full-width no-outline text-bold text-center text-h6">ilość skreślonych : {{quantitySumErased.length}}</div>
-            <q-scroll-area v-if="quantitySumErased.length >0" class="full-width q-pa-none" style="height: 500px;">
-              <q-field color="black" class="self-center col full-width no-outline" standout="bg-accent text-black" stack-label>
-                  <div class="self-center col full-width no-outline text-left">Nazwisko i Imię</div>
-                  <div class="self-center col full-width no-outline text-center">Powód</div>
-                  <div class="self-center col full-width no-outline text-left">Numer legitymacji</div>
-                  <div class="self-center col full-width no-outline text-left">Informacje dodatkowe </div>
-              </q-field>
-            <ol>
-            <li v-for="(member,uuid) in quantitySumErased" :key="uuid" class="self-center col full-width no-outline text-center">
-              <q-field color="black" class="self-center col full-width no-outline text-center" standout="bg-accent text-black" stack-label>
-                  <div class="self-center col full-width no-outline text-left">{{member.secondName}} {{member.firstName}}</div>
-                  <div class="self-center col full-width no-outline text-left">{{member.erasedEntity.date}} {{member.erasedEntity.erasedType}}</div>
-                  <div class="self-center col full-width no-outline text-left">leg. {{member.legitimationNumber}}</div>
-                  <div v-if="member.erasedEntity.additionalDescription==null" class="self-center col full-width no-outline text-left">Brak dodatkowych informacji</div>
-                  <div v-if="member.erasedEntity.additionalDescription!=null" class="self-center col full-width no-outline text-left">{{member.erasedEntity.additionalDescription}}</div>
-              </q-field>
-              <p></p>
-            </li>
-            </ol>
-            </q-scroll-area>
+        <q-virtual-scroll v-if="quantitySumErased.length >0" :items="quantitySumErased" type="table" dense class="row full-width" style="height: 50vh;">
+          <template v-slot:before>
+        <thead class="thead-sticky text-left">
+          <tr>
+            <th class="text-left"><div>{{quantitySumErased.length}} Nazwisko i Imię</div></th>
+            <th class="text-left" style="width:10%;">Powód</th>
+            <th class="text-left" style="width:10%;"><div>Numer</div><div>Legitymacji</div></th>
+            <th class="text-left" style="width:30%;"><div>Informacje</div><div>Dodatkowe</div></th>
+          </tr>
+        </thead>
+          </template>
+    <template v-slot="{ item, index }">
+      <tr :key="index" style="cursor:pointer" >
+        <td class="text-left xyz"><b>{{index+1}} </b> {{item.secondName}} {{item.firstName}}</td>
+        <td class="text-left"><div>{{item.erasedEntity.date}}</div><div>{{item.erasedEntity.erasedType}}</div></td>
+        <td class="text-left">nr leg. {{item.legitimationNumber}}</td>
+        <td v-if="item.erasedEntity.additionalDescription==null" class="text-left"><div>Brak dodatkowych informacji</div></td>
+        <td v-if="item.erasedEntity.additionalDescription!=null" class="bg-warning self-center text-center"><div style="justify-center">{{item.erasedEntity.additionalDescription}}</div></td>
+      </tr>
+      </template>
+      </q-virtual-scroll>
         </q-card-section>
         </div>
         </q-card>
@@ -382,9 +306,9 @@
       <q-expansion-item label="Klubowicze i amunicja" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
         <q-card class="text-body2">
             <div class="row">
-        <q-card-section class="col-4">
+        <q-card-section class="col-3">
             <q-item class="col">
-              <q-input class="full-width" color="black"  filled v-model="firstDateAmmo" label="Data początkowa">
+              <q-input class="full-width" color="black" dense filled v-model="firstDateAmmo" mask="####-##-##" label="Data początkowa">
                 <template v-slot:append>
                   <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -399,7 +323,7 @@
               </q-input>
             </q-item>
             <q-item class="col">
-              <q-input class="full-width" color="black" filled v-model="secondDateAmmo" label="Data końcowa">
+              <q-input class="full-width" color="black" dense filled v-model="secondDateAmmo" mask="####-##-##" label="Data końcowa">
                 <template v-slot:append>
                   <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -417,30 +341,42 @@
               <q-btn @click="memberAmmoTakesInTime ()">Wyszukaj</q-btn>
             </div>
         </q-card-section>
-        <q-card-section class="col-8">
+        <q-card-section class="col">
             <div v-if="quantityAmmo.length <1" class="q-pa-md self-center col full-width no-outline text-bold text-center text-h6">^ Brak wyników - Wybierz daty ^</div>
-            <q-scroll-area v-if="quantityAmmo.length >0" class="full-width q-pa-none" style="height: 500px;">
-            <ol>
-            <li v-for="(member,uuid) in quantityAmmo" :key="uuid" class="text-bold text-h6">
-              <q-field color="black" class="self-center col full-width no-outline" standout="bg-accent text-black" stack-label>
-                  <div class="self-center col full-width no-outline text-left">{{member.secondName}} {{member.firstName}}</div>
-                  <div class="self-center col full-width no-outline text-left">leg. {{member.legitimationNumber}}</div>
-              </q-field>
-              <p></p>
-              <q-field color="black" class="self-center col full-width no-outline" standout="bg-accent text-black" stack-label>
-                 <div class="self-center col full-width no-outline text-left">kaliber</div>
-                 <div class="self-center col full-width no-outline text-left">Ilość</div>
-              </q-field>
-              <div v-for="(caliber,id) in member.caliber" :key="id">
-                  <q-field color="black" class="self-center col full-width no-outline" standout="bg-accent text-black" stack-label>
-                     <div class="self-center col full-width no-outline text-left">{{caliber.name}}</div>
-                     <div class="self-center col full-width no-outline text-left">{{caliber.quantity}}</div>
-                  </q-field>
-              </div>
-            <p></p>
-            </li>
-            </ol>
-            </q-scroll-area>
+            <q-virtual-scroll v-if="quantityAmmo.length >0" :items="quantityAmmo" type="table" dense class="row full-width" style="height: 50vh;">
+          <template v-slot:before>
+        <thead class="thead-sticky text-left">
+          <tr>
+            <th class="text-left" style="width: 25%"><div>{{quantityAmmo.length}} Nazwisko i Imię</div></th>
+            <th class="text-left" style="width: 15%"><div>Numer</div><div>Legitymacji</div></th>
+            <th class="text-left" style="width: 10%" >5,6mm</th>
+            <th class="text-left" style="width: 10%">9x19mm</th>
+            <th class="text-left" style="width: 10%">12/76</th>
+            <th class="text-left" style="width: 10%">.38</th>
+            <th class="text-left" style="width: 10%">.357</th>
+            <th class="text-left" style="width: 10%">7,62x39mm</th>
+          </tr>
+        </thead>
+          </template>
+    <template v-slot="{ item, index }">
+      <tr :key="index" style="cursor:pointer" >
+        <td class="text-left xyz"><div><b>{{index+1}} </b>{{item.secondName}} {{item.firstName}}</div></td>
+        <td class="text-left">nr leg. {{item.legitimationNumber}}</td>
+        <td class="text-left"><div v-for="(caliber,id) in item.caliber" :key="id">
+          <div v-if="caliber.name == '5,6mm'">{{caliber.quantity}} szt.</div></div></td>
+        <td class="text-left"><div v-for="(caliber,id) in item.caliber" :key="id">
+          <div v-if="caliber.name == '9x19mm'">{{caliber.quantity}} szt.</div></div></td>
+        <td class="text-left"><div v-for="(caliber,id) in item.caliber" :key="id">
+          <div v-if="caliber.name == '12/76'">{{caliber.quantity}} szt.</div></div></td>
+        <td class="text-left"><div v-for="(caliber,id) in item.caliber" :key="id">
+          <div v-if="caliber.name == '.38'">{{caliber.quantity}} szt.</div></div></td>
+        <td class="text-left"><div v-for="(caliber,id) in item.caliber" :key="id">
+          <div v-if="caliber.name == '.357'">{{caliber.quantity}} szt.</div></div></td>
+        <td class="text-left"><div v-for="(caliber,id) in item.caliber" :key="id">
+          <div v-if="caliber.name == '7,62x39mm'">{{caliber.quantity}} szt.</div></div></td>
+      </tr>
+      </template>
+      </q-virtual-scroll>
         </q-card-section>
         </div>
         </q-card>
@@ -594,13 +530,16 @@ export default {
       code: null,
       licenseArray: [],
       quantitySum: [],
+      quantitySumRearangeTable: [],
       quantitySumJoinDate: [],
+      quantitySumJoinDateRearangeTable: [],
       quantitySumErased: [],
       quantitySumLicense: [],
+      quantitySumLicenseRearangeTable: [],
       quantitySumJoinDateByMonths: [],
       quantityAmmo: [],
-      adultCondition: true,
-      allLicense: false,
+      adultCondition: null,
+      allLicense: true,
       toggleLicenseAlert: false,
       forbidden: false,
       failure: false,
@@ -647,11 +586,12 @@ export default {
       setScrollPosition(target, offset, duration)
     },
     getSum () {
-      fetch('http://' + this.local + '/statistics/contributionSum?firstDate=' + this.firstDate.replace(/\//gi, '-') + '&secondDate=' + this.secondDate.replace(/\//gi, '-') + '&condition=' + this.adultCondition, {
+      fetch('http://' + this.local + '/statistics/contributionSum?firstDate=' + this.firstDate.replace(/\//gi, '-') + '&secondDate=' + this.secondDate.replace(/\//gi, '-'), {
         method: 'GET'
       }).then(response => {
         response.json().then(response => {
           this.quantitySum = response
+          this.quantitySumRearangeTable = response
         })
       })
     },
@@ -661,6 +601,7 @@ export default {
       }).then(response => {
         response.json().then(response => {
           this.quantitySumJoinDate = response
+          this.quantitySumJoinDateRearangeTable = response
         })
       })
     },
@@ -679,9 +620,41 @@ export default {
       }).then(response => {
         response.json().then(response => {
           this.quantitySumLicense = response
+          this.quantitySumLicenseRearangeTable = response
           this.allLicense = true
         })
       })
+    },
+    rearangeSumLicensedTable () {
+      const arr = this.quantitySumLicense
+      const arr1 = []
+      if (this.paid !== null) {
+        for (let i = 0; i < arr.length; i++) {
+          if (arr[i].payInPZSSPortal === this.paid) {
+            arr1.push(arr[i])
+          }
+        }
+      }
+      if (this.newLicense === true) {
+        for (let i = 0; i < arr.length; i++) {
+          if (arr[i].new === true) {
+            arr1.push(arr[i])
+          }
+        }
+      }
+      this.quantitySumLicenseRearangeTable = arr1
+    },
+    rearangeSumTable () {
+      const arr = this.quantitySum
+      const arr1 = []
+      if (this.adultCondition !== null) {
+        for (let i = 0; i < arr.length; i++) {
+          if (arr[i].adult === this.adultCondition) {
+            arr1.push(arr[i])
+          }
+        }
+      }
+      this.quantitySumRearangeTable = arr1
     },
     getMembersInMonths () {
       fetch('http://' + this.local + '/statistics/joinMonthSum?year=' + this.year.replace(/\//gi, '-'), {

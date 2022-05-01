@@ -4,7 +4,7 @@
         <q-item>
           <div class="text-center col full-width no-outline text-h4 text-bold" tabindex="0">DODAJ NOWEGO KLUBOWICZA</div>
         </q-item>
-      </div>
+    </div>
     <div>
     <q-stepper
       header-nav
@@ -31,7 +31,7 @@
       <q-item><q-input class="full-width" dense color="red" type="tel" v-model="memberPhone" placeholder="tylko cyfry" prefix="+48 " label="Numer telefonu *" mask="### ### ###" filled onkeypress="return (event.charCode > 47 && event.charCode < 58)"/></q-item>
       <q-item><q-input class="full-width" dense filled color="green" type="email" v-model="memberEmail" label="email" @input="isPresentEmail(memberEmail)"/></q-item>
       <q-item><q-input class="full-width" dense filled color="green" v-model="memberLegitimation" label="Numer Legitymacji" onkeypress="return (event.charCode > 47 && event.charCode < 58)"/></q-item>
-      <q-item><q-input class="full-width" dense filled v-model="memberJoinDate" mask="####/##/##" :rules="['date']" label="Data dołączenia do Klubu" hint="użyj kalendarza">
+      <q-item><q-input class="full-width" dense filled v-model="memberJoinDate" mask="####-##-##" label="Data dołączenia do Klubu" hint="użyj kalendarza">
                           <template v-slot:append>
                             <q-icon name="event" class="cursor-pointer">
                               <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -248,7 +248,7 @@
       <q-card-section class="col-6 bg-grey-2">
       <div>
       <q-item><q-input class="full-width" dense v-model="patentNumber" mask="#####/AAA/##/####" label="Numer Patentu" filled/></q-item>
-      <q-item><q-input class="full-width" dense filled v-model="patentDate" mask="####/##/##" :rules="['date']" label="Data Wydania Patentu">
+      <q-item><q-input class="full-width" dense filled v-model="patentDate" mask="####-##-##" :rules="['date']" label="Data Wydania Patentu">
                         <template v-slot:append>
                           <q-icon name="event" class="cursor-pointer">
                             <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -322,7 +322,7 @@
       <q-card-section class="bg-grey-2 col-6">
       <div>
       <q-item><q-input class="full-width" dense v-model="licenseNumber" placeholder="tylko cyfry" label="Numer Licencji" filled/></q-item>
-      <q-item><q-input class="full-width" dense filled v-model="licenseDate" mask="####/12/31" :rules="['date']" label="Ważna do" hint="użyj kalendarza">
+      <q-item><q-input class="full-width" dense filled v-model="licenseDate" mask="####-12-31" :rules="['date']" label="Ważna do" hint="użyj kalendarza">
                       <template v-slot:append>
                         <q-icon name="event" class="cursor-pointer">
                           <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -411,7 +411,7 @@
         <div class="col">
           <q-item><q-item-label>Jeśli posiada Licencję Sędziego - uzupełnij dane</q-item-label></q-item>
           <q-item><q-input class="full-width" dense v-model="permissionsArbiterNumber" filled label="Numer uprawnień" /></q-item>
-          <q-item><q-input class="full-width" dense filled v-model="permissionsArbiterPermissionValidThru" mask="####/12/31" :rules="['date']" label="Ważne do" hint="użyj kalendarza">
+          <q-item><q-input class="full-width" dense filled v-model="permissionsArbiterPermissionValidThru" mask="####-12-31" :rules="['date']" label="Ważne do" hint="użyj kalendarza">
                               <template v-slot:append>
                                 <q-icon name="event" class="cursor-pointer">
                                   <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">

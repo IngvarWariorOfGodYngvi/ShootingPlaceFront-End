@@ -4,6 +4,7 @@
     tag="a"
     :href="link"
     dense
+    @click="refresh()"
   >
     <q-item-section
       v-if="icon"
@@ -43,6 +44,13 @@ export default {
     icon: {
       type: String,
       default: ''
+    }
+  },
+  methods: {
+    refresh () {
+      if (window.location.href === this.link) {
+        window.location.reload()
+      }
     }
   }
 }

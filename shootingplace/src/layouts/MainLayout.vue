@@ -11,6 +11,10 @@
           @click="leftDrawerOpen = !leftDrawerOpen"
         />
 
+        <q-toolbar-title>
+          Program
+        </q-toolbar-title>
+
        <!-- <q-toolbar-title>
           <div class="row">
             <div class="col" id="title">{{$keycloak.keycloak.clientId}} </div>
@@ -37,37 +41,30 @@
         </div> -->
       </q-toolbar>
     </q-header>
-
     <q-drawer
       v-model="leftDrawerOpen"
       bordered
       show-if-above
-      content-style="height: 100vh"
+      content-style="height:100vh;"
       style="width: 50px;"
     >
-      <q-list >
-          <q-item @click="showloading(),clear()" class="flex flex-center q-pa-md" clickable tag="a" target="_self" :href="hrefTarget" width="max">
-            <div class="text-h6 text-bold">STRONA GŁÓWNA</div>
+    <div class="full-height bg-secondary">
+      <q-list class="bg-secondary">
+          <q-item @click="showloading(),clear()" class="flex flex-center q-pa-md bg-primary text-white xyz1" clickable tag="a" target="_self" :href="hrefTarget" width="max">
+            <div class="text-h6 text-bold text-center"><div>PROGRAM</div> STRONA GŁÓWNA</div>
           </q-item>
           <div @click="showloading(),clear()">
         <EssentialLink
           v-for="link in essentialLinks"
           :key="link.title"
           v-bind="link"
+          class="bg-secondary text-white xyz"
         />
         </div>
       </q-list>
-      <members-quantities>
+      <members-quantities class="bg-secondary">
       </members-quantities>
-      <!-- <div class="q-pa-sm" style="height: 28%" dense>
-      <q-item-label v-if="quantities[8]>0" class="text-bold text-red" dense caption lines="3">Nieopłaconyh licencji : {{quantities[8]}}</q-item-label>
-      <q-item-label class="text-bold" dense caption lines="3">Najwyższy numer legitymacji : {{number}}</q-item-label>
-      <q-item-label class="text-bold" dense caption lines="3">Licencje ważne : {{quantities[1]}}</q-item-label>
-      <q-item-label class="text-bold" dense caption lines="3">Licencje nieważne : {{quantities[2]}}</q-item-label>
-      <q-item-label class="text-bold" dense caption lines="3">Klubowiczów ogółem : {{quantities[0] + quantities[3]}} ({{quantities[0]}} + {{quantities[3]}})</q-item-label>
-      <q-item-label class="text-bold" dense caption lines="3">Zapisów w aktualnym roku : {{members}}</q-item-label>
-      <q-item-label class="text-bold" dense caption lines="3">Nowych licencji w aktualnym roku : {{quantities[9]}}</q-item-label>
-      </div> -->
+      </div>
     </q-drawer>
 
     <q-page-container>
@@ -91,6 +88,8 @@
     </q-page-container>
   </q-layout>
 </template>
+<style src="../style/style.scss" lang="scss">
+</style>
 
 <script src="../scripts/mainLayout.js">
 

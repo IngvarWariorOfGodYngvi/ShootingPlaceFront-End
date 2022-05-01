@@ -1,9 +1,10 @@
 import App from 'src/App.vue'
 export default {
-  name: 'PageIndex',
+  name: 'MainList',
   data () {
     return {
       app: 'http://' + App.prod,
+      friend: 'http://' + App.friend,
       color: 'primary',
       tournamentCheck: false,
       local: App.host

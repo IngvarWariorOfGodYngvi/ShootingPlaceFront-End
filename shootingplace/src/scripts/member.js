@@ -12,6 +12,9 @@ Vue.directive('temp', function (el) {
 export default {
   data () {
     return {
+      sortLicense: false,
+      sortLegitimation: false,
+      sortName: false,
       picture: false,
       socialWork: true,
       editLicense: false,
@@ -102,6 +105,7 @@ export default {
       licenseNumber: '',
       validThru: '',
       memberDTOArg: [],
+      memberDTOArgRearangeTable: [],
       calibers: [],
       quantities: [],
       erasedTypes: [],
@@ -176,6 +180,19 @@ export default {
         this.$q.loading.hide()
         this.timer = 0
       }, 1000)
+    },
+    convertDate (date) {
+      const current = new Date(date)
+      let month = current.getMonth() + 1
+      let day = current.getDate()
+      if (day < 10) {
+        day = '0' + day
+      }
+      if (month < 10) {
+        month = '0' + (month)
+      }
+      const formattedDate = day + '-' + (month) + '-' + current.getFullYear()
+      return formattedDate
     },
     handleScroll (search) {
       const word = search.split(' ')
@@ -495,6 +512,7 @@ export default {
       }).then(response => response.json())
         .then(response => {
           this.memberDTOArg = response.sort()
+          this.memberDTOArgRearangeTable = response
         })
     },
     getAllMemberDTO () {
@@ -503,6 +521,7 @@ export default {
       }).then(response => response.json())
         .then(response => {
           this.memberDTOArg = response
+          this.memberDTOArgRearangeTable = response
         })
     },
     getListCalibers () {
@@ -625,9 +644,9 @@ export default {
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
+        console.log(response.data.type)
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
-        console.log(response.data)
         fileLink.href = fileURL
         fileLink.setAttribute('download', response.data.type)
         document.body.appendChild(fileLink)
@@ -1233,6 +1252,66 @@ export default {
     },
     file_selected (file) {
       this.selected_file = file[0]
+    },
+    /**
+    * @param {string} type - The string
+    */
+    sortF (type) {
+      if (type === 'numberLeg') {
+        if (!this.sortLegitimation) {
+          this.memberDTOArgRearangeTable.sort((a, b) => b.legitimationNumber - a.legitimationNumber)
+          this.sortLegitimation = !this.sortLegitimation
+        } else {
+          this.memberDTOArgRearangeTable.sort((a, b) => a.legitimationNumber - b.legitimationNumber)
+          this.sortLegitimation = !this.sortLegitimation
+        }
+      }
+      if (type === 'name') {
+        if (!this.sortName) {
+          this.memberDTOArgRearangeTable.sort((a, b) => ('' + b.secondName).localeCompare(a.secondName))
+          this.sortName = !this.sortName
+        } else {
+          this.memberDTOArgRearangeTable.sort((a, b) => ('' + a.secondName).localeCompare(b.secondName))
+          this.sortName = !this.sortName
+        }
+      }
+      if (type === 'numberLicense') {
+        if (!this.sortLicense) {
+          this.memberDTOArg.sort((a, b) => b.license.number - a.license.number)
+          this.memberDTOArgRearangeTable.sort((a, b) => b.license.number - a.license.number)
+          this.sortLicense = !this.sortLicense
+        } else {
+          this.memberDTOArg.sort((a, b) => a.license.number - b.license.number)
+          this.memberDTOArgRearangeTable.sort((a, b) => a.license.number - b.license.number)
+          this.sortLicense = !this.sortLicense
+        }
+      }
+    },
+    rearangeMemberDTO () {
+      const arr = this.memberDTOArg
+      const arr1 = []
+      if (this.adult !== null && this.active === null) {
+        for (let i = 0; i < arr.length; i++) {
+          if (arr[i].adult === this.adult) {
+            arr1.push(arr[i])
+          }
+        }
+      }
+      if (this.active !== null && this.adult === null) {
+        for (let i = 0; i < arr.length; i++) {
+          if (arr[i].active === this.active) {
+            arr1.push(arr[i])
+          }
+        }
+      }
+      if (this.active !== null && this.adult !== null) {
+        for (let i = 0; i < arr.length; i++) {
+          if (arr[i].active === this.active && arr[i].adult === this.adult) {
+            arr1.push(arr[i])
+          }
+        }
+      }
+      this.memberDTOArgRearangeTable = arr1
     },
     autoClose () {
       setTimeout(() => {

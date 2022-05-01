@@ -1,39 +1,5 @@
 <template>
   <q-page padding>
-    <!-- <div>
-      <q-item>
-        <div class="text-center col full-width no-outline text-h4 text-bold" tabindex="0">USTAWIENIA</div>
-      </q-item>
-    </div>
-    <q-card >
-      <q-card-section>
-          <div>tutaj będą wszelkie pliki do ponownego pobrania</div>
-          <div>tutaj będą ustawienia w formie steppera</div>
-          <div>muszą się tu znaleźć takie rzeczy jak : </div>
-          <div class="q-pa-md">PIERWSZY SUPER-UŻYTKOWNIK</div>
-          <div class="q-pa-md">
-              <div>nazwa usera</div>
-              <div>pinCode usera</div>
-              <div>superuser = true</div>
-          </div>
-          <div class="q-pa-md">PRZYDZIELANIE NOWYCH UŻYTKOWNIKÓW</div>
-          <div class="q-pa-md">
-              <div>nazwa usera</div>
-              <div>pinCode usera</div>
-          </div>
-          <div class="q-pa-md">KLUB</div>
-          <div class="q-pa-md">
-              <div>nazwa / adres / numer licencji / strona itd</div>
-          </div>
-          <div class="q-pa-md">SKŁADKI</div>
-          <div class="q-pa-md">
-            <div>ustawienie wysokości składki dla dorosłych</div>
-            <div>ustawienie wysokości składki dla młodzieży</div>
-            <div>ustawienie składek : miesięczna / 2-miesięczna / kwartalna / półroczna / roczna</div>
-            <div>do kiedy są ważne</div>
-          </div>
-      </q-card-section>
-    </q-card> -->
     <div>
         <q-item>
           <div class="text-center col full-width no-outline text-h4 text-bold" tabindex="0">USTAWIENIA {{respo}}</div>
@@ -232,7 +198,7 @@
     <q-uploader multiple style="max-width: 400px" method="POST" :url="('http://' + local + '/files/upload')"
     label="Dodaj plik" accept=".jpg, image/*" @rejected="onRejected" field-name="file" @added="file_selected"/>
   </div>
-    <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
+    <q-field color="black" class="self-center col full-width no-outline text-bold text-center" dense standout="bg-accent text-black" stack-label>
       <div class="col-5 self-center text-bold text-center">Nazwa pliku</div>
       <div class="col-1 self-center text-bold text-center">Data utworzenia</div>
       <div class="col-1 self-center text-bold text-center">Godzina utworzenia</div>
@@ -240,10 +206,10 @@
       <div class="col-2 self-center text-bold text-center">Typ</div>
       <div class="col-2 self-center text-center"><div>Pobierz plik</div></div>
     </q-field>
-    <q-virtual-scroll :items="files" visible class="full-width q-pa-none" style="height: 80vh;">
+    <q-virtual-scroll :items="files" dense visible class="full-width" style="height: 80vh;">
       <template v-slot="{ item, index }">
         <div :key="index" dense @click.left.ctrl="uuid=item.uuid,deleteConfirm=true">
-          <q-field @click.left.ctrl="deleteConfirm=true" color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
+          <q-field @click.left.ctrl="deleteConfirm=true" color="black" dense class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
             <q-tooltip v-if="item.type.includes('image')" :delay="750" @hide ="url = ''" @before-show ="getUrl (item.uuid)" anchor="center middle" self="center middle" transition-show="scale"
                 transition-hide="scale" content-style="width: 30%; height: 70%"><q-img :src="url" spinner-color="white" style="height: 100%; width: 100%" /></q-tooltip>
             <div class="col-5 self-center text-bold text-justify">{{item.name}}</div>
@@ -251,23 +217,11 @@
             <div class="col-1 self-center text-bold text-center">{{item.time}}</div>
             <div class="col-1 self-center text-bold text-center">{{item.size}}</div>
             <div class="col-2 self-center text-bold text-center">{{item.type}}</div>
-            <div class="col-2 q-pa-xs self-center text-center"><q-btn color="primary" @click="fileName = item.name,getFile (item.uuid)">pobierz plik</q-btn></div>
+            <div class="col-2 q-pa-xs self-center text-center"><q-btn color="primary" dense @click="fileName = item.name,getFile (item.uuid)">pobierz plik</q-btn></div>
           </q-field>
         </div>
       </template>
     </q-virtual-scroll>
-  <!-- <div v-for="(file,uuid) in files" :key="uuid">
-    <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
-      <q-tooltip v-if="file.type.includes('image')" :delay="750" @hide ="url = ''" @before-show ="getUrl (file.uuid)" anchor="center middle" self="center middle" transition-show="scale"
-          transition-hide="scale" content-style="width: 30%; height: 70%"><q-img :src="url" spinner-color="white" style="height: 100%; width: 100%" /></q-tooltip>
-      <div class="col-3 self-center text-bold text-left">{{file.name}}</div>
-      <div class="col-2 self-center text-bold text-center">{{file.date}}</div>
-      <div class="col-1 self-center text-bold text-center">{{file.time}}</div>
-      <div class="col-2 self-center text-bold text-center">{{file.size}}</div>
-      <div class="col-2 self-center text-bold text-center">{{file.type}}</div>
-      <div class="col-2 q-pa-xs self-center text-center"><q-btn color="primary" @click="fileName = file.name,getFile (file.uuid)">pobierz plik</q-btn></div>
-    </q-field>
-  </div> -->
   <q-dialog :position="'top'" v-model="dataFail">
       <q-card class="bg-red-5 text-center">
         <q-card-section>

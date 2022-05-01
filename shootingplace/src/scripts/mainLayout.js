@@ -1,19 +1,14 @@
 import EssentialLink from 'components/EssentialLink.vue'
-import MembersQuantities from 'components/MembersQuantities.vue'
 import App from 'src/App.vue'
 export default {
   name: 'MainLayout',
 
   components: {
-    EssentialLink,
-    MembersQuantities
+    EssentialLink
   },
   created () {
     // this.clockTimer()
-    this.getNumber()
-    this.getMembersQuantity()
     this.getActualYearMemberCounts()
-    this.check()
   },
   data () {
     return {
@@ -33,22 +28,22 @@ export default {
       essentialLinks: [
         {
           title: 'Lista Klubowiczów',
-          icon: 'perm_identity',
+          icon: 'person',
           link: 'http://' + App.prod + 'member'
         },
         {
           title: 'Licencje',
-          icon: 'perm_identity',
+          icon: 'person',
           link: 'http://' + App.prod + 'license'
         },
         {
           title: 'Dodaj Nowego Klubowicza',
-          icon: 'add',
+          icon: 'person_add',
           link: 'http://' + App.prod + 'member/adding'
         },
         {
           title: 'Lista Amunicyjna',
-          icon: 'book',
+          icon: 'list_alt',
           link: 'http://' + App.prod + 'ammolist'
         },
         {
@@ -63,12 +58,12 @@ export default {
         },
         {
           title: 'Zbrojownia',
-          icon: 'book',
+          icon: 'storage',
           link: 'http://' + App.prod + 'armory'
         },
         {
           title: 'Statystyki',
-          icon: 'book',
+          icon: 'bar_chart',
           link: 'http://' + App.prod + 'statistics'
         },
         {
@@ -80,6 +75,11 @@ export default {
           title: 'Ustawienia',
           icon: 'settings',
           link: 'http://' + App.prod + 'settings'
+        },
+        {
+          title: 'Faktury STRONA GŁÓWNA',
+          icon: 'receipt',
+          link: 'http://' + App.friend
         }
       ],
       programName: 'Program'
@@ -105,24 +105,6 @@ export default {
     onClick () {
       console.log('Clicked on a fab action')
     },
-    getNumber () {
-      fetch('http://' + this.local + '/statistics/maxLegNumber', {
-        method: 'GET'
-      }).then(response => response.json()).then(response => {
-        this.number = response
-      })
-    },
-    getMembersQuantity () {
-      fetch('http://' + this.local + '/member/membersQuantity', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => response.json())
-        .then(response => {
-          this.quantities = response
-        })
-    },
     getActualYearMemberCounts () {
       fetch('http://' + this.local + '/statistics/actualYearMemberCounts', {
         method: 'GET',
@@ -133,16 +115,6 @@ export default {
         .then(response => {
           this.members = response
         })
-    },
-    check () {
-      this.checkAnyOpenAmmoList()
-      this.checkTournament()
-      this.getMembersQuantity()
-      setInterval(() => {
-        this.checkAnyOpenAmmoList()
-        this.checkTournament()
-        this.getMembersQuantity()
-      }, 30000)
     },
     // checkAnyOpenAmmoList () {
     //   fetch('http://' + this.local + '/ammoEvidence/checkAnyOpenEvidence', {

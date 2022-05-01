@@ -423,7 +423,7 @@
                     </div>
                     <div dense class="col-1" @dblclick="scoreUUID = item.uuid,metric = item.metricNumber,toggleDSQDNF=true">
                         <q-field dense class="text-center" standout="bg-accent text-black" stack-label label="metryka">
-                            <div class="self-center full-width col no-outline text-center text-black text-caption" tabindex="0">{{item.metricNumber}}</div>
+                            <div class="self-center col no-outline text-center text-black text-caption" tabindex="0">{{item.metricNumber}}</div>
                         </q-field>
                       </div>
                       <q-field dense class="box col-2 cursor-pointer" standout="bg-accent text-black" label="10 ogólnie" stack-label>
@@ -611,7 +611,7 @@
         <q-card>
           <q-card-section class="col items-center">
             <q-item><q-input v-model="tournamentName" hint="nazwa" label="Nowa nazwa zawodów" filled /></q-item>
-            <q-item><q-input filled v-model="tournamentDate" mask="####/##/##" :rules="['date']" label="Wybierz datę" hint="użyj kalendarza">
+            <q-item><q-input filled v-model="tournamentDate" mask="####-##-##" :rules="['date']" label="Wybierz datę" hint="użyj kalendarza">
                             <template v-slot:append>
                               <q-icon name="event" class="cursor-pointer">
                                 <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -770,7 +770,7 @@
         </q-card-section>
         <q-card-actions align="right">
           <q-btn flat label="anuluj" color="primary" v-close-popup />
-          <q-btn label="usuń" color="warning" v-close-popup @click="removeMemberFromCompetition(valUUID, finder),finder = null"/>
+          <q-btn label="usuń" color="warning" v-close-popup @click="removeMemberFromCompetition(),finder = null"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -848,7 +848,7 @@
           /></q-item>
           <q-item><q-item-label class="text-h6 text-center full-width">Data zawodów</q-item-label></q-item>
           <q-item>
-            <q-input class="full-width" filled v-model="tournamentDate" mask="####/##/##" label="Wybierz datę" hint="użyj kalendarza">
+            <q-input class="full-width" filled v-model="tournamentDate" mask="####-##-##" label="Wybierz datę" hint="użyj kalendarza">
               <template v-slot:append>
                 <q-icon name="event" class="cursor-pointer">
                   <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -1453,8 +1453,8 @@ export default {
       fetch('http://' + this.local + '/member/getAllNames', {
         method: 'GET'
       }).then(response => response.json())
-        .then(filters => {
-          this.filters = filters
+        .then(response => {
+          this.filters = response
         })
     },
     getMembersNameswithPermissions () {
@@ -1606,8 +1606,8 @@ export default {
       fetch('http://' + this.local + '/other/arbiters', {
         method: 'GET'
       }).then(response => response.json())
-        .then(filtersOtherArbiters => {
-          this.filtersOtherArbiters = filtersOtherArbiters
+        .then(response => {
+          this.filtersOtherArbiters = response
         })
     },
     getGunInTournament () {

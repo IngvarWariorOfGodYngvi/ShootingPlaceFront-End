@@ -9,44 +9,43 @@
           <q-card class="text-body2">
             <div class="row">
           <div class="q-pa-md text-left col full-width no-outline text-h5 text-bold" >Ilość osób {{members2.length}}</div>
-          <div v-if="licenseList.length>0" class="q-pa-md text-right"><q-btn @click="memberName='WSZYSCY - którzy mają zaznaczone opłacono w PZSS', prolongLicenseAlertAll=true" label="przedłuż zaznaczone">({{licenseList.length}})</q-btn></div>
+          <div v-if="licenseList.length>0" class="q-pa-md text-right"><q-btn @click="memberName='WSZYSCY - którzy mają zaznaczone opłacono w PZSS', prolongLicenseAlertAll=true" :label="'przedłuż zaznaczone (' + licenseList.length + ')'"></q-btn></div>
             </div>
-            <q-virtual-scroll :items="members2" style="height: 600px;">
+            <q-virtual-scroll :items="members2" style="height: 70vh;">
               <template v-slot="{ item, index }">
-                <div :key="index" dense class="row">
-            <div class="self-center text-center no-outline row text-black" tabindex="1">{{index+1}}.</div>
-            <q-checkbox v-if="item.license.paid" v-model="licenseList" :val="item.uuid"/>
-            <q-checkbox color="grey" v-else disable/>
-           <q-field class="col" color="black" label="Nazwisko i Imię" standout="bg-accent text-black" stack-label>
+                <div :key="index" class="row">
+            <q-checkbox dense v-if="item.license.paid" v-model="licenseList" :val="item.uuid" left-label>{{index+1}}.</q-checkbox>
+            <q-checkbox dense color="grey" v-else disable left-label>{{index+1}}.</q-checkbox>
+           <q-field dense class="col" color="black" label="Nazwisko i Imię" standout="bg-accent text-black" stack-label>
                   <div>
                     <div class="self-center col full-width no-outline row text-black" tabindex="1">{{item.secondName}} {{item.firstName}}</div>
                   </div>
            </q-field>
-           <q-field v-if="item.active" class="col" color="black" label="Status" standout="bg-accent text-black" stack-label>
+           <q-field dense v-if="item.active" class="col-2" color="black" label="Status" standout="bg-accent text-black" stack-label>
                   <div>
                     <div class="self-center col full-width no-outline row text-black" tabindex="1">Aktywny</div>
                   </div>
            </q-field>
-           <q-field v-if="!item.active" class="col bg-red-3" color="black" label="Status" standout="bg-accent text-black" stack-label>
+           <q-field dense v-if="!item.active" class="col-2 bg-red-3" color="black" label="Status" standout="bg-accent text-black" stack-label>
                   <div>
                     <div class="self-center col full-width no-outline row text-black" tabindex="1">Nieaktywny</div>
                   </div>
            </q-field>
-           <q-field class="col-2" label="Numer Licencji" standout="bg-accent text-black" stack-label>
+           <q-field dense class="col-1" label="Numer Licencji" standout="bg-accent text-black" stack-label>
                   <div class="self-center col full-width no-outline row text-black" tabindex="1">{{item.license.number}}</div>
            </q-field>
-           <q-field class="col-2" label="Grupa" standout="bg-accent text-black" stack-label>
+           <q-field dense class="col-2" label="Grupa" standout="bg-accent text-black" stack-label>
                   <div v-if="item.adult" class="self-center col full-width no-outline row text-black" tabindex="1">Grupa Ogólna</div>
                   <div v-if="!item.adult" class="self-center col full-width no-outline row text-black" tabindex="1">Grupa Młodzieżowa</div>
            </q-field>
-           <q-field class="col-2" label="Ważność licencji" standout="bg-accent text-black" stack-label>
+           <q-field dense class="col-2" label="Ważność licencji" standout="bg-accent text-black" stack-label>
                   <div>
-                  <div class="self-center col full-width no-outline row text-black" tabindex="1">{{item.license.validThru}}</div>
+                    <div class="row text-black" tabindex="1">{{convertDate (item.license.validThru)}}</div>
                   </div>
            </q-field>
-           <q-btn color="grey-5" v-if="!item.license.paid && !item.active" class="col-1" label="opłać licencję"><q-tooltip content-class="bg-red text-subtitle2" anchor="top middle" >UREGULUJ SKŁADKI</q-tooltip></q-btn>
-           <q-btn color="grey-8" v-if="!item.license.paid && item.active" class="col-1" @click="memberName = item.firstName + item.secondName,memberUUID = item.uuid,paymentLicenseAlert = true">opłać licencję</q-btn>
-           <q-btn color="primary" v-if="item.license.paid" class="col-1" @click="memberName = item.firstName + item.secondName ,licensePistolPermission = item.license.pistolPermission, licenseRiflePermission = item.license.riflePermission, licenseShotgunPermission = item.license.shotgunPermission,memberUUID = item.uuid, prolongLicenseAlert = true">przedłuż licencję</q-btn>
+           <q-btn dense color="grey-5" v-if="!item.license.paid && !item.active" class="col-2" label="opłać licencję"><q-tooltip content-class="bg-red text-subtitle2" anchor="top middle" >UREGULUJ SKŁADKI</q-tooltip></q-btn>
+           <q-btn dense color="grey-8" v-if="!item.license.paid && item.active" class="col-2" @click="memberName = item.firstName + item.secondName,memberUUID = item.uuid,paymentLicenseAlert = true">opłać licencję</q-btn>
+           <q-btn dense color="primary" v-if="item.license.paid" class="col-2" @click="memberName = item.firstName + item.secondName ,licensePistolPermission = item.license.pistolPermission, licenseRiflePermission = item.license.riflePermission, licenseShotgunPermission = item.license.shotgunPermission,memberUUID = item.uuid, prolongLicenseAlert = true">przedłuż licencję</q-btn>
                 </div>
               </template>
             </q-virtual-scroll>
@@ -62,39 +61,38 @@
             <q-virtual-scroll :items="members" style="height: 600px;">
               <template v-slot="{ item, index }">
                 <div :key="index" dense class="row">
-           <div class="self-center text-center no-outline row text-black" tabindex="1">{{index+1}}.</div>
-           <q-checkbox v-if="item.license.paid" v-model="licenseList" :val="item.uuid"/>
-           <q-checkbox color="grey" v-else disable/>
-           <q-field class="col" label="Nazwisko i Imię" standout="bg-accent text-black" stack-label>
+           <q-checkbox dense v-if="item.license.paid" v-model="licenseList" :val="item.uuid" left-label>{{index+1}}.</q-checkbox>
+           <q-checkbox dense color="grey" v-else disable left-label>{{index+1}}.</q-checkbox>
+           <q-field dense class="col" label="Nazwisko i Imię" standout="bg-accent text-black" stack-label>
                     <div>
                   <div class="self-center col full-width no-outline row text-black" tabindex="1">{{item.secondName}} {{item.firstName}}</div>
                   </div>
            </q-field>
-           <q-field v-if="item.active" class="col" label="Status" standout="bg-accent text-black" stack-label>
+           <q-field dense v-if="item.active" class="col-2" label="Status" standout="bg-accent text-black" stack-label>
                     <div>
-                  <div class="self-center col full-width no-outline row text-black" tabindex="1">Aktywny</div>
+                  <div class="row text-black" tabindex="1">Aktywny</div>
                   </div>
            </q-field>
-           <q-field v-if="!item.active" class="col bg-red-3" label="Status" standout="bg-accent text-black" stack-label>
+           <q-field dense v-if="!item.active" class="col-2 bg-red-3" label="Status" standout="bg-accent text-black" stack-label>
                     <div>
-                  <div class="self-center col full-width no-outline row text-black" tabindex="1">Nieaktywny</div>
+                  <div class="row text-black" tabindex="1">Nieaktywny</div>
                   </div>
            </q-field>
-           <q-field class="col-2" label="Numer Licencji" standout="bg-accent text-black" stack-label>
+           <q-field dense class="col-1" label="Numer Licencji" standout="bg-accent text-black" stack-label>
                   <div class="self-center col full-width no-outline row text-black" tabindex="1">{{item.license.number}}</div>
            </q-field>
-           <q-field class="col-2" label="Grupa" standout="bg-accent text-black" stack-label>
+           <q-field dense class="col-2" label="Grupa" standout="bg-accent text-black" stack-label>
                   <div v-if="item.adult" class="self-center col full-width no-outline row text-black" tabindex="1">Grupa Ogólna</div>
                   <div v-if="!item.adult" class="self-center col full-width no-outline row text-black" tabindex="1">Grupa Młodzieżowa</div>
            </q-field>
-           <q-field class="col-2" label="Ważność licencji" standout="bg-accent text-black" stack-label>
+           <q-field dense class="col-2" label="Ważność licencji" standout="bg-accent text-black" stack-label>
                     <div>
-                  <div class="self-center col full-width no-outline row text-black" tabindex="1">{{item.license.validThru}}</div>
+                  <div class="self-center col full-width no-outline row text-black" tabindex="1">{{convertDate (item.license.validThru)}}</div>
                   </div>
            </q-field>
-           <q-btn color="grey-5" v-if="!item.license.paid && !item.active" class="col-1" label="opłać licencję"><q-tooltip content-class="bg-red text-subtitle2" anchor="top middle" >UREGULUJ SKŁADKI</q-tooltip></q-btn>
-           <q-btn color="grey-8" v-if="!item.license.paid && item.active" class="col-1" @click="memberName = item.firstName + item.secondName,memberUUID = item.uuid,paymentLicenseAlert = true">opłać licencję</q-btn>
-           <q-btn color="primary" v-if="item.license.paid" class="col-1" @click="memberName = item.firstName + item.secondName ,licensePistolPermission = item.license.pistolPermission, licenseRiflePermission = item.license.riflePermission, licenseShotgunPermission = item.license.shotgunPermission,memberUUID = item.uuid, prolongLicenseAlert = true">przedłuż licencję</q-btn>
+           <q-btn dense color="grey-5" v-if="!item.license.paid && !item.active" class="col-2" label="opłać licencję"><q-tooltip content-class="bg-red text-subtitle2" anchor="top middle" >UREGULUJ SKŁADKI</q-tooltip></q-btn>
+           <q-btn dense color="grey-8" v-if="!item.license.paid && item.active" class="col-2" @click="memberName = item.firstName + item.secondName,memberUUID = item.uuid,paymentLicenseAlert = true">opłać licencję</q-btn>
+           <q-btn dense color="primary" v-if="item.license.paid" class="col-2" @click="memberName = item.firstName + item.secondName ,licensePistolPermission = item.license.pistolPermission, licenseRiflePermission = item.license.riflePermission, licenseShotgunPermission = item.license.shotgunPermission,memberUUID = item.uuid, prolongLicenseAlert = true">przedłuż licencję</q-btn>
                 </div>
               </template>
             </q-virtual-scroll>
@@ -110,40 +108,39 @@
             <q-virtual-scroll :items="quantitySumLicensePayment" style="height: 600px;">
               <template v-slot="{ item, index }">
                 <div :key="index" dense class="row">
-           <div class="self-center text-center no-outline row text-black" tabindex="1">{{index+1}}.</div>
-           <q-checkbox v-model="payPZSSList" :val="item.paymentUuid"/>
-           <q-field class="col" label="Nazwisko i Imię" standout="bg-accent text-black" stack-label>
+           <q-checkbox dense v-model="payPZSSList" :val="item.paymentUuid" left-label>{{index+1}}.</q-checkbox>
+           <q-field dense class="col" label="Nazwisko i Imię" standout="bg-accent text-black" stack-label>
                     <div>
                   <div class="self-center col full-width no-outline row text-black" tabindex="1">{{item.firstName}} {{item.secondName}}</div>
                   </div>
            </q-field>
-            <q-field class="col-2" label="Grupa" standout="bg-accent text-black" stack-label>
+            <q-field dense class="col-2" label="Grupa" standout="bg-accent text-black" stack-label>
                   <div v-if="item.adult" class="self-center col full-width no-outline row text-black" tabindex="1">Grupa Ogólna</div>
                   <div v-if="!item.adult" class="self-center col full-width no-outline row text-black" tabindex="1">Grupa Młodzieżowa</div>
            </q-field>
-           <q-field v-if="item.active" class="col" label="Status" standout="bg-accent text-black" stack-label>
+           <q-field dense v-if="item.active" class="col" label="Status" standout="bg-accent text-black" stack-label>
                   <div>
                     <div class="self-center col full-width no-outline row text-black" tabindex="1">Aktywny</div>
                   </div>
            </q-field>
-           <q-field v-if="!item.active" class="col bg-red-3" label="Status" standout="bg-accent text-black" stack-label>
+           <q-field dense v-if="!item.active" class="col bg-red-3" label="Status" standout="bg-accent text-black" stack-label>
                   <div>
                     <div class="self-center col full-width no-outline row text-black" tabindex="1">Nieaktywny</div>
                   </div>
            </q-field>
-           <q-field class="col-2" label="Data wpłaty" standout="bg-accent text-black" stack-label>
+           <q-field dense class="col-2" label="Data wpłaty" standout="bg-accent text-black" stack-label>
                     <div>
                   <div class="self-center col full-width no-outline row text-black" tabindex="1">{{item.date}}</div>
                   </div>
            </q-field>
-           <q-field class="col-2" label="Na Rok" standout="bg-accent text-black" stack-label>
+           <q-field dense class="col-2" label="Na Rok" standout="bg-accent text-black" stack-label>
                   <div class="self-center col full-width no-outline row text-black" tabindex="1">{{item.validForYear}}</div>
            </q-field>
-           <q-field v-if="!item.new" class="col-2" label="Rodzaj" standout="bg-accent text-black" stack-label>
-                  <div class="self-center col full-width no-outline row text-black" tabindex="1">Przedłużenie</div>
+           <q-field dense v-if="!item.new" class="col-2" label="Rodzaj" standout="bg-accent text-black" stack-label>
+                  <div class="row text-black" tabindex="1">Przedłużenie</div>
            </q-field>
-           <q-field v-if="item.new" class="col-2 bg-warning" label="Rodzaj" standout="bg-acceny text-black" stack-label>
-                  <div class="self-center col full-width no-outline row text-black" tabindex="1">Nowa</div>
+           <q-field dense v-if="item.new" class="col-2 bg-warning" label="Rodzaj" standout="bg-acceny text-black" stack-label>
+                  <div class="row text-black" tabindex="1">Nowa</div>
            </q-field>
                 </div>
               </template>
@@ -285,6 +282,19 @@ export default {
         this.$q.loading.hide()
         this.timer = 0
       }, 1000)
+    },
+    convertDate (date) {
+      const current = new Date(date)
+      let month = current.getMonth() + 1
+      let day = current.getDate()
+      if (day < 10) {
+        day = '0' + day
+      }
+      if (month + 1 < 10) {
+        month = '0' + (month + 1)
+      }
+      const formattedDate = day + '-' + (month) + '-' + current.getFullYear()
+      return formattedDate
     },
     getMembersWithLicense () {
       fetch('http://' + this.local + '/license/membersWithNotValidLicense', {

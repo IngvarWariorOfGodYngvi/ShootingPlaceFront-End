@@ -60,24 +60,24 @@
       <q-card v-if="!persentation">
         <q-card-section class="col">
           <div class="row q-pa-md">
-          <q-input v-model="caliberName" placeholder="Nowy kaliber" filled></q-input>
-          <q-btn @click="addCaliber = true">dodaj kaliber do bazy danych</q-btn>
+          <q-input dense v-model="caliberName" placeholder="Nowy kaliber" filled></q-input>
+          <q-btn dense @click="addCaliber = true">dodaj kaliber do bazy danych</q-btn>
           </div>
           <div class="col">
               <q-item class="col">
-                <div class="self-center col full-width no-outline text-center text-bold" style="text-center">KALIBER</div>
-                <div class="self-center col full-width no-outline text-center text-bold" style="text-center">ILOŚĆ NA STANIE</div>
-                <div class="self-center col full-width no-outline text-center text-bold" style="text-center"></div>
+                <div class="self-center col-3 no-outline text-left text-bold" style="text-center">KALIBER</div>
+                <div class="self-center col-3 no-outline text-left text-bold" style="text-center">ILOŚĆ NA STANIE</div>
+                <div class="self-center col no-outline text-center text-bold" style="text-center"></div>
               </q-item>
           </div>
               <div class="row" v-for="(caliber,id) in calibers" :key="id">
-              <q-item  @dblclick="caliberUUID = caliber.uuid, caliberInfo=true" class="col">
-                <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
-                    <div class="self-center col full-width no-outline text-center text-bold" style="text-center">{{caliber.name}}</div>
-                    <div class="self-center col full-width no-outline text-center text-bold" style="text-center">{{caliber.quantity}}</div>
+              <q-item dense @dblclick="caliberUUID = caliber.uuid, caliberInfo=true" class="col">
+                <q-field dense color="black" class="self-center col-6 no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
+                    <div class="self-center col-6 no-outline text-left text-bold" style="text-center">{{caliber.name}}</div>
+                    <div class="self-center col-6 no-outline text-left text-bold" style="text-center">{{caliber.quantity}}</div>
                 </q-field>
-                <q-btn @click="caliberUUID = caliber.uuid, addCaliberDialog = true" class="col-2">aktualizuj stan {{caliber.name}}</q-btn>
-                <q-btn @click="caliberUUID = caliber.uuid, caliberHistory = true, getCaliberHistory ()" class="col-2">historia dodawania</q-btn>
+                <q-btn dense @click="caliberUUID = caliber.uuid, addCaliberDialog = true" class="col">aktualizuj stan {{caliber.name}}</q-btn>
+                <q-btn dense @click="caliberUUID = caliber.uuid, caliberHistory = true, getCaliberHistory ()" class="col">historia dodawania</q-btn>
               </q-item>
             </div>
         </q-card-section>
@@ -89,7 +89,7 @@
         <div class="row">
         <q-card-section class="col-4">
             <q-item class="col">
-              <q-input class="full-width" color="black" filled v-model="firstDate" label="Data początkowa">
+              <q-input dense class="full-width" color="black" mask="####-##-##" filled v-model="firstDate" label="Data początkowa">
                 <template v-slot:append>
                   <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -104,7 +104,7 @@
               </q-input>
             </q-item>
              <q-item class="col">
-              <q-input class="full-width" color="black" filled v-model="secondDate" label="Data końcowa">
+              <q-input dense class="full-width" color="black" mask="####-##-##" filled v-model="secondDate" label="Data końcowa">
                 <template v-slot:append>
                   <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -283,7 +283,7 @@
       <q-item><q-input filled class="full-width col" v-model="ammoQuantity" onkeypress="return (event.charCode > 44 && event.charCode < 58)" label="Ilość Amunicji"></q-input></q-item>
       <q-item><q-input filled class="full-width col" v-model="ammoDescription" label="opis"></q-input></q-item>
       <q-item>
-        <q-input class="full-width" filled v-model="ammoDate" mask="####/##/##" label="data" hint="użyj kalendarza">
+        <q-input class="full-width" filled v-model="ammoDate" mask="####-##-##" label="data" hint="użyj kalendarza">
           <template v-slot:append>
             <q-icon name="event" class="cursor-pointer">
               <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -406,7 +406,7 @@
     <div class="text-h6 text-center">Wystawianie listu przewozowego</div>
     <div class="row">
       <q-item>
-        <q-input class="full-width" filled v-model="date" mask="####/##/##" label="data początkowa" hint="użyj kalendarza">
+        <q-input class="full-width" filled v-model="date" mask="####-##-##" label="data początkowa" hint="użyj kalendarza">
           <template v-slot:append>
             <q-icon name="event" class="cursor-pointer">
               <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -421,7 +421,7 @@
         </q-input>
       </q-item>
       <q-item>
-        <q-input class="full-width" filled v-model="date1" mask="####/##/##" label="data końcowa" hint="użyj kalendarza">
+        <q-input class="full-width" filled v-model="date1" mask="####-##-##" label="data końcowa" hint="użyj kalendarza">
           <template v-slot:append>
             <q-icon name="event" class="cursor-pointer">
               <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
