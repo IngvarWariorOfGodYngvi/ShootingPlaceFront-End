@@ -51,7 +51,7 @@ export default {
         this.getNumber()
         this.getMembersQuantity()
         this.getActualYearMemberCounts()
-      }, 30000)
+      }, 300000)
     }
   }
 }

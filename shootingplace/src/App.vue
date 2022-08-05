@@ -7,7 +7,6 @@
 <script>
 // import keycloak from '@dsb-norge/vue-keycloak-js'
 import Vue from 'vue'
-// import App from './App.vue'
 // import router from './router'
 import axios from 'axios'
 Vue.prototype.$axios = axios
@@ -46,9 +45,10 @@ Vue.prototype.$axios = axios
 export default {
   name: 'App',
   friend: 'localhost:8080/invoices/#/',
-  // prod: 'localhost:8081/#/',
-  prod: 'localhost:8080/strzelnica/#/',
-  host: 'localhost:8080/shootingplace-1.0/'
-  // host: 'localhost:8080/shootingplace'
+  prod: 'localhost:8081/#/',
+  // prod: 'localhost:8080/strzelnica/#/',
+  // host: 'localhost:8080/shootingplace-1.0/'
+  host: 'localhost:8080/shootingplace'
 }
+
 </script>

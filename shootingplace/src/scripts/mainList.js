@@ -50,7 +50,7 @@ export default {
       setInterval(() => {
         this.checkAnyOpenAmmoList()
         this.checkTournament()
-      }, 30000)
+      }, 300000)
     }
   }
 }

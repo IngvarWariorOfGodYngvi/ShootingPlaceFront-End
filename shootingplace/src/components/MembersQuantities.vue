@@ -1,5 +1,5 @@
 <template>
-      <div class="q-pa-sm text-white" style="height: 28%" dense>
+      <div class="q-pa-sm text-white" dense>
       <q-item-label v-if="quantities[8]>0" class="text-bold text-red" dense caption lines="3">Nieopłaconyh licencji : {{quantities[8]}}</q-item-label>
       <q-item-label class="text-bold text-white" dense caption lines="3">Najwyższy numer legitymacji : {{number}}</q-item-label>
       <q-item-label class="text-bold text-white" dense caption lines="3">Licencje ważne : {{quantities[1]}}</q-item-label>

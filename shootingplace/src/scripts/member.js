@@ -4,6 +4,7 @@ const stringOptions = []
 import Vue from 'vue'
 import axios from 'axios'
 import App from 'src/App.vue'
+import MemberComp from 'components/MemberComp.vue'
 Vue.prototype.$axios = axios
 Vue.directive('temp', function (el) {
   el.focus()
@@ -35,7 +36,7 @@ export default {
       paymentUUID: null,
       member: null,
       filters: [],
-      certificateChoices: ['ZAŚWIADCZENIE ZWYKŁE', 'ZAŚWIADCZENIE DO POLICJI'],
+      certificateChoices: ['ZAŚWIADCZENIE DO POLICJI', 'ZAŚWIADCZENIE ZWYKŁE'],
       certificateChoice: null,
       options: stringOptions,
       memberName: null,
@@ -108,6 +109,8 @@ export default {
       memberDTOArgRearangeTable: [],
       calibers: [],
       quantities: [],
+      city: 'Łódź',
+      cities: ['Białystok', 'Bydgoszcz', 'Gdańsk', 'Gorzów Wielkopolski', 'Katowice', 'Kielce', 'Kraków', 'Lublin', 'Łódź', 'Olsztyn', 'Opole', 'Poznań', 'Rzeszów', 'Szczecin', 'Warszawa', 'Wrocław'],
       erasedTypes: [],
       erasedType: null,
       patentDate: null,
@@ -166,12 +169,15 @@ export default {
       local: App.host
     }
   },
-  created () {
+  async created () {
     this.getMembersNames()
     this.getListCalibers()
     this.getMembersQuantity()
     this.getAllMemberDTO()
     this.getListErasedType()
+  },
+  components: {
+    MemberComp
   },
   methods: {
     showloading () {
@@ -495,7 +501,7 @@ export default {
         }
       })
     },
-    getMembersNames () {
+    async getMembersNames () {
       fetch('http://' + this.local + '/member/getAllNames', {
         method: 'GET'
       }).then(response => response.json())
@@ -503,7 +509,7 @@ export default {
           this.filters = response
         })
     },
-    getAllMemberDTOWithArgs () {
+    async getAllMemberDTOWithArgs () {
       const active = this.active
       const adult = this.adult
       const erase = this.erase
@@ -515,7 +521,7 @@ export default {
           this.memberDTOArgRearangeTable = response
         })
     },
-    getAllMemberDTO () {
+    async getAllMemberDTO () {
       fetch('http://' + this.local + '/member/getAllMemberDTO', {
         method: 'GET'
       }).then(response => response.json())
@@ -623,7 +629,7 @@ export default {
     },
     getdownloadCertificateOfClubMembership () {
       axios({
-        url: 'http://' + this.local + '/files/downloadCertificateOfClubMembership/' + this.memberUUID + '?reason=' + this.certificateChoice,
+        url: 'http://' + this.local + '/files/downloadCertificateOfClubMembership/' + this.memberUUID + '?reason=' + this.certificateChoice + '&city=' + this.city,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
@@ -671,17 +677,17 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.success = true
-              this.patentNumber = null
+              this.patentNumber = ''
               this.patentPistolPermission = false
               this.patentRiflePermission = false
               this.patentShotgunPermission = false
-              this.patentDate = null
+              this.patentDate = ''
               this.showloading()
-              this.getMemberByUUID(this.memberUUID)
+              this.getMemberByUUID(uuid)
               this.autoClose()
             })
         } else {
@@ -1062,7 +1068,7 @@ export default {
               this.permissionsArbiterPermissionValidThru = ''
               this.ordinal = ''
               this.showloading()
-              this.getMemberByUUID(this.memberUUID)
+              this.getMemberByUUID(uuid)
               this.autoClose()
             })
         } else {
@@ -1312,6 +1318,110 @@ export default {
         }
       }
       this.memberDTOArgRearangeTable = arr1
+    },
+    inputPoliceAddress (city) {
+      if (city === 'Białystok') {
+        this.policeCity = 'w Białymstoku'
+        this.policeZipCode = '15-369'
+        this.policeStreet = 'ul. Bema'
+        this.policeStreetNumber = '4'
+      }
+      if (city === 'Bydgoszcz') {
+        this.policeCity = 'w Bydgoszczy'
+        this.policeZipCode = '85-090'
+        this.policeStreet = 'al. Powstańców Wielkopolskich'
+        this.policeStreetNumber = '7'
+      }
+      if (city === 'Gdańsk') {
+        this.policeCity = 'w Gdańsku'
+        this.policeZipCode = '80-298'
+        this.policeStreet = 'ul. Harfowa'
+        this.policeStreetNumber = '60'
+      }
+      if (city === 'Gorzów Wielkopolski') {
+        this.policeCity = 'w Gorzowie Wielkopolskim'
+        this.policeZipCode = '66-400'
+        this.policeStreet = 'ul. Kwiatowa'
+        this.policeStreetNumber = '10'
+      }
+      if (city === 'Katowice') {
+        this.policeCity = 'w Katowicach'
+        this.policeZipCode = '40-038'
+        this.policeStreet = 'ul. Lompy'
+        this.policeStreetNumber = '19'
+      }
+      if (city === 'Kielce') {
+        this.policeCity = 'w Kielcach'
+        this.policeZipCode = '25-366'
+        this.policeStreet = 'ul. Śniadeckich'
+        this.policeStreetNumber = '4'
+      }
+      if (city === 'Kraków') {
+        this.policeCity = 'w Krakowie'
+        this.policeZipCode = '31-571'
+        this.policeStreet = 'ul. Mogilska'
+        this.policeStreetNumber = '109'
+      }
+      if (city === 'Lublin') {
+        this.policeCity = 'w Lublinie'
+        this.policeZipCode = '20-213'
+        this.policeStreet = 'ul. Gospodarcza'
+        this.policeStreetNumber = '1b'
+      }
+      if (city === 'Łódź') {
+        this.policeCity = 'w Łodzi'
+        this.policeZipCode = '90-144'
+        this.policeStreet = 'Sienkiewicza'
+        this.policeStreetNumber = '26'
+      }
+      if (city === 'Olsztyn') {
+        this.policeCity = 'w Olsztynie'
+        this.policeZipCode = '10-049'
+        this.policeStreet = 'ul. Wincentego Pstrowskiego'
+        this.policeStreetNumber = '3'
+      }
+      if (city === 'Opole') {
+        this.policeCity = 'w Opolu'
+        this.policeZipCode = '46-020'
+        this.policeStreet = 'ul. Powstańców Śląskich'
+        this.policeStreetNumber = '20'
+      }
+      if (city === 'Poznań') {
+        this.policeCity = 'w Poznaniu'
+        this.policeZipCode = '60-844'
+        this.policeStreet = 'ul. Kochanowskiego'
+        this.policeStreetNumber = '2a'
+      }
+      if (city === 'Rzeszów') {
+        this.policeCity = 'w Rzeszowie'
+        this.policeZipCode = '35-036'
+        this.policeStreet = 'ul. Dąbrowskiego'
+        this.policeStreetNumber = '30'
+      }
+      if (city === 'Szczecin') {
+        this.policeCity = 'w Szczecinie'
+        this.policeZipCode = '71-710'
+        this.policeStreet = 'ul. Bardzińska'
+        this.policeStreetNumber = '1a'
+      }
+      if (city === 'Warszawa') {
+        this.policeCity = 'w Warszawie'
+        this.policeZipCode = '00-150'
+        this.policeStreet = 'ul. Nowolipie'
+        this.policeStreetNumber = '2'
+      }
+      if (city === 'Wrocław') {
+        this.policeCity = 'we Wrocławiu'
+        this.policeZipCode = '50-040'
+        this.policeStreet = 'ul. Podwale'
+        this.policeStreetNumber = '31/33'
+      }
+      if (city === 'BRAK WYNIKÓW') {
+        this.policeCity = null
+        this.policeZipCode = null
+        this.policeStreet = null
+        this.policeStreetNumber = null
+      }
     },
     autoClose () {
       setTimeout(() => {
