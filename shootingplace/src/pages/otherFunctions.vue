@@ -296,6 +296,22 @@
               <div v-if="choose == chooseSelect[8]" class="q-pa-md">
                 <q-btn color="primary" label="pobierz Raport Sędziowania" @click="showloading (),getJudgingReport()"/>
               </div>
+              <div v-if="choose == chooseSelect[9]" class="q-pa-none row">
+              <div>
+                <q-select class="col-3 q-pa-none" filled v-model="monthSelect" clearable use-input  multiple :options="month" dense label="Wybierz Miesiące" fill-input @input="logger(monthSelect)">
+                  <template v-slot:no-option>
+                    <q-item>
+                      <q-item-section class="text-grey">
+                        Brak wyników
+                      </q-item-section>
+                    </q-item>
+                  </template>
+                </q-select>
+                <p></p>
+                <q-item v-if="monthSelect===null" class="col-4 q-pa-none"><q-btn class="q-pa-none" disable color="primary" label="Raport Czasu Pracy - miesięczny"/></q-item>
+                <q-item v-else class="col-4 q-pa-none"><q-btn class="q-pa-none" color="primary" label="Raport Czasu Pracy - miesięczny" @click="showloading(),getWorkTimeReport (monthSelect)"/></q-item>
+              </div>
+              </div>
               <!-- <div class="q-pa-md"><q-btn color="primary" label="mejla ślij" @click="sendMail ()"/></div> -->
             </q-card-section>
           </q-card>
@@ -511,7 +527,9 @@ export default {
       others: [],
       clubs: [],
       choose: null,
-      chooseSelect: ['Listy Klubowiczów', 'Lista do zgłoszenia na Policję', 'Lista do skreślenia', 'Lista skreślonych', 'Osoby bez Patentu', 'Osoby nieaktywne', 'Lista Osób z Licencją i bez składek', 'Lista Obecności', 'Raport Sędziowania'],
+      chooseSelect: ['Listy Klubowiczów', 'Lista do zgłoszenia na Policję', 'Lista do skreślenia', 'Lista skreślonych', 'Osoby bez Patentu', 'Osoby nieaktywne', 'Lista Osób z Licencją i bez składek', 'Lista Obecności', 'Raport Sędziowania', 'Raport Czasu Pracy'],
+      month: ['Styczeń', 'Luty', 'Marczec', 'Kwiecień', 'Maj', 'Czerwiec', 'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień'],
+      monthSelect: null,
       othersID: null,
       otherPerson: [],
       club: '',
@@ -572,6 +590,9 @@ export default {
         this.$q.loading.hide()
         this.timer = 0
       }, 1000)
+    },
+    logger (item) {
+      console.log(item)
     },
     handleScroll (search) {
       const ele = document.getElementById(search)
@@ -980,6 +1001,24 @@ export default {
         this.listDownload = true
         this.autoClose()
       })
+    },
+    getWorkTimeReport (month) {
+      if (month !== null) {
+        axios({
+          url: 'http://' + this.local + '/files/downloadWorkReport?month=' + month,
+          method: 'GET',
+          responseType: 'blob'
+        }).then(response => {
+          const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+          const fileLink = document.createElement('a')
+          fileLink.href = fileURL
+          fileLink.setAttribute('download', 'raport_pracy_' + month + '.pdf')
+          document.body.appendChild(fileLink)
+          fileLink.click()
+          this.listDownload = true
+          this.autoClose()
+        })
+      }
     },
     createValue (val, done) {
       if (val.length > 0) {
