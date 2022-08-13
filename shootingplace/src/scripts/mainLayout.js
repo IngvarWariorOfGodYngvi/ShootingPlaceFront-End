@@ -79,12 +79,12 @@ export default {
           title: 'Ustawienia',
           icon: 'settings',
           link: 'http://' + App.prod + 'settings'
-        },
-        {
-          title: 'Faktury STRONA GŁÓWNA',
-          icon: 'receipt',
-          link: 'http://' + App.friend
         }
+        // {
+        //   title: 'Faktury STRONA GŁÓWNA',
+        //   icon: 'receipt',
+        //   link: 'http://' + App.friend
+        // }
       ],
       programName: 'Program'
     }

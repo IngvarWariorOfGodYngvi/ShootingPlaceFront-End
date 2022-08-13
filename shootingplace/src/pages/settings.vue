@@ -23,20 +23,20 @@
       <q-card class="row">
       <q-card-section class="col-6 bg-grey-2">
       <q-form>
-        <q-item><q-input v-model="superUserName" class="full-width" label="Nazwa Użytkownika" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled/></q-item>
+        <q-item><q-input v-model="superUserFirstName" class="full-width" label="Nazwa Użytkownika" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled/></q-item>
+        <q-item><q-input v-model="superUserSecondName" class="full-width" label="Nazwa Użytkownika" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled/></q-item>
         <q-item><q-input v-model="superUserCode" @paste.prevent @copy.prevent class="full-width" mask="####" label="Kod PIN" type="password" filled/></q-item>
         <q-item><q-input v-model="superUserCodeConfirm" @paste.prevent @copy.prevent class="full-width" mask="####" label="Powtórz kod PIN" type="password" filled/></q-item>
         <q-item><q-btn @click="createSuperUser()" label="Dodaj" color="secondary"/></q-item>
       </q-form>
       </q-card-section>
       <q-card-section class="col-6">
-        <q-item v-if="superUserMessage!=null" class="bg-red-3"><div class="full-width text-bold text-center">{{superUserMessage}}</div></q-item>
         <div class="q-pa-md">
             <div class="col q-pa-md text-bold text-h6">Super-Użytkownik :</div>
-            <ol class="bg-grey-3">
-            <li v-for="(superUser,id) in superUsers" :key="id" class="col text-bold bg-grey-3">
-            <div class="row full-width">
-              <div class="col full-width">{{superUser}}</div>
+            <ol>
+            <li v-for="(superUser,id) in superUsers" :key="id" class="col text-bold">
+            <div class="row full-width flex-center bg-grey-3 q-ma-sm">
+              <div class="col full-width" style="cursor: pointer;" @dblclick="uuid = superUser.uuid,inputBarCode=true">{{superUser.firstName}} {{superUser.secondName}}</div>
               <q-btn color="primary" class="col full-width">usuń</q-btn>
             </div>
           </li>
@@ -56,20 +56,20 @@
       <q-card class="row">
       <q-card-section class="col-6 bg-grey-2">
       <q-form>
-      <q-item><q-input v-model="userName" class="full-width" label="Nazwa Użytkownika" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled/></q-item>
+      <q-item><q-input v-model="userFirstName" class="full-width" label="Imię" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled/></q-item>
+      <q-item><q-input v-model="userSecondName" class="full-width" label="Nazwisko" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled/></q-item>
       <q-item><q-input v-model="userCode" @paste.prevent @copy.prevent class="full-width" mask="####" label="Kod PIN" type="password" filled/></q-item>
       <q-item><q-input v-model="userCodeConfirm" @paste.prevent @copy.prevent class="full-width" mask="####" label="Powtórz kod PIN" type="password" filled/></q-item>
       <q-item><q-btn @click="acceptCodeUser = true" label="Dodaj" color="secondary"/></q-item>
       </q-form>
       </q-card-section>
       <q-card-section class="col-6">
-        <q-item v-if="userMessage!=null" class="bg-red-3"><div class="full-width text-bold text-center">{{userMessage}}</div></q-item>
         <div class="q-pa-md">
             <div class="col q-pa-md text-bold text-h6">Użytkownicy :</div>
-            <ol class="bg-grey-3">
-            <li v-for="(user,id) in users" :key="id" class="col text-bold bg-grey-3">
-            <div class="row full-width">
-              <div class="col full-width">{{user}}</div>
+            <ol>
+            <li v-for="(user,id) in users" :key="id" class="col text-bold">
+            <div class="row full-width flex-center bg-grey-3 q-ma-sm">
+              <div class="col full-width" style="cursor: pointer;" @dblclick="uuid = user.uuid,inputBarCode=true">{{user.firstName}} {{user.secondName}}</div>
               <q-btn color="primary" class=" col full-width">usuń</q-btn>
             </div>
           </li>
@@ -198,6 +198,9 @@
     <q-uploader multiple style="max-width: 400px" method="POST" :url="('http://' + local + '/files/upload')"
     label="Dodaj plik" accept=".jpg, image/*" @rejected="onRejected" field-name="file" @added="file_selected"/>
   </div>
+  <div class="row full-width">
+      <div v-if="pageNumber<1" class="self-center text-center"><q-btn icon="arrow_left" style="width: 2em;"></q-btn></div>
+      <div v-else class="self-center text-center" @click="pageNumber=pageNumber-1,getAllFiles(pageNumber)"><q-btn icon="arrow_left" style="width: 2em;"></q-btn></div>
     <q-field color="black" class="self-center col full-width no-outline text-bold text-center" dense standout="bg-accent text-black" stack-label>
       <div class="col-5 self-center text-bold text-center">Nazwa pliku</div>
       <div class="col-1 self-center text-bold text-center">Data utworzenia</div>
@@ -206,13 +209,15 @@
       <div class="col-2 self-center text-bold text-center">Typ</div>
       <div class="col-2 self-center text-center"><div>Pobierz plik</div></div>
     </q-field>
+      <div class="self-center text-center" @click="pageNumber=pageNumber+1,getAllFiles(pageNumber)"><q-btn icon="arrow_right" style="width: 2em;"></q-btn></div>
+      </div>
     <q-virtual-scroll :items="files" dense visible class="full-width" style="height: 80vh;">
       <template v-slot="{ item, index }">
         <div :key="index" dense @click.left.ctrl="uuid=item.uuid,deleteConfirm=true">
           <q-field @click.left.ctrl="deleteConfirm=true" color="black" dense class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
             <q-tooltip v-if="item.type.includes('image')" :delay="750" @hide ="url = ''" @before-show ="getUrl (item.uuid)" anchor="center middle" self="center middle" transition-show="scale"
                 transition-hide="scale" content-style="width: 30%; height: 70%"><q-img :src="url" spinner-color="white" style="height: 100%; width: 100%" /></q-tooltip>
-            <div class="col-5 self-center text-bold text-justify">{{item.name}}</div>
+            <div class="col-5 self-center text-bold text-justify">{{index+1}} {{item.name}}</div>
             <div class="col-1 self-center text-bold text-center">{{item.date}}</div>
             <div class="col-1 self-center text-bold text-center">{{item.time}}</div>
             <div class="col-1 self-center text-bold text-center">{{item.size}}</div>
@@ -222,6 +227,18 @@
         </div>
       </template>
     </q-virtual-scroll>
+  <q-dialog v-model="inputBarCode" @show.stop="barCode = null, master = null">
+      <q-card class="text-center">
+        <q-card-section>
+          <q-input class="full-width" filled v-model="barCode" label="zeskanuj kartę tutaj" @input="getMasterCardCheck(barCode)">
+          </q-input>
+          <q-checkbox style="display: none" v-model="master" dense disable></q-checkbox>
+          <q-checkbox v-if="master==true" style="display: flex; font-size: 10px;" v-model="master" dense disable label="master master, i mean... mister, mister"></q-checkbox>
+          <p></p>
+          <q-btn @click="addNewCardToUser(barCode,uuid)">zatwierdź</q-btn>
+        </q-card-section>
+      </q-card>
+  </q-dialog>
   <q-dialog :position="'top'" v-model="dataFail">
       <q-card class="bg-red-5 text-center">
         <q-card-section>
@@ -282,6 +299,8 @@ Vue.prototype.$axios = axios
 export default {
   data () {
     return {
+      inputBarCode: false,
+      barCode: null,
       cities: ['Białystok', 'Bydgoszcz', 'Gdańsk', 'Gorzów Wielkopolski', 'Katowice', 'Kielce', 'Kraków', 'Lublin', 'Łódź', 'Olsztyn', 'Opole', 'Poznań', 'Rzeszów', 'Szczecin', 'Warszawa', 'Wrocław', 'BRAK WYNIKÓW'],
       ulAl: ['ul. ', 'al. '],
       ul_al: '',
@@ -304,18 +323,18 @@ export default {
       model: '',
       dataFail: false,
       city: null,
-      superUserName: null,
+      superUserFirstName: null,
+      superUserSecondName: null,
       superUserCode: null,
       superUserCodeConfirm: null,
-      userName: null,
+      userFirstName: null,
+      userSecondName: null,
       userCode: null,
       userCodeConfirm: null,
-      superUserMessage: null,
       message: null,
       failure: false,
       success: false,
       deleteConfirm: false,
-      userMessage: null,
       clubMessage: null,
       clubName: null,
       clubFullName: null,
@@ -326,6 +345,8 @@ export default {
       clubURL: null,
       clubs: [],
       files: [],
+      pageNumber: 0,
+      master: false,
       local: App.host
     }
   },
@@ -333,7 +354,7 @@ export default {
     this.getAllClubs()
     this.getAllSuperUsers()
     this.getAllUsers()
-    this.getAllFiles()
+    this.getAllFiles(this.pageNumber)
   },
   methods: {
     showloading () {
@@ -346,8 +367,10 @@ export default {
     file_selected (file) {
       this.selected_file = file[0]
     },
-    getAllFiles () {
-      fetch('http://' + this.local + '/files/getAllFiles', {
+    getAllFiles (pageNumber) {
+      this.showloading()
+      if (pageNumber < 0) { this.pageNumber = 0 }
+      fetch('http://' + this.local + '/files/getAllFiles?page=' + pageNumber + '&size=100', {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -363,7 +386,7 @@ export default {
         })
     },
     getAllSuperUsers () {
-      fetch('http://' + this.local + '/settings/superUserList/', {
+      fetch('http://' + this.local + '/users/superUserList/', {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -371,102 +394,157 @@ export default {
         })
     },
     getAllUsers () {
-      fetch('http://' + this.local + '/settings/userList/', {
+      fetch('http://' + this.local + '/users/userList/', {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
           this.users = response
         })
     },
-    createSuperUser () {
-      if (this.superUserCode !== this.superUserCodeConfirm && this.superUsers.length > 0) {
-        this.superUserMessage = 'Coś poszło nie tak'
-      } else {
-        fetch('http://' + this.local + '/settings/createSuperUser?name=' + this.superUserName + '&pinCode=' + this.superUserCode, {
-          method: 'POST'
-        }).then(response => {
-          if (response.status === 201) {
-            response.json().then(
-              response => {
-                this.superUserMessage = response
-                this.getAllSuperUsers()
-              }
-            )
-          }
-          if (response.status === 400) {
-            response.json().then(
-              response => {
-                this.superUserMessage = response
-              }
-            )
-          }
-          if (response.status === 403) {
-            response.json().then(
-              response => {
-                this.superUserMessage = response
-              }
-            )
-          }
-          if (response.status === 406) {
-            response.json().then(
-              response => {
-                this.superUserMessage = response
-              }
-            )
-          }
-          if (response.status === 409) {
-            response.json().then(
-              response => {
-                this.superUserMessage = response
-              }
-            )
-          }
-        })
+    getMasterCardCheck (code) {
+      if (code.length > 3) {
+        fetch('http://' + this.local + '/barCode/?code=' + code, {
+          method: 'GET'
+        }).then(response => response.json())
+          .then(response => {
+            this.master = response
+          })
       }
     },
-    createUser () {
-      if (this.userCode !== this.userCodeConfirm) {
-        this.dataFail = true
+    addNewCardToUser (barCode, uuid) {
+      const data = {
+        barCode: barCode,
+        isActive: true,
+        belongsTo: uuid,
+        isMaster: this.master
+      }
+      fetch('http://' + this.local + '/barCode/', {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: { 'Content-Type': 'Application/json' }
+      }).then(response => {
+        if (response.status === 200) {
+          response.text().then(
+            response => {
+              this.success = true
+              this.message = response
+            }
+          )
+        }
+        if (response.status === 400) {
+          response.text().then(
+            response => {
+              this.failure = true
+              this.message = response
+            }
+          )
+        }
+        this.autoClose()
+      })
+    },
+    createSuperUser () {
+      if (this.superUserCode !== this.superUserCodeConfirm && this.superUsers.length > 0) {
+        this.message = 'Coś poszło nie tak'
+        this.failure = true
       } else {
-        fetch('http://' + this.local + '/settings/createUser?name=' + this.userName + '&pinCode=' + this.userCode + '&superPinCode=' + this.code, {
+        fetch('http://' + this.local + '/users/createSuperUser?firstName=' + this.superUserFirstName + '&secondName=' + this.superUserSecondName + '&pinCode=' + this.superUserCode, {
           method: 'POST'
         }).then(response => {
           if (response.status === 201) {
-            response.json().then(
+            response.text().then(
               response => {
-                this.userMessage = response
+                this.message = response
+                this.success = true
                 this.getAllUsers()
               }
             )
           }
           if (response.status === 400) {
-            response.json().then(
+            response.text().then(
               response => {
-                this.userMessage = response
+                this.message = response
+                this.failure = true
               }
             )
           }
           if (response.status === 403) {
-            response.json().then(
+            response.text().then(
               response => {
-                this.userMessage = response
+                this.message = response
+                this.failure = true
               }
             )
           }
           if (response.status === 406) {
-            response.json().then(
+            response.text().then(
               response => {
-                this.userMessage = response
+                this.message = response
+                this.failure = true
               }
             )
           }
           if (response.status === 409) {
-            response.json().then(
+            response.text().then(
               response => {
-                this.userMessage = response
+                this.message = response
+                this.failure = true
               }
             )
           }
+          this.autoClose()
+        })
+      }
+    },
+    createUser () {
+      if (this.userCode !== this.userCodeConfirm) {
+        this.message = 'Coś poszło nie tak'
+        this.failure = true
+      } else {
+        fetch('http://' + this.local + '/users/createUser?firstName=' + this.userFirstName + '&secondName=' + this.userSecondName + '&pinCode=' + this.userCode + '&superPinCode=' + this.code, {
+          method: 'POST'
+        }).then(response => {
+          if (response.status === 201) {
+            response.text().then(
+              response => {
+                this.message = response
+                this.success = true
+                this.getAllUsers()
+              }
+            )
+          }
+          if (response.status === 400) {
+            response.text().then(
+              response => {
+                this.message = response
+                this.failure = true
+              }
+            )
+          }
+          if (response.status === 403) {
+            response.text().then(
+              response => {
+                this.message = response
+                this.failure = true
+              }
+            )
+          }
+          if (response.status === 406) {
+            response.text().then(
+              response => {
+                this.message = response
+                this.failure = true
+              }
+            )
+          }
+          if (response.status === 409) {
+            response.text().then(
+              response => {
+                this.message = response
+                this.failure = true
+              }
+            )
+          }
+          this.autoClose()
         })
       }
     },
@@ -558,7 +636,11 @@ export default {
     autoClose () {
       setTimeout(() => {
         this.dataFail = false
+        this.failure = false
+        this.message = null
         this.success = false
+        this.barCode = null
+        this.master = false
       }, 1500)
     },
     inputPoliceAddress (city) {

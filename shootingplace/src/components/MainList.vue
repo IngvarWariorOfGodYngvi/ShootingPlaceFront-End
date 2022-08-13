@@ -92,14 +92,14 @@
             </div>
         </q-item>
       </div>
-      <div @click="showloading()" class="q-pa-xs">
+      <!-- <div @click="showloading()" class="q-pa-xs">
         <q-item class="q-pa-none xyz2" clickable tag="a" target="_self" :href="friend" width="max">
             <div class="row text-grey-7 text-left">
               <q-icon class="q-pa-md text-h5" name="settings"/>
             <div class="self-center text-black" tabindex="1">Faktury STRONA GŁÓWNA</div>
             </div>
         </q-item>
-      </div>
+      </div> -->
     </div>
 </template>
 <style src="../style/style.scss" lang="scss">

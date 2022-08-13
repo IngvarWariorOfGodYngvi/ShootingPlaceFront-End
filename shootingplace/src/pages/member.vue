@@ -29,26 +29,17 @@
             <q-checkbox dense @input="memberName=null, member=null,adult=null,active=null,erase=false,getMembersNames (),getAllMemberDTO()" v-model="allMember" label="Wyświetl wszystkich"></q-checkbox>
             <div class="col full-width">
               <div class="row flex flex-left full-width">
-                <!-- <q-radio @input="member=null,allMember=false,getMembersNames (),getAllMemberDTOWithArgs()" color="green" v-model="adult" :val="true" label="Grupa Ogólna"></q-radio> -->
                 <q-radio @input="member=null,allMember=false,getMembersNames (),rearangeMemberDTO ()" color="green" v-model="adult" :val="true" label="Grupa Ogólna"></q-radio>
-                <!-- <q-radio @input="member=null,allMember=false,getMembersNames (),getAllMemberDTOWithArgs()" color="warning" v-model="adult" :val="false" label="Grupa Młodzieżowa"></q-radio> -->
                 <q-radio @input="member=null,allMember=false,getMembersNames (),rearangeMemberDTO ()" color="warning" v-model="adult" :val="false" label="Grupa Młodzieżowa"></q-radio>
               </div>
               <div class="row flex flex-left full-width">
-                <!-- <q-radio @input="member=null,allMember=false,erase=false, getMembersNames (),getAllMemberDTOWithArgs()" color="green" v-model="active" :val="true" label="Aktywni"></q-radio> -->
                 <q-radio @input="member=null,allMember=false,erase=false, getMembersNames (),rearangeMemberDTO ()" color="green" v-model="active" :val="true" label="Aktywni"></q-radio>
-                <!-- <q-radio @input="member=null,allMember=false,getMembersNames (),getAllMemberDTOWithArgs()" color="warning" v-model="active" :val="false" label="Nieaktywni"></q-radio> -->
                 <q-radio @input="member=null,allMember=false,getMembersNames (),rearangeMemberDTO ()" color="warning" v-model="active" :val="false" label="Nieaktywni"></q-radio>
               </div>
             </div>
             </div>
             <div class="row">
             <q-checkbox dense @input="memberName=null, member=null,allMember=!erase,active = false, getMembersNames (),getAllMemberDTOWithArgs(),erasedType = erasedTypes[0]" color="red" v-model="erase" :val="false" label="Skreśleni"></q-checkbox>
-            <!-- <div v-for="erased in erasedTypes" :key="erased">
-              <div v-if="erase==true">
-              <q-radio color="red" v-model="erasedType" :val="erased" :true-value="erased" :label="erased"></q-radio>
-              </div>
-            </div> -->
             </div>
           </q-card>
           <q-card>
@@ -539,6 +530,13 @@
       </div>
     </q-expansion-item>
     <q-expansion-item label="Przydziel Numer Karty" group="right-right-card" class="bg-white">
+      <div v-if="member.barCodeCardList.length > 0">
+          <div>Przypisane Karty</div>
+        <div v-for="(item, id) in member.barCodeCardList" :key="id" class="row text-bold" style="font-size: smaller;">
+          <div v-if="item.active" class="row text-left">{{item.barCode}} Aktywna</div>
+          <div v-if="!item.active" class="row text-left">{{item.barCode}} Nieaktywna</div>
+        </div>
+      </div>
       <div v-if="!member.erased&&member.clubCardBarCode==null" class="row">
         <q-input v-model="barcode" type="password" filled class="col bg-orange" dark label-color="white" stack-label color="white" label="Zeskanuj Kartę Tutaj" @keypress.enter="uuid = member.uuid,addBarcodeToMember(uuid, barcode)"></q-input>
         <q-item><q-btn label="dodaj" color="primary" @click="uuid = member.uuid,addBarcodeToMember(uuid, barcode)"/></q-item>

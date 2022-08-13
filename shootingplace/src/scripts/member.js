@@ -1186,11 +1186,19 @@ export default {
       })
     },
     addBarcodeToMember (uuid, barcode) {
-      fetch('http://' + this.local + '/member/addBarCode?uuid=' + uuid + '&barcode=' + barcode, {
-        method: 'PUT'
+      const data = {
+        barCode: barcode,
+        belongsTo: uuid
+      }
+      fetch('http://' + this.local + '/barCode/', {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.success = true
               this.message = response
@@ -1201,7 +1209,7 @@ export default {
             }
           )
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
