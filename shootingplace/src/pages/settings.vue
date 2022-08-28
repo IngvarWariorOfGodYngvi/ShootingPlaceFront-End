@@ -56,10 +56,19 @@
       <q-card class="row">
       <q-card-section class="col-6 bg-grey-2">
       <q-form>
-      <q-item><q-input v-model="userFirstName" class="full-width" label="Imię" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled/></q-item>
-      <q-item><q-input v-model="userSecondName" class="full-width" label="Nazwisko" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled/></q-item>
-      <q-item><q-input v-model="userCode" @paste.prevent @copy.prevent class="full-width" mask="####" label="Kod PIN" type="password" filled/></q-item>
-      <q-item><q-input v-model="userCodeConfirm" @paste.prevent @copy.prevent class="full-width" mask="####" label="Powtórz kod PIN" type="password" filled/></q-item>
+      <q-item><q-input v-model="userFirstName" class="full-width" dense label="Imię" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled/></q-item>
+      <q-item><q-input v-model="userSecondName" class="full-width" dense label="Nazwisko" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled/></q-item>
+      <q-item><q-select class="full-width" filled v-model="userSubTypeSelect" use-input :options="userSubType" dense label="Wybierz Rodzaj">
+                  <template v-slot:no-option>
+                    <q-item>
+                      <q-item-section class="text-grey">
+                        Brak wyników
+                      </q-item-section>
+                    </q-item>
+                  </template>
+                </q-select></q-item>
+      <q-item><q-input v-model="userCode" @paste.prevent @copy.prevent class="full-width" dense mask="####" label="Kod PIN" type="password" filled/></q-item>
+      <q-item><q-input v-model="userCodeConfirm" @paste.prevent @copy.prevent class="full-width" dense mask="####" label="Powtórz kod PIN" type="password" filled/></q-item>
       <q-item><q-btn @click="acceptCodeUser = true" label="Dodaj" color="secondary"/></q-item>
       </q-form>
       </q-card-section>
@@ -69,7 +78,7 @@
             <ol>
             <li v-for="(user,id) in users" :key="id" class="col text-bold">
             <div class="row full-width flex-center bg-grey-3 q-ma-sm">
-              <div class="col full-width" style="cursor: pointer;" @dblclick="uuid = user.uuid,inputBarCode=true">{{user.firstName}} {{user.secondName}}</div>
+              <div class="col full-width" style="cursor: pointer;" @dblclick="uuid = user.uuid,userSubTypeBarCodeSelect = user.subType,inputBarCode=true">{{user.firstName}} {{user.secondName}}</div>
               <q-btn color="primary" class=" col full-width">usuń</q-btn>
             </div>
           </li>
@@ -198,18 +207,21 @@
     <q-uploader multiple style="max-width: 400px" method="POST" :url="('http://' + local + '/files/upload')"
     label="Dodaj plik" accept=".jpg, image/*" @rejected="onRejected" field-name="file" @added="file_selected"/>
   </div>
-  <div class="row full-width">
-      <div v-if="pageNumber<1" class="self-center text-center"><q-btn icon="arrow_left" style="width: 2em;"></q-btn></div>
-      <div v-else class="self-center text-center" @click="pageNumber=pageNumber-1,getAllFiles(pageNumber)"><q-btn icon="arrow_left" style="width: 2em;"></q-btn></div>
+  <div class="row full-width bg-grey-5">
+    <div v-if="pageNumber<1" class="self-center text-center col-1"><q-btn icon="arrow_left" class="full-width text-black" color="grey" disable></q-btn></div>
+      <div v-else class="self-center text-center col-1" @click="pageNumber=pageNumber-1,getAllFiles(pageNumber)"><q-btn icon="arrow_left" class="full-width text-black" color="white"></q-btn></div>
+    <div class="self-center text-bold text-center col-10" >STRONA {{pageNumber+1}}</div>
+      <div class="self-center text-center col-1" @click="pageNumber=pageNumber+1,getAllFiles(pageNumber)"><q-btn icon="arrow_right" class="full-width text-black" color="white"></q-btn></div>
+      </div>
+    <div class="row">
     <q-field color="black" class="self-center col full-width no-outline text-bold text-center" dense standout="bg-accent text-black" stack-label>
-      <div class="col-5 self-center text-bold text-center">Nazwa pliku</div>
+      <div class="col-4 self-center text-bold text-left">Nazwa pliku</div>
       <div class="col-1 self-center text-bold text-center">Data utworzenia</div>
       <div class="col-1 self-center text-bold text-center">Godzina utworzenia</div>
-      <div class="col-1 self-center text-bold text-center">Rozmiar</div>
-      <div class="col-2 self-center text-bold text-center">Typ</div>
-      <div class="col-2 self-center text-center"><div>Pobierz plik</div></div>
+      <div class="col-1 self-center text-bold text-right">Rozmiar</div>
+      <div class="col-2 self-center text-bold text-right">Typ</div>
+      <div class="col-2 self-center text-right"><div>Pobierz plik</div></div>
     </q-field>
-      <div class="self-center text-center" @click="pageNumber=pageNumber+1,getAllFiles(pageNumber)"><q-btn icon="arrow_right" style="width: 2em;"></q-btn></div>
       </div>
     <q-virtual-scroll :items="files" dense visible class="full-width" style="height: 80vh;">
       <template v-slot="{ item, index }">
@@ -227,16 +239,39 @@
         </div>
       </template>
     </q-virtual-scroll>
-  <q-dialog v-model="inputBarCode" @show.stop="barCode = null, master = null">
+  <q-dialog v-model="inputBarCode" persistent>
       <q-card class="text-center">
         <q-card-section>
-          <q-input class="full-width" filled v-model="barCode" label="zeskanuj kartę tutaj" @input="getMasterCardCheck(barCode)">
-          </q-input>
+          <q-item class="flex-center text-h6 text-bold">Przypisywanie Karty</q-item>
+          <q-item><q-input class="full-width" filled v-model="barCode" type="password" label="zeskanuj kartę tutaj" @input="getMasterCardCheck(barCode)"></q-input></q-item>
+          <q-item><q-select class="full-width" filled v-model="userSubTypeBarCodeSelect" use-input :options="userSubType" dense label="Wybierz Rodzaj">
+            <template v-slot:no-option>
+              <q-item>
+                <q-item-section class="text-grey">
+                  Brak wyników
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select></q-item>
           <q-checkbox style="display: none" v-model="master" dense disable></q-checkbox>
-          <q-checkbox v-if="master==true" style="display: flex; font-size: 10px;" v-model="master" dense disable label="master master, i mean... mister, mister"></q-checkbox>
+          <q-checkbox v-if="master==true" style="display: flex; font-size: 10px;" v-model="master" dense disable label="potrwierdzone przez Admina"></q-checkbox>
           <p></p>
-          <q-btn @click="addNewCardToUser(barCode,uuid)">zatwierdź</q-btn>
+          <q-btn v-close-popup @click="acceptCodeUser1=true">zatwierdź</q-btn>
+          <q-btn v-close-popup @click="barCode=null, uuid = null,master=false">Anuluj</q-btn>
         </q-card-section>
+      </q-card>
+  </q-dialog>
+    <q-dialog v-model="acceptCodeUser1" persistent @keypress.enter="checkPinCode (code, uuid),addNewCardToUser(barCode,uuid,userSubTypeBarCodeSelect,code),code=null">
+      <q-card class="bg-red-5 text-center">
+        <q-card-section class="flex-center">
+          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający1</span></h3>
+          <div><q-input autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input></div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
+          <q-btn id="3" label="Dodaj" color="black" v-close-popup @click="checkPinCode (code, uuid),addNewCardToUser(barCode,uuid,userSubTypeBarCodeSelect,code),code=null" />
+        </q-card-actions>
       </q-card>
   </q-dialog>
   <q-dialog :position="'top'" v-model="dataFail">
@@ -301,6 +336,9 @@ export default {
     return {
       inputBarCode: false,
       barCode: null,
+      userSubType: ['Pracownik', 'Zarząd', 'Komisja Rewizyjna', 'Gość', 'Pracownik/Zarząd', 'Prezes/Zarząd'],
+      userSubTypeSelect: null,
+      userSubTypeBarCodeSelect: null,
       cities: ['Białystok', 'Bydgoszcz', 'Gdańsk', 'Gorzów Wielkopolski', 'Katowice', 'Kielce', 'Kraków', 'Lublin', 'Łódź', 'Olsztyn', 'Opole', 'Poznań', 'Rzeszów', 'Szczecin', 'Warszawa', 'Wrocław', 'BRAK WYNIKÓW'],
       ulAl: ['ul. ', 'al. '],
       ul_al: '',
@@ -314,6 +352,7 @@ export default {
       superUsers: [],
       users: [],
       acceptCodeUser: false,
+      acceptCodeUser1: false,
       formData: null,
       code: null,
       respo: null,
@@ -347,6 +386,7 @@ export default {
       files: [],
       pageNumber: 0,
       master: false,
+      accept: false,
       local: App.host
     }
   },
@@ -411,33 +451,61 @@ export default {
           })
       }
     },
-    addNewCardToUser (barCode, uuid) {
-      const data = {
-        barCode: barCode,
-        isActive: true,
-        belongsTo: uuid,
-        isMaster: this.master
+    sleep (ms) {
+      return new Promise(resolve => setTimeout(resolve, ms))
+    },
+    checkPinCode (code, uuid) {
+      if (code.length > 3) {
+        fetch('http://' + this.local + '/users/checkPinCode?pinCode=' + code + '&uuid=' + uuid, {
+          method: 'GET'
+        }).then(response => response.json())
+          .then(response => {
+            this.accept = response
+          })
       }
-      fetch('http://' + this.local + '/barCode/', {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: { 'Content-Type': 'Application/json' }
-      }).then(response => {
-        if (response.status === 200) {
-          response.text().then(
-            response => {
-              this.success = true
-              this.message = response
-            }
-          )
+    },
+    addNewCardToUser (barCode, uuid, userSubType) {
+      this.sleep(400).then(() => {
+        if (barCode === null || barCode === '') {
+          this.message = 'Nie podano numeru karty'
+          this.failure = true
+          return
         }
-        if (response.status === 400) {
-          response.text().then(
-            response => {
-              this.failure = true
-              this.message = response
+        const data = {
+          barCode: barCode,
+          isActive: true,
+          belongsTo: uuid,
+          subType: userSubType,
+          isMaster: this.master
+        }
+        console.log('coś2')
+        console.log(this.accept)
+        if (this.accept) {
+          fetch('http://' + this.local + '/barCode/', {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: { 'Content-Type': 'Application/json' }
+          }).then(response => {
+            if (response.status === 200) {
+              response.text().then(
+                response => {
+                  this.success = true
+                  this.message = response
+                }
+              )
             }
-          )
+            if (response.status === 400) {
+              response.text().then(
+                response => {
+                  this.failure = true
+                  this.message = response
+                }
+              )
+            }
+          })
+        } else {
+          this.failure = true
+          this.message = 'Podano zły pin. Spróbuj ponownie'
         }
         this.autoClose()
       })
@@ -500,7 +568,7 @@ export default {
         this.message = 'Coś poszło nie tak'
         this.failure = true
       } else {
-        fetch('http://' + this.local + '/users/createUser?firstName=' + this.userFirstName + '&secondName=' + this.userSecondName + '&pinCode=' + this.userCode + '&superPinCode=' + this.code, {
+        fetch('http://' + this.local + '/users/createUser?firstName=' + this.userFirstName + '&secondName=' + this.userSecondName + '&subType=' + this.userSubTypeSelect + '&pinCode=' + this.userCode + '&superPinCode=' + this.code, {
           method: 'POST'
         }).then(response => {
           if (response.status === 201) {
@@ -596,7 +664,7 @@ export default {
         method: 'DELETE'
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.showloading()
               this.message = response
@@ -606,7 +674,7 @@ export default {
             }
           )
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -640,7 +708,10 @@ export default {
         this.message = null
         this.success = false
         this.barCode = null
+        this.code = null
         this.master = false
+        this.acceptCodeUser1 = false
+        this.accept = false
       }, 1500)
     },
     inputPoliceAddress (city) {
@@ -694,9 +765,9 @@ export default {
       }
       if (city === 'Łódź') {
         this.policeCity = 'w Łodzi'
-        this.policeZipCode = '90-144'
-        this.policeStreet = 'Sienkiewicza'
-        this.policeStreetNumber = '26'
+        this.policeZipCode = '91-048'
+        this.policeStreet = 'Lutomierska'
+        this.policeStreetNumber = '108/112'
       }
       if (city === 'Olsztyn') {
         this.policeCity = 'w Olsztynie'

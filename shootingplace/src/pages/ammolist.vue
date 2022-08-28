@@ -415,7 +415,7 @@ export default {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.success = true
@@ -426,7 +426,7 @@ export default {
             }
           )
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.fail = true
@@ -441,7 +441,7 @@ export default {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(response => {
+          response.text().then(response => {
             // this.ammoList = response
             this.code = null
             this.message = response
@@ -457,7 +457,7 @@ export default {
           this.autoClose()
         }
         if (response.status === 400) {
-          response.json().then(response => {
+          response.text().then(response => {
             this.message = response
             this.fail = true
             this.autoClose()
@@ -504,7 +504,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(response => {
+          response.text().then(response => {
             this.message = response
             this.success = true
             this.getAmmoData()
@@ -514,7 +514,7 @@ export default {
           })
         }
         if (response.status === 400) {
-          response.json().then(response => {
+          response.text().then(response => {
             this.message = response
             this.fail = true
             this.ammoQuantity = null
@@ -536,7 +536,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(response => {
+          response.text().then(response => {
             this.message = response
             this.success = true
             this.getGunInAmmoEvidenceList(this.uuid)
@@ -544,7 +544,7 @@ export default {
             this.autoClose()
           })
         } else {
-          response.json().then(response => {
+          response.text().then(response => {
             this.message = response
             this.fail = true
             this.autoClose()

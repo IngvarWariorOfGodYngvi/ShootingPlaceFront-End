@@ -216,7 +216,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.success = true
               this.message = response
@@ -233,7 +233,7 @@ export default {
           this.autoClose()
         }
         if (response.status === 400) {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -298,7 +298,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.success = true
               this.message = response
@@ -315,7 +315,7 @@ export default {
           this.autoClose()
         }
         if (response.status === 400) {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -333,7 +333,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.success = true
               this.message = response
@@ -350,7 +350,7 @@ export default {
           this.autoClose()
         }
         if (response.status === 400) {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -365,7 +365,7 @@ export default {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.success = true
               this.message = response
@@ -382,7 +382,7 @@ export default {
           this.autoClose()
         }
         if (response.status === 400) {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -407,7 +407,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.success = true
               this.message = response
@@ -418,7 +418,7 @@ export default {
               this.autoClose()
             })
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -441,7 +441,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.success = true
               this.message = response
@@ -453,7 +453,7 @@ export default {
               this.autoClose()
             })
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -478,7 +478,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.success = true
               this.message = response
@@ -492,7 +492,7 @@ export default {
               this.autoClose()
             })
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.failure = true
               this.message = response
@@ -554,7 +554,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(response => {
+          response.text().then(response => {
             this.message = response
             this.success = true
             this.getListCalibers()
@@ -564,7 +564,7 @@ export default {
           })
         }
         if (response.status === 400) {
-          response.json().then(response => {
+          response.text().then(response => {
             this.message = response
             this.failure = true
             this.quantity = null
@@ -691,7 +691,7 @@ export default {
               this.autoClose()
             })
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -715,7 +715,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.success = true
               this.message = response
@@ -728,7 +728,7 @@ export default {
               this.autoClose()
             })
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -752,7 +752,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.success = true
               this.message = response
@@ -765,7 +765,7 @@ export default {
             }
           )
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -783,7 +783,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.success = true
@@ -793,7 +793,7 @@ export default {
               this.autoClose()
             })
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -811,7 +811,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.success = true
@@ -821,7 +821,7 @@ export default {
               this.autoClose()
             })
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -839,7 +839,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.success = true
@@ -848,7 +848,7 @@ export default {
               this.autoClose()
             })
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -865,7 +865,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.success = true
@@ -877,7 +877,7 @@ export default {
           this.forbidden = true
           this.autoClose()
         } if (response.status === 400) {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -894,7 +894,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.success = true
@@ -911,7 +911,7 @@ export default {
           this.autoClose()
         }
         if (response.status === 400) {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -934,7 +934,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.success = true
@@ -944,7 +944,7 @@ export default {
               this.autoClose()
             })
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -966,7 +966,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.success = true
@@ -976,7 +976,7 @@ export default {
               this.autoClose()
             })
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -993,7 +993,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.success = true
@@ -1004,7 +1004,7 @@ export default {
               this.autoClose()
             })
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -1018,7 +1018,7 @@ export default {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.success = true
@@ -1034,7 +1034,7 @@ export default {
           this.autoClose()
         }
         if (response.status === 400) {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -1058,7 +1058,7 @@ export default {
         body: JSON.stringify(data)
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.success = true
@@ -1072,7 +1072,7 @@ export default {
               this.autoClose()
             })
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -1089,7 +1089,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.success = true
@@ -1098,7 +1098,7 @@ export default {
               this.autoClose()
             })
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -1112,7 +1112,7 @@ export default {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.success = true
@@ -1123,7 +1123,7 @@ export default {
               this.autoClose()
             })
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -1164,7 +1164,7 @@ export default {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.success = true
               this.message = response
@@ -1233,7 +1233,7 @@ export default {
             }
           )
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true

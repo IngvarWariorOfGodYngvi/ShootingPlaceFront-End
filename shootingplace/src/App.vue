@@ -44,7 +44,7 @@ Vue.prototype.$axios = axios
 // })
 export default {
   name: 'App',
-  friend: 'localhost:8080/invoices/#/',
+  // friend: 'localhost:8080/invoices/#/',
   prod: 'localhost:8081/#/',
   // prod: 'localhost:8080/strzelnica/#/',
   // host: 'localhost:8080/shootingplace-1.0/'

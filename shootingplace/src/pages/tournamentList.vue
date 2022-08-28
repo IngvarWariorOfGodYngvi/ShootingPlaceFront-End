@@ -1503,7 +1503,7 @@ export default {
       const memberlegNumber = memberNameWord[legNumber - 1]
       fetch('http://' + this.local + '/member/ID/' + memberlegNumber, {
         method: 'GET'
-      }).then(response => response.json())
+      }).then(response => response.text())
         .then(response => {
           if (response.length > 0) {
             this.memberUUID = response
