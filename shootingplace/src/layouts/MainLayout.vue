@@ -61,7 +61,7 @@
       </q-list>
       <members-quantities class="bg-secondary">
       </members-quantities>
-      <WorkTimeList>
+      <WorkTimeList style="margin: auto">
       </WorkTimeList>
       </div>
     </q-drawer>

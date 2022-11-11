@@ -11,7 +11,7 @@
           <div class="q-pa-md text-left col full-width no-outline text-h5 text-bold" >Ilość osób {{members2.length}}</div>
           <div v-if="licenseList.length>0" class="q-pa-md text-right"><q-btn @click="memberName='WSZYSCY - którzy mają zaznaczone opłacono w PZSS', prolongLicenseAlertAll=true" :label="'przedłuż zaznaczone (' + licenseList.length + ')'"></q-btn></div>
             </div>
-            <q-virtual-scroll :items="members2" style="height: 70vh;">
+            <q-virtual-scroll :items="members2" virtual-scroll-slice-size="100" style="height: 50vh">
               <template v-slot="{ item, index }">
                 <div :key="index" class="row">
             <q-checkbox dense v-if="item.license.paid" v-model="licenseList" :val="item.uuid" left-label>{{index+1}}.</q-checkbox>
@@ -58,7 +58,7 @@
           <div class="q-pa-md text-left col full-width no-outline text-h5 text-bold" >Ilość osób {{members.length}}</div>
           <div v-if="licenseList.length>0" class="q-pa-md text-right"><q-btn @click="memberName='WSZYSCY - którzy mają zaznaczone opłacono w PZSS', prolongLicenseAlertAll=true" label="przedłuż zaznaczone">({{licenseList.length}})</q-btn></div>
             </div>
-            <q-virtual-scroll :items="members" style="height: 600px;">
+            <q-virtual-scroll :items="members" virtual-scroll-slice-size="100" style="height: 50vh">
               <template v-slot="{ item, index }">
                 <div :key="index" dense class="row">
            <q-checkbox dense v-if="item.license.paid" v-model="licenseList" :val="item.uuid" left-label>{{index+1}}.</q-checkbox>
@@ -105,7 +105,7 @@
           <div class="q-pa-md text-left col full-width no-outline text-h5 text-bold" >Ilość osób {{quantitySumLicensePayment.length}}</div>
             <div v-if="payPZSSList.length>0" class="q-pa-md text-right"><q-btn @click="paymentLicenseAlertPZSS=true" label="Oznacz wybrane jako opłacone w pzss">({{payPZSSList.length}})</q-btn></div>
             </div>
-            <q-virtual-scroll :items="quantitySumLicensePayment" style="height: 600px;">
+            <q-virtual-scroll :items="quantitySumLicensePayment" virtual-scroll-slice-size="100" style="height: 50vh;">
               <template v-slot="{ item, index }">
                 <div :key="index" dense class="row">
            <q-checkbox dense v-model="payPZSSList" :val="item.paymentUuid" left-label>{{index+1}}.</q-checkbox>

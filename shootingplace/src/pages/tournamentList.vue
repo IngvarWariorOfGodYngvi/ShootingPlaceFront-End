@@ -2293,7 +2293,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.success = true
               this.message = response
@@ -2305,7 +2305,7 @@ export default {
             }
           )
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -2329,7 +2329,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.success = true
               this.message = response
@@ -2341,7 +2341,7 @@ export default {
             }
           )
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -2365,7 +2365,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.success = true
               this.message = response
@@ -2377,7 +2377,7 @@ export default {
             }
           )
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -2401,7 +2401,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.success = true
               this.message = response
@@ -2414,7 +2414,7 @@ export default {
             }
           )
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true

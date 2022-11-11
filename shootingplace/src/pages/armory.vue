@@ -895,7 +895,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.success = true
@@ -905,7 +905,7 @@ export default {
             }
           )
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -920,13 +920,23 @@ export default {
         method: 'PUT'
       }).then(response => {
         if (response.status === 200) {
-          this.message = response
-          this.success = true
-          this.getAllGuns()
-          this.autoClose()
+          response.text().then(
+            response => {
+              this.message = response
+              this.success = true
+              this.showloading()
+              this.getAllGuns()
+              this.autoClose()
+            }
+          )
         } else {
-          this.failure = true
-          this.autoClose()
+          response.text().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            }
+          )
         }
       })
     },
@@ -1116,7 +1126,7 @@ export default {
         method: 'POST'
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.success = true
               this.message = response
@@ -1127,7 +1137,7 @@ export default {
             }
           )
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -1181,14 +1191,14 @@ export default {
       if (val === '') {
         update(() => {
           const needle = val.toLowerCase()
-          this.options = this.filters1.filter(v => v.toLowerCase().indexOf(needle) > -1)
+          this.options = this.filters.filter(v => v.toLowerCase().indexOf(needle) > -1)
         })
         return
       }
 
       update(() => {
         const needle = val.toLowerCase()
-        this.options = this.filters1.filter(v => v.toLowerCase().indexOf(needle) > -1)
+        this.options = this.filters.filter(v => v.toLowerCase().indexOf(needle) > -1)
       })
     },
     filterGunTypes (val, update) {

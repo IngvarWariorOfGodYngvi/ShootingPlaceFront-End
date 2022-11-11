@@ -48,7 +48,7 @@ export default {
   prod: 'localhost:8081/#/',
   // prod: 'localhost:8080/strzelnica/#/',
   // host: 'localhost:8080/shootingplace-1.0/'
-  host: 'localhost:8080/shootingplace'
+  host: 'localhost:8080'
 }
 
 </script>

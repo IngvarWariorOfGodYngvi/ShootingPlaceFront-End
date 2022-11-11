@@ -396,7 +396,30 @@
                 <q-item v-if="monthSelect===null|| workTypeSelect===null" class="col-4 q-pa-none"><q-btn class="q-pa-none" disable color="primary" label="Pobierz raport czasu pracy"/></q-item>
                 <q-item v-else class="col-4 q-pa-none"><q-btn class="q-pa-none" color="primary" label="Pobierz raport czasu pracy" @click="showloading(),getWorkTimeReport (monthSelect, uuid.uuid, workTypeSelect, detailed,false)"/></q-item>
               </div>
+            </div>
+            <div v-if="choose == chooseSelect[10]" class="q-pa-md">
+              <q-btn label="wyświetl książkę" @click="getRecodrsFromBook(dateEvidence)"></q-btn>
+              <div class="row text-bold">
+                <div class="col-2">lp Nazwisko</div>
+                <div class="col-2">Imię</div>
+                <div class="col-3">Adres / Numer pozwolenia</div>
+                <div class="col-2">zapoznanie się z regulaminen strzelnicy</div>
+                <div class="col-3">podpis</div>
               </div>
+              <q-virtual-scroll :items="evidenceBookList" visible class="q-pa-none text-black full-width">
+                    <template v-slot="{ index, item }">
+                    <div class="row">
+                      <div class="col-2">{{index+1}} {{item.secondName}}</div>
+                      <div class="col-2">{{item.firstName}}</div>
+                      <div v-if="item.weaponPermission!=null" class="col-3">{{item.weaponPermission}}</div>
+                      <div  v-else class="col-3">{{item.address}}</div>
+                      <div v-if="item.statementOnReadingTheShootingPlaceRegulations" class="col-2">tak</div>
+                      <div v-else class="col-2">nie</div>
+                      <div class="col-3">{{item.imageUUID}} tutaj będzie podpis w formie obrazka</div>
+                    </div>
+                    </template>
+              </q-virtual-scroll>
+            </div>
               <!-- <div class="q-pa-md"><q-btn color="primary" label="mejla ślij" @click="sendMail ()"/></div> -->
             </q-card-section>
           </q-card>
@@ -662,6 +685,7 @@ export default {
     return {
       workTimeChangeArray: [],
       c: 0,
+      dateEvidence: this.createTodayDate(),
       code: null,
       uuid: null,
       uuid1: null,
@@ -676,7 +700,7 @@ export default {
       others: [],
       clubs: [],
       choose: null,
-      chooseSelect: ['Listy Klubowiczów', 'Lista do zgłoszenia na Policję', 'Lista do skreślenia', 'Lista skreślonych', 'Osoby bez Patentu', 'Osoby nieaktywne', 'Lista Osób z Licencją i bez składek', 'Lista Obecności', 'Raport Sędziowania', 'Raport Czasu Pracy'],
+      chooseSelect: ['Listy Klubowiczów', 'Lista do zgłoszenia na Policję', 'Lista do skreślenia', 'Lista skreślonych', 'Osoby bez Patentu', 'Osoby nieaktywne', 'Lista Osób z Licencją i bez składek', 'Lista Obecności', 'Raport Sędziowania', 'Raport Czasu Pracy', 'Książka rejestru pobytu na strzelnicy'],
       month: ['Styczeń', 'Luty', 'Marczec', 'Kwiecień', 'Maj', 'Czerwiec', 'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień'],
       monthSelect: null,
       monthSelect1: null,
@@ -709,6 +733,7 @@ export default {
       clubInfoModel: [],
       createClub: false,
       policeList: [],
+      evidenceBookList: [],
       success: false,
       editClub: false,
       failure: false,
@@ -749,6 +774,23 @@ export default {
         this.$q.loading.hide()
         this.timer = 0
       }, 1000)
+    },
+    createTodayDate () {
+      const date = new Date()
+      let month = 0
+      let day = 0
+      if ((date.getMonth() + 1) < 10) {
+        month = '0' + (date.getMonth() + 1)
+      } else {
+        month = (date.getMonth() + 1)
+      }
+      if (date.getDate() < 10) {
+        day = '0' + (date.getDate() + 1)
+      } else {
+        day = (date.getDate())
+      }
+      const today = date.getFullYear() + '-' + month + '-' + day
+      return today
     },
     addRecordToWorkTimeArray (uuid, start, stop) {
       const arr = this.workTimeChangeArray
@@ -852,12 +894,20 @@ export default {
       const duration = 500
       setScrollPosition(target, offset, duration)
     },
+    getRecodrsFromBook (date) {
+      fetch('http://' + this.local + '/evidence/?date=' + date, {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.evidenceBookList = response
+        })
+    },
     getOther () {
       fetch('http://' + this.local + '/other/all', {
         method: 'GET'
       }).then(response => response.json())
-        .then(others => {
-          this.others = others
+        .then(response => {
+          this.others = response
         })
     },
     getWorkingType () {
@@ -1050,7 +1100,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.success = true
               this.message = response
@@ -1066,7 +1116,7 @@ export default {
             }
           )
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true

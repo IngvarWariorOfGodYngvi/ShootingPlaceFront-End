@@ -6,7 +6,7 @@
         </q-item>
       </div>
       <div class="row">
-    <q-card class="col-8">
+    <q-card class="col-9">
       <div class="row">
         <div class="col-3">
           <q-btn class="col-1 full-width full-height" style="text-8" label="dodaj do listy" icon="book" @click="getOther(),addAmmo=true" ></q-btn>
@@ -25,7 +25,7 @@
     <div v-if="ammoList.length >= 1" class="col">
       <q-item class="col">
         <q-item-section class="text-h5 text-bold">
-          Lista Amunicji {{ammoList[0].date}} numer {{ammoList[0].number}}
+          Lista Amunicji {{convertDate(ammoList[0].date)}} numer {{ammoList[0].number}}
         </q-item-section>
       <q-item-section side top>
       <q-btn color="primary" label="Zamknij listę" @click="uuid=ammoList[0].uuid,confirmation=true"/>
@@ -35,24 +35,24 @@
       </q-item-section>
       </q-item>
       <div v-for="(ammoList, uuid) in ammoList" :key="uuid">
-            <div v-for="(ammoInEvidenceEntityList,uuid) in ammoList.ammoInEvidenceEntityList" :key="uuid">
+            <div v-for="(ammoInEvidenceDTOList,uuid) in ammoList.ammoInEvidenceDTOList" :key="uuid">
               <q-item dense>
                 <q-item-label class="text-h6">
-                  Kaliber {{ammoInEvidenceEntityList.caliberName}}
+                  Kaliber {{ammoInEvidenceDTOList.caliberName}}
                 </q-item-label>
               </q-item>
                 <div class="col">
-                  <div class="row" v-for="(ammoUsedToEvidenceEntityList,uuid) in ammoInEvidenceEntityList.ammoUsedToEvidenceEntityList" :key="uuid">
+                  <div class="row" v-for="(ammoUsedToEvidenceDTOList,uuid) in ammoInEvidenceDTOList.ammoUsedToEvidenceDTOList" :key="uuid">
                     <q-field color="black" dense class="col-10" standout="bg-accent text-black" label="osoba" stack-label>
-                        <div class="row text-black">{{ammoUsedToEvidenceEntityList.name}}</div>
+                        <div class="row text-black">{{ammoUsedToEvidenceDTOList.name}}</div>
                     </q-field>
                     <q-field class="col-2" dense standout="bg-accent text-black" label="ilość" stack-label>
-                        <div class="row text-black">{{ammoUsedToEvidenceEntityList.counter}}</div>
+                        <div class="row text-black">{{ammoUsedToEvidenceDTOList.counter}}</div>
                     </q-field>
                   </div>
                   <div class="row reverse">
                     <q-field class="col-2 bg-grey-4" dense standout="bg-accent text-black" label="suma" stack-label>
-                        <div class="text-black">{{ammoInEvidenceEntityList.quantity}}</div>
+                        <div class="text-black">{{ammoInEvidenceDTOList.quantity}}</div>
                     </q-field>
                   </div>
                 </div>
@@ -60,7 +60,7 @@
       </div>
     </div>
     </q-card>
-    <q-card class="col-2">
+    <!-- <q-card class="col-2">
       <div>
         <q-item>
           <q-item-label class="text-h5 text-bold">
@@ -83,8 +83,8 @@
         </q-virtual-scroll>
       </div>
       </div>
-    </q-card>
-    <q-card class="col-2">
+    </q-card> -->
+    <q-card class="col-3">
       <div>
         <q-item>
           <q-item-label class="text-h5 text-bold">
@@ -96,8 +96,10 @@
             <q-item :key="index" dense
             >
              <q-btn class="col full-width full-height" @click="date = item.date,ammunitionListNumber = item.number,uuid= item.evidenceUUID,getEvidence(),ammunitionListInfo=true">
-              <div>{{item.number}}</div>
-              <div>{{convertDate(item.date)}}</div>
+              <div class="col">
+                <b>{{item.number}}</b>
+                <div class="text-caption">{{convertDate(item.date)}}</div>
+              </div>
               </q-btn>
             </q-item>
           </template>
@@ -169,7 +171,7 @@
           </q-item>
         </template>
       </q-select>
-      <q-select class="col" filled v-model="otherName" use-input hide-selected fill-input input-debounce="0" :options="options" @input="memberName='0 0'" @filter="filterOther" label="Dodaj osobę spoza klubu">
+      <q-select class="col" filled v-model="otherName" use-input hide-selected fill-input input-debounce="0" :options="options1" @input="memberName='0 0'" @filter="filterOther" label="Dodaj osobę spoza klubu">
         <template v-slot:no-option>
           <div>
             <div class="q-pa-md bg-grey-5 text-center text-bold">Brak wyników  - możesz dodać nową osobę</div>
@@ -327,6 +329,7 @@ export default {
       permissionsOtherArbiterPermissionValidThru: '',
       gunBarcode: null,
       options: stringOptions,
+      options1: stringOptions,
       local: App.host
     }
   },
@@ -470,8 +473,8 @@ export default {
       fetch('http://' + this.local + '/member/getAllNames', {
         method: 'GET'
       }).then(response => response.json())
-        .then(filters => {
-          this.filters = filters
+        .then(response => {
+          this.filters = response
         })
     },
     getAmmoListPDF () {
@@ -564,8 +567,8 @@ export default {
       fetch('http://' + this.local + '/other/', {
         method: 'GET'
       }).then(response => response.json())
-        .then(filtersOther => {
-          this.filtersOther = filtersOther
+        .then(response => {
+          this.filtersOther = response
         })
     },
     addOtherPerson () {
@@ -610,14 +613,14 @@ export default {
       if (val === '') {
         update(() => {
           const needle = val.toLowerCase()
-          this.options = this.filtersOther.filter(v => v.toLowerCase().indexOf(needle) > -1)
+          this.options1 = this.filtersOther.filter(v => v.toLowerCase().indexOf(needle) > -1)
         })
         return
       }
 
       update(() => {
         const needle = val.toLowerCase()
-        this.options = this.filtersOther.filter(v => v.toLowerCase().indexOf(needle) > -1)
+        this.options1 = this.filtersOther.filter(v => v.toLowerCase().indexOf(needle) > -1)
       })
     },
     getAllClubsToTournament () {

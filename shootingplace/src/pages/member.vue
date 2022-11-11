@@ -425,7 +425,7 @@
                 </div>
 </q-expansion-item>
 <q-expansion-item v-if="!member.erased" label="Opcje Dodatkowe" group="right-card" class="bg-grey-3">
-<q-expansion-item v-if="member.adult&&!member.erased" label="Patent" group="right-right-card" class="bg-white">
+<q-expansion-item v-if="!member.erased" label="Patent" group="right-right-card" class="bg-white">
                 <q-btn class="full-width" color="primary" v-if="member.shootingPatent.patentNumber==null" label="DODAJ PATENT" @click="memberUUID=member.uuid,patentConfirm=true"></q-btn>
                 <q-btn class="full-width" color="primary" v-if="member.shootingPatent.patentNumber!=null" label="AKTUALIZUJ PATENT"
                 @click="memberUUID=member.uuid,
@@ -1371,7 +1371,7 @@
 <q-dialog :position="'top'" v-model="forbidden">
       <q-card class="bg-warning">
         <q-card-section>
-          <div class="text-h6">Niewłaściwy kod. Spróbuj ponownie.</div>
+          <div v-if="message!=null" class="text-h6">{{message}}</div>
         </q-card-section>
 
       </q-card>

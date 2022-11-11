@@ -37,7 +37,7 @@
             <li v-for="(superUser,id) in superUsers" :key="id" class="col text-bold">
             <div class="row full-width flex-center bg-grey-3 q-ma-sm">
               <div class="col full-width" style="cursor: pointer;" @dblclick="uuid = superUser.uuid,inputBarCode=true">{{superUser.firstName}} {{superUser.secondName}}</div>
-              <q-btn color="primary" class="col full-width">usuń</q-btn>
+              <q-btn color="primary" class="col full-width" @click="uuid = superUser.uuid,getUserActions(uuid),userActions=true">wyświetl działania</q-btn>
             </div>
           </li>
           </ol>
@@ -79,7 +79,7 @@
             <li v-for="(user,id) in users" :key="id" class="col text-bold">
             <div class="row full-width flex-center bg-grey-3 q-ma-sm">
               <div class="col full-width" style="cursor: pointer;" @dblclick="uuid = user.uuid,userSubTypeBarCodeSelect = user.subType,inputBarCode=true">{{user.firstName}} {{user.secondName}}</div>
-              <q-btn color="primary" class=" col full-width">usuń</q-btn>
+              <q-btn color="primary" class=" col full-width" @click="uuid = user.uuid,getUserActions(uuid),userActions=true">wyświetl działania</q-btn>
             </div>
           </li>
           </ol>
@@ -274,6 +274,22 @@
         </q-card-actions>
       </q-card>
   </q-dialog>
+  <q-dialog v-model="userActions">
+      <q-card class="text-center">
+        <q-card-section>
+          <div class="text-h6">Akcje użytkownika</div>
+          <q-virtual-scroll :items="actions" dense visible class="full-width" style="height: 80vh;">
+            <template v-slot="{ item, index }">
+              <div class="row">
+                <q-field filled color="black" class="col">{{index+1}} {{item.classNamePlusMethod}}</q-field>
+                <q-field filled color="black" class="col">{{item.belongsTo}}</q-field>
+                <q-field filled color="black" class="col">{{item.timeNow}} {{item.dayNow}}</q-field>
+              </div>
+            </template>
+          </q-virtual-scroll>
+        </q-card-section>
+      </q-card>
+  </q-dialog>
   <q-dialog :position="'top'" v-model="dataFail">
       <q-card class="bg-red-5 text-center">
         <q-card-section>
@@ -335,6 +351,8 @@ export default {
   data () {
     return {
       inputBarCode: false,
+      userActions: false,
+      actions: [],
       barCode: null,
       userSubType: ['Pracownik', 'Zarząd', 'Komisja Rewizyjna', 'Gość', 'Pracownik/Zarząd', 'Prezes/Zarząd'],
       userSubTypeSelect: null,
@@ -406,6 +424,14 @@ export default {
     },
     file_selected (file) {
       this.selected_file = file[0]
+    },
+    getUserActions (uuid) {
+      fetch('http://' + this.local + '/users/userActions?uuid=' + uuid, {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.actions = response
+        })
     },
     getAllFiles (pageNumber) {
       this.showloading()

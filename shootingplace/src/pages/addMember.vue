@@ -24,12 +24,12 @@
       <q-card-section class="col-6 bg-grey-2">
       <div class="full-width">
         <q-form>
-      <q-item><q-input class="full-width" dense color="red" v-model="memberFirstName" label="Imię *" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled/></q-item>
-      <q-item><q-input class="full-width" dense color="red" v-model="memberSecondName" label="Nazwisko *" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 45" filled/></q-item>
-      <q-item><q-input class="full-width" dense color="red" v-model="memberIDCard" label="Numer Dokumentu *" filled @input="isPresentIDCard(memberIDCard)"/></q-item>
-      <q-item><q-input class="full-width" dense color="red" v-model="memberPesel" placeholder="tylko cyfry" label="Pesel *" mask="###########" filled @input="isValidPesel(memberPesel),isPresentPesel(memberPesel)"/></q-item>
-      <q-item><q-input class="full-width" dense color="red" type="tel" v-model="memberPhone" placeholder="tylko cyfry" prefix="+48 " label="Numer telefonu *" mask="### ### ###" filled onkeypress="return (event.charCode > 47 && event.charCode < 58)"/></q-item>
-      <q-item><q-input class="full-width" dense filled color="green" type="email" v-model="memberEmail" label="email" @input="isPresentEmail(memberEmail)"/></q-item>
+      <q-item><q-input class="full-width" @input="memberFirstNameC = memberFirstName.length===0? '':memberFirstNameC = memberFirstName.length<3 ? 'red-2':'green-2'" dense :bg-color="memberFirstNameC" v-model="memberFirstName" label="Imię *" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled/></q-item>
+      <q-item><q-input class="full-width" @input="memberSecondNameC = memberSecondName.length===0? '':memberSecondNameC = memberSecondName.length<3 ? 'red-2':'green-2'" dense :bg-color="memberSecondNameC" v-model="memberSecondName" label="Nazwisko *" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 45" filled/></q-item>
+      <q-item><q-input class="full-width" @input="memberIDCardC = memberIDCard.length===0? '' : checkIDCard(memberIDCard)" dense :bg-color="memberIDCardC" v-model="memberIDCard" :suffix="memberIDCardS" label="Numer Dokumentu *" filled/></q-item>
+      <q-item><q-input class="full-width" @input="memberPeselC = memberPesel.length===0? '' : checkPESEL(memberPesel)" dense :bg-color="memberPeselC" v-model="memberPesel" :suffix="memberPeselS" placeholder="tylko cyfry" label="Pesel *" mask="###########" filled /></q-item>
+      <q-item><q-input class="full-width" @input="memberPhoneC = memberPhone.length===0? '' : memberPhone.length<11? 'red-2' : 'green-2' " dense :bg-color="memberPhoneC" type="tel" v-model="memberPhone" placeholder="tylko cyfry" prefix="+48 " label="Numer telefonu *" mask="### ### ###" filled onkeypress="return (event.charCode > 47 && event.charCode < 58)"/></q-item>
+      <q-item><q-input class="full-width" @input="memberEmailC = memberEmail.length===0? '' : checkEmail(memberEmail)" :bg-color="memberEmailC" dense filled color="green" type="email" v-model="memberEmail" :suffix="memberEmailS" label="email"/></q-item>
       <q-item><q-input class="full-width" dense filled color="green" v-model="memberLegitimation" label="Numer Legitymacji" onkeypress="return (event.charCode > 47 && event.charCode < 58)"/></q-item>
       <q-item><q-input class="full-width" dense filled v-model="memberJoinDate" mask="####-##-##" label="Data dołączenia do Klubu" hint="użyj kalendarza">
                           <template v-slot:append>
@@ -52,12 +52,20 @@
         <q-radio v-model="memberAdult" :val="false" label="Grupa Młodzieżowa" color="secondary" />
         </div>
       </div>
-      <q-item><q-btn label="Dodaj" color="secondary" @click="acceptCode=true"/></q-item>
       </q-form>
       </div>
       </q-card-section>
       <q-card-section class="col-6">
       <div>
+      <q-item><q-input class="full-width" dense filled v-model="memberPostOfficeCity" label="Miasto" /></q-item>
+      <q-item><q-input class="full-width" dense filled v-model="memberZipCode" placeholder="00-000" label="Kod Pocztowy" mask="##-###" /></q-item>
+      <q-item><q-input class="full-width" dense filled v-model="memberStreet" label="Ulica" /></q-item>
+      <q-item><q-input class="full-width" dense filled v-model="memberStreetNumber" label="Numer Ulicy" /></q-item>
+      <q-item><q-input class="full-width" dense filled v-model="memberFlatNumber" label="Numer Mieszkania"/></q-item>
+      <!-- <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),updateAddress(uuid, memberPostOfficeCity, memberZipCode, memberStreet, memberStreetNumber, memberFlatNumber)"/></q-item> -->
+    </div>
+    <q-item class="reverse self-end"><q-btn label="Dodaj" color="secondary" @click="acceptCode=true"/></q-item>
+      <!-- <div>
         <q-item>
           <q-field dense v-if="memberFirstName.length<3" class="full-width bg-red-2" standout label="Imię" stack-label>
             <template v-slot:control>
@@ -172,7 +180,7 @@
             </template>
           </q-field>
         </q-item>
-      </div>
+      </div> -->
       </q-card-section>
       </q-card>
       </q-step>
@@ -574,7 +582,8 @@
       memberPesel,
       memberPhone,
       memberEmail,
-      memberAdult),acceptCode=false">
+      memberAdult),
+      updateAddress(uuid, memberPostOfficeCity, memberZipCode, memberStreet, memberStreetNumber, memberFlatNumber),acceptCode=false">
       <q-card class="bg-red-5 text-center">
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
@@ -589,14 +598,15 @@
       memberPesel,
       memberPhone,
       memberEmail,
-      memberAdult)" />
+      memberAdult),
+      updateAddress(uuid, memberPostOfficeCity, memberZipCode, memberStreet, memberStreetNumber, memberFlatNumber)" />
         </q-card-actions>
       </q-card>
 </q-dialog>
 <q-dialog :position="'top'" v-model="forbidden">
       <q-card class="bg-warning">
         <q-card-section>
-          <div class="text-h6">Niewłaściwy kod. Spróbuj ponownie.</div>
+          <div class="text-h6">{{message}}</div>
         </q-card-section>
       </q-card>
 </q-dialog>
@@ -667,11 +677,20 @@ export default {
       weaponPermissionNumber: '',
       isExist: true,
       memberFirstName: '',
+      memberFirstNameC: '',
       memberSecondName: '',
+      memberSecondNameC: '',
       memberIDCard: '',
+      memberIDCardC: '',
+      memberIDCardS: '',
       memberPesel: '',
+      memberPeselC: '',
+      memberPeselS: '',
       memberPhone: '',
+      memberPhoneC: '',
       memberEmail: '',
+      memberEmailC: '',
+      memberEmailS: '',
       memberAdult: true,
       memberAdultConfirm: false,
       memberLegitimation: '',
@@ -724,7 +743,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 400) {
-          response.json().then(
+          response.text().then(
             response => {
               this.code = null
               this.alertResponse = response
@@ -736,7 +755,7 @@ export default {
             })
         }
         if (response.status === 406) {
-          response.json().then(
+          response.text().then(
             response => {
               this.code = null
               this.alertResponse = response
@@ -748,7 +767,7 @@ export default {
             })
         }
         if (response.status === 201) {
-          response.json().then(
+          response.text().then(
             response => {
               this.uuid = response
               this.code = null
@@ -761,7 +780,7 @@ export default {
           )
         }
         if (response.status === 409) {
-          response.json().then(
+          response.text().then(
             response => {
               this.uuid = response
               this.code = null
@@ -774,8 +793,12 @@ export default {
           )
         }
         if (response.status === 403) {
-          this.forbidden = true
-          this.autoClose()
+          response.text().then(
+            response => {
+              this.message = response
+              this.forbidden = true
+              this.autoClose()
+            })
         }
       })
     },
@@ -1031,8 +1054,31 @@ export default {
           this.memberJoinDate = this.memberE.joinDate
         })
     },
-    isValidPesel (pesel) {
-      if (typeof pesel !== 'string') {
+    checkPESEL (pesel) {
+      let a, b
+      let color = ''
+      this.isValidPesel(pesel).then(() => {
+        this.isPresentPesel(pesel).then(() => {
+          a = this.peselValue
+          b = this.isPresent
+          if (a) {
+            color = 'green-2'
+            this.memberPeselS = ''
+            if (b) {
+              this.memberPeselS = 'TAKI PESEL ISTNIEJE JUŻ W BAZIE'
+              color = 'warning'
+            }
+          } else {
+            this.memberPeselS = ''
+            color = 'red-2'
+          }
+          this.memberPeselC = color
+        })
+      })
+      return color
+    },
+    async isValidPesel (pesel) {
+      if (typeof pesel !== 'string' || pesel.length < 11) {
         this.peselValue = false
       } else {
         const weight = [1, 3, 7, 9, 1, 3, 7, 9, 1, 3]
@@ -1044,11 +1090,12 @@ export default {
         }
         sum = sum % 10
         this.peselValue = (10 - sum) % 10 === controlNumber
+        return this.peselValue
       }
     },
-    isPresentPesel (pesel) {
+    async isPresentPesel (pesel) {
       if (pesel.length === 11 && this.peselValue) {
-        fetch('http://' + this.local + '/member/pesel?pesel=' + pesel, {
+        await fetch('http://' + this.local + '/member/pesel?pesel=' + pesel, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -1056,12 +1103,32 @@ export default {
         }).then(response => response.json())
           .then(response => {
             this.isPresent = response
+            return response
           })
-      }
+      } else { return this.isPresent }
     },
-    isPresentIDCard (IDCard) {
-      if (IDCard.length === 10) {
-        fetch('http://' + this.local + '/member/IDCard?IDCard=' + IDCard, {
+    checkIDCard (number) {
+      let color = ''
+      this.isPresentIDCard(number).then(() => {
+        const b = this.isIDCard
+        if (number.length > 9) {
+          if (b) {
+            color = 'warning'
+          } else { color = 'green-2' }
+          if (color === 'warning') {
+            this.memberIDCardS = 'TAKI NUMER JUŻ ISTNIEJE W BAZIE'
+          } else { this.memberIDCardS = '' }
+        } else {
+          this.memberIDCardS = ''
+          color = 'red-2'
+        }
+        this.memberIDCardC = color
+      })
+      return color
+    },
+    async isPresentIDCard (IDCard) {
+      if (IDCard.length > 9) {
+        await fetch('http://' + this.local + '/member/IDCard?IDCard=' + IDCard, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -1069,21 +1136,45 @@ export default {
         }).then(response => response.json())
           .then(response => {
             this.isIDCard = response
+            return response
           })
+      } else {
+        return false
       }
     },
-    isPresentEmail (email) {
-      if (email.includes('@') && email.includes('.')) {
-        fetch('http://' + this.local + '/member/email?email=' + email, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
+    checkEmail (email) {
+      let color = ''
+      this.isPresentEmail(email).then(() => {
+        const a = this.isEmail
+        if (email.includes('@') && email.includes('.')) {
+          color = a ? 'warning' : 'green-2'
+          if (color === 'warning') {
+            this.memberEmailS = 'TAKI EMAIL ISTNIEJE JUŻ W BAZIE'
+          } else {
+            this.memberEmailS = ''
           }
-        }).then(response => response.json())
-          .then(response => {
-            this.isEmail = response
-          })
-      }
+          this.memberEmailC = color
+          return color
+        } else {
+          color = 'red-2'
+          this.memberEmailC = color
+          this.memberEmailS = ''
+          return color
+        }
+      })
+      return color
+    },
+    async isPresentEmail (email) {
+      await fetch('http://' + this.local + '/member/email?email=' + email, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => response.json())
+        .then(response => {
+          this.isEmail = response
+          return response
+        })
     },
     redirectToMemberList () {
       window.location.href = 'http://' + App.prod + 'member'
