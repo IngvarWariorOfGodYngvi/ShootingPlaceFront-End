@@ -9,7 +9,7 @@
     <q-card class="col-9">
       <div class="row">
         <div class="col-3">
-          <q-btn class="col-1 full-width full-height" style="text-8" label="dodaj do listy" icon="book" @click="getOther(),addAmmo=true" ></q-btn>
+          <q-btn class="col-1 full-width full-height" style="text-8" icon="person_add_alt_1" icon-right="person_add_alt_1" @click="getOther(),addAmmo=true"><q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">Dodaj do listy</q-tooltip></q-btn>
         </div>
         <div v-if="ammoList.length >= 1 && ammoList[0].forceOpen==true" class="col-9">
           <div class=" q-pa-md bg-red-3 text-center text-bold">UWAGA! LISTA OTWARTA PONOWNIE. NA KONIEC DNIA PAMIĘTAJ O JEJ ZAMKNIĘCIU!</div>
@@ -28,10 +28,10 @@
           Lista Amunicji {{convertDate(ammoList[0].date)}} numer {{ammoList[0].number}}
         </q-item-section>
       <q-item-section side top>
-      <q-btn color="primary" label="Zamknij listę" @click="uuid=ammoList[0].uuid,confirmation=true"/>
+      <q-btn color="primary" @click="uuid=ammoList[0].uuid,confirmation=true" icon="lock"><q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">Zamknij listę</q-tooltip></q-btn>
       </q-item-section>
       <q-item-section side top>
-      <q-btn color="primary" label="Pobierz listę" @click="date=ammoList[0].date,uuid=ammoList[0].uuid,showloading(),getAmmoListPDF(),getAmmoData(),getCLosedEvidence()"/>
+      <q-btn color="primary" @click="date=ammoList[0].date,uuid=ammoList[0].uuid,showloading(),getAmmoListPDF(),getAmmoData(),getCLosedEvidence()" icon="file_download"><q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">Pobierz listę</q-tooltip></q-btn>
       </q-item-section>
       </q-item>
       <div v-for="(ammoList, uuid) in ammoList" :key="uuid">
@@ -134,14 +134,14 @@
               </div>
             </div>
           <div class="row">
-            <q-btn color="secondary" class="col full-width full-height" label="pobierz listę" @click="getAmmoListPDF()"></q-btn>
+            <q-btn color="secondary" class="col full-width full-height" @click="getAmmoListPDF()" icon="file_download"><q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">Pobierz listę</q-tooltip></q-btn>
             <q-item></q-item>
-            <q-btn color="primary" class="col full-width full-height" label="otwórz listę" @click="openList=true"></q-btn>
+            <q-btn color="primary" class="col full-width full-height" icon="lock_open" @click="openList=true"><q-tooltip  anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">Otwórz listę</q-tooltip></q-btn>
           </div>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat label="Zamknij" color="primary" v-close-popup />
+          <q-btn flat icon="close" color="primary" v-close-popup />
         </q-card-actions>
       </q-card>
 </q-dialog>
@@ -192,8 +192,8 @@
     <div class="col">
     <q-input type="number" @keypress.enter="addMemberAndAmmoToCaliber()" filled class="full-width col" v-model="ammoQuantity" placeholder="Tylko cyfry" onkeypress="return (event.charCode > 44 && event.charCode < 58)" label="Ilość Amunicji"></q-input>
     <q-card-actions class="row" align="right">
-    <q-item><q-btn class="full-width col" color="primary" label="zamknij" v-close-popup></q-btn></q-item>
-    <q-item><q-btn class="full-width col" color="primary" label="wydaj amunicję" @click="addMemberAndAmmoToCaliber()"></q-btn></q-item>
+    <q-item><q-btn class="full-width col" color="primary" icon="close" v-close-popup></q-btn></q-item>
+    <q-item><q-btn class="full-width col" color="primary" icon="done" @click="addMemberAndAmmoToCaliber()"></q-btn></q-item>
     </q-card-actions>
     </div>
   </div>
@@ -262,8 +262,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat label="anuluj" color="primary" v-close-popup />
-          <q-btn label="Zamknij" color="primary" v-close-popup @click="showloading(),closeEvidence (),getAmmoData(),getCLosedEvidence()"/>
+          <q-btn flat icon="cancel" color="primary" v-close-popup />
+          <q-btn icon="done" color="primary" v-close-popup @click="showloading(),closeEvidence (),getAmmoData(),getCLosedEvidence()"/>
         </q-card-actions>
       </q-card>
     </q-dialog>

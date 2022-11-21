@@ -11,7 +11,6 @@ export default {
     WorkTimeList
   },
   created () {
-    // this.clockTimer()
     this.getActualYearMemberCounts()
   },
   data () {
@@ -120,46 +119,9 @@ export default {
           this.members = response
         })
     },
-    // checkAnyOpenAmmoList () {
-    //   fetch('http://' + this.local + '/ammoEvidence/checkAnyOpenEvidence', {
-    //     method: 'GET',
-    //     headers: {
-    //       'Content-Type': 'application/json'
-    //     }
-    //   }).then(response => response.json())
-    //     .then(response => {
-    //       this.color = response
-    //     })
-    // },
-    // checkTournament () {
-    //   fetch('http://' + this.local + '/tournament/check', {
-    //     method: 'GET',
-    //     headers: {
-    //       'Content-Type': 'application/json'
-    //     }
-    //   }).then(response => response.json())
-    //     .then(response => {
-    //       this.tournamentCheck = response
-    //     })
-    // },
-    // logout () {
-    //   this.$keycloak.keycloak.logout()
-    // },
     clear () {
       this.interval = true
       this.distance = 1200000
     }
-    // clockTimer () {
-    //   setInterval(() => {
-    //     const minutes = Math.floor((this.distance % (1000 * 60 * 60)) / (1000 * 60))
-    //     const seconds = Math.floor((this.distance % (1000 * 60)) / 1000)
-    //     document.getElementById('timer').innerHTML = 'Wylogowanie za: ' + minutes + 'm ' + seconds + 's '
-    //     this.distance = this.distance - 1000
-    //     if (this.distance < 0) {
-    //       document.getElementById('timer').innerHTML = 'Wylogowywanie'
-    //       this.logout()
-    //     }
-    //   }, 1000)
-    // }
   }
 }

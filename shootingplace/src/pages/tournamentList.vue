@@ -212,11 +212,23 @@
           <div class="row">
                 <q-card-section class="col-6">
                   <div class="col">
-                <q-select filled v-model="memberName" dense use-input hide-selected fill-input input-debounce="0" :options="options" @input="otherName='0 0'" @filter="filterFn" label="Wybierz osobę z klubu">
+                <q-select :label="memberName" label-color="black" :option-value="memberName" filled dense use-input hide-selected input-debounce="0" :options="options" @input="otherName='0 0'" @filter="filterFn">
+                  <template v-slot:option="option">
+                    <q-item class="rounded" dense style="padding: 0px; margin: 0px;" v-bind="option.itemProps" v-on="option.itemEvents">
+                      <q-item-section v-if="option.opt.active" style="padding: 0.5em; margin: 0px;" @click="memberName = option.opt.secondName+' '+option.opt.firstName+' '+ option.opt.legitimationNumber">
+                        <div v-if="option.opt.adult">{{option.opt.secondName}} {{option.opt.firstName}} {{option.opt.legitimationNumber}} Ogólna</div>
+                        <div v-else>{{option.opt.secondName}} {{option.opt.firstName}} {{option.opt.legitimationNumber}} Młodzież</div>
+                      </q-item-section>
+                      <q-item-section v-else style="padding: 0.5em; margin: 0px;" class="bg-red-2 rounded" @click="memberName = option.opt.legitimationNumber">
+                        <div v-if="option.opt.adult">{{option.opt.secondName}} {{option.opt.firstName}} {{option.opt.legitimationNumber}} Ogólna - BRAK SKŁADEK</div>
+                        <div v-else>{{option.opt.secondName}} {{option.opt.firstName}} {{option.opt.legitimationNumber}} Młodzież - BRAK SKŁADEK</div>
+                      </q-item-section>
+                    </q-item>
+                  </template>
                   <template v-slot:no-option>
                     <q-item>
                       <q-item-section class="text-grey">
-                        Brak wyników
+                        Brak wyników - sprawdź w nieaktywnych
                       </q-item-section>
                     </q-item>
                   </template>
@@ -276,7 +288,7 @@
                             <q-tooltip v-if="!item.member.active" content-class="bg-red text-subtitle2" anchor="top middle" >UREGULUJ SKŁADKI</q-tooltip>
                             <div class="q-pa-xs row full-width text-caption">
                             <div v-if="item.otherPersonEntity == null" class="col no-outline text-black" tabindex="0">{{item.member.secondName}} {{item.member.firstName}}</div>
-                            <div v-if="item.otherPersonEntity == null" class="col-5 no-outline text-black" tabindex="0">{{item.member.club.name}}</div>
+                            <div v-if="item.otherPersonEntity == null" class="col-5 no-outline text-black" tabindex="0">DZIESIĄTKA Łódź</div>
                             </div>
                         </q-field>
                       </div>
@@ -409,7 +421,7 @@
                             <q-tooltip v-if="!item.member.active" content-class="bg-red text-subtitle2" anchor="top middle" >UREGULUJ SKŁADKI</q-tooltip>
                             <div class="q-pa-xs row full-width text-caption">
                               <div v-if="item.otherPersonEntity == null" class="col no-outline text-black" tabindex="0">{{item.member.secondName}} {{item.member.firstName}} </div>
-                              <div v-if="item.otherPersonEntity == null" class="col-5 no-outline text-black" tabindex="0">{{item.member.club.name}}</div>
+                              <div v-if="item.otherPersonEntity == null" class="col-5 no-outline text-black" tabindex="0">DZIESIĄTKA Łódź</div>
                             </div>
                         </q-field>
                       </div>
@@ -1139,7 +1151,7 @@
         </div>
         <div class="row q-pa-md">
             <q-btn class="col full-width" color="red" label="Usuń z listy" @click="removeMemberFromCompetition(),finder = null"></q-btn>
-            <q-btn class="col full-width" label="Dodaj do listy" @click="addMemberToCompetition(), (finder = null)"></q-btn>
+            <q-btn class="col full-width" label="Dodaj do listy" @click="addMemberToCompetition(memberName), (finder = null)"></q-btn>
         </div>
         </q-card-section>
         <q-card-actions align="right">
@@ -1339,7 +1351,7 @@ export default {
       otherRTSArbiter: null,
       competitionAddToTournamentList: [],
       removeFromList: false,
-      memberName: null,
+      memberName: '0 0',
       otherName: null,
       score: null,
       scoreLabel: null,
@@ -1798,7 +1810,7 @@ export default {
         }
       })
     },
-    addMemberToCompetition () {
+    addMemberToCompetition (number) {
       const memberNameWord = this.memberName.split(' ')
       const legNumber = memberNameWord.length
       const memberNameUUID = memberNameWord[legNumber - 1]
@@ -2452,14 +2464,15 @@ export default {
       if (val === '') {
         update(() => {
           const needle = val.toLowerCase()
-          this.options = this.filters.filter(v => v.toLowerCase().indexOf(needle) > -1)
+          this.options = this.filters.filter(v => v.secondName.toLowerCase().indexOf(needle) > -1)
+          this.memberName = this.filters.filter(v => v.secondName.toLowerCase().indexOf(needle) > -1)
         })
         return
       }
-
       update(() => {
         const needle = val.toLowerCase()
-        this.options = this.filters.filter(v => v.toLowerCase().indexOf(needle) > -1)
+        this.options = this.filters.filter(v => v.secondName.toLowerCase().indexOf(needle) > -1)
+        this.memberName = this.filters.filter(v => v.secondName.toLowerCase().indexOf(needle) > -1)
       })
     },
     filterMp (val, update) {

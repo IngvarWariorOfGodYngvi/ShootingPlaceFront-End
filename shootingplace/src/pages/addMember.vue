@@ -23,7 +23,6 @@
       <q-card class="row">
       <q-card-section class="col-6 bg-grey-2">
       <div class="full-width">
-        <q-form>
       <q-item><q-input class="full-width" @input="memberFirstNameC = memberFirstName.length===0? '':memberFirstNameC = memberFirstName.length<3 ? 'red-2':'green-2'" dense :bg-color="memberFirstNameC" v-model="memberFirstName" label="Imię *" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled/></q-item>
       <q-item><q-input class="full-width" @input="memberSecondNameC = memberSecondName.length===0? '':memberSecondNameC = memberSecondName.length<3 ? 'red-2':'green-2'" dense :bg-color="memberSecondNameC" v-model="memberSecondName" label="Nazwisko *" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 45" filled/></q-item>
       <q-item><q-input class="full-width" @input="memberIDCardC = memberIDCard.length===0? '' : checkIDCard(memberIDCard)" dense :bg-color="memberIDCardC" v-model="memberIDCard" :suffix="memberIDCardS" label="Numer Dokumentu *" filled/></q-item>
@@ -31,7 +30,7 @@
       <q-item><q-input class="full-width" @input="memberPhoneC = memberPhone.length===0? '' : memberPhone.length<11? 'red-2' : 'green-2' " dense :bg-color="memberPhoneC" type="tel" v-model="memberPhone" placeholder="tylko cyfry" prefix="+48 " label="Numer telefonu *" mask="### ### ###" filled onkeypress="return (event.charCode > 47 && event.charCode < 58)"/></q-item>
       <q-item><q-input class="full-width" @input="memberEmailC = memberEmail.length===0? '' : checkEmail(memberEmail)" :bg-color="memberEmailC" dense filled color="green" type="email" v-model="memberEmail" :suffix="memberEmailS" label="email"/></q-item>
       <q-item><q-input class="full-width" dense filled color="green" v-model="memberLegitimation" label="Numer Legitymacji" onkeypress="return (event.charCode > 47 && event.charCode < 58)"/></q-item>
-      <q-item><q-input class="full-width" dense filled v-model="memberJoinDate" mask="####-##-##" label="Data dołączenia do Klubu" hint="użyj kalendarza">
+      <q-item><q-input class="full-width" dense filled color="green" v-model="memberJoinDate" mask="####-##-##" label="Data dołączenia do Klubu" hint="użyj kalendarza">
                           <template v-slot:append>
                             <q-icon name="event" class="cursor-pointer">
                               <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -52,205 +51,42 @@
         <q-radio v-model="memberAdult" :val="false" label="Grupa Młodzieżowa" color="secondary" />
         </div>
       </div>
-      </q-form>
       </div>
       </q-card-section>
-      <q-card-section class="col-6">
-      <div>
-      <q-item><q-input class="full-width" dense filled v-model="memberPostOfficeCity" label="Miasto" /></q-item>
-      <q-item><q-input class="full-width" dense filled v-model="memberZipCode" placeholder="00-000" label="Kod Pocztowy" mask="##-###" /></q-item>
-      <q-item><q-input class="full-width" dense filled v-model="memberStreet" label="Ulica" /></q-item>
-      <q-item><q-input class="full-width" dense filled v-model="memberStreetNumber" label="Numer Ulicy" /></q-item>
-      <q-item><q-input class="full-width" dense filled v-model="memberFlatNumber" label="Numer Mieszkania"/></q-item>
-      <!-- <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),updateAddress(uuid, memberPostOfficeCity, memberZipCode, memberStreet, memberStreetNumber, memberFlatNumber)"/></q-item> -->
-    </div>
-    <q-item class="reverse self-end"><q-btn label="Dodaj" color="secondary" @click="acceptCode=true"/></q-item>
-      <!-- <div>
-        <q-item>
-          <q-field dense v-if="memberFirstName.length<3" class="full-width bg-red-2" standout label="Imię" stack-label>
-            <template v-slot:control>
-              <div class="self-center full-width no-outline" tabindex="1">{{memberFirstName}}</div>
-            </template>
-          </q-field>
-          <q-field dense v-else class="full-width bg-green-2" standout label="Imię" stack-label>
-            <template v-slot:control>
-              <div class="self-center full-width no-outline" tabindex="1">{{memberFirstName}}</div>
-            </template>
-          </q-field>
-        </q-item>
-        <q-item>
-          <q-field dense v-if="memberSecondName.length<3" class="full-width bg-red-2" standout label="Nazwisko" stack-label>
-            <template v-slot:control>
-              <div class="self-center full-width no-outline" tabindex="1">{{memberSecondName}}</div>
-            </template>
-          </q-field>
-          <q-field dense v-else class="full-width bg-green-2" standout label="Nazwisko" stack-label>
-            <template v-slot:control>
-              <div class="self-center full-width no-outline" tabindex="1">{{memberSecondName}}</div>
-            </template>
-          </q-field>
-        </q-item>
-        <q-item>
-          <q-field dense v-if="memberIDCard.length<10" class="full-width bg-red-2" standout label="Numer Dokumentu" stack-label>
-            <template v-slot:control>
-              <div class="self-center full-width no-outline" tabindex="1">{{memberIDCard}}</div>
-            </template>
-          </q-field>
-          <q-field dense v-if="memberIDCard.length>=10 && !isIDCard" class="full-width bg-green-2" standout label="Numer Dokumentu" stack-label>
-            <template v-slot:control>
-              <div class="self-center full-width no-outline" tabindex="1">{{memberIDCard}}</div>
-            </template>
-          </q-field>
-          <q-field dense v-if="memberIDCard.length>=10 && isIDCard" class="full-width bg-warning" standout label="Numer Dokumentu" stack-label>
-            <template v-slot:control>
-              <div class="self-center full-width no-outline" tabindex="1">TAKI DOWÓD ISTNIEJE JUŻ W BAZIE</div>
-            </template>
-          </q-field>
-        </q-item>
-        <q-item>
-          <q-field dense v-if="!peselValue" class="full-width bg-red-2" standout label="Numer PESEL" stack-label>
-            <template v-slot:control>
-              <div class="self-center full-width no-outline" tabindex="1">{{memberPesel}}</div>
-            </template>
-          </q-field>
-          <q-field dense v-if="peselValue&&!isPresent" class="full-width bg-green-2" standout label="Numer PESEL" stack-label>
-            <template v-slot:control>
-              <div class="self-center full-width no-outline" tabindex="1">{{memberPesel}}</div>
-            </template>
-          </q-field>
-          <q-field dense v-if="peselValue&&isPresent" class="full-width bg-warning" standout label="Numer PESEL" stack-label>
-            <template v-slot:control>
-              <div class="self-center full-width no-outline" tabindex="1">TAKI PESEL ISTNIEJE JUŻ W BAZIE</div>
-            </template>
-          </q-field>
-        </q-item>
-        <q-item>
-          <q-field dense v-if="memberPhone.length<11" prefix="+48 " class="full-width bg-red-2" standout label="Numer Telefonu" stack-label>
-            <template v-slot:control>
-              <div class="self-center full-width no-outline" tabindex="1">{{memberPhone}}</div>
-            </template>
-          </q-field>
-          <q-field dense v-else prefix="+48 " class="full-width bg-green-2" standout label="Numer Telefonu" stack-label>
-            <template v-slot:control>
-              <div class="self-center full-width no-outline" tabindex="1">{{memberPhone}}</div>
-            </template>
-          </q-field>
-        </q-item>
-        <q-item>
-          <q-field dense v-if="(!memberEmail.includes('@') || !memberEmail.includes('.')) " class="full-width bg-red-2" standout label="Adres E-mail" stack-label>
-            <template v-slot:control>
-              <div class="self-center full-width no-outline" tabindex="1">{{memberEmail}}</div>
-            </template>
-          </q-field>
-          <q-field dense v-if="(memberEmail.includes('@') && memberEmail.includes('.')) && !isEmail" class="full-width bg-green-2" standout label="Adres E-mail" stack-label>
-            <template v-slot:control>
-              <div class="self-center full-width no-outline" tabindex="1">{{memberEmail}}</div>
-            </template>
-          </q-field>
-          <q-field dense v-if="(memberEmail.includes('@') && memberEmail.includes('.')) && isEmail" class="full-width bg-warning" standout label="Adres E-mail" stack-label>
-            <template v-slot:control>
-              <div class="self-center full-width no-outline" tabindex="1">TAKI EMAIL ISTNIEJE JUŻ W BAZIE</div>
-            </template>
-          </q-field>
-        </q-item>
-        <q-item>
-          <q-field dense v-if="memberLegitimation.length<1" class="full-width" standout label="Numer Legitymacji Klubowej" stack-label>
-            <template v-slot:control>
-              <div class="self-center full-width no-outline" tabindex="1">{{memberLegitimation}}</div>
-            </template>
-          </q-field>
-          <q-field dense v-else class="full-width bg-green-2" standout label="Numer Legitymacji Klubowej" stack-label>
-            <template v-slot:control>
-              <div class="self-center full-width no-outline" tabindex="1">{{memberLegitimation}}</div>
-            </template>
-          </q-field>
-        </q-item>
-        <q-item>
-          <q-field dense class="full-width" standout label="Data dołączenia do Klubu" stack-label>
-            <template v-slot:control>
-              <div class="self-center full-width no-outline" tabindex="1">{{memberJoinDate}}</div>
-            </template>
-          </q-field>
-        </q-item>
-        <q-item>
-          <q-field dense class="full-width" standout label="Grupa" stack-label>
-            <template v-slot:control>
-              <div v-if="memberAdult&&memberIDCard!=null" class="self-center full-width no-outline" tabindex="1">Grupa Dorosła</div>
-              <div v-if="!memberAdult&&memberIDCard!=null" class="self-center full-width no-outline" tabindex="1">Grupa Młodzieżowa</div>
-            </template>
-          </q-field>
-        </q-item>
-      </div> -->
-      </q-card-section>
-      </q-card>
-      </q-step>
-
-      <q-step v-if="uuid!=null&&uuid!='' && !uuid.includes('Uwaga!')"
-        :name="2"
-        title="Dane Adresowe"
-        caption="Opcjonalnie"
-        icon="create_new_folder"
-        :done="step > 2"
-      >
-      <q-card class="row">
-      <q-card-section class="col-6 bg-grey-2">
-      <div>
-      <q-item><q-input class="full-width" dense filled v-model="memberPostOfficeCity" label="Miasto" /></q-item>
-      <q-item><q-input class="full-width" dense filled v-model="memberZipCode" placeholder="00-000" label="Kod Pocztowy" mask="##-###" /></q-item>
-      <q-item><q-input class="full-width" dense filled v-model="memberStreet" label="Ulica" /></q-item>
-      <q-item><q-input class="full-width" dense filled v-model="memberStreetNumber" label="Numer Ulicy" /></q-item>
-      <q-item><q-input class="full-width" dense filled v-model="memberFlatNumber" label="Numer Mieszkania"/></q-item>
-      <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),updateAddress(uuid, memberPostOfficeCity, memberZipCode, memberStreet, memberStreetNumber, memberFlatNumber)"/></q-item>
-      </div>
-      </q-card-section>
-      <q-card-section class="col-6">
-      <div>
-        <q-item>
-          <q-field class="full-width" dense standout label="Miasto" stack-label>
-            <template v-slot:control>
-              <div class="self-center full-width no-outline" tabindex="1">{{memberPostOfficeCity}}</div>
-            </template>
-          </q-field>
-        </q-item>
-        <q-item>
-          <q-field class="full-width" dense standout label="Kod Pocztowy" stack-label>
-            <template v-slot:control>
-              <div class="self-center full-width no-outline" tabindex="1">{{memberZipCode}}</div>
-            </template>
-          </q-field>
-        </q-item>
-        <q-item>
-          <q-field class="full-width" dense standout label="Ulica" stack-label>
-            <template v-slot:control>
-              <div class="self-center full-width no-outline" tabindex="1">{{memberStreet}}</div>
-            </template>
-          </q-field>
-        </q-item>
-        <q-item>
-          <q-field class="full-width" dense standout label="Numer Ulicy" stack-label>
-            <template v-slot:control>
-              <div class="self-center full-width no-outline" tabindex="1">{{memberStreetNumber}}</div>
-            </template>
-          </q-field>
-        </q-item>
-        <q-item>
-          <q-field class="full-width" dense standout label="Numer Mieszkania" stack-label>
-            <template v-slot:control>
-              <div class="self-center full-width no-outline" tabindex="1">{{memberFlatNumber}}</div>
-            </template>
-          </q-field>
-        </q-item>
-      </div>
-      </q-card-section>
+      <q-card-section class="col">
+        <div class="fit col">
+        <div class="fit">
+          <q-item><q-input class="full-width" dense filled v-model="memberPostOfficeCity" label="Miasto *" /></q-item>
+          <q-item><q-input class="full-width" dense filled v-model="memberZipCode" placeholder="00-000" label="Kod Pocztowy *" mask="##-###" /></q-item>
+          <q-item><q-input class="full-width" dense filled v-model="memberStreet" label="Ulica *" /></q-item>
+          <q-item><q-input class="full-width" dense filled v-model="memberStreetNumber" label="Numer Ulicy *" /></q-item>
+          <q-item><q-input class="full-width" dense filled v-model="memberFlatNumber" label="Numer Mieszkania"/></q-item>
+          <q-item v-if="
+          memberFirstName.length>3
+          &&memberSecondName.length>3
+          &&memberIDCard.length>3
+          &&memberPesel.length===11
+          &&memberPhone.length===11
+          &&memberEmail.length>3
+          &&memberPostOfficeCity
+          &&memberZipCode
+          &&memberStreet
+          &&memberStreetNumber"
+           class="reverse"><q-btn class="full-width text-bold" style="font-weight: bold; font-size: medium; letter-spacing: 1em;" color="primary" @click="acceptCode=true">dodaj do klubu</q-btn></q-item>
+          <q-item v-else class="reverse"><q-btn class="full-width text-bold" style="font-weight: bold; letter-spacing: 1em; font-size: medium;" color="secondary" disable>dodaj do klubu</q-btn><q-tooltip content-class="bg-red text-subtitle2" anchor="top middle" >Uzupełnij dane z gwiazdką</q-tooltip></q-item>
+          <q-checkbox v-if="isPresent" v-model="returningToClub" color="primary" label="Przywróć do klubu"></q-checkbox>
+        </div>
+        </div>
+    </q-card-section>
       </q-card>
       </q-step>
 
       <q-step v-if="memberAdultConfirm && (uuid!=null&&uuid!='' && !uuid.includes('Uwaga!'))"
-        :name="3"
+        :name="2"
         title="Patent"
         caption="opcjonalnie"
         icon="assignment"
-        :done="step > 3"
+        :done="step > 2"
       >
       <q-card class="row">
       <q-card-section class="col-6 bg-grey-2">
@@ -320,11 +156,11 @@
       </q-step>
 
       <q-step v-if="(!memberAdultConfirm || (memberAdultConfirm && patentNumberConfirm)) && (uuid!=null&&uuid!='' && !uuid.includes('Uwaga!'))"
-        :name="4"
+        :name="3"
         title="Licencja Zawodnicza"
         caption="opcjonalnie"
         icon="assignment"
-        :done="step > 4"
+        :done="step > 3"
       >
       <q-card class="row" v-if="(memberAdultConfirm&&patentNumber!=null)||!memberAdultConfirm">
       <q-card-section class="bg-grey-2 col-6">
@@ -391,11 +227,11 @@
       </q-card>
       </q-step>
       <q-step v-if="memberAdultConfirm && (uuid!=null&&uuid!='' && !uuid.includes('Uwaga!'))"
-        :name="5"
+        :name="4"
         title="Uprawnienia"
         caption="opcjonalnie"
         icon="assignment"
-        :done="step > 6"
+        :done="step > 4"
       >
       <q-card class="row">
         <q-card-section class="col-4 bg-grey-2">
@@ -445,11 +281,11 @@
 
       <template v-slot:navigation  >
         <q-stepper-navigation class="flex flex">
-          <q-item clickable v-if="(step<5&&(uuid!=null&&uuid!=''))" @click="alertResponse=null"><q-btn v-if="step<5" @click="$refs.stepper.next()" color="primary" :label="step === 5 ? 'Zakończ' : 'Przejdź Dalej'" /></q-item>
+          <q-item clickable v-if="(step<5&&(uuid!=null&&uuid!=''))" @click="alertResponse=null"><q-btn v-if="step<5" @click="$refs.stepper.next()" color="primary" :label="step === 4 ? 'Zakończ' : 'Przejdź Dalej'" /></q-item>
           <q-item><q-btn v-if="step > 1" flat color="primary" @click="$refs.stepper.previous()" label="Wróć" /></q-item>
           <q-item><q-btn v-if="step > 1" @click="redirect()" color="primary" label="Zakończ" /></q-item>
-          <q-item><q-btn v-if="step > 1 && (uuid!=null&&uuid!='')" type="a" href="https://portal.pzss.org.pl/CLub/Player" target="_blank" label="Przejdź do portalu PZSS" color="primary" @click="pzssPortal=true"/></q-item>
-          <q-item><q-btn v-if="step > 1 && (uuid!=null&&uuid!='')" label="potwierdź zapis do portalu pzss" color="primary" @click="pzssPortal=true"/></q-item>
+          <q-item><q-btn v-if="uuid!=null&&uuid!=''" type="a" href="https://portal.pzss.org.pl/CLub/Player" target="_blank" label="Przejdź do portalu PZSS" color="primary" @click="pzssPortal=true"/></q-item>
+          <q-item><q-btn v-if="uuid!=null&&uuid!=''" label="potwierdź zapis do portalu pzss" color="primary" @click="pzssPortal=true"/></q-item>
           <q-item><q-btn v-if="uuid!=null&&uuid!=''" color="secondary" @click="personalCardDownloadConfirm=true" label="Drukuj kartę" /></q-item>
           <q-item><q-btn v-if="uuid!=null&&uuid!=''" color="secondary" @click="contributionDownloadConfirm=true" label="Potwierdzenie opłacenia składki" /></q-item>
           <q-item><q-btn v-if="uuid!=null&&uuid!=''" color="secondary" @click="getCSVFile()" label="Pobierz plik .CSV" /></q-item>
@@ -582,8 +418,14 @@
       memberPesel,
       memberPhone,
       memberEmail,
-      memberAdult),
-      updateAddress(uuid, memberPostOfficeCity, memberZipCode, memberStreet, memberStreetNumber, memberFlatNumber),acceptCode=false">
+      memberAdult,
+      memberPostOfficeCity,
+      memberZipCode,
+      memberStreet,
+      memberStreetNumber,
+      memberFlatNumber,
+      returningToClub),
+      acceptCode=false">
       <q-card class="bg-red-5 text-center">
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
@@ -592,14 +434,20 @@
 
         <q-card-actions align="right">
           <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
-          <q-btn id="3" label="Dodaj" color="black" v-close-popup @click="addMember(memberLegitimation, memberFirstName,
-      memberSecondName,
-      memberIDCard,
-      memberPesel,
-      memberPhone,
-      memberEmail,
-      memberAdult),
-      updateAddress(uuid, memberPostOfficeCity, memberZipCode, memberStreet, memberStreetNumber, memberFlatNumber)" />
+          <q-btn id="3" label="Dodaj" color="black" v-close-popup @click="addMember(memberLegitimation,
+          memberFirstName,
+          memberSecondName,
+          memberIDCard,
+          memberPesel,
+          memberPhone,
+          memberEmail,
+          memberAdult,
+          memberPostOfficeCity,
+          memberZipCode,
+          memberStreet,
+          memberStreetNumber,
+          memberFlatNumber,
+          returningToClub)" />
         </q-card-actions>
       </q-card>
 </q-dialog>
@@ -630,6 +478,7 @@ Vue.prototype.$axios = axios
 export default {
   data () {
     return {
+      returningToClub: false,
       peselValue: false,
       value: false,
       value1: false,
@@ -723,19 +572,28 @@ export default {
         this.timer = 0
       }, 1000)
     },
-    addMember (memberLegitimation, memberFirstName, memberSecondName, memberIDCard, memberPesel, memberPhone, memberEmail, memberAdult) {
+    async addMember (memberLegitimation, memberFirstName, memberSecondName, memberIDCard, memberPesel, memberPhone, memberEmail, memberAdult, memberPostOfficeCity, memberZipCode, memberStreet, memberStreetNumber, memberFlatNumber, returningToClub) {
       const data = {
-        legitimationNumber: memberLegitimation,
-        firstName: memberFirstName,
-        secondName: memberSecondName,
-        idcard: memberIDCard,
-        pesel: memberPesel,
-        email: memberEmail,
-        phoneNumber: memberPhone,
-        adult: memberAdult,
-        joinDate: this.memberJoinDate.replace(/\//gi, '-')
+        member: {
+          legitimationNumber: memberLegitimation,
+          firstName: memberFirstName,
+          secondName: memberSecondName,
+          idcard: memberIDCard,
+          pesel: memberPesel,
+          email: memberEmail,
+          phoneNumber: memberPhone,
+          adult: memberAdult,
+          joinDate: this.memberJoinDate.replace(/\//gi, '-')
+        },
+        address: {
+          postOfficeCity: memberPostOfficeCity,
+          zipCode: memberZipCode,
+          street: memberStreet,
+          streetNumber: memberStreetNumber,
+          flatNumber: memberFlatNumber
+        }
       }
-      fetch('http://' + this.local + '/member/?pinCode=' + this.code, {
+      await fetch('http://' + this.local + '/member/?returningToClub=' + returningToClub + '&pinCode=' + this.code, {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
@@ -746,12 +604,14 @@ export default {
           response.text().then(
             response => {
               this.code = null
+              this.message = response
               this.alertResponse = response
               if (response.message === '') {
                 this.uuid = 'Uwaga! Nie można wysyłać pustego formularza'
               }
               this.failure = true
               this.autoClose()
+              return response
             })
         }
         if (response.status === 406) {
@@ -759,11 +619,13 @@ export default {
             response => {
               this.code = null
               this.alertResponse = response
+              this.message = response
               if (response.message === '') {
                 this.uuid = 'Uwaga! Nie można wysyłać pustego formularza'
               }
               this.failure = true
               this.autoClose()
+              return response
             })
         }
         if (response.status === 201) {
@@ -773,9 +635,11 @@ export default {
               this.code = null
               this.alertResponse = null
               this.memberAdultConfirm = this.memberAdult
-              this.memberAlert = true
+              this.message = response
+              this.success = true
               this.getMember(this.uuid)
               this.autoClose()
+              return response
             }
           )
         }
@@ -789,6 +653,7 @@ export default {
               this.conflict = true
               this.getMember(this.uuid)
               this.autoClose()
+              return response
             }
           )
         }
@@ -798,39 +663,7 @@ export default {
               this.message = response
               this.forbidden = true
               this.autoClose()
-            })
-        }
-      })
-    },
-    updateAddress (uuid, memberPostOfficeCity, memberZipCode, memberStreet, memberStreetNumber, memberFlatNumber) {
-      const data = {
-        postOfficeCity: memberPostOfficeCity,
-        zipCode: memberZipCode,
-        street: memberStreet,
-        streetNumber: memberStreetNumber,
-        flatNumber: memberFlatNumber
-      }
-      fetch('http://' + this.local + '/address/' + uuid, {
-        method: 'PUT',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.json().then(
-            response => {
-              this.success = true
-              this.message = response
-              this.showloading()
-              this.autoClose()
-            })
-        } else {
-          response.json().then(
-            response => {
-              this.failure = true
-              this.message = response
-              this.autoClose()
+              return response
             })
         }
       })
@@ -851,7 +684,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.success = true
@@ -861,7 +694,7 @@ export default {
               this.autoClose()
             })
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -916,14 +749,14 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.success = true
               this.message = response
               this.autoClose()
             })
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -938,7 +771,7 @@ export default {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.success = true
               this.message = response
@@ -949,7 +782,7 @@ export default {
             }
           )
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -974,7 +807,7 @@ export default {
         body: JSON.stringify(data)
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.success = true
@@ -983,7 +816,7 @@ export default {
               this.autoClose()
             })
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -1144,24 +977,25 @@ export default {
     },
     checkEmail (email) {
       let color = ''
-      this.isPresentEmail(email).then(() => {
-        const a = this.isEmail
-        if (email.includes('@') && email.includes('.')) {
+      const z = email.includes('@')
+      const x = email.includes('.com') || email.includes('.pl') || email.includes('.eu') || email.includes('.ua')
+      if (z & x) {
+        this.isPresentEmail(email).then(() => {
+          const a = this.isEmail
           color = a ? 'warning' : 'green-2'
-          if (color === 'warning') {
+          if (a) {
             this.memberEmailS = 'TAKI EMAIL ISTNIEJE JUŻ W BAZIE'
           } else {
             this.memberEmailS = ''
           }
           this.memberEmailC = color
           return color
-        } else {
-          color = 'red-2'
-          this.memberEmailC = color
-          this.memberEmailS = ''
-          return color
-        }
-      })
+        })
+      } else {
+        this.memberEmailS = ''
+        color = 'red-2'
+      }
+      this.memberEmailC = color
       return color
     },
     async isPresentEmail (email) {

@@ -2,7 +2,7 @@
   <div class="q-pa-sm text-white">
     <div>
         <q-input v-model="number" class="text-white" type="password" dense label-color="white" label="Czas pracy - zeskanuj swoją kartę tutaj" filled @keypress.enter="goToWork(number)" ></q-input>
-    <q-virtual-scroll :items="usersInWork" visible class="full-width" style="height: 10vh;">
+    <q-virtual-scroll :items="usersInWork" visible class="full-width" style="height: auto">
           <template v-slot="{ item, index }">
             <q-item :key="index" dense style="padding:0% 0% 0% 5%;font-size:small;font-weight: 500;">
               {{item}}

@@ -13,29 +13,29 @@
             <ol>
         <li v-for="(others,id) in others" :key="id">
           <div class="row">
-           <q-field class="col" label="Nazwisko" standout="bg-accent text-black" stack-label>
+           <q-field dense class="col" label="Nazwisko" standout="bg-accent text-black" stack-label>
                     <div>
                         <div class="self-center col full-width no-outline text-left text-black" tabindex="0">{{others.secondName}} {{others.firstName}}</div>
                         <div class="self-center col full-width no-outline text-left text-black" tabindex="0"></div>
                     </div>
            </q-field>
-           <q-field class="col" label="Klub" standout="bg-accent text-black" stack-label>
+           <q-field dense class="col" label="Klub" standout="bg-accent text-black" stack-label>
                     <div>
                       <div class="self-center col full-width no-outline text-left text-black" tabindex="0">{{others.club.name}}</div>
                     </div>
            </q-field>
-           <q-field class="col" label="telefon" standout="bg-accent text-black" stack-label>
+           <q-field dense class="col" label="telefon" standout="bg-accent text-black" stack-label>
                     <div>
                   <div class="self-center col full-width no-outline text-left text-black row" tabindex="0">{{others.phoneNumber}}</div>
                   </div>
            </q-field>
-           <q-field class="col" label="email" standout="bg-accent text-black" stack-label>
+           <q-field dense class="col" label="email" standout="bg-accent text-black" stack-label>
                     <div>
                   <div class="self-center col full-width no-outline text-left text-black row" tabindex="1">{{others.email}}</div>
                   </div>
            </q-field>
-           <q-btn class="col-1" @click="othersID = others.id,alert=true">usuń</q-btn>
-           <q-btn class="col-1" @click="othersID = others.id,otherPersonFirstName = others.firstName,otherPersonSecondName = others.secondName,otherPersonPhoneNumber = others.phoneNumber,otherPersonEmail = others.email,clubNamePerson = others.club.name,getAllClubsToTournament(),editOtherPerson=true">Edytuj</q-btn>
+           <q-btn dense class="col-1" color="primary" @click="othersID = others.id,alert=true" icon="delete"><q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">Usuń</q-tooltip></q-btn>
+           <q-btn dense class="col-1" color="secondary" @click="othersID = others.id,otherPersonFirstName = others.firstName,otherPersonSecondName = others.secondName,otherPersonPhoneNumber = others.phoneNumber,otherPersonEmail = others.email,clubNamePerson = others.club.name,getAllClubsToTournament(),editOtherPerson=true" icon="edit"><q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">Edytuj</q-tooltip></q-btn>
            </div>
            <p></p>
         </li>
@@ -54,23 +54,23 @@
             <div v-for="(club,id) in clubs" :key="id">
               <div v-if="club.name!='BRAK'" class="row">
                 <div @dblclick="clubInfoModel=club,clubInfo=true" class="col-2">
-                  <q-field label="Klub" standout="bg-accent text-black" stack-label clickable>
+                  <q-field dense label="Klub" standout="bg-accent text-black" stack-label clickable>
                       <div class="self-center col full-width no-outline text-left text-black" tabindex="1">{{club.name}}</div>
                   </q-field>
                 </div>
                 <div class="col">
                   <a :href="club.url" target="_blank">
-                    <q-field class="col" label="strona" standout="bg-accent text-black" stack-label>
+                    <q-field dense class="col" label="strona" standout="bg-accent text-black" stack-label>
                         <div class="self-center col full-width no-outline text-left text-black" tabindex="1">{{club.url}}</div>
                     </q-field>
                   </a>
                 </div>
                 <div class="col-4">
-                  <q-field label="adres" standout="bg-accent text-black" stack-label>
+                  <q-field dense label="adres" standout="bg-accent text-black" stack-label>
                     <div class="self-center col full-width no-outline text-left text-black" tabindex="1">{{club.address}}</div>
                   </q-field>
                 </div>
-                  <q-btn class="col-2" @click="clubID = club.id,editClub=true">edytuj dane {{club.name}}</q-btn>
+                  <q-btn dense class="col-1" @click="clubID = club.id,editClub=true" icon="edit"><q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">Edytuj {{club.name}}</q-tooltip></q-btn>
            </div>
             <p></p>
             </div>
@@ -470,8 +470,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat label="anuluj" color="primary" v-close-popup/>
-          <q-btn flat label="Usuń" color="primary" v-close-popup @click="deactivateOther()"/>
+          <q-btn flat icon="cancel" color="primary" v-close-popup/>
+          <q-btn flat icon="delete" color="primary" v-close-popup @click="deactivateOther()"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -497,8 +497,8 @@
                 <q-item><q-input v-model="otherPersonEmail" type="email" class="full-width" filled label="email"></q-input></q-item>
         </q-card-section>
         <q-card-actions align="right">
-          <q-btn flat label="zamknij" color="primary" v-close-popup/>
-          <q-btn flat label="zapisz" color="primary" v-close-popup @click="updateOtherPerson(othersID,otherPersonFirstName, otherPersonSecondName, otherPersonPhoneNumber,otherPersonEmail)"/>
+          <q-btn flat icon="close" color="primary" v-close-popup/>
+          <q-btn flat icon="save" color="primary" v-close-popup @click="updateOtherPerson(othersID,otherPersonFirstName, otherPersonSecondName, otherPersonPhoneNumber,otherPersonEmail)"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -609,8 +609,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat label="anuluj" color="primary" v-close-popup/>
-          <q-btn flat label="ok" color="primary" v-close-popup @click="createNewClub()"/>
+          <q-btn flat icon="cancel" color="primary" v-close-popup/>
+          <q-btn icon="save" color="primary" v-close-popup @click="createNewClub()"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -630,8 +630,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat label="anuluj" color="primary" v-close-popup/>
-          <q-btn flat label="ok" color="primary" v-close-popup @click="updateClub()"/>
+          <q-btn flat icon="cancel" color="primary" v-close-popup/>
+          <q-btn icon="save" color="primary" v-close-popup @click="updateClub()"/>
         </q-card-actions>
       </q-card>
     </q-dialog>

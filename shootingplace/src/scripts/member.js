@@ -1,6 +1,5 @@
 import { scroll } from 'quasar'
 const { getScrollTarget, setScrollPosition } = scroll
-const stringOptions = []
 import Vue from 'vue'
 import axios from 'axios'
 import App from 'src/App.vue'
@@ -16,6 +15,7 @@ export default {
       sortLicense: false,
       sortLegitimation: false,
       sortName: false,
+      sortDate: false,
       picture: false,
       socialWork: true,
       editLicense: false,
@@ -38,9 +38,8 @@ export default {
       filters: [],
       certificateChoices: ['ZAŚWIADCZENIE DO POLICJI', 'ZAŚWIADCZENIE ZWYKŁE'],
       certificateChoice: null,
-      options: stringOptions,
-      memberName: null,
-      memberWord: null,
+      options: [],
+      memberName: '',
       name: null,
       name2: null,
       active: null,
@@ -79,6 +78,8 @@ export default {
       code: null,
       addAmmoConfirm: false,
       alert: false,
+      helpersDefault: ['Patent', 'Pozwolenie na Broń', 'Dopuszczenie do  Posiadania Broni', 'Prowadzący Strzelanie', 'Instruktor', 'Sędzia'],
+      helpers: ['Patent', 'Pozwolenie na Broń', 'Dopuszczenie do  Posiadania Broni', 'Prowadzący Strzelanie', 'Instruktor', 'Sędzia'],
       patentConfirm: false,
       patentConfirm1: false,
       patentConfirm2: false,
@@ -165,6 +166,7 @@ export default {
       certificateDownload: false,
       pzssPortal: false,
       forbidden: false,
+      personalStatisticsObject: null,
       selected_file: '',
       local: App.host
     }
@@ -186,6 +188,25 @@ export default {
         this.$q.loading.hide()
         this.timer = 0
       }, 1000)
+    },
+    resetHelpers () {
+      this.personalStatisticsObject = null
+      this.helpers = this.helpersDefault
+    },
+    getPersonalStatistics (uuid) {
+      fetch('http://' + this.local + '/statistics/personal?uuid=' + uuid, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          response.json().then(
+            response => {
+              this.personalStatisticsObject = response
+            })
+        }
+      })
     },
     convertDate (date) {
       const current = new Date(date)
@@ -244,17 +265,21 @@ export default {
         }
       })
     },
-    getMemberByLegitimationNumber () {
-      const memberNameWord = this.memberName.split(' ')
-      const legNumber = memberNameWord.length
-      const memberNameLegitimation = memberNameWord[legNumber - 1]
-      fetch('http://' + this.local + '/member/' + memberNameLegitimation, {
+    getMemberByLegitimationNumber (number) {
+      // const memberNameWord = this.memberName.split(' ')
+      // const legNumber = memberNameWord.length
+      // const memberNameLegitimation = memberNameWord[legNumber - 1]
+      fetch('http://' + this.local + '/member/' + number, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
         }
       }).then(response => response.json()).then(response => {
         this.showloading()
+        if (this.member !== null && this.member !== response) {
+          this.resetHelpers()
+        }
+        // this.memberName = response.secondName + ' ' + response.firstName
         this.member = response
       })
     },
@@ -266,6 +291,9 @@ export default {
         }
       }).then(response => response.json()).then(response => {
         this.showloading()
+        if (this.member !== null && this.member !== response) {
+          this.resetHelpers()
+        }
         this.member = response
       })
     },
@@ -277,6 +305,9 @@ export default {
         }
       }).then(response => response.json()).then(response => {
         this.showloading()
+        if (this.member !== null && this.member !== response) {
+          this.resetHelpers()
+        }
         this.member = response
       })
     },
@@ -1192,7 +1223,7 @@ export default {
             }
           )
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -1264,13 +1295,13 @@ export default {
       if (val === '') {
         update(() => {
           const needle = val.toLowerCase()
-          this.options = this.filters.filter(v => v.toLowerCase().indexOf(needle) > -1)
+          this.options = this.filters.filter(v => v.secondName.toLowerCase().indexOf(needle) > -1)
         })
         return
       }
       update(() => {
         const needle = val.toLowerCase()
-        this.options = this.filters.filter(v => v.toLowerCase().indexOf(needle) > -1)
+        this.options = this.filters.filter(v => v.secondName.toLowerCase().indexOf(needle) > -1)
       })
     },
     reload () {
@@ -1315,6 +1346,18 @@ export default {
           this.memberDTOArg.sort((a, b) => a.license.number - b.license.number)
           this.memberDTOArgRearangeTable.sort((a, b) => a.license.number - b.license.number)
           this.sortLicense = !this.sortLicense
+        }
+      }
+      if (type === 'date') {
+        console.log('sortuję')
+        if (!this.sortDate) {
+          this.memberDTOArg.sort((a, b) => new Date(b.joinDate) - new Date(a.joinDate))
+          this.memberDTOArgRearangeTable.sort((a, b) => new Date(b.joinDate) - new Date(a.joinDate))
+          this.sortDate = !this.sortDate
+        } else {
+          this.memberDTOArg.sort((a, b) => new Date(a.joinDate) - new Date(b.joinDate))
+          this.memberDTOArgRearangeTable.sort((a, b) => new Date(a.joinDate) - new Date(b.joinDate))
+          this.sortDate = !this.sortDate
         }
       }
     },
