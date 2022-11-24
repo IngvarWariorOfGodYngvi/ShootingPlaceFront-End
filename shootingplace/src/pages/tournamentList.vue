@@ -212,14 +212,19 @@
           <div class="row">
                 <q-card-section class="col-6">
                   <div class="col">
-                <q-select :label="memberName" label-color="black" :option-value="memberName" filled dense use-input hide-selected input-debounce="0" :options="options" @input="otherName='0 0'" @filter="filterFn">
+                <q-select :label="memberName"
+                :option-value="opt => Object(opt)? opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber : '0 0'"
+        :option-label="opt => Object(opt)? opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber : '0 0'"
+        emit-value
+        map-options
+         label-color="black" v-model="memberName" fill-input filled dense use-input hide-selected input-debounce="0" :options="options" @input="otherName='0 0'" @filter="filterFn">
                   <template v-slot:option="option">
                     <q-item class="rounded" dense style="padding: 0px; margin: 0px;" v-bind="option.itemProps" v-on="option.itemEvents">
-                      <q-item-section v-if="option.opt.active" style="padding: 0.5em; margin: 0px;" @click="memberName = option.opt.secondName+' '+option.opt.firstName+' '+ option.opt.legitimationNumber">
+                      <q-item-section v-if="option.opt.active" style="padding: 0.5em; margin: 0px;" @click="otherName='0 0',memberName = option.opt.secondName+' '+option.opt.firstName+' '+ option.opt.legitimationNumber">
                         <div v-if="option.opt.adult">{{option.opt.secondName}} {{option.opt.firstName}} {{option.opt.legitimationNumber}} Ogólna</div>
                         <div v-else>{{option.opt.secondName}} {{option.opt.firstName}} {{option.opt.legitimationNumber}} Młodzież</div>
                       </q-item-section>
-                      <q-item-section v-else style="padding: 0.5em; margin: 0px;" class="bg-red-2 rounded" @click="memberName = option.opt.legitimationNumber">
+                      <q-item-section v-else style="padding: 0.5em; margin: 0px;" class="bg-red-2 rounded" @click="otherName='0 0',memberName = option.opt.secondName+' '+option.opt.firstName+' '+ option.opt.legitimationNumber">
                         <div v-if="option.opt.adult">{{option.opt.secondName}} {{option.opt.firstName}} {{option.opt.legitimationNumber}} Ogólna - BRAK SKŁADEK</div>
                         <div v-else>{{option.opt.secondName}} {{option.opt.firstName}} {{option.opt.legitimationNumber}} Młodzież - BRAK SKŁADEK</div>
                       </q-item-section>

@@ -162,8 +162,25 @@
 <q-dialog v-model="addAmmo">
   <div class="bg-white">
     <div class="row">
-      <q-select class="col" filled v-model="memberName" use-input hide-selected fill-input input-debounce="0" :options="options" @input="otherName='0 0'" @filter="filterFn" label="Dodaj osobę z klubu">
-        <template v-slot:no-option>
+<q-select :label="memberName" class="col"
+                :option-value="opt => opt? opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber : '0 0'"
+        :option-label="opt => opt? opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber : '0 0'"
+        emit-value
+        map-options
+         label-color="black" v-model="memberName" fill-input filled dense use-input hide-selected input-debounce="0" :options="options" @input="otherName='0 0'" @filter="filterFn">
+                  <template v-slot:option="option">
+                    <q-item class="rounded" dense style="padding: 0px; margin: 0px;" v-bind="option.itemProps" v-on="option.itemEvents">
+                      <q-item-section v-if="option.opt.active" style="padding: 0.5em; margin: 0px;" @click="otherName='0 0',memberName = option.opt.secondName+' '+option.opt.firstName+' '+ option.opt.legitimationNumber">
+                        <div v-if="option.opt.adult">{{option.opt.secondName}} {{option.opt.firstName}} {{option.opt.legitimationNumber}} Ogólna</div>
+                        <div v-else>{{option.opt.secondName}} {{option.opt.firstName}} {{option.opt.legitimationNumber}} Młodzież</div>
+                      </q-item-section>
+                      <q-item-section v-else style="padding: 0.5em; margin: 0px;" class="bg-red-2 rounded" @click="otherName='0 0',memberName = option.opt.secondName+' '+option.opt.firstName+' '+ option.opt.legitimationNumber">
+                        <div v-if="option.opt.adult">{{option.opt.secondName}} {{option.opt.firstName}} {{option.opt.legitimationNumber}} Ogólna - BRAK SKŁADEK</div>
+                        <div v-else>{{option.opt.secondName}} {{option.opt.firstName}} {{option.opt.legitimationNumber}} Młodzież - BRAK SKŁADEK</div>
+                      </q-item-section>
+                    </q-item>
+                  </template>
+                  <template v-slot:no-option>
           <q-item>
             <q-item-section class="text-grey">
               Brak wyników
@@ -171,7 +188,7 @@
           </q-item>
         </template>
       </q-select>
-      <q-select class="col" filled v-model="otherName" use-input hide-selected fill-input input-debounce="0" :options="options1" @input="memberName='0 0'" @filter="filterOther" label="Dodaj osobę spoza klubu">
+      <q-select class="col" dense filled v-model="otherName" use-input hide-selected fill-input input-debounce="0" :options="options1" @input="memberName='0 0'" @filter="filterOther" label="Dodaj osobę spoza klubu">
         <template v-slot:no-option>
           <div>
             <div class="q-pa-md bg-grey-5 text-center text-bold">Brak wyników  - możesz dodać nową osobę</div>
@@ -190,7 +207,7 @@
     </div>
     </div>
     <div class="col">
-    <q-input type="number" @keypress.enter="addMemberAndAmmoToCaliber()" filled class="full-width col" v-model="ammoQuantity" placeholder="Tylko cyfry" onkeypress="return (event.charCode > 44 && event.charCode < 58)" label="Ilość Amunicji"></q-input>
+    <q-input dense type="number" @keypress.enter="addMemberAndAmmoToCaliber()" filled class="full-width col" v-model="ammoQuantity" placeholder="Tylko cyfry" onkeypress="return (event.charCode > 44 && event.charCode < 58)" label="Ilość Amunicji"></q-input>
     <q-card-actions class="row" align="right">
     <q-item><q-btn class="full-width col" color="primary" icon="close" v-close-popup></q-btn></q-item>
     <q-item><q-btn class="full-width col" color="primary" icon="done" @click="addMemberAndAmmoToCaliber()"></q-btn></q-item>
@@ -599,14 +616,15 @@ export default {
       if (val === '') {
         update(() => {
           const needle = val.toLowerCase()
-          this.options = this.filters.filter(v => v.toLowerCase().indexOf(needle) > -1)
+          this.options = this.filters.filter(v => v.secondName.toLowerCase().indexOf(needle) > -1)
+          this.memberName = this.filters.filter(v => v.secondName.toLowerCase().indexOf(needle) > -1)
         })
         return
       }
-
       update(() => {
         const needle = val.toLowerCase()
-        this.options = this.filters.filter(v => v.toLowerCase().indexOf(needle) > -1)
+        this.options = this.filters.filter(v => v.secondName.toLowerCase().indexOf(needle) > -1)
+        this.memberName = this.filters.filter(v => v.secondName.toLowerCase().indexOf(needle) > -1)
       })
     },
     filterOther (val, update) {

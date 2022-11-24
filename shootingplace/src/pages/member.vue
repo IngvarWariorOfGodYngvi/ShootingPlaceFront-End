@@ -8,7 +8,7 @@
       <q-card class="row" style="height:20vh;">
         <div class="col-4">
           <q-item>
-            <q-select dense class="full-width rounded text-white" :label="memberName" :option-value="memberName" label-color="white" input-style="color: white;" bg-color="primary" use-input filled hide-selected :options="options" @filter="filter" @input="allMember = false">
+            <q-select dense class="full-width rounded text-white" :label="memberName" label-color="white" input-style="color: white;" bg-color="primary" use-input filled hide-selected :options="options" @filter="filter" @input="allMember = false">
                   <template v-slot:option="option">
                     <q-item class="rounded" dense style="padding: 0px; margin: 0px;" v-bind="option.itemProps" v-on="option.itemEvents" >
                       <q-item-section v-if="option.opt.active" style="padding: 0.5em; margin: 0px;" @click="memberName = option.opt.secondName+' '+option.opt.firstName+' '+ option.opt.legitimationNumber,getMemberByLegitimationNumber(option.opt.legitimationNumber)">
