@@ -62,16 +62,16 @@
           <q-item><q-input class="full-width" dense filled v-model="memberStreetNumber" label="Numer Ulicy *" /></q-item>
           <q-item><q-input class="full-width" dense filled v-model="memberFlatNumber" label="Numer Mieszkania"/></q-item>
           <q-item v-if="
-          memberFirstName.length>3
-          &&memberSecondName.length>3
-          &&memberIDCard.length>3
+          memberFirstName.length>=3
+          &&memberSecondName.length>=3
+          &&memberIDCard.length>=3
           &&memberPesel.length===11
           &&memberPhone.length===11
-          &&memberEmail.length>3
-          &&memberPostOfficeCity
-          &&memberZipCode
-          &&memberStreet
-          &&memberStreetNumber"
+          &&memberEmail.length>=3
+          &&memberPostOfficeCity!=null
+          &&memberZipCode!=null
+          &&memberStreet!=null
+          &&memberStreetNumber!=null"
            class="reverse"><q-btn class="full-width text-bold" style="font-weight: bold; font-size: medium; letter-spacing: 1em;" color="primary" @click="acceptCode=true">dodaj do klubu</q-btn></q-item>
           <q-item v-else class="reverse"><q-btn class="full-width text-bold" style="font-weight: bold; letter-spacing: 1em; font-size: medium;" color="secondary" disable>dodaj do klubu</q-btn><q-tooltip content-class="bg-red text-subtitle2" anchor="top middle" >Uzupełnij dane z gwiazdką</q-tooltip></q-item>
           <q-checkbox v-if="isPresent" v-model="returningToClub" color="primary" label="Przywróć do klubu"></q-checkbox>

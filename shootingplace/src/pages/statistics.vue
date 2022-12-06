@@ -39,16 +39,16 @@
                 </template>
               </q-input>
             </q-item>
-           <div class="row-reverse" align="right">
+           <div class="row-reverse">
              <div class="row-reverse">
               <q-radio @input="rearangeSumTable ()" class="q-pa-md" v-model="adultCondition" :val="false">
-                mołodzież
+                młodzież
               </q-radio>
               <q-radio @input="rearangeSumTable ()" class="q-pa-md" v-model="adultCondition" :val="true">
                 dorośli
               </q-radio>
              </div>
-              <q-btn @click="getSum(),rearangeSumTable ()" align="rigth">Wyszukaj</q-btn>
+              <q-btn align=right @click="getSum();rearangeSumTable ()">Wyszukaj</q-btn>
               </div>
         </q-card-section>
         <q-card-section class="col">
@@ -65,7 +65,9 @@
         </thead>
           </template>
           <template v-slot="{ item, index }">
-            <tr :key="index" dense class="rounded" style="cursor:pointer">
+            <tr :key="index" class="rounded" style="cursor:pointer" @dblclick="legitimationNumber = item.legitimationNumber; memberDial=true">
+              <q-tooltip content-class="text-subtitle2" anchor="top middle">kliknij dwa razy aby wyświetlić podgląd
+              </q-tooltip>
               <td class="xyz"><b>{{index+1}}</b> {{item.secondName}} {{item.firstName}}</td>
               <td>nr. leg {{item.legitimationNumber}}</td>
               <td v-if="item.license.number != null" class="text-left">{{item.license.number}}</td>
@@ -114,7 +116,7 @@
                 </template>
               </q-input>
             </q-item>
-            <div class="q-pa-md" align="right">
+            <div class="q-pa-md">
               <q-btn @click="getSumJoinDate ()">Wyszukaj</q-btn>
             </div>
         </q-card-section>
@@ -134,7 +136,9 @@
         </thead>
           </template>
     <template v-slot="{ item, index }">
-      <tr :key="index" class="rounded" style="cursor:pointer" >
+      <tr :key="index" class="rounded" style="cursor:pointer" @dblclick="legitimationNumber = item.legitimationNumber; memberDial=true">
+        <q-tooltip content-class="text-subtitle2" anchor="top middle">kliknij dwa razy aby wyświetlić podgląd
+        </q-tooltip>
         <td class="text-left xyz"><b>{{index+1}}</b> {{item.secondName}} {{item.firstName}}</td>
         <td class="text-left">nr leg. {{item.legitimationNumber}}</td>
         <td class="text-left">{{item.joinDate}}</td>
@@ -184,16 +188,16 @@
                 </template>
               </q-input>
             </q-item>
-            <div class="q-pa-md" align="right">
+            <div class="q-pa-md">
               <q-btn @click="getSumLicensed ()" >Wyszukaj</q-btn>
             </div>
-            <div class="row" align="right">
-              <q-radio @input="paid = null, newLicense = null, getSumLicensed ()" v-model="allLicense" :val="true">Wszystkie</q-radio>
-              <q-radio @input="allLicense = false, newLicense = null, rearangeSumLicensedTable()" v-model="paid" :val="true">Opłacone</q-radio>
-              <q-radio @input="allLicense = false, newLicense = null, rearangeSumLicensedTable ()" v-model="paid" :val="false">Nieopłacone</q-radio>
-              <q-radio @input="allLicense = false, paid = null, rearangeSumLicensedTable ()" v-model="newLicense" :val="true">Nowe</q-radio>
+            <div class="row">
+              <q-radio @input="paid = null; newLicense = null; getSumLicensed ()" v-model="allLicense" :val="true">Wszystkie</q-radio>
+              <q-radio @input="allLicense = false; newLicense = null; rearangeSumLicensedTable()" v-model="paid" :val="true">Opłacone</q-radio>
+              <q-radio @input="allLicense = false; newLicense = null; rearangeSumLicensedTable ()" v-model="paid" :val="false">Nieopłacone</q-radio>
+              <q-radio @input="allLicense = false; paid = null; rearangeSumLicensedTable ()" v-model="newLicense" :val="true">Nowe</q-radio>
             </div>
-            <div v-if="licenseArray.length > 0" class="row" align="right">
+            <div v-if="licenseArray.length > 0" class="row">
               <q-btn color="primary" @click="toggleLicenseAlert = true">Zatwierdź opłacenie zaznaczonych</q-btn>
             </div>
         </q-card-section>
@@ -215,8 +219,10 @@
         </thead>
           </template>
     <template v-slot="{ item, index }">
-      <tr :key="index" class="rounded" style="cursor:pointer" >
-        <td v-if="paid==false" class="text-left xyz"><q-checkbox dense v-model="licenseArray" :val="item.licenseUUID" :label="(index+1) + ' ' +item.secondName + ' ' + item.firstName "></q-checkbox></td>
+      <tr :key="index" class="rounded" style="cursor:pointer" @dblclick="legitimationNumber = item.legitimationNumber; memberDial=true">
+        <q-tooltip content-class="text-subtitle2" anchor="top middle">kliknij dwa razy aby wyświetlić podgląd
+        </q-tooltip>
+        <td v-if="!paid" class="text-left xyz"><q-checkbox dense v-model="licenseArray" :val="item.licenseUUID" :label="(index+1) + ' ' +item.secondName + ' ' + item.firstName "></q-checkbox></td>
         <td v-else class="text-left xyz"><b>{{index+1}}</b> {{item.secondName}} {{item.firstName}} </td>
         <td class="text-left">nr leg. {{item.legitimationNumber}}</td>
         <td v-if="item.adult" class="text-left"><div>Ogólna</div></td>
@@ -270,7 +276,7 @@
                 </template>
               </q-input>
             </q-item>
-              <div class="q-pa-md" align="right">
+              <div class="q-pa-md">
                 <q-btn @click="getSumErased ()">Wyszukaj</q-btn>
               </div>
         </q-card-section>
@@ -289,12 +295,14 @@
         </thead>
           </template>
     <template v-slot="{ item, index }">
-      <tr :key="index" style="cursor:pointer" >
+      <tr :key="index" style="cursor:pointer"  @dblclick="legitimationNumber = item.legitimationNumber; memberDial=true">
+        <q-tooltip content-class="text-subtitle2" anchor="top middle">kliknij dwa razy aby wyświetlić podgląd
+        </q-tooltip>
         <td class="text-left xyz"><b>{{index+1}} </b> {{item.secondName}} {{item.firstName}}</td>
         <td class="text-left"><div>{{item.erasedEntity.date}}</div><div>{{item.erasedEntity.erasedType}}</div></td>
         <td class="text-left">nr leg. {{item.legitimationNumber}}</td>
         <td v-if="item.erasedEntity.additionalDescription==null" class="text-left"><div>Brak dodatkowych informacji</div></td>
-        <td v-if="item.erasedEntity.additionalDescription!=null" class="bg-warning self-center text-center"><div style="justify-center">{{item.erasedEntity.additionalDescription}}</div></td>
+        <td v-if="item.erasedEntity.additionalDescription!=null" class="bg-warning self-center text-center"><div>{{item.erasedEntity.additionalDescription}}</div></td>
       </tr>
       </template>
       </q-virtual-scroll>
@@ -337,7 +345,7 @@
                 </template>
               </q-input>
             </q-item>
-              <div class="q-pa-md" align="right">
+              <div class="q-pa-md">
               <q-btn @click="memberAmmoTakesInTime ()">Wyszukaj</q-btn>
             </div>
         </q-card-section>
@@ -359,21 +367,23 @@
         </thead>
           </template>
     <template v-slot="{ item, index }">
-      <tr :key="index" style="cursor:pointer" >
+      <tr :key="index" style="cursor:pointer" @dblclick="legitimationNumber = item.legitimationNumber; memberDial=true">
+        <q-tooltip content-class="text-subtitle2" anchor="top middle">kliknij dwa razy aby wyświetlić podgląd
+        </q-tooltip>
         <td class="text-left xyz"><div><b>{{index+1}} </b>{{item.secondName}} {{item.firstName}}</div></td>
         <td class="text-left">nr leg. {{item.legitimationNumber}}</td>
         <td class="text-left"><div v-for="(caliber,id) in item.caliber" :key="id">
-          <div v-if="caliber.name == '5,6mm'">{{caliber.quantity}} szt.</div></div></td>
+          <div v-if="caliber.name === '5,6mm'">{{caliber.quantity}} szt.</div></div></td>
         <td class="text-left"><div v-for="(caliber,id) in item.caliber" :key="id">
-          <div v-if="caliber.name == '9x19mm'">{{caliber.quantity}} szt.</div></div></td>
+          <div v-if="caliber.name === '9x19mm'">{{caliber.quantity}} szt.</div></div></td>
         <td class="text-left"><div v-for="(caliber,id) in item.caliber" :key="id">
-          <div v-if="caliber.name == '12/76'">{{caliber.quantity}} szt.</div></div></td>
+          <div v-if="caliber.name === '12/76'">{{caliber.quantity}} szt.</div></div></td>
         <td class="text-left"><div v-for="(caliber,id) in item.caliber" :key="id">
-          <div v-if="caliber.name == '.38'">{{caliber.quantity}} szt.</div></div></td>
+          <div v-if="caliber.name === '.38'">{{caliber.quantity}} szt.</div></div></td>
         <td class="text-left"><div v-for="(caliber,id) in item.caliber" :key="id">
-          <div v-if="caliber.name == '.357'">{{caliber.quantity}} szt.</div></div></td>
+          <div v-if="caliber.name === '.357'">{{caliber.quantity}} szt.</div></div></td>
         <td class="text-left"><div v-for="(caliber,id) in item.caliber" :key="id">
-          <div v-if="caliber.name == '7,62x39mm'">{{caliber.quantity}} szt.</div></div></td>
+          <div v-if="caliber.name === '7,62x39mm'">{{caliber.quantity}} szt.</div></div></td>
       </tr>
       </template>
       </q-virtual-scroll>
@@ -386,7 +396,7 @@
       <q-card class="bg-red-5 text-center">
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
-          <div><q-input @keypress.enter="toggleHistoryPayment(),toggleLicenseAlert=false" autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input></div>
+          <div><q-input @keypress.enter="toggleHistoryPayment();toggleLicenseAlert=false" autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input></div>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -420,6 +430,17 @@
 
       </q-card>
 </q-dialog>
+    <q-dialog v-model="memberDial" style="min-width: 80vw">
+      <q-card style="min-width: 80vw">
+        <q-card-section class="flex-center">
+          <Member :member-number-legitimation="legitimationNumber"></Member>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn label="zamknij" color="black" v-close-popup @click="pinCode=null"/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 <style src="../style/style.scss" lang="scss">
@@ -428,15 +449,19 @@
 <script>
 
 import { scroll } from 'quasar'
-const { getScrollTarget, setScrollPosition } = scroll
-import Vue from 'vue'
-import axios from 'axios'
 import App from 'src/App.vue'
-Vue.prototype.$axios = axios
+import Member from 'components/Member.vue'
+
+const { getScrollTarget, setScrollPosition } = scroll
 
 export default {
+  components: {
+    Member
+  },
   data () {
     return {
+      memberDial: false,
+      legitimationNumber: null,
       firstDate: null,
       secondDate: this.createTodayDate(),
       firstDateJoinDate: null,
@@ -497,8 +522,7 @@ export default {
       } else {
         day = (date.getDate())
       }
-      const today = date.getFullYear() + '/' + month + '/' + day
-      return today
+      return date.getFullYear() + '/' + month + '/' + day
     },
     handleScroll (search) {
       const ele = document.getElementById(search)
@@ -578,15 +602,6 @@ export default {
       }
       this.quantitySumRearangeTable = arr1
     },
-    getMembersInMonths () {
-      fetch('http://' + this.local + '/statistics/joinMonthSum?year=' + this.year.replace(/\//gi, '-'), {
-        method: 'GET'
-      }).then(response => {
-        response.json().then(response => {
-          this.quantitySumJoinDateByMonths = response
-        })
-      })
-    },
     memberAmmoTakesInTime () {
       fetch('http://' + this.local + '/statistics/memberAmmoTakesInTime?firstDate=' + this.firstDateAmmo.replace(/\//gi, '-') + '&secondDate=' + this.secondDateAmmo.replace(/\//gi, '-'), {
         method: 'GET'
@@ -634,7 +649,6 @@ export default {
         this.failure = false
         this.success = false
         this.forbidden = false
-        this.downloaded = false
         this.message = null
         this.code = null
       }, 2000)
