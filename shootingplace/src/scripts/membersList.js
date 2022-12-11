@@ -1,13 +1,8 @@
 import { scroll } from 'quasar'
-const { getScrollTarget, setScrollPosition } = scroll
-import Vue from 'vue'
-import axios from 'axios'
 import App from 'src/App.vue'
 import Member from 'components/Member.vue'
-Vue.prototype.$axios = axios
-Vue.directive('temp', function (el) {
-  el.focus()
-})
+
+const { getScrollTarget, setScrollPosition } = scroll
 
 export default {
   data () {
@@ -28,7 +23,7 @@ export default {
       message: null,
       barcode: null,
       memberDTOArg: [],
-      memberDTOArgRearangeTable: [],
+      memberDTOArgRearrangeTable: [],
       quantities: [],
       allMember: true,
       local: App.host
@@ -60,8 +55,7 @@ export default {
       if (month < 10) {
         month = '0' + (month)
       }
-      const formattedDate = day + '-' + (month) + '-' + current.getFullYear()
-      return formattedDate
+      return day + '-' + (month) + '-' + current.getFullYear()
     },
     handleScroll (search) {
       const word = search.split(' ')
@@ -99,7 +93,7 @@ export default {
       }).then(response => response.json())
         .then(response => {
           this.memberDTOArg = response.sort()
-          this.memberDTOArgRearangeTable = response
+          this.memberDTOArgRearrangeTable = response
         })
     },
     getAllMemberDTO () {
@@ -108,7 +102,7 @@ export default {
       }).then(response => response.json())
         .then(response => {
           this.memberDTOArg = response
-          this.memberDTOArgRearangeTable = response
+          this.memberDTOArgRearrangeTable = response
         })
     },
     findMemberByBarCode () {
@@ -162,30 +156,30 @@ export default {
     sortF (type) {
       if (type === 'numberLeg') {
         if (!this.sortLegitimation) {
-          this.memberDTOArgRearangeTable.sort((a, b) => b.legitimationNumber - a.legitimationNumber)
+          this.memberDTOArgRearrangeTable.sort((a, b) => b.legitimationNumber - a.legitimationNumber)
           this.sortLegitimation = !this.sortLegitimation
         } else {
-          this.memberDTOArgRearangeTable.sort((a, b) => a.legitimationNumber - b.legitimationNumber)
+          this.memberDTOArgRearrangeTable.sort((a, b) => a.legitimationNumber - b.legitimationNumber)
           this.sortLegitimation = !this.sortLegitimation
         }
       }
       if (type === 'name') {
         if (!this.sortName) {
-          this.memberDTOArgRearangeTable.sort((a, b) => ('' + b.secondName).localeCompare(a.secondName))
+          this.memberDTOArgRearrangeTable.sort((a, b) => ('' + b.secondName).localeCompare(a.secondName))
           this.sortName = !this.sortName
         } else {
-          this.memberDTOArgRearangeTable.sort((a, b) => ('' + a.secondName).localeCompare(b.secondName))
+          this.memberDTOArgRearrangeTable.sort((a, b) => ('' + a.secondName).localeCompare(b.secondName))
           this.sortName = !this.sortName
         }
       }
       if (type === 'numberLicense') {
         if (!this.sortLicense) {
           this.memberDTOArg.sort((a, b) => b.license.number - a.license.number)
-          this.memberDTOArgRearangeTable.sort((a, b) => b.license.number - a.license.number)
+          this.memberDTOArgRearrangeTable.sort((a, b) => b.license.number - a.license.number)
           this.sortLicense = !this.sortLicense
         } else {
           this.memberDTOArg.sort((a, b) => a.license.number - b.license.number)
-          this.memberDTOArgRearangeTable.sort((a, b) => a.license.number - b.license.number)
+          this.memberDTOArgRearrangeTable.sort((a, b) => a.license.number - b.license.number)
           this.sortLicense = !this.sortLicense
         }
       }
@@ -193,16 +187,16 @@ export default {
         console.log('sortuję')
         if (!this.sortDate) {
           this.memberDTOArg.sort((a, b) => new Date(b.joinDate) - new Date(a.joinDate))
-          this.memberDTOArgRearangeTable.sort((a, b) => new Date(b.joinDate) - new Date(a.joinDate))
+          this.memberDTOArgRearrangeTable.sort((a, b) => new Date(b.joinDate) - new Date(a.joinDate))
           this.sortDate = !this.sortDate
         } else {
           this.memberDTOArg.sort((a, b) => new Date(a.joinDate) - new Date(b.joinDate))
-          this.memberDTOArgRearangeTable.sort((a, b) => new Date(a.joinDate) - new Date(b.joinDate))
+          this.memberDTOArgRearrangeTable.sort((a, b) => new Date(a.joinDate) - new Date(b.joinDate))
           this.sortDate = !this.sortDate
         }
       }
     },
-    rearangeMemberDTO () {
+    rearrangeMemberDTO () {
       const arr = this.memberDTOArg
       const arr1 = []
       if (this.adult !== null && this.active === null) {
@@ -226,14 +220,13 @@ export default {
           }
         }
       }
-      this.memberDTOArgRearangeTable = arr1
+      this.memberDTOArgRearrangeTable = arr1
     },
     autoClose () {
       setTimeout(() => {
         this.failure = false
         this.success = false
         this.forbidden = false
-        this.downloaded = false
         this.message = null
         this.barcode = null
         this.code = null

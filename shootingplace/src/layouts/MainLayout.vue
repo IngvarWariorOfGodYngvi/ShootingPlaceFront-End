@@ -47,21 +47,21 @@
     >
     <div class="full-height bg-secondary">
       <q-list class="bg-secondary">
-          <q-item @click="showloading(),clear()" class="flex flex-center q-pa-md bg-primary text-white xyz1" clickable tag="a" target="_self" :href="hrefTarget" width="max">
+          <q-item @click="showloading()" class="flex flex-center q-pa-md bg-primary text-white xyz1" clickable tag="a" target="_self" :href="hrefTarget" width="max">
             <div class="text-h6 text-bold text-center"><div>PROGRAM</div> STRONA GŁÓWNA</div>
           </q-item>
-          <div @click="showloading(),clear()">
+          <div @click="showloading()">
         <EssentialLink
           v-for="link in essentialLinks"
           :key="link.title"
           v-bind="link"
           class="bg-secondary text-white xyz"
-        />
+         :title="link.title"/>
         </div>
       </q-list>
       <members-quantities class="bg-secondary">
       </members-quantities>
-      <WorkTimeList style="margin: auto,height:auto">
+      <WorkTimeList style="margin: auto;height:auto">
       </WorkTimeList>
       </div>
     </q-drawer>
@@ -71,13 +71,13 @@
         <router-view/>
         <q-page-sticky :position="'top-right'" :offset="[30, 30]">
           <q-fab
-            v-if="color!='primary'||tournamentCheck"
+            v-if="color!=='primary'||tournamentCheck"
             :color="color"
             glossy
             icon="keyboard_arrow_left"
             direction="left"
           >
-            <q-fab-action v-if="color!='primary'" external-label :label-position="'top'" color="primary" icon="book" @click="redirectToAmmoList()"><q-tooltip anchor="top middle" self="top middle" content-class="text-h6">Otwarta lista amunicyjna</q-tooltip></q-fab-action>
+            <q-fab-action v-if="color!=='primary'" external-label :label-position="'top'" color="primary" icon="book" @click="redirectToAmmoList()"><q-tooltip anchor="top middle" self="top middle" content-class="text-h6">Otwarta lista amunicyjna</q-tooltip></q-fab-action>
             <q-fab-action v-if="tournamentCheck" external-label :label-position="'top'" color="secondary" icon="people" @click="redirectToCompetitionList()"><q-tooltip anchor="top middle" self="top middle" content-class="text-h6">Otwarte zawody</q-tooltip></q-fab-action>
             <!-- <q-fab-action square external-label label-:position="'top'" color="orange" icon="airplay" label="Airplay" /> -->
             <!-- <q-fab-action square external-label label-:position="'top'" color="accent" icon="room" label="Map" /> -->

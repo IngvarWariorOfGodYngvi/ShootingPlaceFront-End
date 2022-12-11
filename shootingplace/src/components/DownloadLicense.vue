@@ -1,6 +1,10 @@
 <template>
-    <q-btn label="pobierz listę osób z licencją" @click="download()">
+    <div>
+  <q-btn label="pobierz listę osób z licencją" @click="download()">
     </q-btn>
+<!--  <q-btn label="przykładowy docx" @click="download1()">-->
+<!--    </q-btn>-->
+    </div>
 </template>
 
 <script>
@@ -26,6 +30,22 @@ export default {
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
         fileLink.setAttribute('download', 'Lista_klubowiczów_z_licencją.pdf')
+        document.body.appendChild(fileLink)
+        fileLink.click()
+        // this.downloaded = true
+        // this.autoClose()
+      })
+    },
+    download1 () {
+      axios({
+        url: 'http://' + this.local + '/files/simpleDocx',
+        method: 'GET',
+        responseType: 'blob'
+      }).then(response => {
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        const fileLink = document.createElement('a')
+        fileLink.href = fileURL
+        fileLink.setAttribute('download', 'simpleDocx.docx')
         document.body.appendChild(fileLink)
         fileLink.click()
         // this.downloaded = true

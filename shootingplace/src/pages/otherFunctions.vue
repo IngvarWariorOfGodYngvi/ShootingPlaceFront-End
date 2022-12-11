@@ -674,10 +674,11 @@
 <script>
 const stringOptions = []
 import { scroll } from 'quasar'
-const { getScrollTarget, setScrollPosition } = scroll
 import Vue from 'vue'
 import axios from 'axios'
 import App from 'src/App.vue'
+
+const { getScrollTarget, setScrollPosition } = scroll
 Vue.prototype.$axios = axios
 
 export default {
@@ -789,8 +790,7 @@ export default {
       } else {
         day = (date.getDate())
       }
-      const today = date.getFullYear() + '-' + month + '-' + day
-      return today
+      return date.getFullYear() + '-' + month + '-' + day
     },
     addRecordToWorkTimeArray (uuid, start, stop) {
       const arr = this.workTimeChangeArray

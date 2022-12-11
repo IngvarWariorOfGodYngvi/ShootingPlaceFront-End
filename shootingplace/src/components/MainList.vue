@@ -25,7 +25,7 @@
         </q-item>
       </div>
       <div @click="showloading()" class="q-pa-xs fun">
-        <q-item v-if="color!='primary'" class="q-pa-none xyz2 bg-secondary" clickable tag="a" target="_self" :href="app + 'ammolist'" width="max">
+        <q-item v-if="color!=='primary'" class="q-pa-none xyz2 bg-secondary" clickable tag="a" target="_self" :href="app + 'ammolist'" width="max">
           <div class="row text-white full-width">
               <q-icon class="q-pa-md text-h5" name="list_alt" />
             <div class="self-center" tabindex="1"><b class="self-center text-white text-right flex-end">OTWARTA </b> Lista Amunicyjna</div>
@@ -80,7 +80,7 @@
         <q-item class="q-pa-none xyz2" clickable tag="a" target="_self" :href="app + 'otherFunctions'" width="max">
             <div class="row text-grey-7 text-left">
               <q-icon class="q-pa-md text-h5" name="menu"/>
-            <div class="self-center text-black" tabindex="1">Pozstałe Funkcje</div>
+            <div class="self-center text-black" tabindex="1">Pozostałe Funkcje</div>
             </div>
         </q-item>
       </div>

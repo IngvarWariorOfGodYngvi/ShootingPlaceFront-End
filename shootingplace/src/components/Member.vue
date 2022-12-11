@@ -4,71 +4,70 @@
       <q-card-section v-if="member.imageUUID!=null" avatar class="col-2">
         <div style="width:25vh;height:15vw">
           <q-tooltip v-if="(member.address.postOfficeCity===null||member.address.postOfficeCity==='')
-                ||(member.address.street==null||member.address.street=='') || (member.weaponPermission.exist&&!member.license.valid) || (member.email==null||member.email=='') || (member.license.number!=null)&&(member.license.valid == false)"
+                ||(member.address.street===null||member.address.street==='') || (member.weaponPermission.exist&&!member.license.valid) || (member.email===null||member.email==='') || (member.license.number!==null)&&(member.license.valid === false)"
                      class="row" anchor="top middle" self="bottom middle" :offset="[12, 12]">
             <q-badge v-if="(member.address.postOfficeCity===null||member.address.postOfficeCity==='')
-                ||(member.address.street==null||member.address.street=='')" transparent align="middle" color="orange"
+                ||(member.address.street===null||member.address.street==='')" transparent align="middle" color="orange"
                      text-color="black">Brak Adresu
             </q-badge>
             <q-badge v-if="(member.weaponPermission.exist&&!member.license.valid)" transparent align="middle"
                      color="red" text-color="black">Jest Broń i Brak Licencji
             </q-badge>
-            <q-badge v-if="(member.email==null||member.email=='')" transparent align="middle" color="yellow"
+            <q-badge v-if="(member.email===null||member.email==='')" transparent align="middle" color="yellow"
                      text-color="black">Brak E-mail
             </q-badge>
-            <q-badge v-if="(member.license.number!=null)&&(member.license.valid == false)" transparent align="middle"
+            <q-badge v-if="(member.license.number!==null)&&(member.license.valid === false)" transparent align="middle"
                      color="yellow" text-color="black">Brak aktualnej licencji
             </q-badge>
           </q-tooltip>
           <q-avatar v-if="member.weaponPermission.exist&&!member.license.valid" class="full" square color="red"
                     text-color="white">
-            <q-img fit=none height="100%" width="100%" class="text-body1" alt="zdęcie profilowe"
+            <q-img fit=none height="100%" width="100%" class="text-body1" alt="zdjęcie profilowe"
                    :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/>
           </q-avatar>
           <q-avatar v-else-if="member.license.number!=null&&!member.license.valid" class="full" square color="yellow"
                     text-color="white">
-            <q-img fit=none height="100%" width="100%" class="text-body1" alt="zdęcie profilowe"
+            <q-img fit=none height="100%" width="100%" class="text-body1" alt="zdjęcie profilowe"
                    :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/>
           </q-avatar>
-          <q-avatar v-else-if="(member.email==null||member.email=='')
+          <q-avatar v-else-if="(member.email===null||member.email==='')
             ||(member.address.postOfficeCity===null||member.address.postOfficeCity==='')
-            ||(member.address.street==null||member.address.street=='')" class="full" square color="warning"
+            ||(member.address.street===null||member.address.street==='')" class="full" square color="warning"
                     text-color="white">
             <q-img fit=none height="100%" width="100%" img-style="width:100%;height:100%" class="text-body1"
-                   alt="zdęcie profilowe" :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/>
+                   alt="zdjęcie profilowe" :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/>
           </q-avatar>
           <q-avatar v-else-if="!member.active" class="full" square color="red" text-color="white">
             <q-img fit=none height="100%" width="100%" img-style="width:100%;height:100%" class="text-body1"
-                   alt="zdęcie profilowe" :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/>
+                   alt="zdjęcie profilowe" :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/>
           </q-avatar>
           <q-avatar v-else class="full" square>
-            <q-img fit=none height="100%" width="100%" img-class="full" class="text-body1" alt="zdęcie profilowe"
+            <q-img fit=none height="100%" width="100%" img-class="full" class="text-body1" alt="zdjęcie profilowe"
                    :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/>
           </q-avatar>
         </div>
       </q-card-section>
       <q-card-section v-else avatar class="col-2">
-        <q-uploader style="width:100%;heigth:100%" method="POST"
+        <q-uploader style="width:100%;height:100%" method="POST"
                     :url="('http://' + local + '/files/member/' + member.uuid)"
                     label="Dodaj zdjęcie / max 400KB" max-file-size="409600" accept=".jpg, image/*"
                     @rejected="onRejected" field-name="file" @uploaded="getMemberByUUID(member.uuid)"/>
       </q-card-section>
       <q-card-section class="col-4">
         <q-item-label>{{ member.secondName }} {{ member.firstName }}</q-item-label>
-        <q-item-label v-if="member.adult" caption lines="2">Grupa: Ogólna</q-item-label>
-        <q-item-label v-if="!member.adult" caption lines="2">Grupa: Młodzieżowa</q-item-label>
+        <q-item-label caption class="text-bold text-center bg-secondary text-white" style="border-radius: 1em;">{{member.club.name}}</q-item-label>
+        <q-item-label caption lines="2">{{member.adult?'Grupa: Ogólna':'Grupa: Młodzieżowa'}}</q-item-label>
+        <q-item-label caption lines="2">{{member.active?'Status: Aktywny':'Status: Nieaktywny'}}</q-item-label>
         <q-item-label v-if="member.history.contributionList.length > 0" caption lines="2">Składka ważna do:
           {{ convertDate(member.history.contributionList[0].validThru) }}
         </q-item-label>
         <q-item-label v-if="member.history.contributionList.length > 0" caption lines="2">Składka opłacona dnia:
           {{ convertDate(member.history.contributionList[0].paymentDay) }}
         </q-item-label>
-        <q-item-label v-if="member.active" caption lines="2">Status: Aktywny</q-item-label>
-        <q-item-label v-if="!member.active" caption lines="2">Status: Nieaktywny</q-item-label>
         <div v-if="member.imageUUID!=null">
           <q-btn color="primary" label="zmień zdjęcie">
             <q-popup-edit v-model="picture">
-              <q-uploader style="width:100%;heigth:100%" method="POST"
+              <q-uploader style="width:100%;height:100%" method="POST"
                           :url="('http://' + local + '/files/member/' + member.uuid)"
                           label="Dodaj zdjęcie / max 400KB" max-file-size="409600" accept=".jpg, image/*"
                           @rejected="onRejected" field-name="file" @uploaded="getMemberByUUID(member.uuid)"/>
@@ -93,74 +92,73 @@
       </q-card-section>
     </q-card>
     <q-card v-if="!member.active" bordered class="row bg-red-3">
-      <q-card-section v-if="member.imageUUID!=null" avatar class="col-2">
+      <q-card-section v-if="member.imageUUID!==null" avatar class="col-2">
         <div style="width:25vh;height:15vw">
           <q-tooltip v-if="(member.address.postOfficeCity===null||member.address.postOfficeCity==='')
-                ||(member.address.street==null||member.address.street=='') || (member.weaponPermission.exist&&!member.license.valid) || (member.email==null||member.email=='') || (member.license.number!=null)&&(member.license.valid == false)"
+                ||(member.address.street===null||member.address.street==='') || (member.weaponPermission.exist&&!member.license.valid) || (member.email===null||member.email==='') || (member.license.number!==null)&&(member.license.valid === false)"
                      class="row" anchor="top middle" self="bottom middle" :offset="[12, 12]">
             <q-badge v-if="(member.address.postOfficeCity===null||member.address.postOfficeCity==='')
-                ||(member.address.street==null||member.address.street=='')" transparent align="middle" color="orange"
+                ||(member.address.street==null||member.address.street==='')" transparent align="middle" color="orange"
                      text-color="black">Brak Adresu
             </q-badge>
             <q-badge v-if="(member.weaponPermission.exist&&!member.license.valid)" transparent align="middle"
                      color="red" text-color="black">Jest Broń i Brak Licencji
             </q-badge>
-            <q-badge v-if="(member.email==null||member.email=='')" transparent align="middle" color="yellow"
+            <q-badge v-if="(member.email===null||member.email==='')" transparent align="middle" color="yellow"
                      text-color="black">Brak E-mail
             </q-badge>
-            <q-badge v-if="(member.license.number!=null)&&(member.license.valid == false)" transparent align="middle"
+            <q-badge v-if="(member.license.number!==null)&&(member.license.valid === false)" transparent align="middle"
                      color="yellow" text-color="black">Brak aktualnej licencji
             </q-badge>
           </q-tooltip>
           <q-avatar v-if="member.weaponPermission.exist&&!member.license.valid" class="full" square color="red"
                     text-color="white">
             <q-img fit=none height="100%" width="100%" img-style="width:100%;height:100%" class="text-body1"
-                   alt="zdęcie profilowe" :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/>
+                   alt="zdjęcie profilowe" :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/>
           </q-avatar>
-          <q-avatar v-else-if="member.license.number!=null&&!member.license.valid" class="full" square color="yellow"
+          <q-avatar v-else-if="member.license.number!==null&&!member.license.valid" class="full" square color="yellow"
                     text-color="white">
             <q-img fit=none height="100%" width="100%" img-style="width:100%;height:100%" class="text-body1"
-                   alt="zdęcie profilowe" :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/>
+                   alt="zdjęcie profilowe" :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/>
           </q-avatar>
-          <q-avatar v-else-if="(member.email==null||member.email=='')
+          <q-avatar v-else-if="(member.email===null||member.email==='')
             ||(member.address.postOfficeCity===null||member.address.postOfficeCity==='')
-            ||(member.address.street==null||member.address.street=='')" class="full" square color="warning"
+            ||(member.address.street===null||member.address.street==='')" class="full" square color="warning"
                     text-color="white">
             <q-img fit=none height="100%" width="100%" img-style="width:100%;height:100%" class="text-body1"
-                   alt="zdęcie profilowe" :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/>
+                   alt="zdjęcie profilowe" :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/>
           </q-avatar>
           <q-avatar v-else-if="!member.active" class="full" square color="red" text-color="white">
             <q-img fit=none height="100%" width="100%" img-style="width:100%;height:100%" class="text-body1"
-                   alt="zdęcie profilowe" :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/>
+                   alt="zdjęcie profilowe" :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/>
           </q-avatar>
           <q-avatar v-else class="full" square color="green" text-color="white">
             <q-img fit=none height="100%" width="100%" img-style="width:100%;height:100%" class="text-body1"
-                   alt="zdęcie profilowe" :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/>
+                   alt="zdjęcie profilowe" :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/>
           </q-avatar>
         </div>
       </q-card-section>
       <q-card-section v-else avatar class="col-2">
-        <q-uploader style="width:100%;heigth:100%" method="POST"
+        <q-uploader style="width:100%;height:100%" method="POST"
                     :url="('http://' + local + '/files/member/' + member.uuid)"
                     label="Dodaj zdjęcie / max 400KB" max-file-size="409600" accept=".jpg, image/*"
                     @rejected="onRejected" field-name="file" @uploaded="getMemberByUUID(member.uuid)"/>
       </q-card-section>
       <q-card-section class="col-4">
         <q-item-label>{{ member.secondName }} {{ member.firstName }}</q-item-label>
+        <q-item-label caption class="text-bold text-center bg-secondary text-white" style="border-radius: 1em;">{{member.club.name}}</q-item-label>
+        <q-item-label caption lines="2">{{member.adult?'Grupa: Ogólna':'Grupa: Młodzieżowa'}}</q-item-label>
+        <q-item-label caption lines="2">{{member.active?'Status: Aktywny':'Status: Nieaktywny'}}</q-item-label>
         <q-item-label v-if="member.history.contributionList.length > 0" caption lines="2">Składka ważna do:
           {{ convertDate(member.history.contributionList[0].validThru) }}
         </q-item-label>
         <q-item-label v-if="member.history.contributionList.length > 0" caption lines="2">Składka opłacona dnia:
           {{ convertDate(member.history.contributionList[0].paymentDay) }}
         </q-item-label>
-        <q-item-label v-if="member.active" caption lines="2">Status: Aktywny</q-item-label>
-        <q-item-label v-if="!member.active" caption lines="2">Status: Nieaktywny</q-item-label>
-        <q-item-label v-if="member.adult" caption lines="2">Grupa: Ogólna</q-item-label>
-        <q-item-label v-if="!member.adult" caption lines="2">Grupa: Młodzieżowa</q-item-label>
         <div v-if="member.imageUUID!=null">
           <q-btn color="primary" label="zmień zdjęcie">
             <q-popup-edit v-model="picture">
-              <q-uploader style="width:100%;heigth:100%" method="POST"
+              <q-uploader style="width:100%;height:100%" method="POST"
                           :url="('http://' + local + '/files/member/' + member.uuid)" label="Dodaj zdjęcie / max 400KB"
                           max-file-size="409600" accept=".jpg, image/*" @rejected="onRejected" field-name="file"
                           @uploaded="getMemberByUUID(member.uuid)"/>
@@ -179,7 +177,7 @@
           <q-item-label caption lines="2">{{ member.erasedEntity.erasedType }}
             {{ convertDate(member.erasedEntity.date) }}
           </q-item-label>
-          <q-item-label v-if="member.erasedEntity.additionalDescription!=null" caption lines="2">
+          <q-item-label v-if="member.erasedEntity.additionalDescription!==null" caption lines="2">
             {{ member.erasedEntity.additionalDescription }}
           </q-item-label>
         </div>
@@ -194,18 +192,19 @@
         <div v-if="!member.erased">
           <div>
             <q-btn class="full-width" color="green" label="Przedłuż składkę"
-                   @click="memberUUID = member.uuid,name = member.firstName,name2 = member.secondName,contribution=true"/>
+                   @click="memberUUID = member.uuid;name = member.firstName;name2 = member.secondName;contribution=true"/>
           </div>
           <div>
             <q-btn class="full-width text-black" color="white" label="Dodaj historyczną składkę"
-                   @click="memberUUID = member.uuid,name  =member.firstName,name2 = member.secondName,contributionRecordConfirm=true"/>
+                   @click="memberUUID = member.uuid;name  =member.firstName;name2 = member.secondName;contributionRecordConfirm=true"/>
           </div>
         </div>
         <q-expansion-item dense default-opened class="bg-grey-3 full-width q-pa-none text-center" label="Daty Składek">
           <q-scroll-area class="full-width q-pa-none" style="height: 375px;">
             <div v-for="(contributionList,uuid) in member.history.contributionList" :key="uuid" class="row">
               <div class="row full-width"
-                   @dblclick="contributionUUID = contributionList.uuid,memberUUID = member.uuid,editContributionPaymentDate=contributionList.paymentDay,editContributionValidThruDate=contributionList.validThru,editContribution=true">
+                   @dblclick="contributionUUID = contributionList.uuid;memberUUID = member.uuid;editContributionPaymentDate=contributionList.paymentDay
+                   ;editContributionValidThruDate=contributionList.validThru;editContribution=true">
                 <q-field dense class="col-6" label="Opłacona dnia : " standout="bg-accent text-black" stack-label>
                   <div class="self-center col full-width no-outline text-left text-black" tabindex="0">
                     {{ convertDate(contributionList.paymentDay) }}
@@ -225,14 +224,14 @@
       </q-card-section>
       <q-card-section class="col-4 items-center">
         <q-item-section class="col" v-if="!member.license.number!=null||member.adult">
-          <div v-if="member.shootingPatent.patentNumber!=null" class="col" clickable
-               @dblclick="memberUUID = member.uuid,editLicenseNumber=member.license.number,editLicenseDate=member.license.validThru, editLicense=true">
-            <q-field class="col" standout="bg-accent text-black" stack-label>
+          <div v-if="member.shootingPatent.patentNumber!=null" class="col"
+               @dblclick="memberUUID = member.uuid;editLicenseNumber=member.license.number;editLicenseDate=member.license.validThru; editLicense=true">
+            <q-field dense class="col" standout="bg-accent text-black" stack-label>
               <div class="self-center col full-width no-outline text-center text-black" tabindex="0">Licencja</div>
             </q-field>
           </div>
           <div v-if="member.shootingPatent.patentNumber==null"
-               @dblclick="memberUUID = member.uuid,editLicenseNumber=member.license.number,editLicenseDate=member.license.validThru, editLicense=true"
+               @dblclick="memberUUID = member.uuid;editLicenseNumber=member.license.number;editLicenseDate=member.license.validThru; editLicense=true"
                class="col">
             <q-field class="col" standout="bg-accent text-black" stack-label>
               <div class="self-center col full-width no-outline text-center text-black" tabindex="0">Licencja</div>
@@ -259,7 +258,7 @@
               </q-field>
             </div>
             <div
-              v-if="member.license.pistolPermission == true || member.license.riflePermission == true || member.license.shotgunPermission == true"
+              v-if="member.license.pistolPermission === true || member.license.riflePermission === true || member.license.shotgunPermission === true"
               class="row">
               <q-field dense label="Dyscypliny" class="col" standout="bg-accent text-black" stack-label>
                 <div v-if="member.license.pistolPermission" class="self-center text-center col-4 no-outline text-black"
@@ -275,56 +274,56 @@
             </div>
           </div>
           <q-item-label caption lines="2"
-                        v-if="!member.license.pistolPermission&&member.history.licenseHistory[ 0 ]=='Pistolet'">Kiedyś
+                        v-if="!member.license.pistolPermission&&member.history.licenseHistory[ 0 ]==='Pistolet'">Kiedyś
             posiadał licencję na Pistolet
           </q-item-label>
           <q-item-label caption lines="2"
-                        v-if="!member.license.riflePermission&&member.history.licenseHistory[ 1 ]=='Karabin'">Kiedyś
+                        v-if="!member.license.riflePermission&&member.history.licenseHistory[ 1 ]==='Karabin'">Kiedyś
             posiadał licencję na Karabin
           </q-item-label>
           <q-item-label caption lines="2"
-                        v-if="!member.license.shotgunPermission&&member.history.licenseHistory[ 2 ]=='Strzelba'">Kiedyś
+                        v-if="!member.license.shotgunPermission&&member.history.licenseHistory[ 2 ]==='Strzelba'">Kiedyś
             posiadał licencję na strzelbę
           </q-item-label>
         </q-item-section>
         <q-btn
           v-if="(member.shootingPatent.patentNumber!=null&&member.license.number==null&&member.license.paid)||(!member.adult&&member.license.number==null)"
           class="full-width" color="primary" label="WYDAJ LICENCJĘ" @click="
-                memberUUID=member.uuid,
-                patentPistolPermission1=member.shootingPatent.pistolPermission,
-                patentRiflePermission1=member.shootingPatent.riflePermission,
-                patentShotgunPermission1=member.shootingPatent.shotgunPermission,
-                memberAdultConfirm=member.adult,
+                memberUUID=member.uuid;
+                patentPistolPermission1=member.shootingPatent.pistolPermission;
+                patentRiflePermission1=member.shootingPatent.riflePermission;
+                patentShotgunPermission1=member.shootingPatent.shotgunPermission;
+                memberAdultConfirm=member.adult;
                 licenseConfirm=true">
         </q-btn>
         <q-btn class="full-width" color="primary" v-if="member.license.number!=null&&(
                 !member.license.pistolPermission
                 ||!member.license.riflePermission
-                ||!member.license.shotgunPermission)" label="Aktualizuj Licencję" @click="memberUUID=member.uuid,
-                patentPistolPermission1=member.shootingPatent.pistolPermission,
-                patentRiflePermission1=member.shootingPatent.riflePermission,
-                patentShotgunPermission1=member.shootingPatent.shotgunPermission,
-                licensePistolPermission1=member.license.pistolPermission,
-                licenseRiflePermission1=member.license.riflePermission,
-                licenseShotgunPermission1=member.license.shotgunPermission,
-                memberAdultConfirm=member.adult,
+                ||!member.license.shotgunPermission)&&member.club.id===1" label="Rozszerz Licencję" @click="memberUUID=member.uuid;
+                patentPistolPermission1=member.shootingPatent.pistolPermission;
+                patentRiflePermission1=member.shootingPatent.riflePermission;
+                patentShotgunPermission1=member.shootingPatent.shotgunPermission;
+                licensePistolPermission1=member.license.pistolPermission;
+                licenseRiflePermission1=member.license.riflePermission;
+                licenseShotgunPermission1=member.license.shotgunPermission;
+                memberAdultConfirm=member.adult;
                 updateLicenseConfirm=true"></q-btn>
         <div
-          v-if="(member.license.number!=null&&(member.license.pistolPermission||member.license.riflePermission||member.license.shotgunPermission))&&member.license.paid==true">
-          <q-btn class="full-width" v-if="member.license.canProlong&&member.license.paid==true"
-                 label="przedłuż licencję" color="primary" @click="memberUUID=member.uuid,
-                licensePistolPermission1=member.license.pistolPermission,
-                licenseRiflePermission1=member.license.riflePermission,
-                licenseShotgunPermission1=member.license.shotgunPermission,
+          v-if="(member.license.number!=null&&(member.license.pistolPermission||member.license.riflePermission||member.license.shotgunPermission))&&member.club.id===1&&member.license.paid===true">
+          <q-btn class="full-width" v-if="member.license.canProlong&&member.license.paid===true"
+                 label="przedłuż licencję" color="primary" @click="memberUUID=member.uuid;
+                licensePistolPermission1=member.license.pistolPermission;
+                licenseRiflePermission1=member.license.riflePermission;
+                licenseShotgunPermission1=member.license.shotgunPermission;
                 prolongLicenseConfirm=true"></q-btn>
-          <q-btn class="full-width" v-else label="przedłuż licencję" color="primary" @click="memberUUID=member.uuid,
-                licensePistolPermission1=member.license.pistolPermission,
-                licenseRiflePermission1=member.license.riflePermission,
-                licenseShotgunPermission1=member.license.shotgunPermission,
+          <q-btn class="full-width" v-else label="przedłuż licencję" color="primary" @click="memberUUID=member.uuid;
+                licensePistolPermission1=member.license.pistolPermission;
+                licenseRiflePermission1=member.license.riflePermission;
+                licenseShotgunPermission1=member.license.shotgunPermission;
                 noDomesticStarts=true"></q-btn>
         </div>
-        <q-btn v-if="(((member.shootingPatent.patentNumber!=null&&member.license.paid==false))) " class="full-width"
-               label="opłać licencję" @click="memberUUID=member.uuid,licensePayment=true"></q-btn>
+        <q-btn v-if="(((member.shootingPatent.patentNumber!==null&&member.license.paid===false&&member.club.id===1))) " class="full-width"
+               label="opłać licencję" @click="memberUUID=member.uuid;licensePayment=true"></q-btn>
         <q-expansion-item dense default-opened class="bg-grey-3 text-center"
                           v-if="member.history.licensePaymentHistory.length>0" label="Daty Opłacenia Licencji">
           <q-scroll-area class="full-width q-pa-none" style="height: 375px;">
@@ -336,7 +335,7 @@
                 </q-field>
                 <div class="row full-width">
                   <div class="col-5"
-                       @dblclick="memberUUID=member.uuid,paymentUUID = licensePayment.uuid,editLicensePaymentDate = licensePayment.date,editLicensePaymentYear = licensePayment.validForYear,editLicensePayment=true">
+                       @dblclick="memberUUID=member.uuid;paymentUUID = licensePayment.uuid;editLicensePaymentDate = licensePayment.date;editLicensePaymentYear = licensePayment.validForYear;editLicensePayment=true">
                     <q-field dense label="Opłacona dnia : " standout="bg-accent text-black" stack-label>
                       <div class="self-center col full-width no-outline text-left text-black" tabindex="0">
                         {{ convertDate(licensePayment.date) }}
@@ -344,7 +343,7 @@
                     </q-field>
                   </div>
                   <div class="col-4"
-                       @dblclick="memberUUID=member.uuid,paymentUUID = licensePayment.uuid,editLicensePaymentDate = licensePayment.date,editLicensePaymentYear = licensePayment.validForYear,editLicensePayment=true">
+                       @dblclick="memberUUID=member.uuid;paymentUUID = licensePayment.uuid;editLicensePaymentDate = licensePayment.date;editLicensePaymentYear = licensePayment.validForYear;editLicensePayment=true">
                     <q-field dense standout="bg-accent text-black" label="Na rok : " stack-label>
                       <div class="self-center col full-width no-outline text-left text-black" tabindex="1">
                         {{ licensePayment.validForYear }}
@@ -352,7 +351,7 @@
                     </q-field>
                   </div>
                   <div class="col-3"
-                       @dblclick="memberUUID=member.uuid,paymentUUID = licensePayment.uuid,togglePaymentAlert = true">
+                       @dblclick="memberUUID=member.uuid;paymentUUID = licensePayment.uuid;togglePaymentAlert = true">
                     <q-field dense v-if="licensePayment.payInPZSSPortal" standout="bg-accent text-black" label="PZSS : "
                              stack-label>
                       <div class="self-center col full-width no-outline text-left text-black" tabindex="1">Tak</div>
@@ -366,7 +365,7 @@
               </div>
               <div v-if="!licensePayment.new" class="row full-width">
                 <div class="col-5"
-                     @dblclick="memberUUID=member.uuid,paymentUUID = licensePayment.uuid,editLicensePaymentDate = licensePayment.date,editLicensePaymentYear = licensePayment.validForYear,editLicensePayment=true">
+                     @dblclick="memberUUID=member.uuid;paymentUUID = licensePayment.uuid;editLicensePaymentDate = licensePayment.date;editLicensePaymentYear = licensePayment.validForYear;editLicensePayment=true">
                   <q-field dense label="Opłacona dnia : " standout="bg-accent text-black" stack-label>
                     <div class="self-center col full-width no-outline text-left text-black" tabindex="0">
                       {{ convertDate(licensePayment.date) }}
@@ -374,7 +373,7 @@
                   </q-field>
                 </div>
                 <div class="col-4"
-                     @dblclick="memberUUID=member.uuid,paymentUUID = licensePayment.uuid,editLicensePaymentDate = licensePayment.date,editLicensePaymentYear = licensePayment.validForYear,editLicensePayment=true">
+                     @dblclick="memberUUID=member.uuid;paymentUUID = licensePayment.uuid;editLicensePaymentDate = licensePayment.date;editLicensePaymentYear = licensePayment.validForYear;editLicensePayment=true">
                   <q-field dense standout="bg-accent text-black" label="Na rok : " stack-label>
                     <div class="self-center col full-width no-outline text-left text-black" tabindex="1">
                       {{ licensePayment.validForYear }}
@@ -382,14 +381,10 @@
                   </q-field>
                 </div>
                 <div class="col-3"
-                     @dblclick="memberUUID=member.uuid,paymentUUID = licensePayment.uuid,togglePaymentAlert = true">
-                  <q-field dense v-if="licensePayment.payInPZSSPortal" standout="bg-accent text-black" label="PZSS : "
+                     @dblclick="memberUUID=member.uuid;paymentUUID = licensePayment.uuid;togglePaymentAlert = true">
+                  <q-field dense :class="licensePayment.payInPZSSPortal?'':'bg-red-3'" :standout="licensePayment.payInPZSSPortal?'bg-accent text-black':'bg-red-4 text-balck'" label="PZSS : "
                            stack-label>
-                    <div class="self-center col full-width no-outline text-left text-black" tabindex="1">Tak</div>
-                  </q-field>
-                  <q-field dense v-if="!licensePayment.payInPZSSPortal" class="bg-red-3" standout="bg-accent text-black"
-                           label="PZSS : " stack-label>
-                    <div class="self-center col full-width no-outline text-left text-black" tabindex="1">Nie</div>
+                    <div class="full-width text-center text-black" tabindex="1"><q-icon :name="licensePayment.payInPZSSPortal?'done':'cancel'"></q-icon></div>
                   </q-field>
                 </div>
               </div>
@@ -401,31 +396,31 @@
         <q-item-section class="text-center">
           <q-expansion-item dense default-opened label="Informacje o Uprawnieniach" class="col items-center bg-grey-3"
                             group="right-card">
-            <q-field v-if="(member.memberPermissions.arbiterNumber!=null&&member.memberPermissions.arbiterNumber!='')"
+            <q-field v-if="(member.memberPermissions.arbiterNumber!==null&&member.memberPermissions.arbiterNumber!=='')"
                      class="col q-pa-md" borderless color="black" label="Sędzia" stack-label>
               <q-field dense
-                       v-if="(member.memberPermissions.arbiterNumber!=null&&member.memberPermissions.arbiterNumber!='')"
+                       v-if="(member.memberPermissions.arbiterNumber!==null&&member.memberPermissions.arbiterNumber!=='')"
                        class="col" standout="bg-accent text-black" color="black" label="Numer" stack-label>
                 <div class="self-center full-width no-outline text-left text-black" tabindex="0">
                   {{ member.memberPermissions.arbiterNumber }}
                 </div>
               </q-field>
               <q-field dense
-                       v-if="(member.memberPermissions.arbiterNumber!=null&&member.memberPermissions.arbiterNumber!='')"
+                       v-if="(member.memberPermissions.arbiterNumber!==null&&member.memberPermissions.arbiterNumber!=='')"
                        class="col" standout="bg-accent text-black" color="black" label="Klasa" stack-label>
                 <div class="self-center full-width no-outline text-left text-black" tabindex="0">
                   {{ member.memberPermissions.arbiterClass }}
                 </div>
               </q-field>
               <q-field dense
-                       v-if="(member.memberPermissions.arbiterNumber!=null&&member.memberPermissions.arbiterNumber!='')"
+                       v-if="(member.memberPermissions.arbiterNumber!==null&&member.memberPermissions.arbiterNumber!=='')"
                        class="col" standout="bg-accent text-black" color="black" label="Ważna do" stack-label>
                 <div class="self-center full-width no-outline text-left text-black" tabindex="0">
                   {{ convertDate(member.memberPermissions.arbiterPermissionValidThru) }}
                 </div>
               </q-field>
             </q-field>
-            <q-field v-if="member.shootingPatent.patentNumber!=null" class="col q-pa-md" borderless label="Patent"
+            <q-field v-if="member.shootingPatent.patentNumber!==null" class="col q-pa-md" borderless label="Patent"
                      color="black" stack-label>
               <div class="col">
                 <div class="row">
@@ -478,14 +473,14 @@
               </div>
             </q-field>
             <q-field dense
-                     v-if="(member.memberPermissions.shootingLeaderNumber!=null&&member.memberPermissions.shootingLeaderNumber!='')"
+                     v-if="(member.memberPermissions.shootingLeaderNumber!=null&&member.memberPermissions.shootingLeaderNumber!=='')"
                      class="col" standout="bg-accent text-black" label="Prowadzący Strzelanie" stack-label>
               <div class="self-center full-width no-outline text-left text-black" tabindex="0">
                 {{ member.memberPermissions.shootingLeaderNumber }}
               </div>
             </q-field>
             <q-field dense
-                     v-if="(member.memberPermissions.instructorNumber!=null&&member.memberPermissions.instructorNumber!='')"
+                     v-if="(member.memberPermissions.instructorNumber!=null&&member.memberPermissions.instructorNumber!=='')"
                      class="col" standout="bg-accent text-black" label="Instruktor" stack-label>
               <div class="self-center full-width no-outline text-left text-black" tabindex="0">
                 {{ member.memberPermissions.instructorNumber }}
@@ -507,7 +502,7 @@
             </div>
             <q-card flat class="row">
               <q-card-section class="col q-pa-none">
-                <div v-for="(calibers,uuid) in calibers" :key="uuid" :val="calibers.uuid">
+                <div v-for="(calibers,uuid) in calibers" :key="uuid">
                   <q-radio dense v-model="caliberUUID" :val="calibers.uuid" class="col full-width">
                     <q-field dense borderless class="cursor-pointer">
                       <div class="self-center full-width no-outline text-center text-black q-pa-xs">
@@ -529,30 +524,30 @@
             </q-card>
             <div v-if="!member.erased" class="row">
               <q-input dense
-                       @keypress.enter="memberUUID=member.uuid,legNumber=member.legitimationNumber, addAmmoConfirm=true"
+                       @keypress.enter="memberUUID=member.uuid;legNumber=member.legitimationNumber; addAmmoConfirm=true"
                        ref="search" filled class="full-width col" color="black" v-model="quantity"
                        placeholder="Tylko cyfry" onkeypress="return (event.charCode > 44 && event.charCode < 58)"
                        label="Ilość Amunicji"></q-input>
               <q-btn dense class="full-width col" color="primary" label="wydaj amunicję"
-                     @click="memberUUID=member.uuid,legNumber=member.legitimationNumber, addAmmoConfirm=true"></q-btn>
+                     @click="memberUUID=member.uuid;legNumber=member.legitimationNumber; addAmmoConfirm=true"></q-btn>
             </div>
           </div>
         </q-expansion-item>
         <q-expansion-item dense v-if="!member.erased" label="Opcje Dodatkowe" group="right-card" class="bg-grey-3">
           <q-expansion-item dense v-if="!member.erased"
-                            :label="helpers[0] = member.shootingPatent.patentNumber!=null? ('Patent: ' + member.shootingPatent.patentNumber):helpersDefault[0]"
+                            :label="member.shootingPatent.patentNumber!==null? (helpersDefault[0] + ': ' + member.shootingPatent.patentNumber):helpersDefault[0]"
                             group="right-right-card" class="bg-white">
-            <q-btn class="full-width" color="primary" v-if="member.shootingPatent.patentNumber==null"
-                   label="DODAJ PATENT" @click="memberUUID=member.uuid,patentConfirm=true"></q-btn>
-            <q-btn class="full-width" color="primary" v-if="member.shootingPatent.patentNumber!=null"
+            <q-btn class="full-width" color="primary" v-if="member.shootingPatent.patentNumber!==null"
                    label="AKTUALIZUJ PATENT"
-                   @click="memberUUID=member.uuid,
-                patentPistolPermission1=member.shootingPatent.pistolPermission,
-                patentRiflePermission1=member.shootingPatent.riflePermission,
-                patentShotgunPermission1=member.shootingPatent.shotgunPermission,
-                memberAdultConfirm=member.adult,
+                   @click="memberUUID=member.uuid;
+                patentPistolPermission1=member.shootingPatent.pistolPermission;
+                patentRiflePermission1=member.shootingPatent.riflePermission;
+                patentShotgunPermission1=member.shootingPatent.shotgunPermission;
+                memberAdultConfirm=member.adult;
                 patentConfirm2=true">
             </q-btn>
+            <q-btn class="full-width" color="primary" v-else
+                   label="DODAJ PATENT" @click="memberUUID=member.uuid;patentConfirm=true"></q-btn>
             <q-item v-if="member.shootingPatent.pistolPermission
                 &&member.shootingPatent.riflePermission
                 &&member.shootingPatent.shotgunPermission">
@@ -560,7 +555,7 @@
             </q-item>
           </q-expansion-item>
           <q-expansion-item dense v-if="member.adult&&!member.erased"
-                            :label="helpers[1]= member.weaponPermission.exist?('Pozwolenie na Broń: '+member.weaponPermission.number):helpersDefault[1]"
+                            :label="member.weaponPermission.exist?(helpersDefault[1] + ': '+member.weaponPermission.number):helpersDefault[1]"
                             group="right-right-card" class="bg-white">
             <div class="row">
               <q-input dense @keypress.enter="changeWeaponPermission(member.uuid, weaponPermissionNumber, isExist)"
@@ -569,7 +564,7 @@
               <q-btn class="col" v-if="!member.weaponPermission.exist" label="Dodaj" color="primary"
                      @click="changeWeaponPermission(member.uuid, weaponPermissionNumber, isExist)"/>
               <q-btn class="col" v-if="member.weaponPermission.exist" label="Usuń pozwolenie" color="primary"
-                     @click="memberUUID=member.uuid,permission = true,eraseWeapon=true"/>
+                     @click="memberUUID=member.uuid;permission = true;eraseWeapon=true"/>
             </div>
             <q-field dense v-if="!member.license.valid&&member.weaponPermission.exist" class="col bg-red"
                      standout="bg-accent text-black" stack-label>
@@ -579,7 +574,7 @@
             </q-field>
           </q-expansion-item>
           <q-expansion-item dense v-if="member.adult&&!member.erased"
-                            :label="helpers[2]= member.weaponPermission.admissionToPossessAWeaponIsExist?('Dopuszczenie do  Posiadania Broni: '+member.weaponPermission.admissionToPossessAWeapon):helpers[2]"
+                            :label="member.weaponPermission.admissionToPossessAWeaponIsExist?(helpersDefault[2] + ': '+member.weaponPermission.admissionToPossessAWeapon):helpers[2]"
                             group="right-right-card" class="bg-white">
             <div class="row">
               <q-input dense
@@ -592,7 +587,7 @@
                      @click="changeWeaponAdmission (member.uuid, admissionToPossess, admissionToPossessIsExist)"/>
               <q-btn class="col" v-if="member.weaponPermission.admissionToPossessAWeaponIsExist"
                      label="Usuń dopuszczenie" color="primary"
-                     @click="memberUUID=member.uuid, admission = true,eraseAssest=true"/>
+                     @click="memberUUID=member.uuid; admission = true;eraseAssest=true"/>
             </div>
             <q-field dense v-if="!member.license.valid&&member.weaponPermission.exist" class="col bg-red"
                      standout="bg-accent text-black" stack-label>
@@ -607,20 +602,20 @@
                               :label="helpers[3] = member.memberPermissions.shootingLeaderNumber!=null?('Prowadzący Strzelanie: '+member.memberPermissions.shootingLeaderNumber):helpersDefault[3]"
                               group="qualifications">
               <div class="row">
-                <q-input dense @keypress.enter="memberUUID=member.uuid,shootingLeaderConfirm=true" filled class="col"
+                <q-input dense @keypress.enter="memberUUID=member.uuid;shootingLeaderConfirm=true" filled class="col"
                          v-model="permissionsShootingLeaderNumber" label="Numer Uprawnień"/>
                 <q-btn class="col" label="Dodaj" color="primary"
-                       @click="memberUUID=member.uuid,shootingLeaderConfirm=true"/>
+                       @click="memberUUID=member.uuid;shootingLeaderConfirm=true"/>
               </div>
             </q-expansion-item>
             <q-expansion-item dense v-if="member.memberPermissions.instructorNumber==null"
                               :label="helpers[4] = member.memberPermissions.instructorNumber!=null?('Instruktor: '+member.memberPermissions.instructorNumber  ):helpersDefault[4]"
                               group="qualifications">
               <div class="row">
-                <q-input dense @keypress.enter="memberUUID=member.uuid,instructorConfirm=true" filled class="col"
+                <q-input dense @keypress.enter="memberUUID=member.uuid;instructorConfirm=true" filled class="col"
                          v-model="permissionsInstructorNumber" label="Numer Uprawnień"/>
                 <q-btn class="col" label="Dodaj" color="primary"
-                       @click="memberUUID=member.uuid,instructorConfirm=true"/>
+                       @click="memberUUID=member.uuid;instructorConfirm=true"/>
               </div>
             </q-expansion-item>
             <q-expansion-item dense v-if="member.adult&&!member.erased"
@@ -628,7 +623,7 @@
                               group="qualifications">
               <q-item class="full-width">
                 <q-input dense outlined filled class="full-width col"
-                         v-if="member.memberPermissions.arbiterNumber==null||member.memberPermissions.arbiterNumber==''"
+                         v-if="member.memberPermissions.arbiterNumber==null||member.memberPermissions.arbiterNumber===''"
                          v-model="permissionsArbiterNumber" label="Numer Uprawnień"/>
                 <q-input dense class="col" outlined filled v-model="permissionsArbiterPermissionValidThru"
                          mask="####-12-31" label="Ważne do:">
@@ -645,7 +640,7 @@
                   </template>
                 </q-input>
                 <q-btn class="col full-width" v-if="member.memberPermissions.arbiterNumber!=null" color="primary"
-                       label="Przedłuż" @click="memberUUID=member.uuid,arbiterProlongConfirm=true"/>
+                       label="Przedłuż" @click="memberUUID=member.uuid;arbiterProlongConfirm=true"/>
               </q-item>
               <div class="col">
                 <div class="col">
@@ -660,19 +655,19 @@
                   <q-radio dense class="flex" v-if="member.memberPermissions.arbiterNumber==null" v-model="ordinal"
                            :val="5" label="Klasa Międzynarodowa" color="secondary"/>
                 </div>
-                <q-item v-if="member.memberPermissions.arbiterNumber!=null" class="full-width row">
+                <q-item v-if="member.memberPermissions.arbiterNumber!==null" class="full-width row">
                   <q-input dense outlined filled class="full-width col"
-                           v-if="member.memberPermissions.arbiterNumber!=null" v-model="permissionsArbiterNumber"
+                           v-if="member.memberPermissions.arbiterNumber!==null" v-model="permissionsArbiterNumber"
                            label="Numer Uprawnień"/>
                   <q-btn class="full-width col" v-if="member.memberPermissions.arbiterNumber!=null"
-                         label="Nadaj Nowy Numer" color="primary" @click="memberUUID=member.uuid,arbiterConfirm=true"/>
+                         label="Nadaj Nowy Numer" color="primary" @click="memberUUID=member.uuid;arbiterConfirm=true"/>
                 </q-item>
                 <q-item class="full-width">
-                  <q-btn class="full-width col-1" v-if="member.memberPermissions.arbiterNumber!=null" color="primary"
-                         label="Podnieś Klasę" @click="memberUUID=member.uuid,arbiterUpdateClassConfirm=true"/>
+                  <q-btn class="full-width col-1" v-if="member.memberPermissions.arbiterNumber!==null" color="primary"
+                         label="Podnieś Klasę" @click="memberUUID=member.uuid;arbiterUpdateClassConfirm=true"/>
                   <q-btn class="full-width col-1"
-                         v-if="member.memberPermissions.arbiterNumber==null||member.memberPermissions.arbiterNumber==''"
-                         label="Dodaj" color="primary" @click="memberUUID=member.uuid,arbiterConfirm=true"/>
+                         v-if="member.memberPermissions.arbiterNumber===null||member.memberPermissions.arbiterNumber===''"
+                         label="Dodaj" color="primary" @click="memberUUID=member.uuid;arbiterConfirm=true"/>
                 </q-item>
               </div>
             </q-expansion-item>
@@ -682,18 +677,18 @@
               <q-field dense v-if="member.pzss" class="col q-pa-md" bg-color="green-3" standout="bg-green-3 text-black"
                        stack-label>
                 <div class="self-center full-width no-outline text-center text-black" tabindex="0"
-                     @dblclick="memberUUID=member.uuid,pzssPortal=true">Wprowadzony do portalu
+                     @dblclick="memberUUID=member.uuid;pzssPortal=true">Wprowadzony do portalu
                 </div>
               </q-field>
               <q-field dense v-if="!member.pzss" class="col q-pa-md" bg-color="red-3" standout="bg-red-3 text-black"
                        stack-label>
                 <div class="self-center full-width no-outline text-center text-black" tabindex="0"
-                     @dblclick="memberUUID=member.uuid,pzssPortal=true">Nie Wprowadzony do Portalu
+                     @dblclick="memberUUID=member.uuid;pzssPortal=true">Nie Wprowadzony do Portalu
                 </div>
               </q-field>
               <q-item class="q-pa-md">
                 <q-btn label="pobierz plik .csv"
-                       @click="name = member.firstName, name2 = member.secondName,memberUUID = member.uuid, getCSVFile()"></q-btn>
+                       @click="name = member.firstName; name2 = member.secondName;memberUUID = member.uuid; getCSVFile()"></q-btn>
               </q-item>
             </div>
             <q-item v-if="member.pzss">
@@ -702,7 +697,7 @@
             </q-item>
             <q-item v-if="!member.pzss">
               <q-btn class="full-width q-pa-none" type="a" href="https://portal.pzss.org.pl/CLub/Player" target="_blank"
-                     label="Przejdź do portalu" color="primary" @click="memberUUID=member.uuid,pzssPortal = true"/>
+                     label="Przejdź do portalu" color="primary" @click="memberUUID=member.uuid;pzssPortal = true"/>
             </q-item>
           </q-expansion-item>
           <q-expansion-item dense disable label="Praca na rzecz Klubu" group="right-right-card" class="bg-white">
@@ -729,9 +724,9 @@
             <div v-if="!member.erased&&member.clubCardBarCode==null" class="row">
               <q-input v-model="barcode" type="password" filled class="col bg-orange" dark label-color="white"
                        stack-label color="white" label="Zeskanuj Kartę Tutaj"
-                       @keypress.enter="uuid = member.uuid,addBarcodeToMember(uuid, barcode)"></q-input>
+                       @keypress.enter="uuid = member.uuid;addBarcodeToMember(uuid, barcode)"></q-input>
               <q-item>
-                <q-btn label="dodaj" color="primary" @click="uuid = member.uuid,addBarcodeToMember(uuid, barcode)"/>
+                <q-btn label="dodaj" color="primary" @click="uuid = member.uuid;addBarcodeToMember(uuid, barcode)"/>
               </q-item>
             </div>
             <div v-else class="full-width text-center">
@@ -740,15 +735,15 @@
               </q-item>
               <q-input v-model="barcode" type="password" filled class="col bg-orange" dark label-color="white"
                        stack-label color="white" label="Zeskanuj Kartę Tutaj"
-                       @keypress.enter="uuid = member.uuid,addBarcodeToMember(uuid, barcode)"></q-input>
+                       @keypress.enter="uuid = member.uuid;addBarcodeToMember(uuid, barcode)"></q-input>
               <q-item class="full-width">
                 <q-btn label="Przydziel Nowy numer" color="primary"
-                       @click="uuid = member.uuid,addBarcodeToMember(uuid, barcode)"/>
+                       @click="uuid = member.uuid;addBarcodeToMember(uuid, barcode)"/>
               </q-item>
             </div>
           </q-expansion-item>
           <q-expansion-item dense label="Pokaż statystyki" group="right-right-card" class="bg-white"
-                            @click="uuid = member.uuid,getPersonalStatistics(uuid)">
+                            @click="uuid = member.uuid;getPersonalStatistics(uuid)">
             <div v-if="personalStatisticsObject!=null" class="col text-left text-caption">
               <div class="row full-width" style="border-bottom: solid 1px;">
                 <div class="col">Ilość wpłaconych składek:</div>
@@ -782,7 +777,7 @@
               osobę?
             </div>
             <div class="q-pa-md text-bold text-center full-width bg-red-2">
-              <q-btn class="full-width" label="Przenieś" color="red" @click="memberUUID=member.uuid,deactivate=true"/>
+              <q-btn class="full-width" label="Przenieś" color="red" @click="memberUUID=member.uuid;deactivate=true"/>
             </div>
           </q-expansion-item>
           <q-expansion-item dense v-if="!member.adult&&member.active" label="Przenieś do Grupy Ogólnej"
@@ -792,10 +787,10 @@
             </q-item>
             <q-item>
               <q-btn class="full-width" label="Przenieś" color="red"
-                     @click="memberUUID=member.uuid,changeAdultConfirm=true"/>
+                     @click="memberUUID=member.uuid;changeAdultConfirm=true"/>
             </q-item>
           </q-expansion-item>
-          <q-expansion-item dense @focus.stop="erasedReasontype=null,erasedDate=null" class="bg-red"
+          <q-expansion-item dense @focus.stop="erasedReasonType=null;erasedDate=null" class="bg-red"
                             @click="getListErasedType()" v-if="!member.active&&!member.erased"
                             label="Skreśl z listy członków" group="right-right-card">
             <q-item class="bg-red-2">
@@ -803,7 +798,7 @@
               </q-item-label>
             </q-item>
             <q-item class="bg-red-2">
-              <q-select color="black" options-cover filled stack-label class="full-width" v-model="erasedReasontype"
+              <q-select color="black" options-cover filled stack-label class="full-width" v-model="erasedReasonType"
                         :options="erasedTypes" label="wybierz przyczynę"></q-select>
               <q-input class="col-5" color="black" outlined filled v-model="erasedDate" mask="####-##-##"
                        label="w dniu:">
@@ -821,11 +816,11 @@
               </q-input>
             </q-item>
             <q-item class="bg-red-2">
-              <q-input @keypress.enter="memberUUID=member.uuid,eraseConfirm=true" v-model="reason" filled color="black"
+              <q-input @keypress.enter="memberUUID=member.uuid;eraseConfirm=true" v-model="reason" filled color="black"
                        class="col" stack-label label="Dodatkowe informacje"/>
             </q-item>
-            <q-item class="bg-red-2" v-if="erasedReasontype!=null">
-              <q-btn label="Usuń" color="red" @click="memberUUID=member.uuid,eraseConfirm=true"/>
+            <q-item class="bg-red-2" v-if="erasedReasonType!=null">
+              <q-btn label="Usuń" color="red" @click="memberUUID=member.uuid;eraseConfirm=true"/>
             </q-item>
           </q-expansion-item>
           <q-expansion-item dense v-if="!member.active&&!member.erased" class="bg-green" label="Przywróć do Aktywnych"
@@ -836,7 +831,7 @@
             </q-item>
             <q-item class="bg-green-2">
               <q-btn class="full-width" label="Przywróć" color="green-8"
-                     @click="memberUUID=member.uuid,backConfirm=true"/>
+                     @click="memberUUID=member.uuid;backConfirm=true"/>
             </q-item>
           </q-expansion-item>
           <q-expansion-item dense v-if="!member.active&&member.erased" class="bg-green" label="Przywróć Członka klubu"
@@ -847,8 +842,15 @@
             </q-item>
             <q-item class="bg-green-2">
               <q-btn label="Przywróć" class="full-width" color="green-8"
-                     @click="memberUUID=member.uuid,resurrectCode=true"/>
+                     @click="memberUUID=member.uuid;resurrectCode=true"/>
             </q-item>
+          </q-expansion-item>
+          <q-expansion-item dense label="Zmień klub macierzysty" @click="getAllClubs()" class="text-center bg-white">
+            <div class="text-left">
+              <q-checkbox :value="clubChoiceToggle" v-model="clubChoiceToggle" label="Inny Klub jest Klubem macierzystym"></q-checkbox>
+              <q-select v-if="clubChoiceToggle" dense options-dense  :options="clubs" v-model="clubChoice" filled fill-input label="wybierz Klub"></q-select>
+              <q-btn v-if="clubChoice!==''&&clubChoiceToggle" color="primary" label="zmień klub macierzysty" @click="changeClub(member.uuid, clubChoice)"></q-btn>
+            </div>
           </q-expansion-item>
         </q-expansion-item>
         <q-expansion-item dense label="Historia startów" group="right-card" class="bg-grey-3">
@@ -877,37 +879,34 @@
           <q-expansion-item dense label="Daty Startów" class="bg-grey-3 q-pa-none">
             <q-scroll-area class="full-width q-pa-none" style="height: 200px;">
               <div class="row" v-for="(competitionHistory,uuid) in member.history.competitionHistory" :key="uuid">
-                <q-field dense class="col" standout="bg-accent text-black" label="Nazwa" stack-label>
-                  <div class="self-center full-width no-outline text-left text-black" tabindex="0">
+                <q-field dense class="full-width" standout="bg-accent text-black" label="Nazwa" stack-label>
+                  <div class="text-left text-black" tabindex="0">
                     {{ competitionHistory.name }}
                   </div>
                 </q-field>
+                <div class="row full-width">
                 <q-field dense class="col-3" standout="bg-accent text-black" label="Data" stack-label>
-                  <div class="self-center full-width no-outline text-left text-black" tabindex="1">
+                  <div class="text-left text-black" tabindex="1">
                     {{ convertDate(competitionHistory.date) }}
                   </div>
                 </q-field>
                 <q-field dense v-if="competitionHistory.discipline != null" class="col" standout="bg-accent text-black"
                          label="Konkurencja" stack-label>
-                  <div class="self-center full-width no-outline text-left text-black" tabindex="2">
+                  <div class="text-left text-black" tabindex="2">
                     {{ competitionHistory.discipline }}
                   </div>
                 </q-field>
                 <q-field dense v-if="competitionHistory.discipline == null" class="col" standout="bg-accent text-black"
                          label="Konkurencje" stack-label>
                   <div v-for="(disc,id) in competitionHistory.disciplines" :key="id"
-                       class="self-center full-width no-outline text-left text-black" tabindex="2">
-                    <div>{{ disc[0] }}</div>
+                       class="text-left text-black col" tabindex="2">
+                    <div class="col">{{disc}}</div>
                   </div>
                 </q-field>
-                <q-field dense v-if="competitionHistory.wzss" class="col" standout="bg-accent text-black" label="WZSS"
-                         stack-label>
-                  <div class="self-center full-width no-outline text-left text-black" tabindex="2">Tak</div>
+                <q-field dense class="col-3" standout="bg-accent text-black" label="WZSS" stack-label>
+                  <q-icon :name="competitionHistory.wzss?'done':'cancel'"/>
                 </q-field>
-                <q-field dense v-if="!competitionHistory.wzss" class="col" standout="bg-accent text-black" label="WZSS"
-                         stack-label>
-                  <div class="self-center full-width no-outline text-left text-black" tabindex="2">Nie</div>
-                </q-field>
+                </div>
               </div>
             </q-scroll-area>
             <q-scroll-area v-if="member.history.competitionHistory.lenght<1" class="full-width q-pa-none"
@@ -957,7 +956,7 @@
           <q-item-label caption lines="2">Numer Dowodu: {{ member.idcard }}</q-item-label>
           <p></p>
           <q-btn class="full-width" v-if="!member.erased" label="Zmień Dane Podstawowe" color="secondary"
-                 @click="memberUUID=member.uuid,memberIdcard = member.idcard,memberFirstName = member.firstName,memberSecondName = member.secondName,basicDataConfirm=true"></q-btn>
+                 @click="memberUUID=member.uuid;memberIdCard = member.idcard;memberFirstName = member.firstName;memberSecondName = member.secondName;basicDataConfirm=true"></q-btn>
         </q-item-section>
       </q-card-section>
       <q-card-section class="col-3">
@@ -968,7 +967,7 @@
           </q-item-label>
           <q-item-label caption lines="2">e-mail: {{ member.email }}</q-item-label>
           <q-item-label caption lines="2">Numer Telefonu:
-            {{ member.phoneNumber.toString().substr(0, 3) + ' ' + member.phoneNumber.toString().substring(3, 6) + ' ' + member.phoneNumber.toString().substring(6, 9) + ' ' + member.phoneNumber.substring(9, 12) }}
+            {{ member.phoneNumber.toString().substring(0, 3) + ' ' + member.phoneNumber.toString().substring(3, 6) + ' ' + member.phoneNumber.toString().substring(6, 9) + ' ' + member.phoneNumber.substring(9, 12) }}
           </q-item-label>
           <q-item-label>
             <q-icon name="location_city" size="1.5rem"/>
@@ -988,49 +987,54 @@
           </q-item-label>
           <p></p>
           <q-btn v-if="!member.erased" class="full-width" label="Zmień Dane Kontaktowe" color="secondary"
-                 @click="memberUUID=member.uuid,memberEmail = member.email,memberPhoneNumber = member.phoneNumber,memberPostOfficeCity = member.address.postOfficeCity,memberZipCode = member.address.zipCode,memberStreet = member.address.street,memberStreetNumber = member.address.streetNumber,memberFlatNumber=member.address.flatNumber,addressConfirm=true"></q-btn>
+                 @click="memberUUID=member.uuid;memberEmail = member.email;memberPhoneNumber = member.phoneNumber;memberPostOfficeCity = member.address.postOfficeCity;memberZipCode = member.address.zipCode;memberStreet = member.address.street;memberStreetNumber = member.address.streetNumber;memberFlatNumber=member.address.flatNumber;addressConfirm=true"></q-btn>
         </q-item-section>
       </q-card-section>
       <q-card-section class="col-5">
         <div class="col full-width">
           <q-item>
             <q-btn class="full-width" label="Pobierz kartę Członkowską" color="secondary"
-                   @click="memberUUID=member.uuid,name=member.firstName,name2=member.secondName,personalCardDownloadConfirm=true"/>
+                   @click="memberUUID=member.uuid;name=member.firstName;name2=member.secondName;personalCardDownloadConfirm=true"/>
           </q-item>
           <q-item v-if="member.history.contributionList.length > 0">
-            <q-btn class="full-width" label="Pobierz ostatnie potwierdzenie składki" color="secondary"
-                   @click="memberUUID=member.uuid,name=member.firstName,name2=member.secondName,contributionDownloadConfirm=true"/>
-          </q-item>
-          <q-item v-else>
-            <q-btn disable class="full-width" label="Pobierz ostatnie potwierdzenie składki" color="secondary"/>
-            <q-tooltip content-class="text-h6 bg-red" anchor="top middle" self="bottom middle" :offset="[12, 12]">BRAK
+            <q-btn :disable="member.history.contributionList.length < 1" class="full-width" label="Pobierz ostatnie potwierdzenie składki" color="secondary"
+                   @click="memberUUID=member.uuid;name=member.firstName;name2=member.secondName;contributionDownloadConfirm=true"><q-tooltip v-if="member.history.contributionList.length < 1" content-class="text-h6 bg-red" anchor="top middle" self="bottom middle" :offset="[12, 12]">BRAK
               SKŁADEK
+            </q-tooltip></q-btn>
+          </q-item>
+<!--          <q-item v-else>-->
+<!--            <q-btn disable class="full-width" label="Pobierz ostatnie potwierdzenie składki" color="secondary"/>-->
+<!--            <q-tooltip content-class="text-h6 bg-red" anchor="top middle" self="bottom middle" :offset="[12, 12]">BRAK-->
+<!--              SKŁADEK-->
+<!--            </q-tooltip>-->
+<!--          </q-item>-->
+          <q-item v-if="!member.erased&&member.license.number!==null&&member.adult">
+            <q-tooltip v-if="member.club.id !== 1" content-class="text-h6 bg-red" anchor="top middle" self="bottom middle" :offset="[12, 12]">INNY KLUB MACIERZYSTY
             </q-tooltip>
-          </q-item>
-          <q-item v-if="!member.erased&&member.license.number!=null&&member.adult">
-            <q-btn class="full-width" label="Pobierz wniosek o licencję" color="secondary"
-                   @click="memberUUID=member.uuid,name=member.firstName,name2=member.secondName,getApplicationForExtensionOfTheCompetitorsLicense ()"/>
-          </q-item>
-          <q-item v-if="!member.erased&&member.license.number==null">
+            <q-btn :disable="member.club.id !== 1" class="full-width" label="Pobierz wniosek o licencję" color="secondary"
+                   @click="memberUUID=member.uuid;name=member.firstName;name2=member.secondName;getApplicationForExtensionOfTheCompetitorsLicense ()">
+              </q-btn>          </q-item>
+          <q-item v-if="!member.erased&&member.license.number===null">
             <q-btn disable class="full-width" label="Pobierz wniosek o licencję" color="secondary"/>
             <q-tooltip content-class="text-h6 bg-red" anchor="top middle" self="bottom middle" :offset="[12, 12]">BRAK
               LICENCJI
             </q-tooltip>
           </q-item>
-          <q-item v-if="!member.erased&&member.license.number!=null&&!member.adult">
+          <q-item v-if="!member.erased&&member.license.number!==null&&!member.adult">
             <q-btn disable class="full-width" label="Pobierz wniosek o licencję" color="secondary"/>
             <q-tooltip content-class="text-h6 bg-red" anchor="top middle" self="bottom middle" :offset="[12, 12]">BRAK
               DRUKU DLA MŁODZIEŻY
             </q-tooltip>
           </q-item>
           <q-item v-if="!member.erased">
-            <q-btn class="full-width" label="Pobierz Zaświadczenie o przynależności" color="secondary"
-                   @click="memberUUID=member.uuid,name=member.firstName,name2=member.secondName,certificates=true"/>
+            <q-tooltip v-if="member.club.id !== 1" content-class="text-h6 bg-red" anchor="top middle" self="bottom middle" :offset="[12, 12]">INNY KLUB MACIERZYSTY
+            </q-tooltip>
+            <q-btn :disable="member.club.id !== 1" class="full-width" label="Pobierz Zaświadczenie o przynależności" color="secondary"
+                   @click="memberUUID=member.uuid;name=member.firstName;name2=member.secondName;certificates=true"/>
             <q-tooltip v-if="!member.active&&!member.erased" content-class="text-h6 bg-red" anchor="top middle"
                        self="bottom middle" :offset="[12, 12]">BRAK SKŁADEK
             </q-tooltip>
           </q-item>
-          <!-- <q-item v-if="!member.active&&!member.erased"><q-btn disable class="full-width" label="Pobierz Zaświadczenie o przynależności" color="secondary"/><q-tooltip content-class="text-h6 bg-red" anchor="top middle" self="bottom middle" :offset="[12, 12]">BRAK SKŁADEK</q-tooltip></q-item> -->
         </div>
       </q-card-section>
     </q-card>
@@ -1046,7 +1050,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="certificates" persistent>
+    <q-dialog v-model="certificates">
       <q-card style="width: 400px;">
         <q-card-section class="row items-center">
           <div class="q-ml-sm full-width text-h5 text-bold text-center">Wybierz zaświadczenie</div>
@@ -1058,10 +1062,10 @@
         </q-card-section>
         <q-card-section class="row items-center">
           <q-select v-if="certificateChoice==='ZAŚWIADCZENIE DO POLICJI'" class="full-width" v-model="city" filled
-                    use-input hide-selected fill-input input-debounce="0" :options="cities" label-color="secondary"
+                    use-input hide-selected fill-input input-debounce="0"  :options="cities" label-color="secondary"
                     label="wybierz miasto"></q-select>
-          <div v-if="certificateChoice!=null" class="q-pa-md full-width">
-            <q-btn color="primary" class="items-center full-width" :label="certificateChoice"
+          <div v-if="certificateChoice!=null" class="q-pa-md row full-width">
+            <q-checkbox v-if="certificateChoice==='ZAŚWIADCZENIE DO POLICJI'" dense value="" v-model="toggleEnlargement" label="rozszerzenie" class="col"></q-checkbox><q-btn color="primary" class="items-center col" :label="certificateChoice"
                    @click="certificateDownload = true"></q-btn>
           </div>
         </q-card-section>
@@ -1075,13 +1079,13 @@
       <q-card class="bg-green-5 text-center">
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
-          <q-input @keypress.enter="prolongContribution(memberUUID),contributionCode=false" autofocus type="password"
+          <q-input @keypress.enter="prolongContribution(memberUUID);contributionCode=false" autofocus type="password"
                    v-model="code" filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input>
         </q-card-section>
 
         <q-card-actions align="right">
           <q-btn icon="cancel" color="black" v-close-popup @click="code=null"/>
-          <q-btn label="Przedłuż" color="black" v-close-popup @click="prolongContribution(memberUUID),code=null"/>
+          <q-btn label="Przedłuż" color="black" v-close-popup @click="prolongContribution(memberUUID);code=null"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -1090,7 +1094,7 @@
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
           <q-input
-            @keypress.enter="addHistoryContributionRecord (memberUUID, historyContributionRecord),contributionHistoryCode=false"
+            @keypress.enter="addHistoryContributionRecord (memberUUID, historyContributionRecord);contributionHistoryCode=false"
             autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold"
             mask="####"></q-input>
         </q-card-section>
@@ -1098,7 +1102,7 @@
         <q-card-actions align="right">
           <q-btn icon="cancel" color="black" v-close-popup @click="code=null"/>
           <q-btn label="Przedłuż" color="black" v-close-popup
-                 @click="addHistoryContributionRecord (memberUUID, historyContributionRecord),code=null"/>
+                 @click="addHistoryContributionRecord (memberUUID, historyContributionRecord);code=null"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -1144,7 +1148,7 @@
 
         <q-card-actions align="right">
           <q-btn flat icon="cancel" color="primary" v-close-popup/>
-          <q-btn flat label="zmień" color="primary" v-close-popup @click="updateMember(memberUUID, memberEmail, memberPhoneNumber),
+          <q-btn flat label="zmień" color="primary" v-close-popup @click="updateMember(memberUUID, memberEmail, memberPhoneNumber);
                 updateAddress(memberUUID, memberZipCode, memberPostOfficeCity, memberStreet, memberStreetNumber, memberFlatNumber)"/>
         </q-card-actions>
       </q-card>
@@ -1179,15 +1183,15 @@
         <q-card-section class="col items-center">
           <q-item-label class="text-bold text-center text-h6">Zmień dane podstawowe</q-item-label>
           <q-item>
-            <q-input v-model="memberIdcard" label="Numer Dokumentu"/>
+            <q-input v-model="memberIdCard" label="Numer Dokumentu"/>
           </q-item>
           <q-item>
             <q-input v-model="memberFirstName" label="Imię"
-                     onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 45"/>
+                     onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode === 45"/>
           </q-item>
           <q-item>
             <q-input v-model="memberSecondName" label="Nazwisko"
-                     onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 45"/>
+                     onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode === 45"/>
           </q-item>
         </q-card-section>
 
@@ -1207,7 +1211,7 @@
         <q-card-actions align="right">
           <q-btn flat icon="cancel" color="primary" v-close-popup/>
           <q-btn flat label="zmień" color="primary" v-close-popup
-                 @click="updateIDCardAndName(memberUUID,memberIdcard,memberFirstName,memberSecondName)"/>
+                 @click="updateIDCardAndName(memberUUID,memberIdCard,memberFirstName,memberSecondName)"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -1325,13 +1329,13 @@
       <q-card class="bg-red-5 text-center">
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
-          <q-input @keypress.enter="changeActive (memberUUID),activeCode=false" autofocus type="password" v-model="code"
+          <q-input @keypress.enter="changeActive (memberUUID);activeCode=false" autofocus type="password" v-model="code"
                    filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input>
         </q-card-section>
 
         <q-card-actions align="right">
           <q-btn icon="cancel" color="black" v-close-popup @click="code=null"/>
-          <q-btn label="Przenieś" color="black" v-close-popup @click="changeActive (memberUUID),code=null"/>
+          <q-btn label="Przenieś" color="black" v-close-popup @click="changeActive (memberUUID);code=null"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -1339,7 +1343,7 @@
       <q-card>
         <q-card-section class="row items-center">
           <q-avatar icon="add" color="primary"/>
-          <span class="q-ml-sm">Czy napewno usunąć pozwolenie?</span>
+          <span class="q-ml-sm">Czy na pewno usunąć pozwolenie?</span>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -1352,7 +1356,7 @@
       <q-card>
         <q-card-section class="row items-center">
           <q-avatar icon="add" color="primary"/>
-          <span class="q-ml-sm">Czy napewno usunąć dopuszczenie?</span>
+          <span class="q-ml-sm">Czy na pewno usunąć dopuszczenie?</span>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -1362,7 +1366,7 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model="licensePayment" persistent
-              @keypress.enter="addLicenseHistoryPayment (memberUUID),licensePayment=false">
+              @keypress.enter="addLicenseHistoryPayment (memberUUID);licensePayment=false">
       <q-card>
         <q-card-section class="row items-center">
           <q-avatar icon="add" color="primary"/>
@@ -1376,41 +1380,41 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model="instructorConfirm" persistent @keypress.esc="instructorConfirm=false"
-              @keypress.enter="updateMemberPermissions(memberUUID, permissionsInstructorNumber),instructorConfirm=false,value=true">
+              @keypress.enter="updateMemberPermissions(memberUUID, permissionsInstructorNumber);instructorConfirm=false;value=true">
       <q-card>
         <q-card-section class="row items-center">
           <q-avatar icon="add" color="primary"/>
-          <span class="q-ml-sm">Czy napewno chcesz nadać numer instruktora?</span>
+          <span class="q-ml-sm">Czy na pewno chcesz nadać numer instruktora?</span>
         </q-card-section>
 
         <q-card-actions align="right">
           <q-btn flat icon="cancel" color="primary" v-close-popup/>
           <q-btn flat label="Tak" color="primary" v-close-popup
-                 @click="updateMemberPermissions(memberUUID, permissionsInstructorNumber),value=true"/>
+                 @click="updateMemberPermissions(memberUUID, permissionsInstructorNumber);value=true"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
     <q-dialog v-model="shootingLeaderConfirm" persistent @keypress.esc="shootingLeaderConfirm=false"
-              @keypress.enter="updateMemberPermissions(memberUUID, permissionsShootingLeaderNumber),shootingLeaderConfirm=false,value1=true">
+              @keypress.enter="updateMemberPermissions(memberUUID, permissionsShootingLeaderNumber);shootingLeaderConfirm=false;value1=true">
       <q-card>
         <q-card-section class="row items-center">
           <q-avatar icon="add" color="primary"/>
-          <span class="q-ml-sm">Czy napewno chcesz nadać numer Prowadzącego strzelanie?</span>
+          <span class="q-ml-sm">Czy na pewno chcesz nadać numer Prowadzącego strzelanie?</span>
         </q-card-section>
 
         <q-card-actions align="right">
           <q-btn flat icon="cancel" color="primary" v-close-popup/>
           <q-btn flat label="Tak" color="primary" v-close-popup
-                 @click="updateMemberPermissions(memberUUID, permissionsShootingLeaderNumber),value1=true"/>
+                 @click="updateMemberPermissions(memberUUID, permissionsShootingLeaderNumber);value1=true"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
     <q-dialog v-model="arbiterConfirm" persistent @keypress.esc="arbiterConfirm=false"
-              @keypress.enter="updateMemberPermissions(memberUUID, permissionsArbiterNumber, permissionsArbiterPermissionValidThru),arbiterConfirm=false,value2=true">
+              @keypress.enter="updateMemberPermissions(memberUUID, permissionsArbiterNumber, permissionsArbiterPermissionValidThru);arbiterConfirm=false;value2=true">
       <q-card>
         <q-card-section class="row items-center">
           <q-avatar icon="add" color="primary"/>
-          <span class="q-ml-sm">Czy napewno chcesz nadać numer Sędziego?</span>
+          <span class="q-ml-sm">Czy na pewno chcesz nadać numer Sędziego?</span>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -1421,26 +1425,26 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model="arbiterProlongConfirm" persistent
-              @keypress.enter="updateMemberPermissions(memberUUID, permissionsArbiterPermissionValidThru),value3=true,arbiterUpdateClassConfirm=false">
+              @keypress.enter="updateMemberPermissions(memberUUID, permissionsArbiterPermissionValidThru);value3=true;arbiterUpdateClassConfirm=false">
       <q-card>
         <q-card-section class="row items-center">
           <q-avatar icon="add" color="primary"/>
-          <span class="q-ml-sm">Czy napewno chcesz przedłużyć licencję Sędziego?</span>
+          <span class="q-ml-sm">Czy na pewno chcesz przedłużyć licencję Sędziego?</span>
         </q-card-section>
 
         <q-card-actions align="right">
           <q-btn flat icon="cancel" color="primary" v-close-popup/>
           <q-btn label="Przedłuż" color="primary" v-close-popup
-                 @click="updateMemberPermissions(memberUUID, permissionsArbiterPermissionValidThru),value3=true"/>
+                 @click="updateMemberPermissions(memberUUID, permissionsArbiterPermissionValidThru);value3=true"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
     <q-dialog v-model="arbiterUpdateClassConfirm" persistent
-              @keypress.enter="updateMemberArbiterClass(memberUUID),arbiterUpdateClassConfirm=false">
+              @keypress.enter="updateMemberArbiterClass(memberUUID);arbiterUpdateClassConfirm=false">
       <q-card>
         <q-card-section class="row items-center">
           <q-avatar icon="add" color="primary"/>
-          <span class="q-ml-sm">Czy napewno chcesz podnieść klasę licencji Sędziego?</span>
+          <span class="q-ml-sm">Czy na pewno chcesz podnieść klasę licencji Sędziego?</span>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -1449,11 +1453,11 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="eraseConfirm" persistent @keypress.enter="eraseCode=true,eraseConfirm=false">
+    <q-dialog v-model="eraseConfirm" persistent @keypress.enter="eraseCode=true;eraseConfirm=false">
       <q-card class="bg-red">
         <q-card-section class="row items-center">
           <q-avatar icon="warning"/>
-          <span class="q-ml-sm">Czy napewno chcesz usunąć Klubowicza z listy członków klubu?</span>
+          <span class="q-ml-sm">Czy na pewno chcesz usunąć Klubowicza z listy członków klubu?</span>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -1462,7 +1466,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="eraseBackConfirm" persistent @keypress.enter="resurrectCode=true,eraseBackConfirm=false">
+    <q-dialog v-model="eraseBackConfirm" persistent @keypress.enter="resurrectCode=true;eraseBackConfirm=false">
       <q-card class="bg-green">
         <q-card-section class="row items-center">
           <span class="q-ml-sm">Czy przywrócić Członka klubu?</span>
@@ -1478,21 +1482,21 @@
       <q-card class="bg-red-5 text-center">
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
-          <q-input @keypress.enter="eraseMember(memberUUID),eraseCode=false" autofocus type="password" v-model="code"
+          <q-input @keypress.enter="eraseMember(memberUUID);eraseCode=false" autofocus type="password" v-model="code"
                    filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input>
         </q-card-section>
 
         <q-card-actions align="right">
           <q-btn icon="cancel" color="black" v-close-popup @click="code=null"/>
-          <q-btn label="skreśl" color="black" v-close-popup @click="eraseMember(memberUUID),code=null"/>
+          <q-btn label="skreśl" color="black" v-close-popup @click="eraseMember(memberUUID);code=null"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="changeAdultConfirm" persistent @keypress.enter="changeAdultCode=true,changeAdultConfirm=false">
+    <q-dialog v-model="changeAdultConfirm" persistent @keypress.enter="changeAdultCode=true;changeAdultConfirm=false">
       <q-card>
         <q-card-section class="row items-center">
           <q-avatar icon="warning"/>
-          <span class="q-ml-sm">Czy napewno chcesz przenieść Klubowicza do grupy powszechnej?</span>
+          <span class="q-ml-sm">Czy na pewno chcesz przenieść Klubowicza do grupy powszechnej?</span>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -1505,18 +1509,18 @@
       <q-card class="bg-red-5 text-center">
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
-          <q-input @keypress.enter="changeAdult(memberUUID),changeAdultCode=false" autofocus type="password"
+          <q-input @keypress.enter="changeAdult(memberUUID);changeAdultCode=false" autofocus type="password"
                    v-model="code" filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input>
         </q-card-section>
 
         <q-card-actions align="right">
           <q-btn icon="cancel" color="black" v-close-popup @click="code=null"/>
-          <q-btn label="Przedłuż" color="black" v-close-popup @click="changeAdult(memberUUID),code=null"/>
+          <q-btn label="Przedłuż" color="black" v-close-popup @click="changeAdult(memberUUID);code=null"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
     <q-dialog v-model="contributionDownloadConfirm" persistent
-              @keypress.enter="contributionDownloadConfirm=false,getContributionPDF()">
+              @keypress.enter="contributionDownloadConfirm=false;getContributionPDF()">
       <q-card>
         <q-card-section class="row items-center">
           <span class="q-ml-sm text-bold text-h6">Pobrać potwierdzenie składki?</span>
@@ -1529,7 +1533,7 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model="personalCardDownloadConfirm" persistent
-              @keypress.enter="personalCardDownloadConfirm=false,getPersonalCardPDF(memberUUID)">
+              @keypress.enter="personalCardDownloadConfirm=false;getPersonalCardPDF(memberUUID)">
       <q-card>
         <q-card-section class="row items-center">
           <span class="q-ml-sm text-bold text-h6">Pobrać kartę Klubowicza?</span>
@@ -1542,7 +1546,7 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model="certificateDownload" persistent
-              @keypress.enter="getDownloadCertificateOfClubMembership(),certificateDownload=false">
+              @keypress.enter="getDownloadCertificateOfClubMembership();certificateDownload=false">
       <q-card>
         <q-card-section class="col items-center">
           <p class="q-ml-sm text-h6 text-bold">Pobrać zaświadczenie dla Klubowicza?</p>
@@ -1552,14 +1556,14 @@
         <q-card-actions align="right">
           <q-btn flat icon="cancel" color="primary" v-close-popup @click="certificateChoice = null"/>
           <q-btn flat label="Pobierz" color="primary" v-close-popup
-                 @click="getDownloadCertificateOfClubMembership(),certificates=false"/>
+                 @click="getDownloadCertificateOfClubMembership();certificates=false"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="addAmmoConfirm" persistent @keypress.enter="addMemberAndAmmoToCaliber(),addAmmoConfirm=false">
+    <q-dialog v-model="addAmmoConfirm" persistent @keypress.enter="addMemberAndAmmoToCaliber();addAmmoConfirm=false">
       <q-card>
         <q-card-section class="row items-center">
-          <span class="q-ml-sm">Czy napewno chcesz wydać amunicję?</span>
+          <span class="q-ml-sm">Czy na pewno chcesz wydać amunicję?</span>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -1655,10 +1659,10 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model="patentConfirm1" persistent
-              @keypress.enter="addPatent(memberUUID, patentNumber, patentPistolPermission, patentRiflePermission, patentShotgunPermission,patentDate),patentConfirm1=false">
+              @keypress.enter="addPatent(memberUUID, patentNumber, patentPistolPermission, patentRiflePermission, patentShotgunPermission,patentDate);patentConfirm1=false">
       <q-card>
         <q-card-section class="row items-center">
-          <span class="q-ml-sm">Czy napewno chcesz dodać PATENT?</span>
+          <span class="q-ml-sm">Czy na pewno chcesz dodać PATENT?</span>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -1687,8 +1691,8 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="contributionRemoveRecordQuerry" persistent
-              @keypress.enter="contributionRemoveRecordQuerry=false,contributionRemoveRecordQuerryCode=true">
+    <q-dialog v-model="contributionRemoveRecordQuery" persistent
+              @keypress.enter="contributionRemoveRecordQuery=false;contributionRemoveRecordQueryCode=true">
       <q-card class="bg-red-5 text-center">
         <q-card-section class="row items-center">
           <h3><span class="q-ml-sm">Czy na pewno usunąć składkę?</span></h3>
@@ -1696,16 +1700,16 @@
 
         <q-card-actions align="right">
           <q-btn icon="cancel" color="black" v-close-popup/>
-          <q-btn label="Usuń" color="black" v-close-popup @click="contributionRemoveRecordQuerryCode=true"/>
+          <q-btn label="Usuń" color="black" v-close-popup @click="contributionRemoveRecordQueryCode=true"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="contributionRemoveRecordQuerryCode" persistent>
+    <q-dialog v-model="contributionRemoveRecordQueryCode" persistent>
       <q-card class="bg-red-5 text-center">
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
           <div>
-            <q-input @keypress.enter="removeContributionRecord(),contributionRemoveRecordQuerryCode=false" autofocus
+            <q-input @keypress.enter="removeContributionRecord();contributionRemoveRecordQueryCode=false" autofocus
                      type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold"
                      mask="####"></q-input>
           </div>
@@ -1795,7 +1799,7 @@
               </q-input>
             </div>
             <div>
-              <q-checkbox label="Oznacz jako opłacona"/>
+              <q-checkbox value="" label="Oznacz jako opłacona"/>
             </div>
           </div>
           <div class="q-pa-md row full-width bg-grey-3">
@@ -1814,7 +1818,7 @@
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
           <div>
-            <q-input @keypress.enter="forceUpdateLicence(),editLicenseCode=false" autofocus type="password"
+            <q-input @keypress.enter="forceUpdateLicence();editLicenseCode=false" autofocus type="password"
                      v-model="code" filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input>
           </div>
         </q-card-section>
@@ -1869,7 +1873,7 @@
           <div class="row full-width bg-red-3">
             <div class="col-6 q-pa-md">
               <q-btn class="full-width" label="usuń Składkę" color="red"
-                     @click="contributionRemoveRecordQuerry=true,editContribution=false"></q-btn>
+                     @click="contributionRemoveRecordQuery=true;editContribution=false"></q-btn>
             </div>
             <div class="col-6 q-pa-md bg-grey-3">
               <q-btn class="full-width" label="wprowadź zmiany" color="primary" v-close-popup
@@ -1892,7 +1896,7 @@
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
           <div>
-            <q-input @keypress.enter="editContributionRecord(),code=null,editContributionCode=false" autofocus
+            <q-input @keypress.enter="editContributionRecord();code=null;editContributionCode=false" autofocus
                      type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold"
                      mask="####"></q-input>
           </div>
@@ -1901,7 +1905,7 @@
         <q-card-actions align="right">
           <q-btn icon="cancel" color="black" v-close-popup @click="code=null"/>
           <q-btn id="3" label="Wprowadź zmiany" color="black" v-close-popup
-                 @click="editContributionRecord(), code=null"/>
+                 @click="editContributionRecord(); code=null"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -1954,7 +1958,7 @@
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
           <div>
-            <q-input @keypress.enter="editLicenseHistoryPayment(),code=null,editLicensePaymentCode=false" autofocus
+            <q-input @keypress.enter="editLicenseHistoryPayment();code=null;editLicensePaymentCode=false" autofocus
                      type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold"
                      mask="####"></q-input>
           </div>
@@ -1963,7 +1967,7 @@
         <q-card-actions align="right">
           <q-btn icon="cancel" color="black" v-close-popup @click="code=null"/>
           <q-btn id="3" label="Wprowadź zmiany" color="black" v-close-popup
-                 @click="editLicenseHistoryPayment(), code=null"/>
+                 @click="editLicenseHistoryPayment(); code=null"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -1973,7 +1977,7 @@
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
           <h3><span class="q-ml-sm">Usuń wpłatę</span></h3>
           <div>
-            <q-input @keypress.enter="deleteLicenseHistoryPayment(),code=null,deleteLicensePaymentCode=false" autofocus
+            <q-input @keypress.enter="deleteLicenseHistoryPayment();code=null;deleteLicensePaymentCode=false" autofocus
                      type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold"
                      mask="####"></q-input>
           </div>
@@ -1982,7 +1986,7 @@
         <q-card-actions align="right">
           <q-btn icon="cancel" color="black" v-close-popup @click="code=null"/>
           <q-btn id="3" label="Wprowadź zmiany" color="black" v-close-popup
-                 @click="deleteLicenseHistoryPayment(), code=null"/>
+                 @click="deleteLicenseHistoryPayment(); code=null"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -1991,16 +1995,14 @@
 
 <script>
 import { scroll } from 'quasar'
+import axios from 'axios'
+import App from 'src/App.vue'
 
 const {
   getScrollTarget,
   setScrollPosition
 } = scroll
-import Vue from 'vue'
-import axios from 'axios'
-import App from 'src/App.vue'
 
-Vue.prototype.$axios = axios
 export default {
   name: 'Member',
   data () {
@@ -2063,8 +2065,8 @@ export default {
       historyContributionRecord: Date.now,
       contributionRecordConfirm: false,
       contributionRecordConfirm1: false,
-      contributionRemoveRecordQuerry: false,
-      contributionRemoveRecordQuerryCode: false,
+      contributionRemoveRecordQuery: false,
+      contributionRemoveRecordQueryCode: false,
       code: null,
       addAmmoConfirm: false,
       alert: false,
@@ -2096,8 +2098,6 @@ export default {
       patentNumber: '',
       licenseNumber: '',
       validThru: '',
-      memberDTOArg: [],
-      memberDTOArgRearangeTable: [],
       calibers: [],
       quantities: [],
       city: 'Łódź',
@@ -2127,7 +2127,7 @@ export default {
       permissionsArbiterPermissionValidThru: '',
       ordinal: '',
       reason: null,
-      erasedReasontype: null,
+      erasedReasonType: null,
       erasedDate: null,
       weaponPermissionNumber: null,
       isExist: true,
@@ -2138,7 +2138,7 @@ export default {
       secondName: '',
       memberEmail: '',
       memberPhoneNumber: '',
-      memberIdcard: '',
+      memberIdCard: '',
       memberSecondName: '',
       memberFirstName: '',
       memberPostOfficeCity: '',
@@ -2155,8 +2155,12 @@ export default {
       certificateDownload: false,
       pzssPortal: false,
       forbidden: false,
+      toggleEnlargement: false,
       personalStatisticsObject: null,
       selected_file: '',
+      clubs: ['DZIESIĄTKA Łódź'],
+      clubChoiceToggle: false,
+      clubChoice: '',
       local: App.host
     }
   },
@@ -2175,6 +2179,7 @@ export default {
   },
   created () {
     this.getMemberByLegitimationNumber(this.memberNumberLegitimation)
+    this.getListCalibers()
   },
   methods: {
     showloading () {
@@ -2213,8 +2218,7 @@ export default {
       if (month < 10) {
         month = '0' + (month)
       }
-      const formattedDate = day + '-' + (month) + '-' + current.getFullYear()
-      return formattedDate
+      return day + '-' + (month) + '-' + current.getFullYear()
     },
     handleScroll (search) {
       const word = search.split(' ')
@@ -2237,7 +2241,6 @@ export default {
               this.success = true
               this.message = response
               this.code = null
-              this.getMembersNames()
               this.showloading()
               this.getMemberByUUID(this.memberUUID)
               this.autoClose()
@@ -2301,7 +2304,6 @@ export default {
               this.success = true
               this.message = response
               this.code = null
-              this.getMembersNames()
               this.showloading()
               this.getMemberByUUID(this.memberUUID)
               this.autoClose()
@@ -2340,7 +2342,6 @@ export default {
               this.success = true
               this.message = response
               this.code = null
-              this.getMembersNames()
               this.showloading()
               this.getMemberByUUID(this.memberUUID)
               this.autoClose()
@@ -2437,9 +2438,9 @@ export default {
         }
       })
     },
-    updateIDCardAndName (uuid, idcard, firstName, secondName) {
+    updateIDCardAndName (uuid, idCard, firstName, secondName) {
       const data = {
-        idcard: idcard,
+        idcard: idCard,
         firstName: firstName,
         secondName: secondName
       }
@@ -2455,7 +2456,7 @@ export default {
             response => {
               this.success = true
               this.message = response
-              this.memberIdcard = ''
+              this.memberIdCard = ''
               this.memberSecondName = ''
               this.memberFirstName = ''
               this.showloading()
@@ -2559,7 +2560,7 @@ export default {
         }
       })
     },
-    getContributionPDF (memberUUID, contributionUUID) {
+    getContributionPDF () {
       axios({
         url: 'http://' + this.local + '/files/downloadContribution/' + this.memberUUID + '?contributionUUID=' + this.contributionUUID,
         method: 'GET',
@@ -2610,7 +2611,7 @@ export default {
     },
     getDownloadCertificateOfClubMembership () {
       axios({
-        url: 'http://' + this.local + '/files/downloadCertificateOfClubMembership/' + this.memberUUID + '?reason=' + this.certificateChoice + '&city=' + this.city,
+        url: 'http://' + this.local + '/files/downloadCertificateOfClubMembership/' + this.memberUUID + '?reason=' + this.certificateChoice + '&city=' + this.city + '&enlargement=' + this.toggleEnlargement,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
@@ -2622,6 +2623,7 @@ export default {
         fileLink.click()
         this.certificateChoice = null
         this.downloaded = true
+        this.toggleEnlargement = false
         this.autoClose()
       })
     },
@@ -3030,7 +3032,7 @@ export default {
         }
       })
     },
-    updateMemberPermissions (uuid, permissionsShootingLeaderNumber, permissionsInstructorNumber, permissionsArbiterNumber, permissionsArbiterPermissionValidThru) {
+    updateMemberPermissions (uuid) {
       const data = {
         shootingLeaderNumber: this.permissionsShootingLeaderNumber,
         instructorNumber: this.permissionsInstructorNumber,
@@ -3095,7 +3097,7 @@ export default {
       })
     },
     eraseMember (uuid) {
-      fetch('http://' + this.local + '/member/erase/' + uuid + '?additionalDescription=' + this.reason + '&erasedDate=' + this.erasedDate.replace(/\//gi, '-') + '&erasedType=' + this.erasedReasontype + '&pinCode=' + this.code, {
+      fetch('http://' + this.local + '/member/erase/' + uuid + '?additionalDescription=' + this.reason + '&erasedDate=' + this.erasedDate.replace(/\//gi, '-') + '&erasedType=' + this.erasedReasonType + '&pinCode=' + this.code, {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {
@@ -3130,7 +3132,6 @@ export default {
               this.message = response
               this.success = true
               this.code = null
-              this.getMembersNames()
               this.showloading()
               this.getMemberByUUID(this.memberUUID)
               this.autoClose()
@@ -3155,7 +3156,6 @@ export default {
             response => {
               this.success = true
               this.message = response
-              this.getMembersNames()
               this.showloading()
               this.getMemberByUUID(this.memberUUID)
               this.autoClose()
@@ -3171,6 +3171,41 @@ export default {
           )
         }
       })
+    },
+    changeClub (uuid, clubName) {
+      fetch('http://' + this.local + '/member/changeClub/' + uuid + '?clubName=' + clubName, {
+        method: 'PATCH'
+      }).then(response => {
+        if (response.status === 200) {
+          response.text().then(
+            response => {
+              this.success = true
+              this.message = response
+              this.showloading()
+              this.getMemberByUUID(uuid)
+              this.autoClose()
+            }
+          )
+        } else {
+          response.text().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            }
+          )
+        }
+      })
+    },
+    getAllClubs () {
+      fetch('http://' + this.local + '/club/tournament', {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          for (let i = 0; i < response.length; i++) {
+            this.clubs.push(response[i])
+          }
+        })
     },
     addBarcodeToMember (uuid, barcode) {
       const data = {
@@ -3189,7 +3224,6 @@ export default {
             response => {
               this.success = true
               this.message = response
-              this.getMembersNames()
               this.showloading()
               this.getMemberByUUID(uuid)
               this.autoClose()
@@ -3219,6 +3253,8 @@ export default {
         this.downloaded = false
         this.message = null
         this.barcode = null
+        this.clubChoice = null
+        this.clubChoiceToggle = false
         this.code = null
       }, 2000)
     }

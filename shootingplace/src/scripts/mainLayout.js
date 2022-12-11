@@ -102,12 +102,6 @@ export default {
     redirectToCompetitionList () {
       window.location.href = 'http://' + App.prod + 'competition'
     },
-    redirectToMembersList () {
-      window.location.href = 'http://' + App.prod + 'member'
-    },
-    onClick () {
-      console.log('Clicked on a fab action')
-    },
     getActualYearMemberCounts () {
       fetch('http://' + this.local + '/statistics/actualYearMemberCounts', {
         method: 'GET',
@@ -118,10 +112,6 @@ export default {
         .then(response => {
           this.members = response
         })
-    },
-    clear () {
-      this.interval = true
-      this.distance = 1200000
     }
   }
 }

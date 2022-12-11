@@ -21,7 +21,7 @@
               <div class="row" v-if="item.ammunition === false && item.gun === false && item.member!=null">
                 <div class="col-5 self-center">{{ index + 1 }}.</div>
                 <q-btn dense class="col" icon="book"
-                       @click="compName=competition.name,scoreUUID = item.uuid,memberLeg = item.member.legitimationNumber,otherID = 0, getListCalibers(),caliberUUID = competition.caliberUUID,ammoQuantity = competition.practiceShots + competition.numberOfShots , addAmmo=true">
+                       @click="compName=competition.name;scoreUUID = item.uuid;memberLeg = item.member.legitimationNumber;otherID = 0; getListCalibers();caliberUUID = competition.caliberUUID;ammoQuantity = competition.practiceShots + competition.numberOfShots ; addAmmo=true">
                   <q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Wydaj broń lub
                     amunicję {{ item.member.secondName }}
                   </q-tooltip>
@@ -30,7 +30,7 @@
               <div class="row" v-if="item.ammunition === true && item.gun === false && item.member!=null">
                 <div class="col-5 self-center">{{ index + 1 }}.</div>
                 <q-btn dense class="col" color="green" icon="book"
-                       @click="compName=competition.name,scoreUUID = item.uuid,memberLeg = item.member.legitimationNumber,otherID = 0, getListCalibers(),caliberUUID = competition.caliberUUID,ammoQuantity = competition.practiceShots + competition.numberOfShots,addAmmo=true">
+                       @click="compName=competition.name;scoreUUID = item.uuid;memberLeg = item.member.legitimationNumber;otherID = 0; getListCalibers();caliberUUID = competition.caliberUUID;ammoQuantity = competition.practiceShots + competition.numberOfShots;addAmmo=true">
                   <q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Amunicja wydana
                   </q-tooltip>
                 </q-btn>
@@ -38,7 +38,7 @@
               <div class="row" v-if="item.ammunition === false && item.gun === true && item.member!=null">
                 <div class="col-5 self-center">{{ index + 1 }}.</div>
                 <q-btn dense class="col" color="yellow" icon="book"
-                       @click="compName=competition.name,scoreUUID = item.uuid,memberLeg = item.member.legitimationNumber,otherID = 0, getListCalibers(),caliberUUID = competition.caliberUUID,ammoQuantity = competition.practiceShots + competition.numberOfShots,addAmmo=true">
+                       @click="compName=competition.name;scoreUUID = item.uuid;memberLeg = item.member.legitimationNumber;otherID = 0; getListCalibers();caliberUUID = competition.caliberUUID;ammoQuantity = competition.practiceShots + competition.numberOfShots;addAmmo=true">
                   <q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Broń wydana
                   </q-tooltip>
                 </q-btn>
@@ -46,7 +46,7 @@
               <div class="row" v-if="item.ammunition === true && item.gun === true && item.member!=null">
                 <div class="col-5 self-center">{{ index + 1 }}.</div>
                 <q-btn dense glossy class="col" color="green" text-color="yellow" icon="book"
-                       @click="compName=competition.name,scoreUUID = item.uuid,memberLeg = item.member.legitimationNumber,otherID = 0, getListCalibers(),caliberUUID = competition.caliberUUID,ammoQuantity = competition.practiceShots + competition.numberOfShots,addAmmo=true">
+                       @click="compName=competition.name;scoreUUID = item.uuid;memberLeg = item.member.legitimationNumber;otherID = 0; getListCalibers();caliberUUID = competition.caliberUUID;ammoQuantity = competition.practiceShots + competition.numberOfShots;addAmmo=true">
                   <q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Broń i Amunicja
                     wydana
                   </q-tooltip>
@@ -56,7 +56,7 @@
                    v-if="item.ammunition === false && item.gun === false && item.otherPersonEntity!=null">
                 <div class="col-5 self-center">{{ index + 1 }}.</div>
                 <q-btn dense class="col" icon="book"
-                       @click="compName=competition.name,scoreUUID = item.uuid,otherID = item.otherPersonEntity.id,memberLeg=0, getListCalibers(),caliberUUID = competition.caliberUUID,ammoQuantity = competition.practiceShots + competition.numberOfShots,addAmmo=true">
+                       @click="compName=competition.name;scoreUUID = item.uuid;otherID = item.otherPersonEntity.id;memberLeg=0; getListCalibers();caliberUUID = competition.caliberUUID;ammoQuantity = competition.practiceShots + competition.numberOfShots;addAmmo=true">
                   <q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Wydaj broń lub
                     amunicję {{ item.otherPersonEntity.secondName }}
                   </q-tooltip>
@@ -66,7 +66,7 @@
                    v-if="item.ammunition === true && item.gun === false && item.otherPersonEntity!=null">
                 <div class="col-5 self-center">{{ index + 1 }}.</div>
                 <q-btn dense class="col" color="green" icon="book"
-                       @click="compName=competition.name,scoreUUID = item.uuid,otherID = item.otherPersonEntity.id,memberLeg=0, getListCalibers(),caliberUUID = competition.caliberUUID,ammoQuantity = competition.practiceShots + competition.numberOfShots,addAmmo=true">
+                       @click="compName=competition.name;scoreUUID = item.uuid;otherID = item.otherPersonEntity.id;memberLeg=0; getListCalibers();caliberUUID = competition.caliberUUID;ammoQuantity = competition.practiceShots + competition.numberOfShots;addAmmo=true">
                   <q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Amunicja wydana
                   </q-tooltip>
                 </q-btn>
@@ -75,7 +75,7 @@
                    v-if="item.ammunition === false && item.gun === true && item.otherPersonEntity!=null">
                 <div class="col-5 self-center">{{ index + 1 }}.</div>
                 <q-btn dense class="col" color="yellow" icon="book"
-                       @click="compName=competition.name,scoreUUID = item.uuid,otherID = item.otherPersonEntity.id,memberLeg=0, getListCalibers(),caliberUUID = competition.caliberUUID,ammoQuantity = competition.practiceShots + competition.numberOfShots,addAmmo=true">
+                       @click="compName=competition.name;scoreUUID = item.uuid;otherID = item.otherPersonEntity.id;memberLeg=0; getListCalibers();caliberUUID = competition.caliberUUID;ammoQuantity = competition.practiceShots + competition.numberOfShots;addAmmo=true">
                   <q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Broń wydana
                   </q-tooltip>
                 </q-btn>
@@ -84,7 +84,7 @@
                    v-if="item.ammunition === true && item.gun === true && item.otherPersonEntity!=null">
                 <div class="col-5 self-center">{{ index + 1 }}.</div>
                 <q-btn dense class="col" color="green" text-color="yellow" icon="book"
-                       @click="compName=competition.name,scoreUUID = item.uuid,otherID = item.otherPersonEntity.id,memberLeg=0, getListCalibers(),caliberUUID = competition.caliberUUID,ammoQuantity = competition.practiceShots + competition.numberOfShots,addAmmo=true">
+                       @click="compName=competition.name;scoreUUID = item.uuid;otherID = item.otherPersonEntity.id;memberLeg=0; getListCalibers();caliberUUID = competition.caliberUUID;ammoQuantity = competition.practiceShots + competition.numberOfShots;addAmmo=true">
                   <q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Broń i Amunicja
                     wydana
                   </q-tooltip>
@@ -92,7 +92,7 @@
               </div>
             </div>
             <div v-if="item.otherPersonEntity == null" class="col"
-                 @dblclick="memberName=null,otherName=null,memberExist=true,memberUUID=item.member.uuid,otherID = '0',name=item.member.secondName,memberLeg = item.member.legitimationNumber,startNumber=item.metricNumber,getScoreInfo(),metricsInfo=true">
+                 @dblclick="memberName=null;otherName=null;memberExist=true;memberUUID=item.member.uuid;otherID = '0';name=item.member.secondName;memberLeg = item.member.legitimationNumber;startNumber=item.metricNumber;getScoreInfo();metricsInfo=true">
               <q-field dense standout="bg-accent text-black" stack-label>
                 <q-tooltip v-if="!item.member.active" content-class="bg-red text-subtitle2"
                            anchor="top middle">UREGULUJ SKŁADKI
@@ -101,26 +101,26 @@
                   <div v-if="item.otherPersonEntity == null" class="col no-outline text-black" tabindex="0">
                     {{ item.member.secondName }} {{ item.member.firstName }}
                   </div>
-                  <div v-if="item.otherPersonEntity == null" class="col-5 no-outline text-black"
-                       tabindex="0">DZIESIĄTKA Łódź
+                  <div class="col-5 no-outline text-black"
+                       tabindex="0">{{item.member.club.name}}
                   </div>
                 </div>
               </q-field>
             </div>
             <div v-if="item.member == null" class="col"
-                 @dblclick="memberName=null,otherName=null,memberExist=false,memberUUID='0',otherID = item.otherPersonEntity.id,name=item.otherPersonEntity.secondName,startNumber=item.metricNumber,getScoreInfo(),metricsInfo=true">
+                 @dblclick="memberName=null;otherName=null;memberExist=false;memberUUID='0';otherID = item.otherPersonEntity.id;name=item.otherPersonEntity.secondName;startNumber=item.metricNumber;getScoreInfo();metricsInfo=true">
               <q-field dense standout="bg-accent text-black" stack-label>
                 <div class="q-pa-xs row full-width text-caption">
                   <div v-if="item.member == null" class="col no-outline text-black" tabindex="0">
                     {{ item.otherPersonEntity.secondName }} {{ item.otherPersonEntity.firstName }}
                   </div>
-                  <div v-if="item.member == null" class="col-5 no-outline text-black" tabindex="0">
+                  <div class="col-5 no-outline text-black" tabindex="0">
                     {{ item.otherPersonEntity.club.name }}
                   </div>
                 </div>
               </q-field>
             </div>
-            <div class="col-1" @dblclick="scoreUUID = item.uuid,toggleDSQDNF=true">
+            <div class="col-1" @dblclick="scoreUUID = item.uuid;toggleDSQDNF=true">
               <q-field dense class="text-center" standout="bg-accent text-black" stack-label
                        label="metryka">
                 <div class="self-center full-width col no-outline text-center text-black text-caption"
@@ -150,9 +150,9 @@
                          onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                 <div class="q-pa-xs">
                   <q-btn color="primary" label="Anuluj" v-close-popup
-                         @click="outerTen='',alfa='',charlie='',delta=''"></q-btn>
+                         @click="outerTen='';alfa='';charlie='';delta=''"></q-btn>
                   <q-btn color="primary" label="Zapisz" v-close-popup
-                         @click="scoreUUID = item.uuid, setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
+                         @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
                 </div>
               </q-popup-edit>
               <div class="self-center full-width col no-outline text-center text-black" tabindex="0">
@@ -165,26 +165,26 @@
                 <q-popup-edit v-model="outerTen">
                   <q-input v-if="alfa === '' && charlie === '' && delta === ''" @focus="scoreUUID = item.uuid"
                            input-class="text-center" v-model="outerTen"
-                           @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)" dense autofocus
+                           @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
                            stack-label label="trafienia"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                   <q-input @focus="scoreUUID = item.uuid"
-                           @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)"
+                           @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
                            input-class="text-center" v-model="alfa" stack-label label="Alfa"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                   <q-input @focus="scoreUUID = item.uuid"
-                           @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)"
+                           @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
                            input-class="text-center" v-model="charlie" stack-label label="Charlie"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                   <q-input @focus="scoreUUID = item.uuid"
-                           @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)"
+                           @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
                            input-class="text-center" v-model="delta" stack-label label="Delta"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                   <div class="q-pa-xs">
                     <q-btn color="primary" label="Anuluj" v-close-popup
-                           @click="outerTen='',alfa='',charlie='',delta=''"></q-btn>
+                           @click="outerTen='';alfa='';charlie='';delta=''"></q-btn>
                     <q-btn color="primary" label="Zapisz" v-close-popup
-                           @click="scoreUUID = item.uuid, setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
+                           @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
                   </div>
                 </q-popup-edit>
                 <div class="self-center full-width col no-outline text-center text-black text-caption"
@@ -196,26 +196,26 @@
                 <q-popup-edit v-model="outerTen">
                   <q-input v-if="alfa === '' && charlie === '' && delta === ''" @focus="scoreUUID = item.uuid"
                            input-class="text-center" v-model="outerTen"
-                           @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)" dense autofocus
+                           @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
                            stack-label label="trafienia"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                   <q-input @focus="scoreUUID = item.uuid"
-                           @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)"
+                           @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
                            input-class="text-center" v-model="alfa" stack-label label="Alfa"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                   <q-input @focus="scoreUUID = item.uuid"
-                           @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)"
+                           @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
                            input-class="text-center" v-model="charlie" stack-label label="Charlie"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                   <q-input @focus="scoreUUID = item.uuid"
-                           @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)"
+                           @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
                            input-class="text-center" v-model="delta" stack-label label="Delta"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                   <div class="q-pa-xs">
                     <q-btn color="primary" label="Anuluj" v-close-popup
-                           @click="outerTen='',alfa='',charlie='',delta=''"></q-btn>
+                           @click="outerTen='';alfa='';charlie='';delta=''"></q-btn>
                     <q-btn color="primary" label="Zapisz" v-close-popup
-                           @click="scoreUUID = item.uuid, setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
+                           @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
                   </div>
                 </q-popup-edit>
                 <div class="self-center full-width col no-outline text-center text-black text-caption"
@@ -227,26 +227,26 @@
                 <q-popup-edit v-model="outerTen">
                   <q-input v-if="alfa === '' && charlie === '' && delta === ''" @focus="scoreUUID = item.uuid"
                            input-class="text-center" v-model="outerTen"
-                           @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)" dense autofocus
+                           @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
                            stack-label label="trafienia"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                   <q-input @focus="scoreUUID = item.uuid"
-                           @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)"
+                           @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
                            input-class="text-center" v-model="alfa" stack-label label="Alfa"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                   <q-input @focus="scoreUUID = item.uuid"
-                           @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)"
+                           @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
                            input-class="text-center" v-model="charlie" stack-label label="Charlie"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                   <q-input @focus="scoreUUID = item.uuid"
-                           @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)"
+                           @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
                            input-class="text-center" v-model="delta" stack-label label="Delta"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                   <div class="q-pa-xs">
                     <q-btn color="primary" label="Anuluj" v-close-popup
-                           @click="outerTen='',alfa='',charlie='',delta=''"></q-btn>
+                           @click="outerTen='';alfa='';charlie='';delta=''"></q-btn>
                     <q-btn color="primary" label="Zapisz" v-close-popup
-                           @click="scoreUUID = item.uuid, setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
+                           @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
                   </div>
                 </q-popup-edit>
                 <div class="self-center full-width col no-outline text-center text-black text-caption"
@@ -258,13 +258,13 @@
                      stack-label>
               <q-popup-edit v-model="innerTen">
                 <q-input @focus="scoreUUID = item.uuid" input-class="text-center" v-model="innerTen"
-                         @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)" dense autofocus
+                         @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
                          stack-label label="czas"
                          onkeypress="return (event.charCode > 47 && event.charCode < 58) || event.charCode > 44 || event.charCode < 46"/>
                 <div class="q-pa-xs">
                   <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
                   <q-btn color="primary" label="Zapisz" v-close-popup
-                         @click="scoreUUID = item.uuid, setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
+                         @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
                 </div>
               </q-popup-edit>
               <div class="self-center full-width col no-outline text-center text-black text-caption"
@@ -275,13 +275,13 @@
                      label="procedury" stack-label>
               <q-popup-edit v-model="procedures">
                 <q-input @focus="scoreUUID = item.uuid" input-class="text-center" v-model="procedures"
-                         @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)" dense autofocus
+                         @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
                          stack-label label="procedury + 3 sek"
                          onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                 <div class="q-pa-xs row full-width">
                   <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
                   <q-btn color="primary" label="Zapisz" v-close-popup
-                         @click="scoreUUID = item.uuid, setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
+                         @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
                 </div>
               </q-popup-edit>
               <div class="self-center full-width col no-outline text-center text-black text-caption"
@@ -303,13 +303,13 @@
               <q-field dense standout="bg-accent text-black" label="Wynik" clickable stack-label>
                 <q-popup-edit v-model="scoreLabel">
                   <q-input @focus="scoreUUID = item.uuid" input-class="text-center" v-model="scoreLabel"
-                           @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)" dense autofocus
+                           @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
                            stack-label label="Wynik"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58) || event.charCode > 44 || event.charCode < 46"/>
                   <div class="q-pa-xs">
                     <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
                     <q-btn color="primary" label="Zapisz" v-close-popup
-                           @click="scoreUUID = item.uuid, forceSetScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
+                           @click="scoreUUID = item.uuid; forceSetScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
                   </div>
                 </q-popup-edit>
                 <div v-if="item.dnf||item.dsq||item.pk"
@@ -331,7 +331,7 @@
               <div class="row" v-if="item.ammunition === false && item.gun === false && item.member!=null">
                 <div class="col-5 self-center">{{ index + 1 }}.</div>
                 <q-btn dense class="col" icon="book"
-                       @click="compName=competition.name,scoreUUID = item.uuid,memberLeg = item.member.legitimationNumber,otherID = 0, getListCalibers(),caliberUUID = competition.caliberUUID,ammoQuantity = competition.practiceShots + competition.numberOfShots,addAmmo=true">
+                       @click="compName=competition.name;scoreUUID = item.uuid;memberLeg = item.member.legitimationNumber;otherID = 0; getListCalibers();caliberUUID = competition.caliberUUID;ammoQuantity = competition.practiceShots + competition.numberOfShots;addAmmo=true">
                   <q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Wydaj broń lub
                     amunicję {{ item.member.secondName }}
                   </q-tooltip>
@@ -340,7 +340,7 @@
               <div class="row" v-if="item.ammunition === true && item.gun === false && item.member!=null">
                 <div class="col-5 self-center">{{ index + 1 }}.</div>
                 <q-btn dense class="col" color="green" icon="book"
-                       @click="compName=competition.name,scoreUUID = item.uuid,memberLeg = item.member.legitimationNumber,otherID = 0, getListCalibers(),caliberUUID = competition.caliberUUID,ammoQuantity = competition.practiceShots + competition.numberOfShots,addAmmo=true">
+                       @click="compName=competition.name;scoreUUID = item.uuid;memberLeg = item.member.legitimationNumber;otherID = 0; getListCalibers();caliberUUID = competition.caliberUUID;ammoQuantity = competition.practiceShots + competition.numberOfShots;addAmmo=true">
                   <q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Amunicja wydana
                   </q-tooltip>
                 </q-btn>
@@ -348,7 +348,7 @@
               <div class="row" v-if="item.ammunition === false && item.gun === true && item.member!=null">
                 <div class="col-5 self-center">{{ index + 1 }}.</div>
                 <q-btn dense class="col" color="yellow" icon="book"
-                       @click="compName=competition.name,scoreUUID = item.uuid,memberLeg = item.member.legitimationNumber,otherID = 0, getListCalibers(),caliberUUID = competition.caliberUUID,ammoQuantity = competition.practiceShots + competition.numberOfShots,addAmmo=true">
+                       @click="compName=competition.name;scoreUUID = item.uuid;memberLeg = item.member.legitimationNumber;otherID = 0; getListCalibers();caliberUUID = competition.caliberUUID;ammoQuantity = competition.practiceShots + competition.numberOfShots;addAmmo=true">
                   <q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Broń wydana
                   </q-tooltip>
                 </q-btn>
@@ -356,7 +356,7 @@
               <div class="row" v-if="item.ammunition === true && item.gun === true && item.member!=null">
                 <div class="col-5 self-center">{{ index + 1 }}.</div>
                 <q-btn dense glossy class="col" color="green" text-color="yellow" icon="book"
-                       @click="compName=competition.name,scoreUUID = item.uuid,memberLeg = item.member.legitimationNumber,otherID = 0, getListCalibers(),caliberUUID = competition.caliberUUID,ammoQuantity = competition.practiceShots + competition.numberOfShots,addAmmo=true">
+                       @click="compName=competition.name;scoreUUID = item.uuid;memberLeg = item.member.legitimationNumber;otherID = 0; getListCalibers();caliberUUID = competition.caliberUUID;ammoQuantity = competition.practiceShots + competition.numberOfShots;addAmmo=true">
                   <q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Broń i Amunicja
                     wydana
                   </q-tooltip>
@@ -366,7 +366,7 @@
                    v-if="item.ammunition === false && item.gun === false && item.otherPersonEntity!=null">
                 <div class="col-5 self-center">{{ index + 1 }}.</div>
                 <q-btn dense class="col" icon="book"
-                       @click="compName=competition.name,scoreUUID = item.uuid,otherID = item.otherPersonEntity.id,memberLeg=0, getListCalibers(),caliberUUID = competition.caliberUUID,ammoQuantity = competition.practiceShots + competition.numberOfShots,addAmmo=true">
+                       @click="compName=competition.name;scoreUUID = item.uuid;otherID = item.otherPersonEntity.id;memberLeg=0; getListCalibers();caliberUUID = competition.caliberUUID;ammoQuantity = competition.practiceShots + competition.numberOfShots;addAmmo=true">
                   <q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Wydaj broń lub
                     amunicję {{ item.otherPersonEntity.secondName }}
                   </q-tooltip>
@@ -376,7 +376,7 @@
                    v-if="item.ammunition === true && item.gun === false && item.otherPersonEntity!=null">
                 <div class="col-5 self-center">{{ index + 1 }}.</div>
                 <q-btn dense class="col" color="green" icon="book"
-                       @click="compName=competition.name,scoreUUID = item.uuid,otherID = item.otherPersonEntity.id,memberLeg=0, getListCalibers(),caliberUUID = competition.caliberUUID,ammoQuantity = competition.practiceShots + competition.numberOfShots,addAmmo=true">
+                       @click="compName=competition.name;scoreUUID = item.uuid;otherID = item.otherPersonEntity.id;memberLeg=0; getListCalibers();caliberUUID = competition.caliberUUID;ammoQuantity = competition.practiceShots + competition.numberOfShots;addAmmo=true">
                   <q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Amunicja wydana
                   </q-tooltip>
                 </q-btn>
@@ -385,7 +385,7 @@
                    v-if="item.ammunition === false && item.gun === true && item.otherPersonEntity!=null">
                 <div class="col-5 self-center">{{ index + 1 }}.</div>
                 <q-btn dense class="col" color="yellow" icon="book"
-                       @click="compName=competition.name,scoreUUID = item.uuid,otherID = item.otherPersonEntity.id,memberLeg=0, getListCalibers(),caliberUUID = competition.caliberUUID,ammoQuantity = competition.practiceShots + competition.numberOfShots,addAmmo=true">
+                       @click="compName=competition.name;scoreUUID = item.uuid;otherID = item.otherPersonEntity.id;memberLeg=0; getListCalibers();caliberUUID = competition.caliberUUID;ammoQuantity = competition.practiceShots + competition.numberOfShots;addAmmo=true">
                   <q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Broń wydana
                   </q-tooltip>
                 </q-btn>
@@ -394,7 +394,7 @@
                    v-if="item.ammunition === true && item.gun === true && item.otherPersonEntity!=null">
                 <div class="col-5 self-center">{{ index + 1 }}.</div>
                 <q-btn dense class="col" color="green" text-color="yellow" icon="book"
-                       @click="compName=competition.name,scoreUUID = item.uuid,otherID = item.otherPersonEntity.id,memberLeg=0, getListCalibers(),caliberUUID = competition.caliberUUID,ammoQuantity = competition.practiceShots + competition.numberOfShots,addAmmo=true">
+                       @click="compName=competition.name;scoreUUID = item.uuid;otherID = item.otherPersonEntity.id;memberLeg=0; getListCalibers();caliberUUID = competition.caliberUUID;ammoQuantity = competition.practiceShots + competition.numberOfShots;addAmmo=true">
                   <q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Broń i Amunicja
                     wydana
                   </q-tooltip>
@@ -402,7 +402,7 @@
               </div>
             </div>
             <div class="col" v-if="item.otherPersonEntity == null"
-                 @dblclick="memberName=null,otherName=null,memberExist=true,memberUUID=item.member.uuid,memberLeg = item.member.legitimationNumber,otherID = '0',name=item.member.secondName + ' ' + item.member.firstName,startNumber=item.metricNumber,getScoreInfo(),metricsInfo=true">
+                 @dblclick="memberName=null;otherName=null;memberExist=true;memberUUID=item.member.uuid;memberLeg = item.member.legitimationNumber;otherID = '0';name=item.member.secondName + ' ' + item.member.firstName;startNumber=item.metricNumber;getScoreInfo();metricsInfo=true">
               <q-field dense standout="bg-accent text-black" stack-label>
                 <q-tooltip v-if="!item.member.active" content-class="bg-red text-subtitle2"
                            anchor="top middle">UREGULUJ SKŁADKI
@@ -412,13 +412,13 @@
                     {{ item.member.secondName }} {{ item.member.firstName }}
                   </div>
                   <div v-if="item.otherPersonEntity == null" class="col-5 no-outline text-black"
-                       tabindex="0">DZIESIĄTKA Łódź
+                       tabindex="0">{{item.member.club.name}}
                   </div>
                 </div>
               </q-field>
             </div>
             <div class="col" v-if="item.member == null"
-                 @dblclick="memberName=null,otherName=null,memberExist=false,memberUUID='0',otherID = item.otherPersonEntity.id,name=item.otherPersonEntity.secondName + ' ' + item.otherPersonEntity.firstName,startNumber=item.metricNumber,getScoreInfo(),metricsInfo=true">
+                 @dblclick="memberName=null;otherName=null;memberExist=false;memberUUID='0';otherID = item.otherPersonEntity.id;name=item.otherPersonEntity.secondName + ' ' + item.otherPersonEntity.firstName;startNumber=item.metricNumber;getScoreInfo();metricsInfo=true">
               <q-field dense standout="bg-accent text-black" stack-label>
                 <div class="q-pa-xs row full-width text-caption">
                   <div v-if="item.member == null" class="col no-outline text-black" tabindex="0">
@@ -431,7 +431,7 @@
               </q-field>
             </div>
             <div class="col-1"
-                 @dblclick="scoreUUID = item.uuid,metric = item.metricNumber,toggleDSQDNF=true">
+                 @dblclick="scoreUUID = item.uuid;metric = item.metricNumber;toggleDSQDNF=true">
               <q-field dense class="text-center" standout="bg-accent text-black" stack-label
                        label="metryka">
                 <div class="self-center col no-outline text-center text-black text-caption" tabindex="0">
@@ -443,13 +443,13 @@
                      label="10 ogólnie" stack-label>
               <q-popup-edit v-model="outerTen">
                 <q-input @focus="scoreUUID = item.uuid" input-class="text-center" v-model="outerTen"
-                         @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)" dense autofocus
+                         @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
                          stack-label label="ilość 10 ogólnie"
                          onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                 <div class="q-pa-xs">
                   <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
                   <q-btn color="primary" label="Zapisz" v-close-popup
-                         @click="scoreUUID = item.uuid, setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
+                         @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
                 </div>
               </q-popup-edit>
               <div class="self-center full-width col no-outline text-center text-black text-caption"
@@ -460,13 +460,13 @@
                      label="10 wewnętrzne" stack-label>
               <q-popup-edit v-model="innerTen">
                 <q-input @focus="scoreUUID = item.uuid" input-class="text-center" v-model="innerTen"
-                         @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)" dense autofocus
+                         @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
                          stack-label label="ilość 10 wewnętrznych"
                          onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                 <div class="q-pa-xs">
                   <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
                   <q-btn color="primary" label="Zapisz" v-close-popup
-                         @click="scoreUUID = item.uuid, setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
+                         @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
                 </div>
               </q-popup-edit>
               <div class="self-center full-width col no-outline text-center text-black text-caption"
@@ -477,13 +477,13 @@
                      stack-label>
               <q-popup-edit v-model="scoreLabel">
                 <q-input @focus="scoreUUID = item.uuid" input-class="text-center" v-model="scoreLabel"
-                         @keypress.enter="scoreUUID = item.uuid, onEnter(scoreUUID)" dense autofocus
+                         @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
                          stack-label label="Wynik"
                          onkeypress="return (event.charCode > 47 && event.charCode < 58) || event.charCode > 44 || event.charCode < 46"/>
                 <div class="q-pa-xs">
                   <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
                   <q-btn color="primary" label="Zapisz" v-close-popup
-                         @click="scoreUUID = item.uuid, setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
+                         @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
                 </div>
               </q-popup-edit>
               <div v-if="item.dnf||item.dsq||item.pk"
@@ -552,14 +552,14 @@
                      onkeypress="return (event.charCode > 44 && event.charCode < 58)" v-model="ammoQuantity"
                      label='"Ilość Amunicji wraz z próbnymi"'></q-input>
             <div align="right">
-              <q-btn v-if="caliberUUID==null||ammoQuantity==null||ammoQuantity==''" class="col full-width"
+              <q-btn v-if="caliberUUID===null||ammoQuantity===null||ammoQuantity===''" class="col full-width"
                      color="grey-5">
                 <div>
-                  <div v-if="caliberUUID==null">wybierz kaliber</div>
-                  <div v-if="ammoQuantity==null||ammoQuantity==''">wprowadź ilość</div>
+                  <div v-if="caliberUUID===null">wybierz kaliber</div>
+                  <div v-if="ammoQuantity===null||ammoQuantity===''">wprowadź ilość</div>
                 </div>
               </q-btn>
-              <q-btn v-if="caliberUUID!==null&&ammoQuantity!=null&&ammoQuantity!=''" class="col full-width"
+              <q-btn v-if="caliberUUID!==null&&ammoQuantity!==null&&ammoQuantity!==''" class="col full-width"
                      color="primary" label="wydaj amunicję" @click="addAmmoConfirm = true"></q-btn>
             </div>
           </div>
@@ -567,7 +567,7 @@
         <q-card-section>
           <div class="text-bold text-center text-h6">WYDAWANIE BRONI</div>
           <div align="right">
-            <q-btn class="full-width" color="primary" @click="showloading(),toggleGunInScore()">wydaj broń</q-btn>
+            <q-btn class="full-width" color="primary" @click="showloading();toggleGunInScore()">wydaj broń</q-btn>
           </div>
         </q-card-section>
         <q-card-actions align="right">
@@ -584,7 +584,7 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model="addAmmoConfirm" persistent
-              @keypress.enter="addMemberAndAmmoToCaliber(),addAmmoConfirm=false,ammoQuantity=null,addAmmo=false">
+              @keypress.enter="addMemberAndAmmoToCaliber();addAmmoConfirm=false;ammoQuantity=null;addAmmo=false">
       <q-card>
         <q-card-section class="row items-center">
           <span class="q-ml-sm">Czy na pewno chcesz Wydać amunicję?</span>
@@ -593,7 +593,7 @@
         <q-card-actions align="right">
           <q-btn flat label="anuluj" color="primary" v-close-popup/>
           <q-btn flat label="Wydaj" color="primary" v-close-popup
-                 @click="addMemberAndAmmoToCaliber(),addAmmoConfirm=false,ammoQuantity=null,addAmmo=false"/>
+                 @click="addMemberAndAmmoToCaliber();addAmmoConfirm=false;ammoQuantity=null;addAmmo=false"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -607,7 +607,7 @@
               <q-checkbox color="secondary" class="col" v-model="compList" :val="info" :label="info"/>
               <div>
                 <q-btn class="col-3" color="primary" label="Wydaj amunicję"
-                       @click="compName=info,getListCalibers(),addAmmo=true"/>
+                       @click="compName=info;getListCalibers();addAmmo=true"/>
               </div>
             </li>
           </ol>
@@ -616,18 +616,18 @@
               wyświetl profil
             </q-btn>
             <q-item></q-item>
-            <q-btn dense @click="getMemberMetrics(compList),info=[],compList=[]" class="col q-pa-xs" color="secondary">
+            <q-btn dense @click="getMemberMetrics(compList);info=[];compList=[]" class="col q-pa-xs" color="secondary">
               wydrukuj wybrane metryki
             </q-btn>
             <q-item></q-item>
-            <q-btn dense @click="getMemberMetrics(infoScore),info=[],compList=[]" class="col q-pa-xs" color="primary">wydrukuj
+            <q-btn dense @click="getMemberMetrics(infoScore);info=[];compList=[]" class="col q-pa-xs" color="primary">wydrukuj
               wszystkie metryki
             </q-btn>
           </div>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn @click="compName='',compList=[]" label="zamknij" color="primary" v-close-popup/>
+          <q-btn @click="compName='';compList=[]" label="zamknij" color="primary" v-close-popup/>
         </q-card-actions>
       </q-card>
     </q-dialog>
