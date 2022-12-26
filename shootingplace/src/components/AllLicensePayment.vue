@@ -27,22 +27,12 @@
               </q-field>
             </div>
             <q-field dense class="col-2" label="Grupa" standout="bg-accent text-black" stack-label>
-              <div v-if="item.adult" class="self-center col full-width no-outline row text-black" tabindex="1">Grupa
-                Ogólna
-              </div>
-              <div v-if="!item.adult" class="self-center col full-width no-outline row text-black" tabindex="1">Grupa
-                Młodzieżowa
+              <div class="self-center col full-width no-outline row text-black" tabindex="1">{{item.adult?'Grupa Ogólna':'Grupa Młodzieżowa'}}
               </div>
             </q-field>
-            <q-field dense v-if="item.active" class="col" label="Status" standout="bg-accent text-black" stack-label>
+            <q-field dense class="col-1" label="Status" standout="bg-accent text-black" stack-label>
               <div>
-                <div class="self-center col full-width no-outline row text-black" tabindex="1">Aktywny</div>
-              </div>
-            </q-field>
-            <q-field dense v-if="!item.active" class="col bg-red-3" label="Status" standout="bg-accent text-black"
-                     stack-label>
-              <div>
-                <div class="self-center col full-width no-outline row text-black" tabindex="1">Nieaktywny</div>
+                <div class="self-center col full-width no-outline row text-black" tabindex="1">{{item.active?'Aktywny':'Nieaktywny'}}</div>
               </div>
             </q-field>
             <q-field dense class="col-2" label="Data wpłaty" standout="bg-accent text-black" stack-label>
@@ -50,16 +40,12 @@
                 <div class="self-center col full-width no-outline row text-black" tabindex="1">{{ item.date }}</div>
               </div>
             </q-field>
-            <q-field dense class="col-2" label="Na Rok" standout="bg-accent text-black" stack-label>
+            <q-field dense class="col-1" label="Na Rok" standout="bg-accent text-black" stack-label>
               <div class="self-center col full-width no-outline row text-black" tabindex="1">{{ item.validForYear }}
               </div>
             </q-field>
-            <q-field dense v-if="!item.new" class="col-2" label="Rodzaj" standout="bg-accent text-black" stack-label>
-              <div class="row text-black" tabindex="1">Przedłużenie</div>
-            </q-field>
-            <q-field dense v-if="item.new" class="col-2 bg-warning" label="Rodzaj" standout="bg-acceny text-black"
-                     stack-label>
-              <div class="row text-black" tabindex="1">Nowa</div>
+            <q-field dense :class="item.new?'col-2 bg-warning':'col-2'" label="Rodzaj" :standout="item.new?'bg-warning text-black':'bg-accent'" stack-label>
+              <div class="row text-black" tabindex="1">{{item.new?'Nowa':'Przedłużenie'}}</div>
             </q-field>
           </div>
         </template>
@@ -109,13 +95,13 @@
       <q-card class="bg-red-5 text-center">
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
-          <q-input @keypress.enter="toggleHistoryPayment(),pinWindowPZSS=false" autofocus type="password"
+          <q-input @keypress.enter="toggleHistoryPayment();pinWindowPZSS=false" autofocus type="password"
                    v-model="pinCode" filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input>
         </q-card-section>
 
         <q-card-actions align="right">
           <q-btn label="anuluj" color="black" v-close-popup @click="pinCode=null"/>
-          <q-btn label="Przedłuż" color="black" v-close-popup @click="toggleHistoryPayment(), pinCode=null"/>
+          <q-btn label="Przedłuż" color="black" v-close-popup @click="toggleHistoryPayment(); pinCode=null"/>
         </q-card-actions>
       </q-card>
     </q-dialog>

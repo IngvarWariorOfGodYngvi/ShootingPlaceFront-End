@@ -1,6 +1,7 @@
 import { scroll } from 'quasar'
 import App from 'src/App.vue'
-import Member from 'components/Member.vue'
+import lazyLoadComponent from 'src/utils/lazyLoadComponent'
+import SkeletonBox from 'src/utils/SkeletonBox.vue'
 
 const { getScrollTarget, setScrollPosition } = scroll
 
@@ -35,7 +36,10 @@ export default {
     this.getAllMemberDTO()
   },
   components: {
-    Member
+    Member: lazyLoadComponent({
+      componentFactory: () => import('components/Member.vue'),
+      loading: SkeletonBox
+    })
   },
   methods: {
     showloading () {

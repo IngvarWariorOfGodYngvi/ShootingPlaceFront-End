@@ -322,7 +322,7 @@
                 licenseShotgunPermission1=member.license.shotgunPermission;
                 noDomesticStarts=true"></q-btn>
         </div>
-        <q-btn v-if="(((member.shootingPatent.patentNumber!==null&&member.license.paid===false&&member.club.id===1))) " class="full-width"
+        <q-btn v-if="(((member.shootingPatent.patentNumber!==null&&member.license.paid===false&&member.club.id===1))) " :disable="!member.active" class="full-width"
                label="opłać licencję" @click="memberUUID=member.uuid;licensePayment=true"></q-btn>
         <q-expansion-item dense default-opened class="bg-grey-3 text-center"
                           v-if="member.history.licensePaymentHistory.length>0" label="Daty Opłacenia Licencji">

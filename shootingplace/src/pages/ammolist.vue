@@ -15,20 +15,20 @@
               </q-tooltip>
             </q-btn>
           </div>
-          <div v-if="ammoList!==null && ammoList.forceOpen" class="col-9">
+          <div v-if="ammoList!=null && ammoList.forceOpen" class="col-9">
             <div class=" q-pa-md bg-red-3 text-center text-bold">UWAGA! LISTA OTWARTA PONOWNIE. NA KONIEC DNIA PAMIĘTAJ
               O JEJ ZAMKNIĘCIU!
             </div>
           </div>
         </div>
-        <div class="text-h5 text-bold" v-if="ammoList===null">
+        <div class="text-h5 text-bold" v-if="ammoList.length<=0">
           <q-item>
             <q-item-section>
               Brak aktywnej listy amunicji
             </q-item-section>
           </q-item>
         </div>
-        <div v-if="ammoList!==null" class="col">
+        <div v-else class="col">
           <q-item class="col">
             <q-item-section class="text-h5 text-bold">
               Lista Amunicji {{ convertDate(ammoList.date) }} numer {{ ammoList.number }}
@@ -369,14 +369,19 @@
 
 <script>
 
+import lazyLoadComponent from 'src/utils/lazyLoadComponent'
+
 const stringOptions = []
 import axios from 'axios'
 import App from 'src/App.vue'
-import Member from 'components/Member.vue'
+import SkeletonBox from 'src/utils/SkeletonBox.vue'
 
 export default {
   components: {
-    Member
+    Member: lazyLoadComponent({
+      componentFactory: () => import('components/Member.vue'),
+      loading: SkeletonBox
+    })
   },
   data () {
     return {
@@ -458,9 +463,9 @@ export default {
       fetch('http://' + this.local + '/ammoEvidence/evidence', {
         method: 'GET'
       }).then(response => {
-        response.json().then(ammoList => {
-          this.ammoList = ammoList
-          this.uuid = ammoList.uuid
+        response.json().then(response => {
+          this.ammoList = response
+          this.uuid = response.uuid
         })
       })
     },
@@ -584,7 +589,6 @@ export default {
             this.message = response
             this.success = true
             this.getAmmoData()
-            this.getClosedEvidence(this.pageNumber)
             this.showloading()
             this.autoClose()
           })

@@ -8,7 +8,14 @@
       <q-card class="row" style="height:20vh;">
         <div class="col-4">
           <q-item>
-            <q-select dense class="full-width rounded text-white" :label="memberName" label-color="white" input-style="color: white;" bg-color="primary" use-input filled hide-selected :options="options" @filter="filter" @input="allMember = false" :value="options">
+            <q-select dense class="full-width rounded text-white"
+                      label="Wybierz osobę"
+                      :option-value="opt => String(opt)? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber).toString() : ''"
+                      :option-label="opt => String(opt)? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber).toString() : ''"
+                      emit-value
+                      map-options
+                      v-model="memberName"
+                      label-color="white" input-style="color: white;" bg-color="primary" fill-input filled use-input hide-selected :options="options" @filter="filter" @input="allMember = false" :value="options">
                   <template v-slot:option="option">
                     <q-item class="rounded" dense style="padding: 0; margin: 0;" v-bind="option['itemProps']" v-on="option.itemEvents" >
                       <q-item-section v-if="option['opt'].active" style="padding: 0.5em; margin: 0;" @click="memberName = option.opt.secondName+' '+option.opt.firstName+' '+ option.opt.legitimationNumber;temp = option.opt.legitimationNumber;temp = option.opt.legitimationNumber">

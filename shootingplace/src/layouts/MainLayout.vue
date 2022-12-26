@@ -55,8 +55,8 @@
           v-for="link in essentialLinks"
           :key="link.title"
           v-bind="link"
-          class="bg-secondary text-white xyz"
-         :title="link.title"/>
+          :title="link.title"
+          />
         </div>
       </q-list>
       <members-quantities class="bg-secondary">

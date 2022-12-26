@@ -4,7 +4,7 @@ import WorkTimeList from 'components/WorkTimeList.vue'
 import App from 'src/App.vue'
 export default {
   name: 'MainLayout',
-
+  visible2: false,
   components: {
     EssentialLink,
     membersQuantities,
@@ -12,9 +12,11 @@ export default {
   },
   created () {
     this.getActualYearMemberCounts()
+    this.check()
   },
   data () {
     return {
+      visible1: true,
       leftDrawerOpen: false,
       interval: false,
       interval2: null,
@@ -26,64 +28,75 @@ export default {
       color: 'primary',
       tournamentCheck: false,
       quantities: [],
-      hrefTarget: 'http://' + App.prod,
+      hrefTarget: 'http://' + location.hostname + ':8081/#/',
       local: App.host,
       essentialLinks: [
         {
           title: 'Lista Klubowiczów',
           icon: 'person',
-          link: 'http://' + App.prod + 'member'
+          link: 'http://' + App.prod + 'member',
+          visible: this.visible2
         },
         {
           title: 'Licencje',
           icon: 'person',
-          link: 'http://' + App.prod + 'license'
+          link: 'http://' + App.prod + 'license',
+          visible: this.visible2
         },
         {
           title: 'Dodaj Nowego Klubowicza',
           icon: 'person_add',
-          link: 'http://' + App.prod + 'member/adding'
+          link: 'http://' + App.prod + 'member/adding',
+          visible: this.visible2
         },
         {
           title: 'Lista Amunicyjna',
           icon: 'list_alt',
-          link: 'http://' + App.prod + 'ammolist'
+          link: 'http://' + App.prod + 'ammolist',
+          visible: this.visible2
         },
         {
           title: 'Zawody',
           icon: 'book',
-          link: 'http://' + App.prod + 'competition'
+          link: 'http://' + App.prod + 'competition',
+          visible: this.visible2
         },
         {
           title: 'Lista Osób z Uprawnieniami',
           icon: 'book',
-          link: 'http://' + App.prod + 'memberwithpermission'
+          link: 'http://' + App.prod + 'memberwithpermission',
+          visible: this.visible2
         },
         {
           title: 'Zbrojownia',
           icon: 'storage',
-          link: 'http://' + App.prod + 'armory'
+          link: 'http://' + App.prod + 'armory',
+          visible: this.visible2
         },
         {
           title: 'Statystyki',
           icon: 'bar_chart',
-          link: 'http://' + App.prod + 'statistics'
+          link: 'http://' + App.prod + 'statistics',
+          visible: this.visible2
         },
         {
           title: 'Pozostałe Funkcje',
           icon: 'menu',
-          link: 'http://' + App.prod + 'otherFunctions'
+          link: 'http://' + App.prod + 'otherFunctions',
+          visible: this.visible2
         },
         {
           title: 'Ustawienia',
           icon: 'settings',
-          link: 'http://' + App.prod + 'settings'
+          link: 'http://' + App.prod + 'settings',
+          visible: this.visible2
+        },
+        {
+          title: 'Panel Sędziego',
+          icon: 'done',
+          link: 'http://' + App.prod + 'juryPanel',
+          visible: true
         }
-        // {
-        //   title: 'Faktury STRONA GŁÓWNA',
-        //   icon: 'receipt',
-        //   link: 'http://' + App.friend
-        // }
       ],
       programName: 'Program'
     }

@@ -5,6 +5,7 @@
     :href="link"
     dense
     @click="refresh()"
+    class="bg-secondary text-white xyz"
   >
     <q-item-section
       v-if="icon"
@@ -44,6 +45,10 @@ export default {
     icon: {
       type: String,
       default: ''
+    },
+    visible: {
+      type: Boolean,
+      default: true
     }
   },
   methods: {

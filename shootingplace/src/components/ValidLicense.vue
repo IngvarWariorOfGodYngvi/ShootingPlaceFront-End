@@ -28,29 +28,19 @@
                 </div>
               </q-field>
             </div>
-            <q-field dense v-if="item.active" class="col-2" label="Status" standout="bg-accent text-black"
+            <q-field dense :class="item.active?'col-1':'col-1 bg-red-3'" label="Status" standout="bg-accent text-black"
                      stack-label>
               <div>
-                <div class="row text-black" tabindex="1">Aktywny</div>
-              </div>
-            </q-field>
-            <q-field dense v-if="!item.active" class="col-2 bg-red-3" label="Status" standout="bg-accent text-black"
-                     stack-label>
-              <div>
-                <div class="row text-black" tabindex="1">Nieaktywny</div>
+                <div class="row text-black" tabindex="1">{{item.active?'Aktywny':'Nieaktywny'}}</div>
               </div>
             </q-field>
             <q-field dense class="col-1" label="Numer Licencji" standout="bg-accent text-black" stack-label>
               <div class="self-center col full-width no-outline row text-black" tabindex="1">
-                {{ item.license.legitimationNumber }}
+                {{ item.license.number }}
               </div>
             </q-field>
             <q-field dense class="col-2" label="Grupa" standout="bg-accent text-black" stack-label>
-              <div v-if="item.adult" class="self-center col full-width no-outline row text-black" tabindex="1">Grupa
-                Ogólna
-              </div>
-              <div v-if="!item.adult" class="self-center col full-width no-outline row text-black" tabindex="1">Grupa
-                Młodzieżowa
+              <div class="self-center col full-width no-outline row text-black" tabindex="1">{{item.adult?'Grupa Ogólna':'Grupa Młodzieżowa'}}
               </div>
             </q-field>
             <q-field dense class="col-2" label="Ważność licencji" standout="bg-accent text-black" stack-label>
@@ -60,18 +50,20 @@
                 </div>
               </div>
             </q-field>
-            <q-btn dense color="grey-5" v-if="!item.license.paid && !item.active" class="col-2"
+            <div class="col-2">
+              <q-tooltip v-if="!item.license.paid && !item.active" content-class="bg-red text-subtitle2" anchor="top middle">UREGULUJ SKŁADKI</q-tooltip>
+            <q-btn dense disable color="grey-8" v-if="!item.license.paid && !item.active" class="fit"
                    label="opłać licencję">
-              <q-tooltip content-class="bg-red text-subtitle2" anchor="top middle">UREGULUJ SKŁADKI</q-tooltip>
             </q-btn>
-            <q-btn dense color="grey-8" v-if="!item.license.paid && item.active" class="col-2"
+            <q-btn dense color="secondary" v-if="!item.license.paid && item.active" class="fit"
                    @click="memberName = item.firstName + item.secondName;memberUUID = item.uuid;paymentLicenseAlert = true">
               opłać licencję
             </q-btn>
-            <q-btn dense color="primary" v-if="item.license.paid" class="col-2"
+            <q-btn dense color="primary" v-if="item.license.paid" class="fit"
                    @click="memberName = item.firstName + item.secondName ;licensePistolPermission = item.license.pistolPermission; licenseRiflePermission = item.license.riflePermission; licenseShotgunPermission = item.license.shotgunPermission;memberUUID = item.uuid; prolongLicenseAlert = true">
               przedłuż licencję
             </q-btn>
+            </div>
           </div>
         </template>
       </q-virtual-scroll>
@@ -190,6 +182,9 @@ export default {
   components: {
     Member
   },
+  // watch: {
+  //
+  // },
   created () {
     this.getMembersWithLicense()
   },

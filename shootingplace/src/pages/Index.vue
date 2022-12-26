@@ -13,7 +13,8 @@
 </style>
 <script>
 import App from 'src/App.vue'
-import MainList from 'src/components/MainList.vue'
+import lazyLoadComponent from 'src/utils/lazyLoadComponent'
+import SkeletonBox from 'src/utils/SkeletonBox.vue'
 export default {
   name: 'PageIndex',
   data () {
@@ -22,7 +23,10 @@ export default {
     }
   },
   components: {
-    MainList
+    MainList: lazyLoadComponent({
+      componentFactory: () => import('components/MainList.vue'),
+      loading: SkeletonBox
+    })
   },
   methods: {
     showloading () {

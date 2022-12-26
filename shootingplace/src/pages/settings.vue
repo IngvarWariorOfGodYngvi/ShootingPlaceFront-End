@@ -331,19 +331,19 @@
     <div class="row">
       <q-field color="black" class="self-center col full-width no-outline text-bold text-center" dense
                standout="bg-accent text-black" stack-label>
-        <div class="col-4 self-center text-bold text-left">Nazwa pliku</div>
+        <div class="col-5 self-center text-bold text-left">Nazwa pliku</div>
         <div class="col-1 self-center text-bold text-center">Data utworzenia</div>
         <div class="col-1 self-center text-bold text-center">Godzina utworzenia</div>
-        <div class="col-1 self-center text-bold text-right">Rozmiar</div>
-        <div class="col-2 self-center text-bold text-right">Typ</div>
-        <div class="col-2 self-center text-right">
+        <div class="col-1 self-center text-bold text-center">Rozmiar</div>
+        <div class="col-2 self-center text-bold text-center">Typ</div>
+        <div class="col-2 self-center text-center">
           <div>Pobierz plik</div>
         </div>
       </q-field>
     </div>
     <q-virtual-scroll :items="files" dense visible class="full-width" style="height: 80vh;">
       <template v-slot="{ item, index }">
-        <div :key="index" @click.left.ctrl="uuid=item.uuid,deleteConfirm=true">
+        <div :key="index" @click.left.ctrl="uuid=item.uuid;deleteConfirm=true">
           <q-field @click.left.ctrl="deleteConfirm=true" color="black" dense
                    class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black"
                    stack-label>
@@ -359,7 +359,7 @@
             <div class="col-1 self-center text-bold text-center">{{ item.size }}</div>
             <div class="col-2 self-center text-bold text-center">{{ item.type }}</div>
             <div class="col-2 q-pa-xs self-center text-center">
-              <q-btn color="primary" dense @click="fileName = item.name,getFile (item.uuid)">pobierz plik</q-btn>
+              <q-btn color="primary" dense @click="fileName = item.name;getFile (item.uuid)">pobierz plik</q-btn>
             </div>
           </q-field>
         </div>
@@ -551,12 +551,7 @@ export default {
       local: App.host
     }
   },
-  created () {
-    this.getAllClubs()
-    this.getAllSuperUsers()
-    this.getAllUsers()
-    this.getAllFiles(this.pageNumber)
-  },
+
   methods: {
     showloading () {
       this.$q.loading.show({ message: 'Dzieje się coś ważnego... Poczekaj' })
@@ -581,7 +576,7 @@ export default {
       if (pageNumber < 0) {
         this.pageNumber = 0
       }
-      fetch('http://' + this.local + '/files/getAllFiles?page=' + pageNumber + '&size=100', {
+      fetch('http://' + this.local + '/files/getAllFiles?page=' + pageNumber + '&size=50', {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {

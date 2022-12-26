@@ -2,22 +2,23 @@
 const routes = [
   {
     path: '/',
-    component: () => import('layouts/MainLayout.vue'),
+    component: () => import(/* webpackChunkName: "layoutGłówny" */'layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/Index.vue') },
-      { path: '/member/adding', name: 'dodawanie', component: () => import('pages/addMember.vue') },
-      { path: '/ammolist', name: 'amunicja', component: () => import('pages/ammolist.vue') },
-      { path: '/competition', name: 'zawody', component: () => import('pages/tournamentList.vue') },
-      { path: '/memberwithpermission', component: () => import('pages/memberWithPermission.vue') },
-      { path: '/member', component: () => import('pages/membersList.vue') },
-      { path: '/license', name: 'licencje', component: () => import('pages/license.vue') },
-      { path: '/licenseend', component: () => import('pages/licenseEnd.vue') },
-      { path: '/patentWilling', component: () => import('pages/patentWilling.vue') },
-      { path: '/statistics', name: 'statystyki', component: () => import('pages/statistics.vue') },
-      { path: '/otherFunctions', name: 'pozostałe funkcje', component: () => import('pages/otherFunctions.vue') },
-      { path: '/settings', component: () => import('pages/settings.vue') },
-      { path: '/armory', name: 'zbrojownia', component: () => import('pages/armory.vue') },
-      { path: '/armory/galery', component: () => import('pages/galery.vue') }
+      { path: '', component: () => import(/* webpackChunkName: "Index" */'pages/Index.vue') },
+      { path: '/member/adding', name: 'dodawanie Klubowicza', component: () => import(/* webpackChunkName: "Dodawanie Klubowicza" */'pages/addMember.vue') },
+      { path: '/ammolist', name: 'amunicja', component: () => import(/* webpackChunkName: "Lista Amunicyjna" */'pages/ammolist.vue') },
+      { path: '/competition', name: 'zawody', component: () => import(/* webpackChunkName: "Zawody" */'pages/tournamentList.vue') },
+      { path: '/memberwithpermission', component: () => import(/* webpackChunkName: "Uprawnienia " */'pages/memberWithPermission.vue') },
+      { path: '/member', component: () => import(/* webpackChunkName: "Lista Klubowiczów" */'pages/membersList.vue') },
+      { path: '/license', name: 'licencje', component: () => import(/* webpackChunkName: "Licencje" */'pages/license.vue') },
+      { path: '/licenseend', component: () => import(/* webpackChunkName: "Koniec Licencji" */'pages/licenseEnd.vue') },
+      { path: '/patentWilling', component: () => import(/* webpackChunkName: "Patentowicze" */'pages/patentWilling.vue') },
+      { path: '/statistics', name: 'statystyki', component: () => import(/* webpackChunkName: "Statystyki" */'pages/statistics.vue') },
+      { path: '/otherFunctions', name: 'pozostałe funkcje', component: () => import(/* webpackChunkName: "Pozostałe funkcje" */'pages/otherFunctions.vue') },
+      { path: '/settings', component: () => import(/* webpackChunkName: "Ustawienia" */'pages/settings.vue') },
+      { path: '/armory', name: 'zbrojownia', component: () => import(/* webpackChunkName: "Zbrojownia" */'pages/armory.vue') },
+      { path: '/juryPanel', name: 'panel sędziego', component: () => import(/* webpackChunkName: "Panel Sędziego" */'pages/juryPanel.vue') },
+      { path: '/armory/galery', component: () => import(/* webpackChunkName: "Galeria" */'pages/galery.vue') }
     ]
   },
 

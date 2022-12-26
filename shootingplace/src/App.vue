@@ -11,7 +11,6 @@ import Vue from 'vue'
 import axios from 'axios'
 Vue.prototype.$axios = axios
 // import store from './store'
-
 // Vue.config.productionTip = false
 
 // Vue.use(keycloak, {
@@ -45,10 +44,10 @@ Vue.prototype.$axios = axios
 export default {
   name: 'App',
   // friend: 'localhost:8080/invoices/#/',
-  prod: 'localhost:8081/#/',
-  // prod: 'localhost:8080/strzelnica/#/',
-  // host: 'localhost:8080/shootingplace-1.0/'
-  host: 'localhost:8080'
+  // prod: location.hostname + ':8081/#/',
+  prod: location.hostname + ':8080' + '/strzelnica/#/',
+  host: location.hostname + ':8080' + '/shootingplace-1.0/'
+  // host: location.hostname + ':8080'
 }
 
 </script>

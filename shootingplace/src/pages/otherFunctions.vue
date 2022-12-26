@@ -355,7 +355,7 @@
                                 <div v-if="item.automatedClosed" class="col text-center self-center bg-primary text-white">TAK</div>
                                 <div v-else class="col text-center self-center"></div>
                                 <div v-if="item.accepted" class="col text-center self-center bg-green">ZATWIERDZONO</div>
-                                <div v-else class="col text-center self-center"><q-checkbox v-model="acceptedList" :val="item.uuid" label="zatwierdź" @input="c = checkLenght(workList); if (c === acceptedList.length) { checked = true } else { checked = false };"></q-checkbox></div>
+                                <div v-else class="col text-center self-center"><q-checkbox v-model="acceptedList" :val="item.uuid" label="zatwierdź" @input="c = checkLenght(workList)"></q-checkbox></div>
                               </div>
                             </q-field>
                           </template>

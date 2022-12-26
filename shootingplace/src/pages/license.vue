@@ -6,10 +6,10 @@
       </q-item>
     </div>
     <div class="q-pa-md">
-      <downloadBtn/>
+      <DownloadBtn/>
     </div>
     <q-expansion-item label="Licencje nieważne" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
-      <NotValidLicense></NotValidLicense>
+      <NotValidLicense ></NotValidLicense>
     </q-expansion-item>
     <p></p>
     <q-expansion-item label="Licencje ważne" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
@@ -24,17 +24,27 @@
 </template>
 
 <script>
-import downloadBtn from 'components/DownloadLicense.vue'
-import NotValidLicense from 'components/NotValidLicense.vue'
-import ValidLicense from 'components/ValidLicense.vue'
-import AllLicensePayment from 'components/AllLicensePayment.vue'
+import lazyLoadComponent from 'src/utils/lazyLoadComponent'
+import SkeletonBox from 'src/utils/SkeletonBox.vue'
 
 export default {
   components: {
-    downloadBtn,
-    NotValidLicense,
-    ValidLicense,
-    AllLicensePayment
+    DownloadBtn: lazyLoadComponent({
+      componentFactory: () => import('components/DownloadLicense.vue'),
+      loading: SkeletonBox
+    }),
+    NotValidLicense: lazyLoadComponent({
+      componentFactory: () => import('components/NotValidLicense.vue'),
+      loading: SkeletonBox
+    }),
+    ValidLicense: lazyLoadComponent({
+      componentFactory: () => import('components/ValidLicense.vue'),
+      loading: SkeletonBox
+    }),
+    AllLicensePayment: lazyLoadComponent({
+      componentFactory: () => import('components/AllLicensePayment.vue'),
+      loading: SkeletonBox
+    })
   },
   name: 'license'
 }
