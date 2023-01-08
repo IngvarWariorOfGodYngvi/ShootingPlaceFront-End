@@ -110,7 +110,8 @@
 
 <script>
 import App from 'src/App.vue'
-import Member from 'components/Member.vue'
+import lazyLoadComponent from 'src/utils/lazyLoadComponent'
+import SkeletonBox from 'src/utils/SkeletonBox.vue'
 
 export default {
   name: 'AllLicencePayment',
@@ -131,7 +132,10 @@ export default {
     }
   },
   components: {
-    Member
+    Member: lazyLoadComponent({
+      componentFactory: () => import('components/Member.vue'),
+      loading: SkeletonBox
+    })
   },
   created () {
     this.getAllLicencePayment()

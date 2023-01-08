@@ -4,6 +4,11 @@
       <div class="row">
         <div class="q-pa-md text-left col full-width no-outline text-h5 text-bold">Ilość osób {{ list.length }}
         </div>
+        <div v-if="licenseList.length>0" class="q-pa-md text-right">
+          <q-btn @click="prolongLicenseAlert=true" label="Przedłuż wybrane Licencje">
+            ({{ licenseList.length }})
+          </q-btn>
+        </div>
       </div>
       <q-virtual-scroll :items="list" virtual-scroll-slice-size="100" style="height: 50vh">
         <template v-slot="{ item, index }">
@@ -88,6 +93,32 @@
 
       </q-card>
     </q-dialog>
+    <q-dialog v-model="prolongLicenseAlert">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Czy przedłużyć licencje</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="anuluj" color="primary" v-close-popup/>
+          <q-btn flat label="Przedłuż" color="primary" v-close-popup @click="pinProlongLicense = true"/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="pinProlongLicense">
+      <q-card class="bg-red-5 text-center">
+        <q-card-section class="flex-center">
+          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
+          <q-input @keypress.enter="prolongLicenseList();pinProlongLicense=false" autofocus type="password"
+                   v-model="pinCode" filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn label="anuluj" color="black" v-close-popup @click="pinCode=null"/>
+          <q-btn label="Przedłuż" color="black" v-close-popup @click="prolongLicenseList(); pinCode=null"/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
@@ -103,8 +134,11 @@ export default {
       licenseList: [],
       memberName: '',
       memberUUID: '',
+      prolongLicenseAlert: false,
+      pinProlongLicense: false,
       memberDial: false,
       legitimationNumber: null,
+      pinCode: null,
       success: false,
       failure: false,
       message: null,
@@ -156,10 +190,6 @@ export default {
             response => {
               this.success = true
               this.message = response
-              this.licensePistolPermission = false
-              this.licenseRiflePermission = false
-              this.licenseShotgunPermission = false
-              this.getMembersWithLicense()
               this.getMembersWithLicenseNotValid()
               this.autoClose()
             }
@@ -187,11 +217,7 @@ export default {
             response => {
               this.success = true
               this.message = response
-              this.licensePistolPermission = false
-              this.licenseRiflePermission = false
-              this.licenseShotgunPermission = false
               this.licenseList = []
-              this.getMembersWithLicense()
               this.getMembersWithLicenseNotValid()
               this.autoClose()
             }

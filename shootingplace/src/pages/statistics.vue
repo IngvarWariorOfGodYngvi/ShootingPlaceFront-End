@@ -117,7 +117,9 @@
               </q-input>
             </q-item>
             <div class="q-pa-md">
-              <q-btn @click="getSumJoinDate ()">Wyszukaj</q-btn>
+              <q-btn @click="getSumJoinDate()" label="Wyszukaj"></q-btn>
+              <p></p>
+              <q-btn v-if="firstDateJoinDate!=null&&secondDateJoinDate!=null" @click="getSumJoinDateXLSXFile()" label="pobierz plik xlsx" color="green-3" text-color="black"></q-btn>
             </div>
         </q-card-section>
         <q-card-section class="col">
@@ -452,6 +454,7 @@ import { scroll } from 'quasar'
 import App from 'src/App.vue'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox.vue'
+import axios from 'axios'
 
 const { getScrollTarget, setScrollPosition } = scroll
 
@@ -553,6 +556,22 @@ export default {
           this.quantitySumJoinDate = response
           this.quantitySumJoinDateRearangeTable = response
         })
+      })
+    },
+    getSumJoinDateXLSXFile () {
+      axios({
+        url: 'http://' + this.local + '/files/joinDateSum?firstDate=' + this.firstDateJoinDate.replace(/\//gi, '-') + '&secondDate=' + this.secondDateJoinDate.replace(/\//gi, '-'),
+        method: 'GET',
+        responseType: 'blob'
+      }).then(response => {
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        const fileLink = document.createElement('a')
+        fileLink.href = fileURL
+        fileLink.setAttribute('download', 'lista.xlsx')
+        document.body.appendChild(fileLink)
+        fileLink.click()
+        this.listDownload = true
+        this.autoClose()
       })
     },
     getSumErased () {

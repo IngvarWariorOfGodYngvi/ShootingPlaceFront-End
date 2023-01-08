@@ -288,6 +288,7 @@
           <q-item><q-btn v-if="uuid!=null&&uuid!=''" label="potwierdź zapis do portalu pzss" color="primary" @click="pzssPortal=true"/></q-item>
           <q-item><q-btn v-if="uuid!=null&&uuid!=''" color="secondary" @click="personalCardDownloadConfirm=true" label="Drukuj kartę" /></q-item>
           <q-item><q-btn v-if="uuid!=null&&uuid!=''" color="secondary" @click="contributionDownloadConfirm=true" label="Potwierdzenie opłacenia składki" /></q-item>
+          <q-item><DeklaracjaLOK v-if="uuid!=null&&uuid!=''" :uuid="uuid"/></q-item>
           <q-item><q-btn v-if="uuid!=null&&uuid!=''" color="secondary" @click="getCSVFile()" label="Pobierz plik .CSV" /></q-item>
           <q-item v-if="uuid!=null"><q-item-label>Identyfikator : {{uuid}}</q-item-label></q-item>
           <q-item v-if="alertResponse!=null" class="bg-red-3"><q-item-label>Ostrzeżenie : {{alertResponse}}</q-item-label></q-item>
@@ -473,9 +474,11 @@
 import Vue from 'vue'
 import axios from 'axios'
 import App from 'src/App.vue'
+import DeklaracjaLOK from 'components/DeklaracjaLOK.vue'
 Vue.prototype.$axios = axios
 
 export default {
+  components: { DeklaracjaLOK },
   data () {
     return {
       returningToClub: false,

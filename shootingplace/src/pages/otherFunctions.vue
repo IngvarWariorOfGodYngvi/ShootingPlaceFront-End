@@ -5,102 +5,14 @@
           <div class="text-center col full-width no-outline text-h4 text-bold" tabindex="0">Pozostałe Funkcje</div>
         </q-item>
       </div>
-      <q-expansion-item label="Lista osób spoza klubu" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
-      <q-card class="row text-body2">
-        <q-card-section class="col">
-      <div class="q-pa-md text-center col full-width no-outline text-h5 text-bold" tabindex="0">Lista osób spoza klubu</div>
-          <q-scroll-area class="full-width q-pa-none" style="height: 400px;">
-            <ol>
-        <li v-for="(others,id) in others" :key="id">
-          <div class="row">
-           <q-field dense class="col" label="Nazwisko" standout="bg-accent text-black" stack-label>
-                    <div>
-                        <div class="self-center col full-width no-outline text-left text-black" tabindex="0">{{others.secondName}} {{others.firstName}}</div>
-                        <div class="self-center col full-width no-outline text-left text-black" tabindex="0"></div>
-                    </div>
-           </q-field>
-           <q-field dense class="col" label="Klub" standout="bg-accent text-black" stack-label>
-                    <div>
-                      <div class="self-center col full-width no-outline text-left text-black" tabindex="0">{{others.club.name}}</div>
-                    </div>
-           </q-field>
-           <q-field dense class="col" label="telefon" standout="bg-accent text-black" stack-label>
-                    <div>
-                  <div class="self-center col full-width no-outline text-left text-black row" tabindex="0">{{others.phoneNumber}}</div>
-                  </div>
-           </q-field>
-           <q-field dense class="col" label="email" standout="bg-accent text-black" stack-label>
-                    <div>
-                  <div class="self-center col full-width no-outline text-left text-black row" tabindex="1">{{others.email}}</div>
-                  </div>
-           </q-field>
-           <q-btn dense class="col-1" color="primary" @click="othersID = others.id,alert=true" icon="delete"><q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">Usuń</q-tooltip></q-btn>
-           <q-btn dense class="col-1" color="secondary" @click="othersID = others.id,otherPersonFirstName = others.firstName,otherPersonSecondName = others.secondName,otherPersonPhoneNumber = others.phoneNumber,otherPersonEmail = others.email,clubNamePerson = others.club.name,getAllClubsToTournament(),editOtherPerson=true" icon="edit"><q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">Edytuj</q-tooltip></q-btn>
-           </div>
-           <p></p>
-        </li>
-        </ol>
-           </q-scroll-area>
-    </q-card-section>
-        </q-card>
+      <q-expansion-item label="Lista osób spoza klubu" dense class="text-left text-h6 text-bold bg-grey-3 q-mb-md" group="list">
+        <OtherList></OtherList>
       </q-expansion-item>
-      <p></p>
-      <q-expansion-item label="Lista znanych klubów" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
-        <q-card class="text-body2">
-          <q-card-section>
-          <div class="q-pa-md text-center col full-width no-outline text-h5 text-bold" tabindex="0">Lista znanych klubów</div>
-          <div class="q-pb-md"><q-btn @click="createClub=true">utwórz nowy klub</q-btn></div>
-            <q-scroll-area class="full-width q-pa-none" style="height: 400px;">
-            <div v-for="(club,id) in clubs" :key="id">
-              <div v-if="club.name!='BRAK'" class="row">
-                <div @dblclick="clubInfoModel=club,clubInfo=true" class="col-2">
-                  <q-field dense label="Klub" standout="bg-accent text-black" stack-label clickable>
-                      <div class="self-center col full-width no-outline text-left text-black" tabindex="1">{{club.name}}</div>
-                  </q-field>
-                </div>
-                <div class="col">
-                  <a :href="club.url" target="_blank">
-                    <q-field dense class="col" label="strona" standout="bg-accent text-black" stack-label>
-                        <div class="self-center col full-width no-outline text-left text-black" tabindex="1">{{club.url}}</div>
-                    </q-field>
-                  </a>
-                </div>
-                <div class="col-4">
-                  <q-field dense label="adres" standout="bg-accent text-black" stack-label>
-                    <div class="self-center col full-width no-outline text-left text-black" tabindex="1">{{club.address}}</div>
-                  </q-field>
-                </div>
-                  <q-btn dense class="col-1" @click="clubID = club.id,editClub=true" icon="edit"><q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">Edytuj {{club.name}}</q-tooltip></q-btn>
-           </div>
-            <p></p>
-            </div>
-            </q-scroll-area>
-          </q-card-section>
-        </q-card>
+      <q-expansion-item label="Lista znanych klubów" dense class="text-left text-h6 text-bold bg-grey-3 q-mb-md" group="list">
+        <Clubs></Clubs>
       </q-expansion-item>
-      <p></p>
       <q-expansion-item label="Lista Konkurencji" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
-        <q-card class="text-body2">
-          <q-card-section>
-          <div class="q-pa-md text-center col full-width no-outline text-h5 text-bold" tabindex="0">Lista Konkurencji</div>
-            <q-scroll-area class="full-width q-pa-none" style="height: 400px;">
-            <div v-for="(comp,uuid) in competitions" :key="uuid">
-              <div v-if="comp.name!='BRAK'" class="col">
-                <div class="row">
-                  <q-field class="col" label="Konkurencja" standout="bg-accent text-black" stack-label clickable>
-                      <div class="self-center col full-width no-outline text-left text-black" tabindex="1">{{comp.name}}</div>
-                  </q-field>
-                  <q-field class="col-2" label="Kolejność na listach" standout="bg-accent text-black" stack-label clickable>
-                      <div class="self-center col full-width no-outline text-center text-black" tabindex="1">{{comp.ordering}}</div>
-                  </q-field>
-                  <q-btn class="col-4" @click="competition=comp,competitionInfo=true">edytuj dane {{comp.name}}</q-btn>
-                </div>
-           </div>
-            <p></p>
-            </div>
-            </q-scroll-area>
-          </q-card-section>
-        </q-card>
+        <Competitions></Competitions>
       </q-expansion-item>
       <p></p>
       <q-expansion-item label="Dodatkowe Funkcje" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
@@ -108,7 +20,7 @@
             <q-card-section>
           <div class="q-pa-md text-center col full-width no-outline text-h5 text-bold">Dodatkowe Funkcje</div>
           <div class="row">
-            <q-select class="full-width" filled v-model="choose" :options="chooseSelect" @input="policeList=[],toEraseList=[]" label="Wybierz Opcję">
+            <q-select class="full-width" filled v-model="choose" :options="chooseSelect" @input="policeList=[];toEraseList=[]" label="Wybierz Opcję">
               <template v-slot:no-option>
                 <q-item>
                   <q-item-section class="text-grey">
@@ -117,21 +29,18 @@
                 </q-item>
               </template>
             </q-select>
-              <div v-if="choose == chooseSelect[0]" class="q-pa-md">
-              <q-radio v-model="tableCondition" :val="true">
-                dorośli
-              </q-radio>
-              <q-radio v-model="tableCondition" :val="false">
-                mołodzież
-              </q-radio>
-                <q-item>
-                  <q-btn v-if="tableCondition" color="primary" label="pobierz listę wszystkich klubowiczów dorosłych" @click="showloading (),getAllMembersList()"/>
-                  <q-btn v-if="!tableCondition" color="primary" label="pobierz listę wszystkich klubowiczów młodzieżowych" @click="showloading (),getAllMembersList()"/>
-                </q-item>
-                <q-item>
-                  <q-btn color="primary" label="wyświetl listę numerów telefonów" @click="showloading (),getMembersPhoneNumbers (),membersPhoneNumbers = true"/>
-                  <q-btn color="primary" label="wyświetl listę email" @click="showloading (),getMembersEmails (),membersEmails = true"/>
-                </q-item>
+              <div v-if="choose === chooseSelect[0]" class="q-pa-md">
+                <div>
+              <q-radio label="dorośli" v-model="tableCondition" :val="true"/>
+              <q-radio label="młodzież" v-model="tableCondition" :val="false"/>
+                </div>
+                <q-btn color="primary" :label="tableCondition?'pobierz listę wszystkich klubowiczów dorosłych PDF':'pobierz listę wszystkich klubowiczów młodzieżowych PDF'" @click="showloading ();getAllMembersList()"/>
+                <p></p>
+                <q-btn color="green-3" text-color="black" :label="tableCondition?'pobierz listę wszystkich klubowiczów dorosłych XLSX':'pobierz listę wszystkich klubowiczów młodzieżowych XLSX'" @click="showloading ();getAllMembersListXLSXFile()"/>
+                <p></p>
+                <q-btn color="primary" label="wyświetl listę numerów telefonów" @click="showloading ();getMembersPhoneNumbers ();membersPhoneNumbers = true"/>
+                <p></p>
+                <q-btn color="primary" label="wyświetl listę email" @click="showloading ();getMembersEmails ();membersEmails = true"/>
               </div>
               <p></p>
               </div>
@@ -344,7 +253,7 @@
                         <q-virtual-scroll :items="item.wtedtoList" visible class="q-pa-none">
                           <template v-slot="{ item, index }">
                             <q-field :key="index" dense class="bg-grey-2" color="black" standout="bg-accent text-black">
-                              <div class="row full-width" @dblclick="uuid1 = item.uuid, editWorkTime=true">
+                              <div class="row full-width" @dblclick="uuid1 = item.uuid; editWorkTime=true">
                                 <div class="text-left self-center text-bold" @dblclick="editWorkTime=true">{{index+1}}</div>
                                 <div class="col-2 text-center self-center">{{item.start.replace('T',' ').substring(0, 19)}}</div>
                                 <div class="col-2 text-center self-center">{{item.stop.replace('T',' ').substring(0, 19)}}</div>
@@ -355,7 +264,7 @@
                                 <div v-if="item.automatedClosed" class="col text-center self-center bg-primary text-white">TAK</div>
                                 <div v-else class="col text-center self-center"></div>
                                 <div v-if="item.accepted" class="col text-center self-center bg-green">ZATWIERDZONO</div>
-                                <div v-else class="col text-center self-center"><q-checkbox v-model="acceptedList" :val="item.uuid" label="zatwierdź" @input="c = checkLenght(workList)"></q-checkbox></div>
+                                <div v-else class="col text-center self-center"><q-checkbox v-model="acceptedList" :val="item.uuid" label="zatwierdź" @input="c = checkLength(workList)"></q-checkbox></div>
                               </div>
                             </q-field>
                           </template>
@@ -463,45 +372,6 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="alert">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Czy na pewno usunąć? Zmiana będzie trwała.</div>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat icon="cancel" color="primary" v-close-popup/>
-          <q-btn flat icon="delete" color="primary" v-close-popup @click="deactivateOther()"/>
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-    <q-dialog v-model="editOtherPerson">
-      <q-card>
-        <q-card-section>
-                <q-item><q-input v-model="otherPersonFirstName" class="full-width" filled label="Imię"></q-input></q-item>
-                <q-item><q-input v-model="otherPersonSecondName" class="full-width" filled label="Nazwisko"></q-input></q-item>
-                <q-item><q-checkbox left-label color="primary" false-value="" true-value="BRAK" v-model="clubNamePerson" :val="'BRAK'" label="Brak Klubu"></q-checkbox>
-                <q-item v-if="clubNamePerson!='BRAK'" class="full-width">
-                  <q-select v-if="clubNamePerson!='BRAK'" class="full-width" @new-value="createValue" hide-selected use-chips filled v-model="clubNamePerson" use-input fill-input input-debounce="0" :options="filterOptions" @filter="filterFna" label="Wybierz Klub">
-                    <template v-slot:no-option>
-                      <q-item>
-                        <q-item-section class="text-grey">
-                            Brak wyników
-                        </q-item-section>
-                      </q-item>
-                    </template>
-                  </q-select>
-                </q-item>
-                </q-item>
-                <q-item><q-input v-model="otherPersonPhoneNumber" type="tel" class="full-width" mask="### ### ###" filled label="Telefon"></q-input></q-item>
-                <q-item><q-input v-model="otherPersonEmail" type="email" class="full-width" filled label="email"></q-input></q-item>
-        </q-card-section>
-        <q-card-actions align="right">
-          <q-btn flat icon="close" color="primary" v-close-popup/>
-          <q-btn flat icon="save" color="primary" v-close-popup @click="updateOtherPerson(othersID,otherPersonFirstName, otherPersonSecondName, otherPersonPhoneNumber,otherPersonEmail)"/>
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
     <q-dialog :position="'top'" v-model="success">
       <q-card>
         <q-card-section>
@@ -529,109 +399,6 @@
         </q-card-section>
         <q-card-actions align="right">
           <q-btn flat label="zamknij" color="primary" v-close-popup/>
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-    <q-dialog v-model="clubInfo">
-      <q-card>
-        <q-card-section class="text-bold">
-          <div class="text-h6">Informacje dodatkowe o klubie {{clubInfoModel.name}}</div>
-        <div>ID : {{clubInfoModel.id}}</div>
-        <div v-if="clubInfoModel.id == 1">Pełna nazwa : {{clubInfoModel.fullName}}</div>
-        <div v-if="clubInfoModel.id == 1">Numer Licencji Klubowej : {{clubInfoModel.licenseNumber}}</div>
-        <div>email : {{clubInfoModel.email}}</div>
-        <div>telefon : {{clubInfoModel.phoneNumber}}</div>
-        <div>adres : {{clubInfoModel.address}}</div>
-        </q-card-section>
-        <q-card-actions align="right">
-          <q-btn flat label="zamknij" color="primary" v-close-popup/>
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-    <q-dialog v-model="competitionInfo">
-      <q-card>
-        <q-card-section class="text-bold">
-          <div class="text-h6">{{competition.name}}</div>
-        <div>ID: {{competition.uuid}}</div>
-        <div>Dyscyplina: {{competition.discipline}}</div>
-        <div>Ilość Strzałów: {{competition.numberOfShots}}</div>
-        <div>Rodzaj: {{competition.type}}</div>
-        <div class="row">Metoda Liczenia: <div v-if="competition.countingMethod == 'NORMAL'">: Normalnie</div><div v-else>{{competition.countingMethod}}</div></div>
-        <div>Numer Kolejności na Listach: {{competition.ordering}}</div>
-        <div>Ilość Strzałów próbnych: {{competition.practiceShots}}</div>
-        <div>Kaliber: {{competition.caliberUUID}}</div>
-        <q-field class="col-2 cursor-pointer" standout="bg-accent text-black" label="ZMIEŃ NUMER KOLEJNOŚCI NA LISTACH">
-            <q-popup-edit @keypress.enter="compID=competition.uuid,updateCompetition()">
-                <q-input v-model="orderNumber" input-class="text-center" dense autofocus stack-label label="zmień na inny numer" onkeypress="return (event.charCode > 47 && event.charCode < 58)" @keypress.enter="compID=competition.uuid,updateCompetition()"/>
-                <div class="q-pa-xs">
-                  <q-btn align="left" color="primary" label="Anuluj" v-close-popup></q-btn>
-                  <q-btn align="right" color="primary" label="Zmień" v-close-popup @click="compID=competition.uuid,updateCompetition()"></q-btn>
-                </div>
-            </q-popup-edit>
-        </q-field>
-        <q-field class="col-2 cursor-pointer" standout="bg-accent text-black" label="ZMIEŃ ILOŚĆ STRZAŁÓW PRÓBNYCH">
-            <q-popup-edit @keypress.enter="compID=competition.uuid,updateCompetition()">
-                <q-input v-model="practiceShots" input-class="text-center" dense autofocus stack-label label="zmień na inny numer" onkeypress="return (event.charCode > 47 && event.charCode < 58)" @keypress.enter="compID=competition.uuid,updateCompetition()"/>
-                <div class="q-pa-xs">
-                  <q-btn align="left" color="primary" label="Anuluj" v-close-popup></q-btn>
-                  <q-btn align="right" color="primary" label="Zmień" v-close-popup @click="compID=competition.uuid,updateCompetition()"></q-btn>
-                </div>
-            </q-popup-edit>
-        </q-field>
-        <q-field class="col-2 cursor-pointer" standout="bg-accent text-black" label="ZMIEŃ KALIBER">
-            <q-popup-edit @keypress.enter="compID=competition.uuid,updateCompetition()">
-                <q-input v-model="caliberUUID" input-class="text-center" dense autofocus stack-label label="zmień na inny numer" onkeypress="return (event.charCode > 47 && event.charCode < 58)" @keypress.enter="compID=competition.uuid,updateCompetition()"/>
-                <div class="q-pa-xs">
-                  <q-btn align="left" color="primary" label="Anuluj" v-close-popup></q-btn>
-                  <q-btn align="right" color="primary" label="Zmień" v-close-popup @click="compID=competition.uuid,updateCompetition()"></q-btn>
-                </div>
-            </q-popup-edit>
-        </q-field>
-        </q-card-section>
-        <q-card-actions align="right">
-          <q-btn flat label="zamknij" color="primary" v-close-popup/>
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-    <q-dialog v-model="createClub">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6" style="min-width: 500px">Utwórz nowy Klub</div>
-        </q-card-section>
-        <q-card-section>
-                <q-item><q-input v-model="clubName" class="full-width" filled label="Nazwa"></q-input></q-item>
-                <q-item><q-input v-model="clubFullName" class="full-width" filled label="Pełna nazwa do dokumentów"></q-input></q-item>
-                <q-item v-if="clubID == 1"><q-input v-model="clubLicenseNumber" class="full-width" filled label="Numer licencji Klubowej"></q-input></q-item>
-                <q-item><q-input v-model="clubPhoneNumber" type="tel" class="full-width" mask="### ### ###" filled label="Telefon"></q-input></q-item>
-                <q-item><q-input v-model="clubEmail" type="email" class="full-width" filled label="email"></q-input></q-item>
-                <q-item><q-input v-model="clubAddress" type="address" class="full-width" filled label="Adres"></q-input></q-item>
-                <q-item><q-input v-model="clubURL" type="url" class="full-width" filled label="Strona internetowa"></q-input></q-item>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat icon="cancel" color="primary" v-close-popup/>
-          <q-btn icon="save" color="primary" v-close-popup @click="createNewClub()"/>
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-    <q-dialog v-model="editClub">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6" style="min-width: 500px">Zmień dane klubu</div>
-        </q-card-section>
-        <q-card-section>
-                <q-item><q-input v-model="clubName" class="full-width" filled label="Nazwa"></q-input></q-item>
-                <q-item><q-input v-model="clubFullName" class="full-width" filled label="Pełna nazwa do dokumentów"></q-input></q-item>
-                <q-item v-if="clubID == 1"><q-input v-model="clubLicenseNumber" class="full-width" filled label="Numer licencji Klubowej"></q-input></q-item>
-                <q-item><q-input v-model="clubPhoneNumber" type="tel" class="full-width" mask="### ### ###" filled label="Telefon"></q-input></q-item>
-                <q-item><q-input v-model="clubEmail" type="email" class="full-width" filled label="email"></q-input></q-item>
-                <q-item><q-input v-model="clubAddress" type="address" class="full-width" filled label="Adres"></q-input></q-item>
-                <q-item><q-input v-model="clubURL" type="url" class="full-width" filled label="Strona internetowa"></q-input></q-item>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat icon="cancel" color="primary" v-close-popup/>
-          <q-btn icon="save" color="primary" v-close-popup @click="updateClub()"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -672,7 +439,8 @@
 </template>
 
 <script>
-const stringOptions = []
+import lazyLoadComponent from 'src/utils/lazyLoadComponent'
+import SkeletonBox from 'src/utils/SkeletonBox.vue'
 import { scroll } from 'quasar'
 import Vue from 'vue'
 import axios from 'axios'
@@ -682,6 +450,20 @@ const { getScrollTarget, setScrollPosition } = scroll
 Vue.prototype.$axios = axios
 
 export default {
+  components: {
+    OtherList: lazyLoadComponent({
+      componentFactory: () => import('components/OtherFunctions/OthersList.vue'),
+      loading: SkeletonBox
+    }),
+    Clubs: lazyLoadComponent({
+      componentFactory: () => import('components/OtherFunctions/Clubs.vue'),
+      loading: SkeletonBox
+    }),
+    Competitions: lazyLoadComponent({
+      componentFactory: () => import('components/OtherFunctions/Competitions.vue'),
+      loading: SkeletonBox
+    })
+  },
   data () {
     return {
       workTimeChangeArray: [],
@@ -698,8 +480,6 @@ export default {
       toEraseList: [],
       checked: false,
       erasedList: [],
-      others: [],
-      clubs: [],
       choose: null,
       chooseSelect: ['Listy Klubowiczów', 'Lista do zgłoszenia na Policję', 'Lista do skreślenia', 'Lista skreślonych', 'Osoby bez Patentu', 'Osoby nieaktywne', 'Lista Osób z Licencją i bez składek', 'Lista Obecności', 'Raport Sędziowania', 'Raport Czasu Pracy', 'Książka rejestru pobytu na strzelnicy'],
       month: ['Styczeń', 'Luty', 'Marczec', 'Kwiecień', 'Maj', 'Czerwiec', 'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień'],
@@ -711,43 +491,19 @@ export default {
       workTypeSelect1: null,
       acceptedList: [],
       detailed: false,
-      othersID: null,
       otherPerson: [],
       club: '',
-      clubNames: [],
-      competitions: null,
       competition: [],
       copmID: null,
       competitionInfo: false,
       listDownload: false,
-      orderNumber: null,
-      clubNamePerson: null,
-      clubID: null,
-      clubName: null,
-      clubFullName: null,
-      clubLicenseNumber: null,
-      clubPhoneNumber: null,
-      clubEmail: null,
-      clubAddress: null,
-      clubURL: null,
-      clubInfo: false,
-      clubInfoModel: [],
-      createClub: false,
       policeList: [],
       evidenceBookList: [],
       success: false,
-      editClub: false,
       failure: false,
-      alert: false,
       editOtherPerson: false,
-      otherPersonFirstName: null,
-      otherPersonSecondName: null,
-      otherPersonPhoneNumber: null,
-      otherPersonEmail: null,
       condition: true,
       tableCondition: true,
-      practiceShots: null,
-      caliberUUID: null,
       emails: null,
       phoneNumbers: null,
       membersEmails: false,
@@ -758,14 +514,10 @@ export default {
       workList: [],
       usersList: [],
       nowDate: Date.now(),
-      filterOptions: stringOptions,
       local: App.host
     }
   },
   created () {
-    this.getOther()
-    this.getAllClubs()
-    this.getCompetitions()
     this.getWorkingType()
   },
   methods: {
@@ -834,7 +586,7 @@ export default {
     logger (item) {
       console.log(item)
     },
-    checkLenght (list) {
+    checkLength (list) {
       let length = 0
       for (let i = 0; i < list.length; i++) {
         for (let j = 0; j < list[i].wtedtoList.length; j++) {
@@ -902,14 +654,6 @@ export default {
           this.evidenceBookList = response
         })
     },
-    getOther () {
-      fetch('http://' + this.local + '/other/all', {
-        method: 'GET'
-      }).then(response => response.json())
-        .then(response => {
-          this.others = response
-        })
-    },
     getWorkingType () {
       fetch('http://' + this.local + '/work/workType', {
         method: 'GET'
@@ -925,14 +669,6 @@ export default {
       }).then(response => response.json())
         .then(response => {
           this.usersList = response
-        })
-    },
-    getAllClubs () {
-      fetch('http://' + this.local + '/club/', {
-        method: 'GET'
-      }).then(response => response.json())
-        .then(clubs => {
-          this.clubs = clubs
         })
     },
     getMembersToReportToThePolice () {
@@ -1039,175 +775,6 @@ export default {
           this.phoneNumbers = response
         })
     },
-    getCompetitions () {
-      fetch('http://' + this.local + '/competition/', {
-        method: 'GET'
-      }).then(response => response.json())
-        .then(response => {
-          this.competitions = response
-        })
-    },
-    updateClub () {
-      const data = {
-        name: this.clubName,
-        fullName: this.clubFullName,
-        licenseNumber: this.clubLicenseNumber,
-        phoneNumber: this.clubPhoneNumber,
-        email: this.clubEmail,
-        address: this.clubAddress,
-        url: this.clubURL
-      }
-      fetch('http://' + this.local + '/club/' + this.clubID, {
-        method: 'PUT',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          this.message = response
-          this.success = true
-          this.clubName = null
-          this.clubFullName = null
-          this.clubLicenseNumber = null
-          this.clubEmail = null
-          this.clubAddress = null
-          this.clubURL = null
-          this.getOther()
-          this.getAllClubs()
-          this.autoClose()
-        } else {
-          this.failure = true
-          this.autoClose()
-        }
-      })
-    },
-    createNewClub () {
-      const data = {
-        name: this.clubName,
-        fullName: this.clubFullName,
-        licenseNumber: this.clubLicenseNumber,
-        phoneNumber: this.clubPhoneNumber,
-        email: this.clubEmail,
-        address: this.clubAddress,
-        url: this.clubURL
-      }
-      fetch('http://' + this.local + '/club/create', {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.text().then(
-            response => {
-              this.success = true
-              this.message = response
-              this.clubName = null
-              this.clubFullName = null
-              this.clubLicenseNumber = null
-              this.clubEmail = null
-              this.clubAddress = null
-              this.clubURL = null
-              this.getOther()
-              this.getAllClubs()
-              this.autoClose()
-            }
-          )
-        } else {
-          response.text().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.autoClose()
-            }
-          )
-        }
-      })
-    },
-    updateCompetition () {
-      const data = {
-        ordering: this.orderNumber,
-        practiceShots: this.practiceShots,
-        caliberUUID: this.caliberUUID
-      }
-      fetch('http://' + this.local + '/competition/update?uuid=' + this.compID, {
-        method: 'PUT',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.json().then(
-            response => {
-              if (this.orderNumber !== null) {
-                this.competition.ordering = this.orderNumber
-              }
-              if (this.practiceShots !== null) {
-                this.competition.practiceShots = this.practiceShots
-              }
-              if (this.caliberUUID !== null) {
-                this.competition.caliberUUID = this.caliberUUID
-              }
-              this.message = response
-              this.success = true
-              this.showloading()
-              this.getCompetitions()
-              this.autoClose()
-            })
-        } else {
-          response.json().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.autoClose()
-            }
-          )
-        }
-      })
-    },
-    updateOtherPerson (id, first, second, phone, mail) {
-      const data = {
-        firstName: first,
-        secondName: second,
-        phoneNumber: phone,
-        email: mail
-      }
-      fetch('http://' + this.local + '/other/?id=' + id + '&clubName=' + this.clubNamePerson, {
-        method: 'PUT',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          this.getOther()
-          this.success = true
-          this.autoClose()
-        } else {
-          this.failure = true
-          this.autoClose()
-        }
-      })
-    },
-    deactivateOther () {
-      fetch('http://' + this.local + '/other/?id=' + this.othersID, {
-        method: 'POST'
-      }).then(response => {
-        if (response.status === 200) {
-          this.success = true
-          this.othersID = null
-          this.getOther()
-          this.getAllClubs()
-          this.autoClose()
-        } else {
-          this.failure = true
-          this.autoClose()
-        }
-      })
-    },
     getAllMembersList () {
       axios({
         url: 'http://' + this.local + '/files/downloadAllMembers/?condition=' + this.tableCondition,
@@ -1218,6 +785,22 @@ export default {
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
         fileLink.setAttribute('download', 'Lista_klubowiczów_na_dzień ' + this.nowDate + '.pdf')
+        document.body.appendChild(fileLink)
+        fileLink.click()
+        this.listDownload = true
+        this.autoClose()
+      })
+    },
+    getAllMembersListXLSXFile () {
+      axios({
+        url: 'http://' + this.local + '/files/downloadAllMembersXLSXFile/?condition=' + this.tableCondition,
+        method: 'GET',
+        responseType: 'blob'
+      }).then(response => {
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        const fileLink = document.createElement('a')
+        fileLink.href = fileURL
+        fileLink.setAttribute('download', 'Lista_klubowiczów_na_dzień ' + this.nowDate + '.xlsx')
         document.body.appendChild(fileLink)
         fileLink.click()
         this.listDownload = true
@@ -1347,51 +930,11 @@ export default {
           this.workList = response
         })
     },
-    createValue (val, done) {
-      if (val.length > 0) {
-        const model = (this.clubNames || []).slice()
-
-        val
-          .split(/[,;|]+/)
-          .map(v => v.trim())
-          .filter(v => v.length > 0)
-          .forEach(v => {
-            if (this.clubNames.includes(v) === false) {
-              this.clubNames.push(v)
-            }
-            if (model.includes(v) === false) {
-              model.push(v)
-            }
-          })
-
-        done(null)
-        this.clubNames = model
-      }
-    },
-    filterFna (val, update) {
-      update(() => {
-        if (val === '') {
-          this.filterOptions = this.clubNames
-        } else {
-          const needle = val.toLowerCase()
-          this.filterOptions = this.clubNames.filter(
-            v => v.toLowerCase().indexOf(needle) > -1
-          )
-        }
-      })
-    },
-    getAllClubsToTournament () {
-      fetch('http://' + this.local + '/club/tournament', {
-        method: 'GET'
-      }).then(response => response.json())
-        .then(response => {
-          this.clubNames = response
-        })
-    },
     autoClose () {
       setTimeout(() => {
         this.success = false
         this.failure = false
+        this.message = null
         this.listDownload = false
         this.acceptWorkingTimeDial = false
         this.changeWorkingTimeDial = false

@@ -852,6 +852,13 @@
               <q-btn v-if="clubChoice!==''&&clubChoiceToggle" color="primary" label="zmień klub macierzysty" @click="changeClub(member.uuid, clubChoice)"></q-btn>
             </div>
           </q-expansion-item>
+          <q-expansion-item dense label="Przypisane dokumenty" class="text-center bg-white"
+                            @click="uuid = member.uuid;getAllMemberFiles(uuid)">
+            <q-item dense v-for="(item,uuid) in personalFiles" :key="uuid" class="text-black text-center full-width" clickable>
+              <q-field dense color="black" borderless class="cursor-pointer full-width" standout="text-black"
+                       stack-label>{{item.name}} {{item.date}}</q-field>
+            </q-item>
+          </q-expansion-item>
         </q-expansion-item>
         <q-expansion-item dense label="Historia startów" group="right-card" class="bg-grey-3">
           <div class="bg-white">
@@ -993,6 +1000,9 @@
       <q-card-section class="col-5">
         <div class="col full-width">
           <q-item>
+            <DeklaracjaLOK :uuid="member.uuid"></DeklaracjaLOK>
+          </q-item>
+          <q-item>
             <q-btn class="full-width" label="Pobierz kartę Członkowską" color="secondary"
                    @click="memberUUID=member.uuid;name=member.firstName;name2=member.secondName;personalCardDownloadConfirm=true"/>
           </q-item>
@@ -1008,7 +1018,7 @@
 <!--              SKŁADEK-->
 <!--            </q-tooltip>-->
 <!--          </q-item>-->
-          <q-item v-if="!member.erased&&member.license.number!==null&&member.adult">
+          <q-item v-if="!member.erased&&member.license.number!==null&&member.shootingPatent.patentNumber!=null">
             <q-tooltip v-if="member.club.id !== 1" content-class="text-h6 bg-red" anchor="top middle" self="bottom middle" :offset="[12, 12]">INNY KLUB MACIERZYSTY
             </q-tooltip>
             <q-btn :disable="member.club.id !== 1" class="full-width" label="Pobierz wniosek o licencję" color="secondary"
@@ -1020,10 +1030,10 @@
               LICENCJI
             </q-tooltip>
           </q-item>
-          <q-item v-if="!member.erased&&member.license.number!==null&&!member.adult">
+          <q-item v-if="!member.erased&&member.license.number!==null&&member.shootingPatent.patentNumber===null">
             <q-btn disable class="full-width" label="Pobierz wniosek o licencję" color="secondary"/>
             <q-tooltip content-class="text-h6 bg-red" anchor="top middle" self="bottom middle" :offset="[12, 12]">BRAK
-              DRUKU DLA MŁODZIEŻY
+              PATENTU
             </q-tooltip>
           </q-item>
           <q-item v-if="!member.erased">
@@ -1679,16 +1689,16 @@
         </q-card-section>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="contributionAlert" @keypress.enter="contributionAlert=false">
+    <q-dialog v-model="contributionAlert" :position="'top'">
       <q-card>
         <q-card-section>
           <div class="text-h6">Składka została przedłużona</div>
         </q-card-section>
 
-        <q-card-actions align="right">
-          <q-btn flat icon="close" color="primary" v-close-popup/>
-          <q-btn label="Pobierz Potwierdzenie" color="primary" v-close-popup @click="getContributionPDF()"/>
-        </q-card-actions>
+<!--        <q-card-actions align="right">-->
+<!--          <q-btn flat icon="close" color="primary" v-close-popup/>-->
+<!--          <q-btn label="Pobierz Potwierdzenie" color="primary" v-close-popup @click="getContributionPDF()"/>-->
+<!--        </q-card-actions>-->
       </q-card>
     </q-dialog>
     <q-dialog v-model="contributionRemoveRecordQuery" persistent
@@ -1997,6 +2007,7 @@
 import { scroll } from 'quasar'
 import axios from 'axios'
 import App from 'src/App.vue'
+import DeklaracjaLOK from 'components/DeklaracjaLOK.vue'
 
 const {
   getScrollTarget,
@@ -2005,6 +2016,7 @@ const {
 
 export default {
   name: 'Member',
+  components: { DeklaracjaLOK },
   data () {
     return {
       member: null,
@@ -2157,6 +2169,7 @@ export default {
       forbidden: false,
       toggleEnlargement: false,
       personalStatisticsObject: null,
+      personalFiles: null,
       selected_file: '',
       clubs: ['DZIESIĄTKA Łódź'],
       clubChoiceToggle: false,
@@ -2204,6 +2217,22 @@ export default {
           response.json().then(
             response => {
               this.personalStatisticsObject = response
+            })
+        }
+      })
+    },
+    getAllMemberFiles (uuid) {
+      this.showloading()
+      fetch('http://' + this.local + '/files/getAllMemberFiles?uuid=' + uuid, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          response.json().then(
+            response => {
+              this.personalFiles = response
             })
         }
       })
@@ -2378,6 +2407,7 @@ export default {
               this.message = response
               this.contributionAlert = true
               this.showloading()
+              this.getContributionPDF()
               this.getMemberByUUID(this.memberUUID)
               this.autoClose()
               this.code = null
@@ -2573,8 +2603,6 @@ export default {
         document.body.appendChild(fileLink)
         fileLink.click()
         this.contributionUUID = null
-        this.downloaded = true
-        this.autoClose()
       })
     },
     getPersonalCardPDF (uuid) {
@@ -3255,6 +3283,7 @@ export default {
         this.barcode = null
         this.clubChoice = null
         this.clubChoiceToggle = false
+        this.contributionAlert = false
         this.code = null
       }, 2000)
     }
