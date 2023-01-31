@@ -30,19 +30,19 @@ import SkeletonBox from 'src/utils/SkeletonBox.vue'
 export default {
   components: {
     DownloadBtn: lazyLoadComponent({
-      componentFactory: () => import('components/DownloadLicense.vue'),
+      componentFactory: () => import('components/license/DownloadLicense.vue'),
       loading: SkeletonBox
     }),
     NotValidLicense: lazyLoadComponent({
-      componentFactory: () => import('components/NotValidLicense.vue'),
+      componentFactory: () => import('components/license/NotValidLicense.vue'),
       loading: SkeletonBox
     }),
     ValidLicense: lazyLoadComponent({
-      componentFactory: () => import('components/ValidLicense.vue'),
+      componentFactory: () => import('components/license/ValidLicense.vue'),
       loading: SkeletonBox
     }),
     AllLicensePayment: lazyLoadComponent({
-      componentFactory: () => import('components/AllLicensePayment.vue'),
+      componentFactory: () => import('components/license/AllLicensePayment.vue'),
       loading: SkeletonBox
     })
   },

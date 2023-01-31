@@ -179,8 +179,8 @@
       <div class="bg-white">
         <div class="row">
           <q-select :label="memberName" class="col"
-                    :option-value="opt => opt? opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber : '0 0'"
-                    :option-label="opt => opt? opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber : '0 0'"
+                    :option-value="opt => opt!==''? opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber : '0 0'"
+                    :option-label="opt => opt!==''? opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber : '0 0'"
                     emit-value
                     map-options
                     label-color="black" v-model="memberName" fill-input filled dense use-input hide-selected
@@ -379,7 +379,7 @@ import SkeletonBox from 'src/utils/SkeletonBox.vue'
 export default {
   components: {
     Member: lazyLoadComponent({
-      componentFactory: () => import('components/Member.vue'),
+      componentFactory: () => import('components/member/Member.vue'),
       loading: SkeletonBox
     })
   },
@@ -653,14 +653,14 @@ export default {
         update(() => {
           const needle = val.toLowerCase()
           this.options = this.filters.filter(v => v.secondName.toLowerCase().indexOf(needle) > -1)
-          this.memberName = this.filters.filter(v => v.secondName.toLowerCase().indexOf(needle) > -1)
+          // this.memberName = this.filters.filter(v => v.secondName.toLowerCase().indexOf(needle) > -1)
         })
         return
       }
       update(() => {
         const needle = val.toLowerCase()
         this.options = this.filters.filter(v => v.secondName.toLowerCase().indexOf(needle) > -1)
-        this.memberName = this.filters.filter(v => v.secondName.toLowerCase().indexOf(needle) > -1)
+        // this.memberName = this.filters.filter(v => v.secondName.toLowerCase().indexOf(needle) > -1)
       })
     },
     filterOther (val, update) {

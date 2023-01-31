@@ -1,7 +1,8 @@
 <template>
-<div class="full-width">
-    <q-btn class="full-width" @click="membershipDeclarationLOKPDF()" color="secondary">Pobierz deklarację członkowską LOK</q-btn>
-</div>
+  <div class="full-width">
+    <q-btn class="full-width" @click="membershipDeclarationLOKPDF()" color="secondary">Pobierz deklarację członkowską LOK
+    </q-btn>
+  </div>
 </template>
 
 <script>
@@ -18,7 +19,7 @@ export default {
   },
   props: {
     uuid: {
-      type: Number,
+      type: String,
       required: true
     }
   },

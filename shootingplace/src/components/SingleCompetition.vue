@@ -510,7 +510,7 @@ export default {
   name: 'SingleCompetition',
   components: {
     Member: lazyLoadComponent({
-      componentFactory: () => import('components/Member.vue'),
+      componentFactory: () => import('components/member/Member.vue'),
       loading: SkeletonBox
     })
   },

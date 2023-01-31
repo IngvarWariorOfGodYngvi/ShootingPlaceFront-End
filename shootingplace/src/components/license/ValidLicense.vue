@@ -153,7 +153,7 @@
 
 <script>
 import App from 'src/App.vue'
-import Member from 'components/Member.vue'
+import Member from 'components/member/Member.vue'
 
 export default {
   name: 'ValidLicense',

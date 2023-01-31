@@ -16,9 +16,11 @@ const routes = [
       { path: '/statistics', name: 'statystyki', component: () => import(/* webpackChunkName: "Statystyki" */'pages/statistics.vue') },
       { path: '/otherFunctions', name: 'pozostałe funkcje', component: () => import(/* webpackChunkName: "Pozostałe funkcje" */'pages/otherFunctions.vue') },
       { path: '/settings', component: () => import(/* webpackChunkName: "Ustawienia" */'pages/settings.vue') },
+      { path: '/files', component: () => import(/* webpackChunkName: "Pliki" */'pages/file.vue') },
       { path: '/armory', name: 'zbrojownia', component: () => import(/* webpackChunkName: "Zbrojownia" */'pages/armory.vue') },
       { path: '/juryPanel', name: 'panel sędziego', component: () => import(/* webpackChunkName: "Panel Sędziego" */'pages/juryPanel.vue') },
-      { path: '/armory/galery', component: () => import(/* webpackChunkName: "Galeria" */'pages/galery.vue') }
+      { path: '/armory/galery', component: () => import(/* webpackChunkName: "Galeria" */'pages/galery.vue') },
+      { path: '/test', component: () => import(/* webpackChunkName: "Galeria" */'pages/test.vue') }
     ]
   },
 

@@ -8,14 +8,15 @@
       <q-card class="row" style="height:20vh;">
         <div class="col-4">
           <q-item>
-            <q-select dense class="full-width rounded text-white"
+            <q-select class="full-width rounded text-white"
                       label="Wybierz osobę"
-                      :option-value="opt => String(opt)? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber).toString() : ''"
-                      :option-label="opt => String(opt)? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber).toString() : ''"
+                      :option-value="opt => opt!==''? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber).toString() : ''"
+                      :option-label="opt => opt!==''? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber).toString() : ''"
                       emit-value
                       map-options
                       v-model="memberName"
-                      label-color="white" input-style="color: white;" bg-color="primary" fill-input filled use-input hide-selected :options="options" @filter="filter" @input="allMember = false" :value="options">
+                      label-color="white" input-style="color: white;" bg-color="primary" filled dense use-input hide-selected fill-input
+                      :options="options" @filter="filter" @input="allMember = false">
                   <template v-slot:option="option">
                     <q-item class="rounded" dense style="padding: 0; margin: 0;" v-bind="option['itemProps']" v-on="option.itemEvents" >
                       <q-item-section v-if="option['opt'].active" style="padding: 0.5em; margin: 0;" @click="memberName = option.opt.secondName+' '+option.opt.firstName+' '+ option.opt.legitimationNumber;temp = option.opt.legitimationNumber;temp = option.opt.legitimationNumber">
@@ -104,7 +105,7 @@
         </thead>
           </template>
     <template v-slot="{ item, index }">
-      <tr v-if="!item.erased" :key="index" class="rounded" style="cursor:pointer" @click="showloading();allMember=false;memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber;temp = item.legitimationNumber">
+      <tr v-if="!item.erased" :key="index" class="rounded" style="cursor:pointer" @click="showloading();allMember=false;memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber;temp = item.legitimationNumber;">
         <td style="width:25%;" :class="item.club.id===1?'xyz':'xyz bg-secondary text-white'"><b>{{index +1 + ' '}}</b>{{item.club.id===1?item.secondName + ' ' + item.firstName:item.secondName + ' ' + item.firstName + ' ' + item.club.name}}</td>
         <td style="width:10%;" class="text-center">{{convertDate(item.joinDate)}}</td>
         <td style="width:5%;" :class="item.pzss?'bg-green-3 text-center':'bg-warning text-center text-black'"><q-icon :name="item.pzss?'done':'cancel'" :color="item.pzss?'':'primary'" size="1rem"/></td>

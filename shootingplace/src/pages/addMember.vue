@@ -474,7 +474,7 @@
 import Vue from 'vue'
 import axios from 'axios'
 import App from 'src/App.vue'
-import DeklaracjaLOK from 'components/DeklaracjaLOK.vue'
+import DeklaracjaLOK from 'components/member/DeklaracjaLOK.vue'
 Vue.prototype.$axios = axios
 
 export default {

@@ -648,27 +648,25 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="addArbitersConfirmbtn">
-      <q-card>
+    <!--Dodawanie sędziów-->
+    <!--                 -->
+    <!--                 -->
+    <!--                 -->
+    <!--                 -->
+    <q-dialog v-model="addArbitersConfirmbtn" >
+      <q-card style="min-width: 60vw">
         <q-card-section style="min-width: 500px" class="row items-center">
-          <q-item-section>
-            <div class="q-pa-md bg-grey-2">
-              <q-field standout stack-label>
-                <div class="self-center full-width col no-outline text-black" tabindex="0">Sędzia Główny</div>
-              </q-field>
+          <div class="row full-width">
+            <div class="q-pa-md bg-grey-2 col-6">
+              <q-item>
+                <div class="text-center full-width" tabindex="0">Sędzia Główny</div>
+              </q-item>
               <div>
-                <q-select @input="otherMainArbiterName ='0 0' " color="orange" class="full-width" filled
+                <q-input @input="otherMainArbiterName ='0 0' " color="secondary" class="full-width" filled type="password"
                           v-model="mainArbiter" use-input hide-selected fill-input input-debounce="0" :options="options"
-                          @filter="filterMp" style="width: 350px" label="Wybierz z Klubu">
-                  <template v-slot:no-option>
-                    <q-item>
-                      <q-item-section class="text-grey">
-                        Brak wyników
-                      </q-item-section>
-                    </q-item>
-                  </template>
-                </q-select>
-                <q-select @input="mainArbiter ='0 0' " color="orange" filled v-model="otherMainArbiterName" use-input
+                          style="width: 350px" label="Zeskanuj Kartę" @keypress.enter="addMainArbiterToTournament(mainArbiter)">
+                </q-input>
+                <q-select @input="mainArbiter =''" color="secondary" filled v-model="otherMainArbiterName" use-input
                           hide-selected fill-input input-debounce="0" :options="options" @filter="filterOtherArbiters"
                           label="Dodaj sędziego spoza klubu">
                   <template v-slot:no-option>
@@ -682,30 +680,21 @@
                   </template>
                 </q-select>
               </div>
-              <q-item v-if="mainArbiter !== '0 0' ">
-                <q-btn label="Dodaj" color="orange" @click="addMainArbiterToTournament()"/>
+              <q-item v-if="mainArbiter !== '' || otherMainArbiterName !== '0 0'">
+                <q-btn label="Dodaj" color="primary" @click="addMainArbiterToTournament(mainArbiter)"/>
               </q-item>
-              <q-item v-if="otherMainArbiterName !== '0 0' ">
-                <q-btn label="Dodaj" color="orange" @click="addMainArbiterToTournament()"/>
-              </q-item>
+              <q-item v-else></q-item>
             </div>
-            <div class="q-pa-md bg-grey-3">
-              <q-field standout stack-label>
-                <div class="self-center full-width col no-outline text-black" tabindex="0">Sędzia RTS</div>
-              </q-field>
+            <div class="q-pa-md bg-grey-2 col-6">
+              <q-item standout stack-label>
+                <div class="text-center full-width" tabindex="0">Sędzia RTS</div>
+              </q-item>
               <div>
-                <q-select @input="otherRTSArbiterName ='0 0'" class="full-width" color="orange" filled
+                <q-input @input="otherRTSArbiterName ='0 0'" class="full-width" color="secondary" filled type="password"
                           v-model="countArbiter" use-input hide-selected fill-input input-debounce="0"
-                          :options="options" @filter="filterMp" style="width: 350px" label="Wybierz z Klubu">
-                  <template v-slot:no-option>
-                    <q-item>
-                      <q-item-section class="text-grey">
-                        Brak wyników
-                      </q-item-section>
-                    </q-item>
-                  </template>
-                </q-select>
-                <q-select @input="countArbiter ='0 0'" class="full-width" color="orange" filled
+                           style="width: 350px" label="Zeskanuj Kartę" @keypress.enter="addRTSArbiterToTournament(countArbiter)">
+                </q-input>
+                <q-select @input="countArbiter =''" class="full-width" color="secondary" filled
                           v-model="otherRTSArbiterName" use-input hide-selected fill-input input-debounce="0"
                           :options="options" @filter="filterOtherArbiters" label="Dodaj sędziego spoza klubu">
                   <template v-slot:no-option>
@@ -719,30 +708,24 @@
                   </template>
                 </q-select>
               </div>
-              <q-item v-if="countArbiter !=='0 0' ">
-                <q-btn label="Dodaj" color="primary" @click="addRTSArbiterToTournament()"/>
+              <q-item v-if="countArbiter !=='' || otherRTSArbiterName !== '0 0'">
+                <q-btn label="Dodaj" color="primary" @click="addRTSArbiterToTournament(countArbiter)"/>
               </q-item>
-              <q-item v-if="otherRTSArbiterName !== '0 0' ">
-                <q-btn label="Dodaj" color="primary" @click="addRTSArbiterToTournament()"/>
+              <q-item v-else>
               </q-item>
             </div>
-            <div class="q-pa-md bg-grey-4">
-              <q-field standout stack-label>
-                <div class="self-center full-width col no-outline text-black" tabindex="0">Sędziowie stanowiskowi</div>
-              </q-field>
+          </div>
+          <div class="row full-width">
+            <div class="q-pa-md bg-grey-3 col-6">
+              <q-item standout stack-label>
+                <div class="text-center full-width" tabindex="0">Sędziowie stanowiskowi</div>
+              </q-item>
               <div>
-                <q-select @input="otherArbitersList = '0 0'" class="full-width" filled v-model="otherArbiter" use-input
-                          hide-selected fill-input input-debounce="0" :options="options" @filter="filterMp"
-                          style="width: 350px" label="Wybierz z Klubu">
-                  <template v-slot:no-option>
-                    <q-item>
-                      <q-item-section class="text-grey">
-                        Brak wyników
-                      </q-item-section>
-                    </q-item>
-                  </template>
-                </q-select>
-                <q-select @input="otherArbiter = '0 0'" class="full-width" color="orange" filled
+                <q-input @input="otherArbitersList = '0 0'" color="secondary" class="full-width" filled type="password"
+                         v-model="otherArbiter" use-input hide-selected fill-input input-debounce="0"
+                          style="width: 350px" label="Zeskanuj Kartę" @keypress.enter="addOtherArbiterToTournament(otherArbiter)">
+                </q-input>
+                <q-select @input="otherArbiter = ''" class="full-width" color="secondary" filled
                           v-model="otherArbitersList" use-input hide-selected fill-input input-debounce="0"
                           :options="options" @filter="filterOtherArbiters" label="Dodaj sędziego spoza klubu">
                   <template v-slot:no-option>
@@ -758,45 +741,34 @@
               </div>
               <div class="col">
                 <div>
-                  <q-item v-if="otherArbiter!=='0 0'">
+                  <q-item v-if="otherArbiter!=='' || otherArbitersList!=='0 0'">
                     <q-btn class="full-width" label="Dodaj sędziego stanowiskowego" color="primary"
-                           @click="addOtherArbiterToTournament()"/>
+                           @click="addOtherArbiterToTournament(otherArbiter)"/>
                   </q-item>
-                  <q-item v-if="otherArbitersList!=='0 0' ">
-                    <q-btn class="full-width" label="Dodaj sędziego stanowiskowego spoza klubu" color="primary"
-                           @click="addOtherArbiterToTournament()"/>
+                  <q-item v-else>
                   </q-item>
                 </div>
                 <div>
-                  <q-item v-if="otherArbiter!=='0 0' ">
+                  <q-item v-if="otherArbiter!=='' || otherArbitersList!=='0 0'">
                     <q-btn class="full-width" label="usuń sędziego stanowiskowego" color="primary"
-                           @click="removeArbiter()"/>
+                           @click="removeArbiter(otherArbiter)"/>
                   </q-item>
-                  <q-item v-if="otherArbitersList!=='0 0'">
-                    <q-btn class="full-width" label="usuń sędziego stanowiskowego spoza klubu" color="primary"
-                           @click="removeArbiter()"/>
+                  <q-item v-else>
                   </q-item>
                 </div>
               </div>
             </div>
-            <div class="q-pa-md bg-grey-4">
-              <q-field standout stack-label>
-                <div class="self-center full-width col no-outline text-black" tabindex="0">Sędziowie biura obliczeń
+            <div class="q-pa-md bg-grey-3 col-6">
+              <q-item standout stack-label>
+                <div class="text-center full-width" tabindex="0">Sędziowie biura obliczeń
                 </div>
-              </q-field>
+              </q-item>
               <div>
-                <q-select @input="otherRTSArbitersList = '0 0'" class="full-width" filled v-model="otherRTSArbiter"
-                          use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filterMp"
-                          style="width: 350px" label="Wybierz z Klubu">
-                  <template v-slot:no-option>
-                    <q-item>
-                      <q-item-section class="text-grey">
-                        Brak wyników
-                      </q-item-section>
-                    </q-item>
-                  </template>
-                </q-select>
-                <q-select @input="otherRTSArbiter = '0 0'" class="full-width" color="orange" filled
+                <q-input @input="otherRTSArbitersList = '0 0'" color="secondary" class="full-width" filled v-model="otherRTSArbiter"
+                          use-input hide-selected fill-input input-debounce="0" type="password"
+                          style="width: 350px" label="Zeskanuj kartę" @keypress.enter="addOtherRTSArbiterToTournament(otherRTSArbiter)">
+                </q-input>
+                <q-select @input="otherRTSArbiter = ''" class="full-width" color="secondary" filled
                           v-model="otherRTSArbitersList" use-input hide-selected fill-input input-debounce="0"
                           :options="options" @filter="filterOtherArbiters" label="Dodaj sędziego spoza klubu">
                   <template v-slot:no-option>
@@ -812,35 +784,32 @@
               </div>
               <div class="col">
                 <div>
-                  <q-item v-if="otherRTSArbiter!=='0 0'">
+                  <q-item v-if="otherRTSArbiter!=='' || otherRTSArbitersList!=='0 0' ">
                     <q-btn class="full-width" label="Dodaj sędziego biura obliczeń" color="primary"
-                           @click="addOtherRTSArbiterToTournament()"/>
+                           @click="addOtherRTSArbiterToTournament(otherRTSArbiter)"/>
                   </q-item>
-                  <q-item v-if="otherRTSArbitersList!=='0 0' ">
-                    <q-btn class="full-width" label="Dodaj sędziego biura obliczeń spoza klubu" color="primary"
-                           @click="addOtherRTSArbiterToTournament()"/>
+                  <q-item v-else>
                   </q-item>
                 </div>
                 <div>
-                  <q-item v-if="otherRTSArbiter!=='0 0' ">
+                  <q-item v-if="otherRTSArbiter!=='' || otherRTSArbitersList!=='0 0'">
                     <q-btn class="full-width" label="usuń sędziego biura obliczeń" color="primary"
-                           @click="removeRTSArbiter()"/>
+                           @click="removeRTSArbiter(otherRTSArbiter)"/>
                   </q-item>
-                  <q-item v-if="otherRTSArbitersList!=='0 0'">
-                    <q-btn class="full-width" label="usuń sędziego biura obliczeń spoza klubu" color="primary"
-                           @click="removeRTSArbiter()"/>
+                  <q-item v-else>
                   </q-item>
                 </div>
               </div>
             </div>
-          </q-item-section>
+          </div>
         </q-card-section>
         <q-card-actions align="right">
-          <q-btn label="zamknij" color="orange" v-close-popup
-                 @click="mainArbiter='0 0';countArbiter='0 0';otherArbiter='0 0';otherRTSArbiter='0 0';otherMainArbiterName='0 0';otherRTSArbiterName='0 0';otherArbitersList='0 0';otherRTSArbitersList='0 0'"/>
+          <q-btn label="zamknij" color="secondary" v-close-popup
+                 @click="mainArbiter='';countArbiter='';otherArbiter='';otherRTSArbiter='';otherMainArbiterName='0 0';otherRTSArbiterName='0 0';otherArbitersList='0 0';otherRTSArbitersList='0 0'"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <!-- Koniec -->
     <q-dialog v-model="removeFromList">
       <q-card>
         <q-card-section>
@@ -1336,10 +1305,10 @@ export default {
       options: [],
       options3: [],
       finder: '',
-      mainArbiter: null,
-      countArbiter: null,
-      otherArbiter: '0 0',
-      otherRTSArbiter: null,
+      mainArbiter: '',
+      countArbiter: '',
+      otherArbiter: '',
+      otherRTSArbiter: '',
       competitionAddToTournamentList: [],
       removeFromList: false,
       memberName: null,
@@ -1364,10 +1333,10 @@ export default {
       otherID: '',
       memberUUID: null,
       filtersOtherArbiters: [],
-      otherMainArbiterName: null,
-      otherRTSArbiterName: null,
-      otherArbitersList: null,
-      otherRTSArbitersList: null,
+      otherMainArbiterName: '0 0',
+      otherRTSArbiterName: '0 0',
+      otherArbitersList: '0 0',
+      otherRTSArbitersList: '0 0',
       ordinal: '',
       permissionsOtherArbiterNumber: '',
       permissionsOtherArbiterPermissionValidThru: '',
@@ -1898,49 +1867,11 @@ export default {
           })
       })
     },
-    removeArbiter () {
-      const otherArbiterWord = this.otherArbiter.split(' ')
-      const legNumber = otherArbiterWord.length
-      const otherArbiterUUID = otherArbiterWord[legNumber - 1]
+    removeArbiter (barcode) {
       const otherPersonArbiterWord = this.otherArbitersList.split(' ')
       const personLegNumber = otherPersonArbiterWord.length
       const otherPersonArbiterID = otherPersonArbiterWord[personLegNumber - 1]
-      fetch('http://' + this.local + '/tournament/removeArbiter/' + this.tournamentUUID + '?number=' + otherArbiterUUID + '&id=' + otherPersonArbiterID, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.json().then(
-            response => {
-              this.message = response
-              this.success = true
-              this.otherArbiter = '0 0'
-              this.otherArbitersList = '0 0'
-              this.showloading()
-              this.getListTournaments()
-              this.autoClose()
-            })
-        } else {
-          response.json().then(
-            response => {
-              this.failure = true
-              this.message = response
-              this.autoClose()
-            }
-          )
-        }
-      })
-    },
-    removeRTSArbiter () {
-      const otherArbiterWord = this.otherRTSArbiter.split(' ')
-      const legNumber = otherArbiterWord.length
-      const otherArbiterUUID = otherArbiterWord[legNumber - 1]
-      const otherPersonArbiterWord = this.otherRTSArbitersList.split(' ')
-      const personLegNumber = otherPersonArbiterWord.length
-      const otherPersonArbiterID = otherPersonArbiterWord[personLegNumber - 1]
-      fetch('http://' + this.local + '/tournament/removeRTSArbiter/' + this.tournamentUUID + '?number=' + otherArbiterUUID + '&id=' + otherPersonArbiterID, {
+      fetch('http://' + this.local + '/tournament/removeArbiter/' + this.tournamentUUID + '?barcode=' + barcode + '&id=' + otherPersonArbiterID, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -1951,26 +1882,58 @@ export default {
             response => {
               this.message = response
               this.success = true
-              this.otherRTSArbiter = '0 0'
+              this.otherArbiter = ''
+              this.otherArbitersList = '0 0'
+              this.showloading()
+              this.getListTournaments()
+              this.autoClose()
+            })
+        } else {
+          response.text().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            })
+        }
+      })
+    },
+    removeRTSArbiter (barcode) {
+      const otherPersonArbiterWord = this.otherRTSArbitersList.split(' ')
+      const personLegNumber = otherPersonArbiterWord.length
+      const otherPersonArbiterID = otherPersonArbiterWord[personLegNumber - 1]
+      fetch('http://' + this.local + '/tournament/removeRTSArbiter/' + this.tournamentUUID + '?barcode=' + barcode + '&id=' + otherPersonArbiterID, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          response.text().then(
+            response => {
+              this.message = response
+              this.success = true
+              this.otherRTSArbiter = ''
               this.otherRTSArbitersList = '0 0'
               this.showloading()
               this.getListTournaments()
               this.autoClose()
             })
         } else {
-          this.failure = true
-          this.autoClose()
+          response.text().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            })
         }
       })
     },
-    addMainArbiterToTournament () {
-      const mainArbiterWord = this.mainArbiter.split(' ')
-      const legNumber = mainArbiterWord.length
-      const mainArbiterUUID = mainArbiterWord[legNumber - 1]
+    addMainArbiterToTournament (barcode) {
       const mainOtherArbiterWord = this.otherMainArbiterName.split(' ')
       const otherLegNumber = mainOtherArbiterWord.length
       const mainOtherArbiterID = mainOtherArbiterWord[otherLegNumber - 1]
-      fetch('http://' + this.local + '/tournament/addMainArbiter/' + this.tournamentUUID + '?number=' + mainArbiterUUID + '&id=' + mainOtherArbiterID, {
+      fetch('http://' + this.local + '/tournament/addMainArbiter/' + this.tournamentUUID + '?barcode=' + barcode + '&id=' + mainOtherArbiterID, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -1981,8 +1944,8 @@ export default {
             response => {
               this.success = true
               this.message = response
-              this.mainArbiter = null
-              this.otherMainArbiterName = null
+              this.mainArbiter = ''
+              this.otherMainArbiterName = '0 0'
               this.showloading()
               this.getListTournaments()
               this.autoClose()
@@ -1999,14 +1962,11 @@ export default {
         }
       })
     },
-    addRTSArbiterToTournament () {
-      const countArbiterWord = this.countArbiter.split(' ')
-      const legNumber = countArbiterWord.length
-      const countArbiterUUID = countArbiterWord[legNumber - 1]
+    addRTSArbiterToTournament (barcode) {
       const countOtherArbiterWord = this.otherRTSArbiterName.split(' ')
       const otherLegNumber = countOtherArbiterWord.length
       const countOtherArbiterID = countOtherArbiterWord[otherLegNumber - 1]
-      fetch('http://' + this.local + '/tournament/addRTSArbiter/' + this.tournamentUUID + '?number=' + countArbiterUUID + '&id=' + countOtherArbiterID, {
+      fetch('http://' + this.local + '/tournament/addRTSArbiter/' + this.tournamentUUID + '?barcode=' + barcode + '&id=' + countOtherArbiterID, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -2017,8 +1977,8 @@ export default {
             response => {
               this.success = true
               this.message = response
-              this.countArbiter = null
-              this.otherRTSArbiterName = null
+              this.countArbiter = ''
+              this.otherRTSArbiterName = '0 0'
               this.showloading()
               this.getListTournaments()
               this.autoClose()
@@ -2035,14 +1995,11 @@ export default {
         }
       })
     },
-    addOtherArbiterToTournament () {
-      const otherArbiterWord = this.otherArbiter.split(' ')
-      const legNumber = otherArbiterWord.length
-      const otherArbiterUUID = otherArbiterWord[legNumber - 1]
+    addOtherArbiterToTournament (barcode) {
       const otherPersonArbiterWord = this.otherArbitersList.split(' ')
       const personLegNumber = otherPersonArbiterWord.length
       const otherPersonArbiterID = otherPersonArbiterWord[personLegNumber - 1]
-      fetch('http://' + this.local + '/tournament/addOthersArbiters/' + this.tournamentUUID + '?number=' + otherArbiterUUID + '&id=' + otherPersonArbiterID, {
+      fetch('http://' + this.local + '/tournament/addOthersArbiters/' + this.tournamentUUID + '?barcode=' + barcode + '&id=' + otherPersonArbiterID, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -2053,7 +2010,7 @@ export default {
             response => {
               this.success = true
               this.message = response
-              this.otherArbiter = '0 0'
+              this.otherArbiter = ''
               this.otherArbitersList = '0 0'
               this.showloading()
               this.getListTournaments()
@@ -2071,14 +2028,11 @@ export default {
         }
       })
     },
-    addOtherRTSArbiterToTournament () {
-      const otherArbiterWord = this.otherRTSArbiter.split(' ')
-      const legNumber = otherArbiterWord.length
-      const otherArbiterUUID = otherArbiterWord[legNumber - 1]
+    addOtherRTSArbiterToTournament (barcode) {
       const otherPersonArbiterWord = this.otherRTSArbitersList.split(' ')
       const personLegNumber = otherPersonArbiterWord.length
       const otherPersonArbiterID = otherPersonArbiterWord[personLegNumber - 1]
-      fetch('http://' + this.local + '/tournament/addOthersRTSArbiters/' + this.tournamentUUID + '?number=' + otherArbiterUUID + '&id=' + otherPersonArbiterID, {
+      fetch('http://' + this.local + '/tournament/addOthersRTSArbiters/' + this.tournamentUUID + '?barcode=' + barcode + '&id=' + otherPersonArbiterID, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -2089,8 +2043,7 @@ export default {
             response => {
               this.success = true
               this.message = response
-              this.otherArbiter = '0 0'
-              this.otherArbitersList = '0 0'
+              this.otherRTSArbiter = ''
               this.otherRTSArbitersList = '0 0'
               this.showloading()
               this.getListTournaments()
@@ -2122,7 +2075,7 @@ export default {
           this.getListTournaments()
           this.autoClose()
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -2136,15 +2089,13 @@ export default {
       if (val === '') {
         update(() => {
           const needle = val.toLowerCase()
-          this.options = this.filters.filter(v => v.secondName.toLowerCase().indexOf(needle) > -1)
-          // this.memberName = this.filters.filter(v => v.secondName.toLowerCase().indexOf(needle) > -1)
+          this.options = this.filters.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
         })
         return
       }
       update(() => {
         const needle = val.toLowerCase()
-        this.options = this.filters.filter(v => v.secondName.toLowerCase().indexOf(needle) > -1)
-        // this.memberName = this.filters.filter(v => v.secondName.toLowerCase().indexOf(needle) > -1)
+        this.options = this.filters.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
       })
     },
     filterMp (val, update) {

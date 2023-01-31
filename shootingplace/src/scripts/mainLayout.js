@@ -12,7 +12,6 @@ export default {
   },
   created () {
     this.getActualYearMemberCounts()
-    this.check()
   },
   data () {
     return {
@@ -28,7 +27,7 @@ export default {
       color: 'primary',
       tournamentCheck: false,
       quantities: [],
-      hrefTarget: 'http://' + location.hostname + ':8081/#/',
+      hrefTarget: 'http://' + location.hostname + ':8080/strzelnica/#/',
       local: App.host,
       essentialLinks: [
         {
@@ -89,6 +88,12 @@ export default {
           title: 'Ustawienia',
           icon: 'settings',
           link: 'http://' + App.prod + 'settings',
+          visible: this.visible2
+        },
+        {
+          title: 'Pliki',
+          icon: 'download',
+          link: 'http://' + App.prod + 'files',
           visible: this.visible2
         },
         {

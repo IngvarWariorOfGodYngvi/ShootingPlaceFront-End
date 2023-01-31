@@ -37,11 +37,14 @@ export default {
   },
   components: {
     Member: lazyLoadComponent({
-      componentFactory: () => import('components/Member.vue'),
+      componentFactory: () => import('components/member/Member.vue'),
       loading: SkeletonBox
     })
   },
   methods: {
+    log (item) {
+      console.log(item)
+    },
     showloading () {
       this.$q.loading.show({ message: 'Dzieje się coś ważnego... Poczekaj' })
       this.timer = setTimeout(() => {
@@ -137,13 +140,13 @@ export default {
       if (val === '') {
         update(() => {
           const needle = val.toLowerCase()
-          this.options = this.filters.filter(v => v.secondName.toLowerCase().indexOf(needle) > -1)
+          this.options = this.filters.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
         })
         return
       }
       update(() => {
         const needle = val.toLowerCase()
-        this.options = this.filters.filter(v => v.secondName.toLowerCase().indexOf(needle) > -1)
+        this.options = this.filters.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
       })
     },
     reload () {

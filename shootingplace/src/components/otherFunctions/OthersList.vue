@@ -1,6 +1,6 @@
 <template>
   <div>
-  <q-card class="row text-body2">
+  <div class="row text-body2 bg-white">
     <q-card-section class="col">
       <div class="q-pa-md text-center col full-width no-outline text-h5 text-bold" tabindex="0">Lista osób spoza klubu</div>
       <q-scroll-area class="full-width q-pa-none" style="height: 400px;">
@@ -36,7 +36,7 @@
         </ol>
       </q-scroll-area>
     </q-card-section>
-  </q-card>
+  </div>
   <q-dialog :position="'top'" v-model="success">
     <q-card>
       <q-card-section>

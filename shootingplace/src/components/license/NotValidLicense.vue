@@ -123,7 +123,7 @@
 </template>
 
 <script>
-import Member from 'components/Member.vue'
+import Member from 'components/member/Member.vue'
 import App from 'src/App.vue'
 
 export default {

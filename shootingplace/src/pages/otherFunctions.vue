@@ -15,7 +15,12 @@
         <Competitions></Competitions>
       </q-expansion-item>
       <p></p>
-      <q-expansion-item label="Dodatkowe Funkcje" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
+    <div v-if="!access">
+    <q-input dense v-model="accessCode" label="wprowadź kod" type="password" mask="####" @keypress.enter="getAccess(accessCode)" filled></q-input>
+    <q-item dense>{{accessMessage}}</q-item>
+      <q-btn dense label="wprowadź" @click="getAccess(accessCode)"></q-btn>
+    </div>
+      <q-expansion-item v-if="access" label="Dodatkowe Funkcje" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
         <q-card class="text-body2">
             <q-card-section>
           <div class="q-pa-md text-center col full-width no-outline text-h5 text-bold">Dodatkowe Funkcje</div>
@@ -452,15 +457,15 @@ Vue.prototype.$axios = axios
 export default {
   components: {
     OtherList: lazyLoadComponent({
-      componentFactory: () => import('components/OtherFunctions/OthersList.vue'),
+      componentFactory: () => import('components/otherFunctions/OthersList.vue'),
       loading: SkeletonBox
     }),
     Clubs: lazyLoadComponent({
-      componentFactory: () => import('components/OtherFunctions/Clubs.vue'),
+      componentFactory: () => import('components/otherFunctions/Clubs.vue'),
       loading: SkeletonBox
     }),
     Competitions: lazyLoadComponent({
-      componentFactory: () => import('components/OtherFunctions/Competitions.vue'),
+      componentFactory: () => import('components/otherFunctions/Competitions.vue'),
       loading: SkeletonBox
     })
   },
@@ -491,6 +496,9 @@ export default {
       workTypeSelect1: null,
       acceptedList: [],
       detailed: false,
+      access: false,
+      accessCode: '',
+      accessMessage: '',
       otherPerson: [],
       club: '',
       competition: [],
@@ -543,6 +551,31 @@ export default {
         day = (date.getDate())
       }
       return date.getFullYear() + '-' + month + '-' + day
+    },
+    getAccess (accessCode) {
+      fetch('http://' + this.local + '/users/getAccess?pinCode=' + accessCode, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          response.text().then(
+            response => {
+              this.accessMessage = response
+              this.access = true
+            }
+          )
+        } else {
+          response.text().then(
+            response => {
+              this.message = response
+              this.accessMessage = response
+            }
+          )
+        }
+      }
+      )
     },
     addRecordToWorkTimeArray (uuid, start, stop) {
       const arr = this.workTimeChangeArray

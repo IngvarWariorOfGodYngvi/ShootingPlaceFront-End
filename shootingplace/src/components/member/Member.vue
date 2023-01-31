@@ -184,7 +184,7 @@
       </q-card-section>
     </q-card>
 
-    <q-card bordered class="row">
+    <q-card bordered class="row" style="height: 80vh;">
       <q-card-section class="col-3">
         <q-field dense class="col" standout="bg-accent text-black" stack-label>
           <div class="self-center col full-width no-outline text-center text-black" tabindex="0">Historia Składek</div>
@@ -194,207 +194,40 @@
             <q-btn class="full-width" color="green" label="Przedłuż składkę"
                    @click="memberUUID = member.uuid;name = member.firstName;name2 = member.secondName;contribution=true"/>
           </div>
-          <div>
-            <q-btn class="full-width text-black" color="white" label="Dodaj historyczną składkę"
-                   @click="memberUUID = member.uuid;name  =member.firstName;name2 = member.secondName;contributionRecordConfirm=true"/>
-          </div>
         </div>
         <q-expansion-item dense default-opened class="bg-grey-3 full-width q-pa-none text-center" label="Daty Składek">
-          <q-scroll-area class="full-width q-pa-none" style="height: 375px;">
-            <div v-for="(contributionList,uuid) in member.history.contributionList" :key="uuid" class="row">
+          <q-virtual-scroll class="full-width q-pa-none" style="height: 65vh;" :items="member.history.contributionList">
+            <template class="row" v-slot="{item}">
               <div class="row full-width"
-                   @dblclick="contributionUUID = contributionList.uuid;memberUUID = member.uuid;editContributionPaymentDate=contributionList.paymentDay
-                   ;editContributionValidThruDate=contributionList.validThru;editContribution=true">
+                   @dblclick="contributionUUID = item.uuid;memberUUID = member.uuid;editContributionPaymentDate=item.paymentDay
+                   ;editContributionValidThruDate=item.validThru;editContribution=true">
                 <q-field dense class="col-6" label="Opłacona dnia : " standout="bg-accent text-black" stack-label>
                   <div class="self-center col full-width no-outline text-left text-black" tabindex="0">
-                    {{ convertDate(contributionList.paymentDay) }}
+                    {{ convertDate(item.paymentDay) }}
                   </div>
                 </q-field>
                 <div class="col-6">
                   <q-field dense class="col" standout="bg-accent text-black" label="Ważna do : " stack-label>
                     <div class="self-center col full-width no-outline text-left text-black" tabindex="1">
-                      {{ convertDate(contributionList.validThru) }}
+                      {{ convertDate(item.validThru) }}
                     </div>
                   </q-field>
                 </div>
               </div>
-            </div>
-          </q-scroll-area>
+            </template>
+          </q-virtual-scroll>
         </q-expansion-item>
       </q-card-section>
-      <q-card-section class="col-4 items-center">
-        <q-item-section class="col" v-if="!member.license.number!=null||member.adult">
-          <div v-if="member.shootingPatent.patentNumber!=null" class="col"
-               @dblclick="memberUUID = member.uuid;editLicenseNumber=member.license.number;editLicenseDate=member.license.validThru; editLicense=true">
-            <q-field dense class="col" standout="bg-accent text-black" stack-label>
-              <div class="self-center col full-width no-outline text-center text-black" tabindex="0">Licencja</div>
-            </q-field>
-          </div>
-          <div v-if="member.shootingPatent.patentNumber==null"
-               @dblclick="memberUUID = member.uuid;editLicenseNumber=member.license.number;editLicenseDate=member.license.validThru; editLicense=true"
-               class="col">
-            <q-field class="col" standout="bg-accent text-black" stack-label>
-              <div class="self-center col full-width no-outline text-center text-black" tabindex="0">Licencja</div>
-              <q-tooltip v-if="member.adult" content-class="text-body2 text-center" self="top middle"
-                         anchor="top middle" :offset="[12, 12]">Klubowicz nie ma patentu<p>wprowadź patent aby móc dodać
-                licencję</p></q-tooltip>
-            </q-field>
-          </div>
-          <div>
-            <div class="row">
-              <div class="col">
-                <q-field dense class="col" v-if="member.license.number!=null" label="Numer Licencji"
-                         standout="bg-accent text-black" stack-label>
-                  <div class="self-center col full-width no-outline text-left text-black" tabindex="0">
-                    {{ member.license.number }}
-                  </div>
-                </q-field>
-              </div>
-              <q-field dense class="col" v-if="member.license.validThru!=null" label="Ważna do :"
-                       standout="bg-accent text-black" stack-label>
-                <div class="self-center col full-width no-outline text-left text-black" tabindex="0">
-                  {{ convertDate(member.license.validThru) }}
-                </div>
-              </q-field>
-            </div>
-            <div
-              v-if="member.license.pistolPermission === true || member.license.riflePermission === true || member.license.shotgunPermission === true"
-              class="row">
-              <q-field dense label="Dyscypliny" class="col" standout="bg-accent text-black" stack-label>
-                <div v-if="member.license.pistolPermission" class="self-center text-center col-4 no-outline text-black"
-                     tabindex="0">Pistolet
-                </div>
-                <div v-if="member.license.riflePermission" class="self-center text-center col-4 no-outline text-black"
-                     tabindex="0">Karabin
-                </div>
-                <div v-if="member.license.shotgunPermission" class="self-center text-center col-4 no-outline text-black"
-                     tabindex="0">Strzelba
-                </div>
-              </q-field>
-            </div>
-          </div>
-          <q-item-label caption lines="2"
-                        v-if="!member.license.pistolPermission&&member.history.licenseHistory[ 0 ]==='Pistolet'">Kiedyś
-            posiadał licencję na Pistolet
-          </q-item-label>
-          <q-item-label caption lines="2"
-                        v-if="!member.license.riflePermission&&member.history.licenseHistory[ 1 ]==='Karabin'">Kiedyś
-            posiadał licencję na Karabin
-          </q-item-label>
-          <q-item-label caption lines="2"
-                        v-if="!member.license.shotgunPermission&&member.history.licenseHistory[ 2 ]==='Strzelba'">Kiedyś
-            posiadał licencję na strzelbę
-          </q-item-label>
-        </q-item-section>
-        <q-btn
-          v-if="(member.shootingPatent.patentNumber!=null&&member.license.number==null&&member.license.paid)||(!member.adult&&member.license.number==null)"
-          class="full-width" color="primary" label="WYDAJ LICENCJĘ" @click="
-                memberUUID=member.uuid;
-                patentPistolPermission1=member.shootingPatent.pistolPermission;
-                patentRiflePermission1=member.shootingPatent.riflePermission;
-                patentShotgunPermission1=member.shootingPatent.shotgunPermission;
-                memberAdultConfirm=member.adult;
-                licenseConfirm=true">
-        </q-btn>
-        <q-btn class="full-width" color="primary" v-if="member.license.number!=null&&(
-                !member.license.pistolPermission
-                ||!member.license.riflePermission
-                ||!member.license.shotgunPermission)&&member.club.id===1" label="Rozszerz Licencję" @click="memberUUID=member.uuid;
-                patentPistolPermission1=member.shootingPatent.pistolPermission;
-                patentRiflePermission1=member.shootingPatent.riflePermission;
-                patentShotgunPermission1=member.shootingPatent.shotgunPermission;
-                licensePistolPermission1=member.license.pistolPermission;
-                licenseRiflePermission1=member.license.riflePermission;
-                licenseShotgunPermission1=member.license.shotgunPermission;
-                memberAdultConfirm=member.adult;
-                updateLicenseConfirm=true"></q-btn>
-        <div
-          v-if="(member.license.number!=null&&(member.license.pistolPermission||member.license.riflePermission||member.license.shotgunPermission))&&member.club.id===1&&member.license.paid===true">
-          <q-btn class="full-width" v-if="member.license.canProlong&&member.license.paid===true"
-                 label="przedłuż licencję" color="primary" @click="memberUUID=member.uuid;
-                licensePistolPermission1=member.license.pistolPermission;
-                licenseRiflePermission1=member.license.riflePermission;
-                licenseShotgunPermission1=member.license.shotgunPermission;
-                prolongLicenseConfirm=true"></q-btn>
-          <q-btn class="full-width" v-else label="przedłuż licencję" color="primary" @click="memberUUID=member.uuid;
-                licensePistolPermission1=member.license.pistolPermission;
-                licenseRiflePermission1=member.license.riflePermission;
-                licenseShotgunPermission1=member.license.shotgunPermission;
-                noDomesticStarts=true"></q-btn>
-        </div>
-        <q-btn v-if="(((member.shootingPatent.patentNumber!==null&&member.license.paid===false&&member.club.id===1))) " :disable="!member.active" class="full-width"
-               label="opłać licencję" @click="memberUUID=member.uuid;licensePayment=true"></q-btn>
-        <q-expansion-item dense default-opened class="bg-grey-3 text-center"
-                          v-if="member.history.licensePaymentHistory.length>0" label="Daty Opłacenia Licencji">
-          <q-scroll-area class="full-width q-pa-none" style="height: 375px;">
-            <div v-for="(licensePayment,uuid) in member.history.licensePaymentHistory" :key="uuid" class="row">
-              <div v-if="licensePayment.new" class="full-width bg-warning">
-                <q-field dense standout="bg-accent text-black" stack-label>
-                  <div class="self-center col full-width no-outline text-center text-black" tabindex="1">Licencja Nowa
-                  </div>
-                </q-field>
-                <div class="row full-width">
-                  <div class="col-5"
-                       @dblclick="memberUUID=member.uuid;paymentUUID = licensePayment.uuid;editLicensePaymentDate = licensePayment.date;editLicensePaymentYear = licensePayment.validForYear;editLicensePayment=true">
-                    <q-field dense label="Opłacona dnia : " standout="bg-accent text-black" stack-label>
-                      <div class="self-center col full-width no-outline text-left text-black" tabindex="0">
-                        {{ convertDate(licensePayment.date) }}
-                      </div>
-                    </q-field>
-                  </div>
-                  <div class="col-4"
-                       @dblclick="memberUUID=member.uuid;paymentUUID = licensePayment.uuid;editLicensePaymentDate = licensePayment.date;editLicensePaymentYear = licensePayment.validForYear;editLicensePayment=true">
-                    <q-field dense standout="bg-accent text-black" label="Na rok : " stack-label>
-                      <div class="self-center col full-width no-outline text-left text-black" tabindex="1">
-                        {{ licensePayment.validForYear }}
-                      </div>
-                    </q-field>
-                  </div>
-                  <div class="col-3"
-                       @dblclick="memberUUID=member.uuid;paymentUUID = licensePayment.uuid;togglePaymentAlert = true">
-                    <q-field dense v-if="licensePayment.payInPZSSPortal" standout="bg-accent text-black" label="PZSS : "
-                             stack-label>
-                      <div class="self-center col full-width no-outline text-left text-black" tabindex="1">Tak</div>
-                    </q-field>
-                    <q-field dense v-if="!licensePayment.payInPZSSPortal" class="bg-red-3"
-                             standout="bg-accent text-black" label="PZSS : " stack-label>
-                      <div class="self-center col full-width no-outline text-left text-black" tabindex="1">Nie</div>
-                    </q-field>
-                  </div>
-                </div>
-              </div>
-              <div v-if="!licensePayment.new" class="row full-width">
-                <div class="col-5"
-                     @dblclick="memberUUID=member.uuid;paymentUUID = licensePayment.uuid;editLicensePaymentDate = licensePayment.date;editLicensePaymentYear = licensePayment.validForYear;editLicensePayment=true">
-                  <q-field dense label="Opłacona dnia : " standout="bg-accent text-black" stack-label>
-                    <div class="self-center col full-width no-outline text-left text-black" tabindex="0">
-                      {{ convertDate(licensePayment.date) }}
-                    </div>
-                  </q-field>
-                </div>
-                <div class="col-4"
-                     @dblclick="memberUUID=member.uuid;paymentUUID = licensePayment.uuid;editLicensePaymentDate = licensePayment.date;editLicensePaymentYear = licensePayment.validForYear;editLicensePayment=true">
-                  <q-field dense standout="bg-accent text-black" label="Na rok : " stack-label>
-                    <div class="self-center col full-width no-outline text-left text-black" tabindex="1">
-                      {{ licensePayment.validForYear }}
-                    </div>
-                  </q-field>
-                </div>
-                <div class="col-3"
-                     @dblclick="memberUUID=member.uuid;paymentUUID = licensePayment.uuid;togglePaymentAlert = true">
-                  <q-field dense :class="licensePayment.payInPZSSPortal?'':'bg-red-3'" :standout="licensePayment.payInPZSSPortal?'bg-accent text-black':'bg-red-4 text-balck'" label="PZSS : "
-                           stack-label>
-                    <div class="full-width text-center text-black" tabindex="1"><q-icon :name="licensePayment.payInPZSSPortal?'done':'cancel'"></q-icon></div>
-                  </q-field>
-                </div>
-              </div>
-            </div>
-          </q-scroll-area>
-        </q-expansion-item>
-      </q-card-section>
+      <MemberLicense :memberUUID="member.uuid"
+                     :clubID="member.club.id"
+                     :adult="member.adult"
+                     :active="member.active"
+                     :licenseUUID="member.license.uuid"
+                     :shootingPatent="member.shootingPatent"
+      ></MemberLicense>
       <q-card-section class="col-5 text-center">
         <q-item-section class="text-center">
-          <q-expansion-item dense default-opened label="Informacje o Uprawnieniach" class="col items-center bg-grey-3"
+          <q-expansion-item dense label="Informacje o Uprawnieniach" class="col items-center bg-grey-3"
                             group="right-card">
             <q-field v-if="(member.memberPermissions.arbiterNumber!==null&&member.memberPermissions.arbiterNumber!=='')"
                      class="col q-pa-md" borderless color="black" label="Sędzia" stack-label>
@@ -657,7 +490,7 @@
                 </div>
                 <q-item v-if="member.memberPermissions.arbiterNumber!==null" class="full-width row">
                   <q-input dense outlined filled class="full-width col"
-                           v-if="member.memberPermissions.arbiterNumber!==null" v-model="permissionsArbiterNumber"
+                           v-if="member.memberPermissions.arbiterNumber!=null" v-model="permissionsArbiterNumber"
                            label="Numer Uprawnień"/>
                   <q-btn class="full-width col" v-if="member.memberPermissions.arbiterNumber!=null"
                          label="Nadaj Nowy Numer" color="primary" @click="memberUUID=member.uuid;arbiterConfirm=true"/>
@@ -860,7 +693,7 @@
             </q-item>
           </q-expansion-item>
         </q-expansion-item>
-        <q-expansion-item dense label="Historia startów" group="right-card" class="bg-grey-3">
+        <q-expansion-item dense label="Historia startów" group="right-card" class="bg-grey-3" default-opened>
           <div class="bg-white">
             <q-field dense class="col" standout="bg-accent text-black" stack-label>
               <div class="self-center full-width no-outline text-center text-black" tabindex="0">Licznik startów</div>
@@ -883,39 +716,39 @@
               </q-field>
             </div>
           </div>
-          <q-expansion-item dense label="Daty Startów" class="bg-grey-3 q-pa-none">
-            <q-scroll-area class="full-width q-pa-none" style="height: 200px;">
-              <div class="row" v-for="(competitionHistory,uuid) in member.history.competitionHistory" :key="uuid">
+          <q-expansion-item dense label="Daty Startów" class="bg-grey-3 q-pa-none" default-opened>
+            <q-virtual-scroll class="full-width q-pa-none" :items="member.history.competitionHistory" :style="member.memberPermissions.arbiterNumber!=null?'height: 46.8vh':'height: 51vh'">
+              <template v-slot="{item}">
                 <q-field dense class="full-width" standout="bg-accent text-black" label="Nazwa" stack-label>
                   <div class="text-left text-black" tabindex="0">
-                    {{ competitionHistory.name }}
+                    {{ item.name }}
                   </div>
                 </q-field>
                 <div class="row full-width">
                 <q-field dense class="col-3" standout="bg-accent text-black" label="Data" stack-label>
                   <div class="text-left text-black" tabindex="1">
-                    {{ convertDate(competitionHistory.date) }}
+                    {{ convertDate(item.date) }}
                   </div>
                 </q-field>
-                <q-field dense v-if="competitionHistory.discipline != null" class="col" standout="bg-accent text-black"
+                <q-field dense v-if="item.discipline != null" class="col" standout="bg-accent text-black"
                          label="Konkurencja" stack-label>
                   <div class="text-left text-black" tabindex="2">
-                    {{ competitionHistory.discipline }}
+                    {{ item.discipline }}
                   </div>
                 </q-field>
-                <q-field dense v-if="competitionHistory.discipline == null" class="col" standout="bg-accent text-black"
+                <q-field dense v-if="item.discipline == null" class="col" standout="bg-accent text-black"
                          label="Konkurencje" stack-label>
-                  <div v-for="(disc,id) in competitionHistory.disciplines" :key="id"
+                  <div v-for="(disc,id) in item.disciplines" :key="id"
                        class="text-left text-black col" tabindex="2">
                     <div class="col">{{disc}}</div>
                   </div>
                 </q-field>
-                <q-field dense class="col-3" standout="bg-accent text-black" label="WZSS" stack-label>
-                  <q-icon :name="competitionHistory.wzss?'done':'cancel'"/>
+                <q-field dense class="col-3" standout="bg-accent text-black text-center" label="WZSS" stack-label>
+                  <q-icon :name="item.wzss?'done':'cancel'"/>
                 </q-field>
                 </div>
-              </div>
-            </q-scroll-area>
+              </template>
+            </q-virtual-scroll>
             <q-scroll-area v-if="member.history.competitionHistory.lenght<1" class="full-width q-pa-none"
                            style="height: 200px;">
               <div>
@@ -928,34 +761,39 @@
         </q-expansion-item>
         <q-expansion-item dense v-if="member.memberPermissions.arbiterNumber!=null" label="Historia sędziowania"
                           group="right-card" class="bg-grey-3">
-          <div class="row" v-for="(judgingHistory,uuid) in member.history.judgingHistory" :key="uuid">
+          <q-virtual-scroll :items="member.history.judgingHistory" style="height: 52vh;">
+            <template v-slot="{ item }">
+          <div class="row">
             <q-field dense class="col" standout="bg-accent text-black" label="Nazwa" stack-label>
               <div class="self-center full-width no-outline text-left text-black" tabindex="0">
-                {{ judgingHistory.name }}
+                {{ item.name }}
               </div>
             </q-field>
             <q-field dense class="col-3" standout="bg-accent text-black" label="Data" stack-label>
               <div class="self-center full-width no-outline text-left text-black" tabindex="1">
-                {{ convertDate(judgingHistory.date) }}
+                {{ convertDate(item.date) }}
               </div>
             </q-field>
             <q-field dense class="col" standout="bg-accent text-black" label="Funkcja" stack-label>
               <div class="self-center full-width no-outline text-left text-black" tabindex="2">
-                {{ judgingHistory.judgingFunction }}
+                {{ item.judgingFunction }}
               </div>
             </q-field>
           </div>
+            </template>
+          </q-virtual-scroll>
         </q-expansion-item>
       </q-card-section>
     </q-card>
     <q-card bordered class="row bg-grey-3">
-      <q-card-section class="col-4 full-height" style="height:100%;">
-        <q-item-section>
+      <q-card-section class="col-3" style="height:100%;">
+        <q-item-section class=" full-height">
           <q-item-label>
             <q-icon name="person_search" size="1.5rem"/>
             Dane Podstawowe
           </q-item-label>
-          <q-item-label caption lines="2">Identyfikator: {{ member.uuid }}</q-item-label>
+          <q-item-label caption lines="2">Identyfikator:</q-item-label>
+          <q-item-label caption lines="2">{{ member.uuid }}</q-item-label>
           <q-item-label caption lines="2">Imię: {{ member.firstName }}</q-item-label>
           <q-item-label caption lines="2">Nazwisko: {{ member.secondName }}</q-item-label>
           <q-item-label caption lines="2">Data Zapisu do Klubu: {{ convertDate(member.joinDate) }}</q-item-label>
@@ -966,7 +804,7 @@
                  @click="memberUUID=member.uuid;memberIdCard = member.idcard;memberFirstName = member.firstName;memberSecondName = member.secondName;basicDataConfirm=true"></q-btn>
         </q-item-section>
       </q-card-section>
-      <q-card-section class="col-3">
+      <q-card-section class="col-4">
         <q-item-section>
           <q-item-label>
             <q-icon name="contact_mail" size="1.5rem"/>
@@ -1003,21 +841,15 @@
             <DeklaracjaLOK :uuid="member.uuid"></DeklaracjaLOK>
           </q-item>
           <q-item>
-            <q-btn class="full-width" label="Pobierz kartę Członkowską" color="secondary"
-                   @click="memberUUID=member.uuid;name=member.firstName;name2=member.secondName;personalCardDownloadConfirm=true"/>
+            <personalCardPDF :uuid="member.uuid" :name="(member.firstName + ' ' + member.secondName)"></personalCardPDF>
           </q-item>
           <q-item v-if="member.history.contributionList.length > 0">
-            <q-btn :disable="member.history.contributionList.length < 1" class="full-width" label="Pobierz ostatnie potwierdzenie składki" color="secondary"
-                   @click="memberUUID=member.uuid;name=member.firstName;name2=member.secondName;contributionDownloadConfirm=true"><q-tooltip v-if="member.history.contributionList.length < 1" content-class="text-h6 bg-red" anchor="top middle" self="bottom middle" :offset="[12, 12]">BRAK
-              SKŁADEK
-            </q-tooltip></q-btn>
-          </q-item>
-<!--          <q-item v-else>-->
-<!--            <q-btn disable class="full-width" label="Pobierz ostatnie potwierdzenie składki" color="secondary"/>-->
-<!--            <q-tooltip content-class="text-h6 bg-red" anchor="top middle" self="bottom middle" :offset="[12, 12]">BRAK-->
+            <LastContributionPDF :uuid="member.uuid" :name="(member.firstName + ' ' + member.secondName)" :disable="member.history.contributionList.length < 1"></LastContributionPDF>
+<!--            <q-btn :disable="member.history.contributionList.length < 1" class="full-width" label="Pobierz ostatnie potwierdzenie składki" color="secondary"-->
+<!--                   @click="memberUUID=member.uuid;name=member.firstName;name2=member.secondName;contributionDownloadConfirm=true"><q-tooltip v-if="member.history.contributionList.length < 1" content-class="text-h6 bg-red" anchor="top middle" self="bottom middle" :offset="[12, 12]">BRAK-->
 <!--              SKŁADEK-->
-<!--            </q-tooltip>-->
-<!--          </q-item>-->
+<!--            </q-tooltip></q-btn>-->
+          </q-item>
           <q-item v-if="!member.erased&&member.license.number!==null&&member.shootingPatent.patentNumber!=null">
             <q-tooltip v-if="member.club.id !== 1" content-class="text-h6 bg-red" anchor="top middle" self="bottom middle" :offset="[12, 12]">INNY KLUB MACIERZYSTY
             </q-tooltip>
@@ -1176,18 +1008,6 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="togglePaymentAlert" persistent>
-      <q-card>
-        <q-card-section class="row items-center">
-          <span class="q-ml-sm text-h6 text-justify text-center">Czy Licencja Klubowicza została opłacona w portalu PZSS?</span>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="nie" color="primary" v-close-popup/>
-          <q-btn label="tak" color="primary" v-close-popup @click="toggleHistoryPaymentCode = true"/>
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
     <q-dialog v-model="basicDataConfirm" persistent>
       <q-card>
         <q-card-section class="col items-center">
@@ -1224,90 +1044,6 @@
                  @click="updateIDCardAndName(memberUUID,memberIdCard,memberFirstName,memberSecondName)"/>
         </q-card-actions>
       </q-card>
-    </q-dialog>
-    <q-dialog v-model="licenseConfirm">
-      <div>
-        <q-card>
-          <q-item class="flex-center text-bold full-width text-h5">Dodaj licencję</q-item>
-          <q-card-section class="col items-center">
-            <q-item>
-              <q-input v-model="licenseNumber" label="Numer Licencji"
-                       onkeypress="return (event.charCode > 47 && event.charCode < 58)" hint="tylko cyfry"
-                       placeholder="tylko cyfry" filled lazy-rules
-                       :rules="[ val => val && val.length > 0 || 'Pole nie może być puste']"/>
-            </q-item>
-            <q-item v-if="(patentPistolPermission1||!memberAdultConfirm)">
-              <q-checkbox v-model="licensePistolPermission" label="Pistolet"/>
-            </q-item>
-            <q-item v-if="(patentRiflePermission1||!memberAdultConfirm)">
-              <q-checkbox v-model="licenseRiflePermission" label="Karabin"/>
-            </q-item>
-            <q-item v-if="(patentShotgunPermission1||!memberAdultConfirm)">
-              <q-checkbox v-model="licenseShotgunPermission" label="Strzelba"/>
-            </q-item>
-          </q-card-section>
-          <q-card-actions align="right">
-            <q-btn flat icon="cancel" color="primary" v-close-popup/>
-            <q-btn flat label="Dodaj" color="primary" v-close-popup
-                   @click="addLicense(memberUUID, licenseNumber, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission)"/>
-          </q-card-actions>
-        </q-card>
-      </div>
-    </q-dialog>
-    <q-dialog v-model="updateLicenseConfirm" persistent>
-      <div>
-        <q-card>
-          <q-item>Aktualizuj licencję</q-item>
-          <q-card-section class="col items-center">
-            <q-item v-if="!licensePistolPermission1&&(patentPistolPermission1)||!memberAdultConfirm">
-              <q-checkbox v-model="licensePistolPermission" label="Pistolet"/>
-            </q-item>
-            <q-item v-if="!licenseRiflePermission1&&(patentRiflePermission1)||!memberAdultConfirm">
-              <q-checkbox v-model="licenseRiflePermission" label="Karabin"/>
-            </q-item>
-            <q-item v-if="!licenseShotgunPermission1&&(patentShotgunPermission1)||!memberAdultConfirm">
-              <q-checkbox v-model="licenseShotgunPermission" label="Strzelba"/>
-            </q-item>
-          </q-card-section>
-          <q-card-actions align="right">
-            <q-btn flat icon="cancel" color="primary" v-close-popup/>
-            <q-btn flat label="Dodaj" color="primary" v-close-popup
-                   @click="addLicense(memberUUID, member.license.licenseNumber, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission)"/>
-          </q-card-actions>
-        </q-card>
-      </div>
-    </q-dialog>
-    <q-dialog v-model="noDomesticStarts">
-      <q-card>
-        <h4 class="text-bold text-center">Klubowicz nie ma zaliczonej wymaganej ilości startów </h4>
-        <h4 class="text-bold text-center">Upewnij się, że klubowicz może udokumentować swoje starty</h4>
-        <q-card-actions align="right">
-          <q-btn flat label="zamknij" color="primary" v-close-popup @click="prolongLicenseConfirm=true"/>
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-    <q-dialog v-model="prolongLicenseConfirm" persistent>
-      <div>
-        <q-card>
-          <q-item>Przedłuż licencję</q-item>
-          <q-card-section class="col items-center">
-            <q-item v-if="licensePistolPermission1">
-              <q-checkbox v-model="licensePistolPermission" label="Pistolet"/>
-            </q-item>
-            <q-item v-if="licenseRiflePermission1">
-              <q-checkbox v-model="licenseRiflePermission" label="Karabin"/>
-            </q-item>
-            <q-item v-if="licenseShotgunPermission1">
-              <q-checkbox v-model="licenseShotgunPermission" label="Strzelba"/>
-            </q-item>
-          </q-card-section>
-          <q-card-actions align="right">
-            <q-btn flat icon="cancel" color="primary" v-close-popup/>
-            <q-btn label="Przedłuż" color="primary" v-close-popup
-                   @click="prolongLicense(memberUUID, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission)"/>
-          </q-card-actions>
-        </q-card>
-      </div>
     </q-dialog>
     <q-dialog v-model="deactivate" persistent>
       <q-card>
@@ -1372,20 +1108,6 @@
         <q-card-actions align="right">
           <q-btn flat icon="cancel" color="primary" v-close-popup/>
           <q-btn flat label="usuń" color="primary" v-close-popup @click="removeWeaponPermissionOrAdmission()"/>
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-    <q-dialog v-model="licensePayment" persistent
-              @keypress.enter="addLicenseHistoryPayment (memberUUID);licensePayment=false">
-      <q-card>
-        <q-card-section class="row items-center">
-          <q-avatar icon="add" color="primary"/>
-          <span class="q-ml-sm">Czy licencja została opłacona?</span>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat icon="cancel" color="primary" v-close-popup/>
-          <q-btn flat label="Tak" color="primary" v-close-popup @click="addLicenseHistoryPayment (memberUUID)"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -1694,11 +1416,6 @@
         <q-card-section>
           <div class="text-h6">Składka została przedłużona</div>
         </q-card-section>
-
-<!--        <q-card-actions align="right">-->
-<!--          <q-btn flat icon="close" color="primary" v-close-popup/>-->
-<!--          <q-btn label="Pobierz Potwierdzenie" color="primary" v-close-popup @click="getContributionPDF()"/>-->
-<!--        </q-card-actions>-->
       </q-card>
     </q-dialog>
     <q-dialog v-model="contributionRemoveRecordQuery" persistent
@@ -1728,22 +1445,6 @@
         <q-card-actions align="right">
           <q-btn icon="cancel" color="black" v-close-popup @click="code=null"/>
           <q-btn id="3" label="Usuń" color="black" v-close-popup @click="removeContributionRecord()"/>
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-    <q-dialog v-model="toggleHistoryPaymentCode" persistent>
-      <q-card class="bg-red-5 text-center">
-        <q-card-section class="flex-center">
-          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
-          <div>
-            <q-input @keypress.enter="toggleHistoryPayment(paymentUUID)" autofocus type="password" v-model="code" filled
-                     color="Yellow" class="bg-yellow text-bold" mask="####"></q-input>
-          </div>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn icon="cancel" color="black" v-close-popup @click="code=null"/>
-          <q-btn id="3" label="OK" color="black" v-close-popup @click="toggleHistoryPayment(paymentUUID)"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -1780,63 +1481,6 @@
           <div v-if="message!=null" class="text-h6">{{ message }}</div>
         </q-card-section>
 
-      </q-card>
-    </q-dialog>
-    <q-dialog v-model="editLicense" @keypress.esc="editLicense=false">
-      <q-card>
-        <q-card-section class="col">
-          <div class="text-h5 text-bold text-center">Edytuj Licencje</div>
-          <div class="text-h6">Uwaga! Wprowadzając zmiany bądź pewny tego co robisz</div>
-          <div class="row bg-grey-3">
-            <div class="q-pa-md col-6">
-              <q-input filled standout="bg-accent text-black" stack-label v-model="editLicenseNumber"
-                       label="Numer Licencji"></q-input>
-            </div>
-            <div class="q-pa-md col-6">
-              <q-input filled standout="bg-accent text-black" stack-label v-model="editLicenseDate" mask="####-12-31"
-                       label="Ważność licencji">
-                <template v-slot:append>
-                  <q-icon name="event" class="cursor-pointer">
-                    <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                      <q-date v-model="editLicenseDate">
-                        <div class="row items-center justify-end">
-                          <q-btn v-close-popup label="Zamknij" color="primary" flat/>
-                        </div>
-                      </q-date>
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
-              </q-input>
-            </div>
-            <div>
-              <q-checkbox value="" label="Oznacz jako opłacona"/>
-            </div>
-          </div>
-          <div class="q-pa-md row full-width bg-grey-3">
-            <q-btn class="full-width" label="wprowadź zmiany" color="primary" v-close-popup
-                   @click="editLicenseCode=true"/>
-          </div>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="zamknij" color="primary" v-close-popup/>
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-    <q-dialog v-model="editLicenseCode" persistent>
-      <q-card class="bg-red-5 text-center">
-        <q-card-section class="flex-center">
-          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
-          <div>
-            <q-input @keypress.enter="forceUpdateLicence();editLicenseCode=false" autofocus type="password"
-                     v-model="code" filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input>
-          </div>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn icon="cancel" color="black" v-close-popup @click="code=null"/>
-          <q-btn id="3" label="Wprowadź zmiany" color="black" v-close-popup @click="forceUpdateLicence()"/>
-        </q-card-actions>
       </q-card>
     </q-dialog>
     <q-dialog v-model="editContribution" @keypress.esc="editContribution=false">
@@ -1919,87 +1563,6 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="editLicensePayment" @keypress.esc="editLicensePayment=false">
-      <q-card>
-        <q-card-section>
-          <div class="text-h5 text-bold text-center">Edytuj Opłatę za Licencję</div>
-          <div class="text-h6 text-center">Uwaga! Wprowadzając zmiany bądź pewny tego co robisz</div>
-          <div class="row bg-grey-3">
-            <div class="q-pa-md col-6">
-              <q-input v-model="editLicensePaymentDate" filled standout="bg-accent text-black" stack-label
-                       mask="####-##-##" label="Data Opłacenia Licencji">
-                <template v-slot:append>
-                  <q-icon name="event" class="cursor-pointer">
-                    <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                      <q-date v-model="editLicensePaymentDate">
-                        <div class="row items-center justify-end">
-                          <q-btn v-close-popup label="Zamknij" color="primary" flat/>
-                        </div>
-                      </q-date>
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
-              </q-input>
-            </div>
-            <div class="q-pa-md col-6">
-              <q-input class="col-6" v-model="editLicensePaymentYear" filled standout="bg-accent text-black" stack-label
-                       mask="####" label="Opłacona na Rok"></q-input>
-            </div>
-          </div>
-          <div class="row full-width bg-red-3">
-            <div class="col q-pa-md bg-grey-3">
-              <q-btn class="full-width" label="wprowadź zmiany" color="primary" v-close-popup
-                     @click="editLicensePaymentCode=true"/>
-            </div>
-            <div class="col q-pa-md bg-red-3">
-              <q-btn class="full-width" label="Usuń wpłatę" color="red" v-close-popup
-                     @click="deleteLicensePaymentCode=true"/>
-            </div>
-          </div>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat icon="close" color="primary" v-close-popup/>
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-    <q-dialog v-model="editLicensePaymentCode" persistent>
-      <q-card class="bg-red-5 text-center">
-        <q-card-section class="flex-center">
-          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
-          <div>
-            <q-input @keypress.enter="editLicenseHistoryPayment();code=null;editLicensePaymentCode=false" autofocus
-                     type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold"
-                     mask="####"></q-input>
-          </div>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn icon="cancel" color="black" v-close-popup @click="code=null"/>
-          <q-btn id="3" label="Wprowadź zmiany" color="black" v-close-popup
-                 @click="editLicenseHistoryPayment(); code=null"/>
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-    <q-dialog v-model="deleteLicensePaymentCode" persistent>
-      <q-card class="bg-red-5 text-center">
-        <q-card-section class="flex-center">
-          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
-          <h3><span class="q-ml-sm">Usuń wpłatę</span></h3>
-          <div>
-            <q-input @keypress.enter="deleteLicenseHistoryPayment();code=null;deleteLicensePaymentCode=false" autofocus
-                     type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold"
-                     mask="####"></q-input>
-          </div>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn icon="cancel" color="black" v-close-popup @click="code=null"/>
-          <q-btn id="3" label="Wprowadź zmiany" color="black" v-close-popup
-                 @click="deleteLicenseHistoryPayment(); code=null"/>
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
   </div>
 </template>
 
@@ -2007,7 +1570,8 @@
 import { scroll } from 'quasar'
 import axios from 'axios'
 import App from 'src/App.vue'
-import DeklaracjaLOK from 'components/DeklaracjaLOK.vue'
+import lazyLoadComponent from 'src/utils/lazyLoadComponent'
+import SkeletonBox from 'src/utils/SkeletonBox.vue'
 
 const {
   getScrollTarget,
@@ -2016,29 +1580,34 @@ const {
 
 export default {
   name: 'Member',
-  components: { DeklaracjaLOK },
+  components: {
+    PersonalCardPDF: lazyLoadComponent({
+      componentFactory: () => import('components/member/PersonalCardPDF.vue'),
+      loading: SkeletonBox
+    }),
+    DeklaracjaLOK: lazyLoadComponent({
+      componentFactory: () => import('components/member/DeklaracjaLOK.vue'),
+      loading: SkeletonBox
+    }),
+    LastContributionPDF: lazyLoadComponent({
+      componentFactory: () => import('components/member/LastContributionPDF.vue'),
+      loading: SkeletonBox
+    }),
+    MemberLicense: lazyLoadComponent({
+      componentFactory: () => import('components/member/MemberLicense.vue'),
+      loading: SkeletonBox
+    })
+  },
   data () {
     return {
       member: null,
       memberUUID: null,
       picture: false,
       socialWork: true,
-      editLicense: false,
-      editLicenseDate: null,
-      editLicenseNumber: null,
-      editLicenseCode: false,
-      editLicensePayment: false,
-      editLicensePaymentDate: null,
-      editLicensePaymentYear: null,
-      editLicensePaymentCode: false,
-      deleteLicensePaymentCode: false,
       editContribution: false,
       editContributionPaymentDate: null,
       editContributionValidThruDate: null,
       editContributionCode: false,
-      togglePaymentAlert: false,
-      toggleHistoryPaymentCode: false,
-      paymentUUID: null,
       filters: [],
       certificateChoices: ['ZAŚWIADCZENIE DO POLICJI', 'ZAŚWIADCZENIE ZWYKŁE'],
       certificateChoice: null,
@@ -2075,13 +1644,10 @@ export default {
       addressConfirm: false,
       addressConfirm1: false,
       historyContributionRecord: Date.now,
-      contributionRecordConfirm: false,
-      contributionRecordConfirm1: false,
       contributionRemoveRecordQuery: false,
       contributionRemoveRecordQueryCode: false,
       code: null,
       addAmmoConfirm: false,
-      alert: false,
       helpersDefault: ['Patent', 'Pozwolenie na Broń', 'Dopuszczenie do  Posiadania Broni', 'Prowadzący Strzelanie', 'Instruktor', 'Sędzia'],
       helpers: ['Patent', 'Pozwolenie na Broń', 'Dopuszczenie do  Posiadania Broni', 'Prowadzący Strzelanie', 'Instruktor', 'Sędzia'],
       patentConfirm: false,
@@ -2094,8 +1660,6 @@ export default {
       deactivate: false,
       eraseWeapon: false,
       eraseAssest: false,
-      licenseConfirm: false,
-      licensePayment: false,
       instructorConfirm: false,
       shootingLeaderConfirm: false,
       arbiterConfirm: false,
@@ -2108,7 +1672,6 @@ export default {
       number: '',
       legNumber: null,
       patentNumber: '',
-      licenseNumber: '',
       validThru: '',
       calibers: [],
       quantities: [],
@@ -2123,15 +1686,6 @@ export default {
       patentPistolPermission1: false,
       patentRiflePermission1: false,
       patentShotgunPermission1: false,
-      licensePistolPermission: false,
-      licenseRiflePermission: false,
-      licenseShotgunPermission: false,
-      licensePistolPermission1: false,
-      licenseRiflePermission1: false,
-      licenseShotgunPermission1: false,
-      updateLicenseConfirm: false,
-      prolongLicenseConfirm: false,
-      noDomesticStarts: false,
       downloaded: false,
       permissionsInstructorNumber: '',
       permissionsShootingLeaderNumber: '',
@@ -2170,7 +1724,6 @@ export default {
       toggleEnlargement: false,
       personalStatisticsObject: null,
       personalFiles: null,
-      selected_file: '',
       clubs: ['DZIESIĄTKA Łódź'],
       clubChoiceToggle: false,
       clubChoice: '',
@@ -2433,6 +1986,20 @@ export default {
         }
       })
     },
+    getContributionPDF () {
+      axios({
+        url: 'http://' + this.local + '/files/downloadContribution/' + this.memberUUID + '?contributionUUID=null',
+        method: 'GET',
+        responseType: 'blob'
+      }).then(response => {
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        const fileLink = document.createElement('a')
+        fileLink.href = fileURL
+        fileLink.setAttribute('download', 'Składka_' + this.name + '_' + this.name2 + '.pdf')
+        document.body.appendChild(fileLink)
+        fileLink.click()
+      })
+    },
     updateMember (uuid, email, phoneNumber) {
       const phone = String(phoneNumber)
       phone.replace('+48', '')
@@ -2590,37 +2157,6 @@ export default {
         }
       })
     },
-    getContributionPDF () {
-      axios({
-        url: 'http://' + this.local + '/files/downloadContribution/' + this.memberUUID + '?contributionUUID=' + this.contributionUUID,
-        method: 'GET',
-        responseType: 'blob'
-      }).then(response => {
-        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        const fileLink = document.createElement('a')
-        fileLink.href = fileURL
-        fileLink.setAttribute('download', 'Składka_' + this.name + '_' + this.name2 + '.pdf')
-        document.body.appendChild(fileLink)
-        fileLink.click()
-        this.contributionUUID = null
-      })
-    },
-    getPersonalCardPDF (uuid) {
-      axios({
-        url: 'http://' + this.local + '/files/downloadPersonalCard/' + uuid,
-        method: 'GET',
-        responseType: 'blob'
-      }).then(response => {
-        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        const fileLink = document.createElement('a')
-        fileLink.href = fileURL
-        fileLink.setAttribute('download', 'Karta_Członkowska_' + this.name + '_' + this.name2 + '.pdf')
-        document.body.appendChild(fileLink)
-        fileLink.click()
-        this.downloaded = true
-        this.autoClose()
-      })
-    },
     getApplicationForExtensionOfTheCompetitorsLicense () {
       axios({
         url: 'http://' + this.local + '/files/downloadApplication/' + this.memberUUID,
@@ -2706,229 +2242,6 @@ export default {
             response => {
               this.message = response
               this.failure = true
-              this.autoClose()
-            })
-        }
-      })
-    },
-    addLicense (uuid, licenseNumber, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission) {
-      const data1 = {
-        number: licenseNumber,
-        pistolPermission: licensePistolPermission,
-        riflePermission: licenseRiflePermission,
-        shotgunPermission: licenseShotgunPermission
-      }
-      fetch('http://' + this.local + '/license/' + this.memberUUID, {
-        method: 'PUT',
-        body: JSON.stringify(data1),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.text().then(
-            response => {
-              this.success = true
-              this.message = response
-              this.licenseNumber = ''
-              this.licensePistolPermission = false
-              this.licenseRiflePermission = false
-              this.licenseShotgunPermission = false
-              this.showloading()
-              this.getMemberByUUID(this.memberUUID)
-              this.autoClose()
-            })
-        } else {
-          response.text().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.autoClose()
-            }
-          )
-        }
-      })
-    },
-    prolongLicense (uuid, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission) {
-      const data = {
-        pistolPermission: licensePistolPermission,
-        riflePermission: licenseRiflePermission,
-        shotgunPermission: licenseShotgunPermission
-      }
-      fetch('http://' + this.local + '/license/' + uuid, {
-        method: 'PATCH',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.text().then(
-            response => {
-              this.success = true
-              this.message = response
-              this.licensePistolPermission = false
-              this.licenseRiflePermission = false
-              this.licenseShotgunPermission = false
-              this.showloading()
-              this.getMemberByUUID(this.memberUUID)
-              this.autoClose()
-            }
-          )
-        } else {
-          response.text().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.autoClose()
-            }
-          )
-        }
-      })
-    },
-    editLicenseHistoryPayment () {
-      fetch('http://' + this.local + '/license/editPayment?memberUUID=' + this.memberUUID + '&paymentUUID=' + this.paymentUUID + '&paymentDate=' + this.editLicensePaymentDate.replace(/\//gi, '-') + '&year=' + this.editLicensePaymentYear + '&pinCode=' + this.code, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.text().then(
-            response => {
-              this.message = response
-              this.success = true
-              this.code = null
-              this.showloading()
-              this.getMemberByUUID(this.memberUUID)
-              this.autoClose()
-            })
-        } else {
-          response.text().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.code = null
-              this.autoClose()
-            })
-        }
-      })
-    },
-    deleteLicenseHistoryPayment () {
-      fetch('http://' + this.local + '/license/removePayment?paymentUUID=' + this.paymentUUID + '&pinCode=' + this.code, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.text().then(
-            response => {
-              this.message = response
-              this.success = true
-              this.code = null
-              this.showloading()
-              this.getMemberByUUID(this.memberUUID)
-              this.autoClose()
-            })
-        } else {
-          response.text().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.code = null
-              this.autoClose()
-            })
-        }
-      })
-    },
-    addLicenseHistoryPayment (uuid) {
-      fetch('http://' + this.local + '/license/history/' + uuid, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.text().then(
-            response => {
-              this.message = response
-              this.success = true
-              this.showloading()
-              this.getMemberByUUID(this.memberUUID)
-              this.autoClose()
-            })
-        } else {
-          response.text().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.autoClose()
-            })
-        }
-      })
-    },
-    toggleHistoryPayment (uuid) {
-      fetch('http://' + this.local + '/license/paymentToggle?paymentUUID=' + uuid + '&pinCode=' + this.code, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.text().then(
-            response => {
-              this.message = response
-              this.success = true
-              this.showloading()
-              this.getMemberByUUID(this.memberUUID)
-              this.autoClose()
-            })
-        }
-        if (response.status === 403) {
-          this.forbidden = true
-          this.autoClose()
-        }
-        if (response.status === 400) {
-          response.text().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.autoClose()
-            })
-        }
-      })
-    },
-    forceUpdateLicence () {
-      fetch('http://' + this.local + '/license/forceUpdate?memberUUID=' + this.memberUUID + '&number=' + this.editLicenseNumber + '&date=' + this.editLicenseDate.replace(/\//gi, '-') + '&pinCode=' + this.code, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.text().then(
-            response => {
-              this.message = response
-              this.success = true
-              this.editLicenseNumber = null
-              this.editLicenseDate = null
-              this.code = null
-              this.showloading()
-              this.getMemberByUUID(this.memberUUID)
-              this.autoClose()
-            })
-        }
-        if (response.status === 403) {
-          this.forbidden = true
-          this.autoClose()
-        }
-        if (response.status === 400) {
-          response.text().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.code = null
               this.autoClose()
             })
         }

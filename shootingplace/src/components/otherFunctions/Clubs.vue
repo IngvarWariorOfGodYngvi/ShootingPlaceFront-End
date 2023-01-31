@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-card class="text-body2">
+    <div class="text-body2 bg-white">
       <q-card-section>
         <div class="q-pa-md text-center col full-width no-outline text-h5 text-bold" tabindex="0">Lista znanych klubów
         </div>
@@ -43,7 +43,7 @@
           </div>
         </q-scroll-area>
       </q-card-section>
-    </q-card>
+    </div>
     <q-dialog v-model="clubInfo">
       <q-card>
         <q-card-section class="text-bold">
