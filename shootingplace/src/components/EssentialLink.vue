@@ -1,5 +1,5 @@
 <template>
-  <q-item
+  <q-item v-if="visible"
     clickable
     tag="a"
     :href="link"

@@ -1,16 +1,17 @@
 <template>
-  <q-page padding>
+  <q-page padding class="bg-dark text-positive">
     <div>
         <q-item>
-          <div class="text-center col full-width no-outline text-h4 text-bold" tabindex="0">DODAJ NOWEGO KLUBOWICZA</div>
+          <div class="text-center col full-width no-outline text-h4 text-bold text-positive" tabindex="0">Dodaj Nowego Klubowicza</div>
         </q-item>
     </div>
-    <div>
+    <div class="bg-dark">
     <q-stepper
       header-nav
       v-model="step"
       ref="stepper"
-      color="primary"
+      active-color="secondary"
+      class="bg-dark"
       animated
     >
       <q-step
@@ -18,19 +19,20 @@
         title="Podstawowe dane"
         caption="Wymagane"
         icon="settings"
+        class="bg-dark"
         :done="step > 1"
       >
-      <q-card class="row">
-      <q-card-section class="col-6 bg-grey-2">
+      <q-card class="row bg-dark text-positivev">
+      <q-card-section class="col-6 bg-dark-separator">
       <div class="full-width">
-      <q-item><q-input class="full-width" @input="memberFirstNameC = memberFirstName.length===0? '':memberFirstNameC = memberFirstName.length<3 ? 'red-2':'green-2'" dense :bg-color="memberFirstNameC" v-model="memberFirstName" label="Imię *" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" filled/></q-item>
-      <q-item><q-input class="full-width" @input="memberSecondNameC = memberSecondName.length===0? '':memberSecondNameC = memberSecondName.length<3 ? 'red-2':'green-2'" dense :bg-color="memberSecondNameC" v-model="memberSecondName" label="Nazwisko *" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 45" filled/></q-item>
-      <q-item><q-input class="full-width" @input="memberIDCardC = memberIDCard.length===0? '' : checkIDCard(memberIDCard)" dense :bg-color="memberIDCardC" v-model="memberIDCard" :suffix="memberIDCardS" label="Numer Dokumentu *" filled/></q-item>
-      <q-item><q-input class="full-width" @input="memberPeselC = memberPesel.length===0? '' : checkPESEL(memberPesel)" dense :bg-color="memberPeselC" v-model="memberPesel" :suffix="memberPeselS" placeholder="tylko cyfry" label="Pesel *" mask="###########" filled /></q-item>
-      <q-item><q-input class="full-width" @input="memberPhoneC = memberPhone.length===0? '' : memberPhone.length<11? 'red-2' : 'green-2' " dense :bg-color="memberPhoneC" type="tel" v-model="memberPhone" placeholder="tylko cyfry" prefix="+48 " label="Numer telefonu *" mask="### ### ###" filled onkeypress="return (event.charCode > 47 && event.charCode < 58)"/></q-item>
-      <q-item><q-input class="full-width" @input="memberEmailC = memberEmail.length===0? '' : checkEmail(memberEmail)" :bg-color="memberEmailC" dense filled color="green" type="email" v-model="memberEmail" :suffix="memberEmailS" label="email"/></q-item>
-      <q-item><q-input class="full-width" dense filled color="green" v-model="memberLegitimation" label="Numer Legitymacji" onkeypress="return (event.charCode > 47 && event.charCode < 58)"/></q-item>
-      <q-item><q-input class="full-width" dense filled color="green" v-model="memberJoinDate" mask="####-##-##" label="Data dołączenia do Klubu" hint="użyj kalendarza">
+      <q-item><q-input class="full-width" @input="memberFirstNameC = memberFirstName.length===0? '':memberFirstNameC = memberFirstName.length<3 ? 'red-2':'green-2'" dense :bg-color="memberFirstNameC" label-color="positive" v-model="memberFirstName" label="Imię *" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode === 32" filled/></q-item>
+      <q-item><q-input class="full-width" @input="memberSecondNameC = memberSecondName.length===0? '':memberSecondNameC = memberSecondName.length<3 ? 'red-2':'green-2'" dense :bg-color="memberSecondNameC" label-color="positive" v-model="memberSecondName" label="Nazwisko *" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode === 45" filled/></q-item>
+      <q-item><q-input class="full-width" @input="memberIDCardC = memberIDCard.length===0? '' : checkIDCard(memberIDCard)" dense :bg-color="memberIDCardC" v-model="memberIDCard" :suffix="memberIDCardS" label-color="positive" label="Numer Dokumentu *" filled/></q-item>
+      <q-item><q-input class="full-width" @input="memberPeselC = memberPesel.length===0? '' : checkPESEL(memberPesel)" dense :bg-color="memberPeselC" v-model="memberPesel" :suffix="memberPeselS" label-color="positive" placeholder="tylko cyfry" label="Pesel *" mask="###########" filled /></q-item>
+      <q-item><q-input class="full-width" @input="memberPhoneC = memberPhone.length===0? '' : memberPhone.length<11? 'red-2' : 'green-2' " dense :bg-color="memberPhoneC" type="tel" v-model="memberPhone" label-color="positive" placeholder="tylko cyfry" prefix="+48 " label="Numer telefonu *" mask="### ### ###" filled onkeypress="return (event.charCode > 47 && event.charCode < 58)"/></q-item>
+      <q-item><q-input class="full-width" @input="memberEmailC = memberEmail.length===0? '' : checkEmail(memberEmail)" :bg-color="memberEmailC" dense filled type="email" v-model="memberEmail" label-color="positive" :suffix="memberEmailS" label="e-mail *"/></q-item>
+      <q-item><q-input class="full-width" dense filled color="green" v-model="memberLegitimation" input-class="text-positive" label-color="positive" label="Numer Legitymacji" onkeypress="return (event.charCode > 47 && event.charCode < 58)"/></q-item>
+      <q-item><q-input class="full-width" dense filled color="green" v-model="memberJoinDate" input-class="text-positive" label-color="positive" mask="####-##-##" label="Data dołączenia do Klubu" hint="użyj kalendarza">
                           <template v-slot:append>
                             <q-icon name="event" class="cursor-pointer">
                               <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -56,11 +58,11 @@
       <q-card-section class="col">
         <div class="fit col">
         <div class="fit">
-          <q-item><q-input class="full-width" dense filled v-model="memberPostOfficeCity" label="Miasto *" /></q-item>
-          <q-item><q-input class="full-width" dense filled v-model="memberZipCode" placeholder="00-000" label="Kod Pocztowy *" mask="##-###" /></q-item>
-          <q-item><q-input class="full-width" dense filled v-model="memberStreet" label="Ulica *" /></q-item>
-          <q-item><q-input class="full-width" dense filled v-model="memberStreetNumber" label="Numer Ulicy *" /></q-item>
-          <q-item><q-input class="full-width" dense filled v-model="memberFlatNumber" label="Numer Mieszkania"/></q-item>
+          <q-item><q-input class="full-width" dense filled color="primary" label-color="positive" input-class="text-positive" v-model="memberPostOfficeCity" label="Miasto *" /></q-item>
+          <q-item><q-input class="full-width" dense filled color="primary" label-color="positive" input-class="text-positive" v-model="memberZipCode" placeholder="00-000" label="Kod Pocztowy *" mask="##-###" /></q-item>
+          <q-item><q-input class="full-width" dense filled color="primary" label-color="positive" input-class="text-positive" v-model="memberStreet" label="Ulica *" /></q-item>
+          <q-item><q-input class="full-width" dense filled color="primary" label-color="positive" input-class="text-positive" v-model="memberStreetNumber" label="Numer Ulicy *" /></q-item>
+          <q-item><q-input class="full-width" dense filled color="primary" label-color="positive" input-class="text-positive" v-model="memberFlatNumber" label="Numer Mieszkania"/></q-item>
           <q-item v-if="
           memberFirstName.length>=3
           &&memberSecondName.length>=3
@@ -81,7 +83,7 @@
       </q-card>
       </q-step>
 
-      <q-step v-if="memberAdultConfirm && (uuid!=null&&uuid!='' && !uuid.includes('Uwaga!'))"
+      <q-step v-if="memberAdultConfirm && (uuid!=null&&uuid!=='' && !uuid.includes('Uwaga!'))"
         :name="2"
         title="Patent"
         caption="opcjonalnie"
@@ -108,7 +110,7 @@
       <q-item><q-checkbox v-model="patentPistolPermission" label="Pistolet"/></q-item>
       <q-item><q-checkbox v-model="patentRiflePermission" label="Karabin"/></q-item>
       <q-item><q-checkbox v-model="patentShotgunPermission" label="Strzelba"/></q-item>
-      <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),addPatent(uuid, patentNumber, patentPistolPermission, patentRiflePermission, patentShotgunPermission,patentDate)"/></q-item>
+      <q-item><q-btn label="Dodaj" color="secondary" @click="showloading();addPatent(uuid, patentNumber, patentPistolPermission, patentRiflePermission, patentShotgunPermission,patentDate)"/></q-item>
       </div>
       </q-card-section>
       <q-card-section class="col-6">
@@ -155,7 +157,7 @@
       </q-card>
       </q-step>
 
-      <q-step v-if="(!memberAdultConfirm || (memberAdultConfirm && patentNumberConfirm)) && (uuid!=null&&uuid!='' && !uuid.includes('Uwaga!'))"
+      <q-step v-if="(!memberAdultConfirm || (memberAdultConfirm && patentNumberConfirm)) && (uuid!=null&&uuid!=='' && !uuid.includes('Uwaga!'))"
         :name="3"
         title="Licencja Zawodnicza"
         caption="opcjonalnie"
@@ -182,7 +184,7 @@
       <q-item v-if="patentPistolPermission||!memberAdultConfirm"><q-checkbox v-model="licensePistolPermission"  label="Pistolet"/></q-item>
       <q-item v-if="patentRiflePermission||!memberAdultConfirm"><q-checkbox  v-model="licenseRiflePermission"  label="Karabin"/></q-item>
       <q-item v-if="patentShotgunPermission||!memberAdultConfirm"><q-checkbox v-model="licenseShotgunPermission"  label="Strzelba"/></q-item>
-      <q-item><q-btn label="Dodaj" color="secondary" @click="showloading(),addLicense(uuid, licenseNumber, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission, licenseDate)"/></q-item>
+      <q-item><q-btn label="Dodaj" color="secondary" @click="showloading();addLicense(uuid, licenseNumber, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission, licenseDate)"/></q-item>
       </div>
       </q-card-section>
       <q-card-section class="col-6">
@@ -226,7 +228,7 @@
       </q-card-section>
       </q-card>
       </q-step>
-      <q-step v-if="memberAdultConfirm && (uuid!=null&&uuid!='' && !uuid.includes('Uwaga!'))"
+      <q-step v-if="memberAdultConfirm && (uuid!=null&&uuid!=='' && !uuid.includes('Uwaga!'))"
         :name="4"
         title="Uprawnienia"
         caption="opcjonalnie"
@@ -237,18 +239,18 @@
         <q-card-section class="col-4 bg-grey-2">
           <div>
             <q-item dense><q-item-label>Jeśli posiada pozwolenie na broń - wpisz numer</q-item-label></q-item>
-            <q-item><q-input @keypress.enter="showloading(),changeWeaponPermission(uuid, weaponPermissionNumber)" dense class="full-width" v-model="weaponPermissionNumber" label="Numer" filled/></q-item>
-            <q-item dense><q-btn label="Dodaj" color="secondary" @click="showloading(),changeWeaponPermission(uuid, weaponPermissionNumber)"/></q-item>
+            <q-item><q-input @keypress.enter="showloading();changeWeaponPermission(uuid, weaponPermissionNumber)" dense class="full-width" v-model="weaponPermissionNumber" label="Numer" filled/></q-item>
+            <q-item dense><q-btn label="Dodaj" color="secondary" @click="showloading();changeWeaponPermission(uuid, weaponPermissionNumber)"/></q-item>
           </div>
           <div>
             <q-item dense><q-item-label>Jeśli posiada uprawnienia prowadzącego - wpisz numer</q-item-label></q-item>
-            <q-item><q-input @keypress.enter="showloading(),updateMemberPermissions(uuid, permissionsShootingLeaderNumber),value=true" dense class="full-width" v-model="permissionsShootingLeaderNumber" label="Numer" filled/></q-item>
-            <q-item dense><q-btn label="Dodaj" color="secondary" @click="showloading(),updateMemberPermissions(uuid, permissionsShootingLeaderNumber),value=true"/></q-item>
+            <q-item><q-input @keypress.enter="showloading();updateMemberPermissions(uuid, permissionsShootingLeaderNumber)" dense class="full-width" v-model="permissionsShootingLeaderNumber" label="Numer" filled/></q-item>
+            <q-item dense><q-btn label="Dodaj" color="secondary" @click="showloading();updateMemberPermissions(uuid, permissionsShootingLeaderNumber)"/></q-item>
           </div>
           <div>
             <q-item dense><q-item-label>Jeśli posiada uprawnienia instruktora - wpisz numer</q-item-label></q-item>
-            <q-item><q-input @keypress.enter="showloading(),updateMemberPermissions(uuid, permissionsInstructorNumber), value1=true" dense class="full-width" v-model="permissionsInstructorNumber" label="Numer" filled/></q-item>
-            <q-item dense><q-btn label="Dodaj" color="secondary" @click="showloading(),updateMemberPermissions(uuid, permissionsInstructorNumber), value1=true"/></q-item>
+            <q-item><q-input @keypress.enter="showloading();updateMemberPermissions(uuid, permissionsInstructorNumber)" dense class="full-width" v-model="permissionsInstructorNumber" label="Numer" filled/></q-item>
+            <q-item dense><q-btn label="Dodaj" color="secondary" @click="showloading();updateMemberPermissions(uuid, permissionsInstructorNumber)"/></q-item>
           </div>
         </q-card-section>
         <q-card-section class="col-4">
@@ -273,119 +275,29 @@
           <q-item dense><q-radio dense v-model="ordinal" :val="3" label="Klasa 1" color="secondary" /></q-item>
           <q-item dense><q-radio dense v-model="ordinal" :val="4" label="Klasa Państwowa" color="secondary" /></q-item>
           <q-item dense><q-radio dense v-model="ordinal" :val="5" label="Klasa Międzynarodowa" color="secondary" /></q-item>
-          <q-item dense><q-btn label="Dodaj" color="secondary" @click="showloading(),updateMemberPermissions(uuid, permissionsArbiterNumber,permissionsArbiterPermissionValidThru, ordinal), value2=true"/></q-item>
+          <q-item dense><q-btn label="Dodaj" color="secondary" @click="showloading(),updateMemberPermissions(uuid, permissionsArbiterNumber,permissionsArbiterPermissionValidThru, ordinal)"/></q-item>
         </div>
       </q-card-section>
       </q-card>
       </q-step>
 
       <template v-slot:navigation  >
-        <q-stepper-navigation class="flex flex">
-          <q-item clickable v-if="(step<5&&(uuid!=null&&uuid!=''))" @click="alertResponse=null"><q-btn v-if="step<5" @click="$refs.stepper.next()" color="primary" :label="step === 4 ? 'Zakończ' : 'Przejdź Dalej'" /></q-item>
+        <q-stepper-navigation class="flex bg-dark">
+          <q-item clickable v-if="(step<5&&(uuid!=null&&uuid!==''))" @click="alertResponse=null"><q-btn v-if="step<5" @click="$refs.stepper.next()" color="primary" :label="step === 4 ? 'Zakończ' : 'Przejdź Dalej'" /></q-item>
           <q-item><q-btn v-if="step > 1" flat color="primary" @click="$refs.stepper.previous()" label="Wróć" /></q-item>
           <q-item><q-btn v-if="step > 1" @click="redirect()" color="primary" label="Zakończ" /></q-item>
-          <q-item><q-btn v-if="uuid!=null&&uuid!=''" type="a" href="https://portal.pzss.org.pl/CLub/Player" target="_blank" label="Przejdź do portalu PZSS" color="primary" @click="pzssPortal=true"/></q-item>
-          <q-item><q-btn v-if="uuid!=null&&uuid!=''" label="potwierdź zapis do portalu pzss" color="primary" @click="pzssPortal=true"/></q-item>
-          <q-item><q-btn v-if="uuid!=null&&uuid!=''" color="secondary" @click="personalCardDownloadConfirm=true" label="Drukuj kartę" /></q-item>
-          <q-item><q-btn v-if="uuid!=null&&uuid!=''" color="secondary" @click="contributionDownloadConfirm=true" label="Potwierdzenie opłacenia składki" /></q-item>
-          <q-item><DeklaracjaLOK v-if="uuid!=null&&uuid!=''" :uuid="uuid"/></q-item>
-          <q-item><q-btn v-if="uuid!=null&&uuid!=''" color="secondary" @click="getCSVFile()" label="Pobierz plik .CSV" /></q-item>
-          <q-item v-if="uuid!=null"><q-item-label>Identyfikator : {{uuid}}</q-item-label></q-item>
+          <q-item><q-btn v-if="uuid!=null&&uuid!==''" type="a" href="https://portal.pzss.org.pl/CLub/Player" target="_blank" label="Przejdź do portalu PZSS" color="primary" @click="pzssPortal=true"/></q-item>
+          <q-item><q-btn v-if="uuid!=null&&uuid!==''" label="potwierdź zapis do portalu pzss" color="primary" @click="pzssPortal=true"/></q-item>
+          <q-item><PersonalCardPDF v-if="uuid!=null&&uuid!==''" :uuid="uuid" :name="memberE!=null?(memberE.firstName + ' ' + memberE.secondName):''"/></q-item>
+          <q-item><LastContributionPDF v-if="uuid!=null&&uuid!==''" :uuid="uuid" :name="memberE!=null?(memberE.firstName + ' ' + memberE.secondName):''"/></q-item>
+          <q-item><DeklaracjaLOK v-if="uuid!=null&&uuid!==''" :uuid="uuid" :name="memberE!=null?(memberE.firstName + ' ' + memberE.secondName):''"/></q-item>
+          <q-item><CSVFile v-if="uuid!=null&&uuid!==''" :uuid="uuid" :name="memberE!=null?(memberE.firstName + ' ' + memberE.secondName):''"/></q-item>
+          <q-item v-if="uuid!==''"><q-item-label>Identyfikator : {{uuid}}</q-item-label></q-item>
           <q-item v-if="alertResponse!=null" class="bg-red-3"><q-item-label>Ostrzeżenie : {{alertResponse}}</q-item-label></q-item>
         </q-stepper-navigation>
       </template>
     </q-stepper>
   </div>
-<q-dialog v-model="contributionDownloadConfirm" persistent @keypress.enter="contributionDownloadConfirm=false,getContributionPDF()">
-      <q-card>
-        <q-card-section class="row items-center">
-          <span class="text-h6">Czy napewno chcesz pobrać potwierdzenie składki?</span>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="anuluj" color="primary" v-close-popup />
-          <q-btn flat label="Pobierz" color="primary" v-close-popup @click="getContributionPDF()" />
-        </q-card-actions>
-      </q-card>
-</q-dialog>
-<q-dialog v-model="personalCardDownloadConfirm" persistent @keypress.enter="personalCardDownloadConfirm=false,getPersonalCardPDF()">
-      <q-card>
-        <q-card-section class="row items-center">
-          <span class="text-h6">Czy napewno chcesz pobrać kartę Klubowicza?</span>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="anuluj" color="primary" v-close-popup />
-          <q-btn flat label="Pobierz" color="primary" v-close-popup @click="getPersonalCardPDF()" />
-        </q-card-actions>
-      </q-card>
-</q-dialog>
-<q-dialog :position="'top'" v-model="memberAlert">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6 text-bold">Osoba została dodana do bazy klubu</div>
-        </q-card-section>
-      </q-card>
-</q-dialog>
-<q-dialog :position="'top'" v-model="licenseAndPatentAlert">
-      <q-card>
-        <q-card-section v-if="licenseNumber==null">
-          <div class="text-h6">Uprawnienia patentu zostały nadane</div>
-        </q-card-section>
-        <q-card-section v-else>
-          <div class="text-h6">Uprawnienia licencji zostały nadane</div>
-        </q-card-section>
-      </q-card>
-</q-dialog>
-<q-dialog :position="'top'" v-model="weaponAlert">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Dodano Pozwolenie na Broń</div>
-        </q-card-section>
-      </q-card>
-</q-dialog>
-<q-dialog :position="'top'" v-model="instructorAlert">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Dodano Uprawnienia Instruktora</div>
-        </q-card-section>
-      </q-card>
-</q-dialog>
-<q-dialog :position="'top'" v-model="shootingLeaderAlert">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Dodano Uprawnienia Prowadzącego Strzelanie</div>
-        </q-card-section>
-      </q-card>
-</q-dialog>
-<q-dialog :position="'top'" v-model="arbiterAlert">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Dodano Licencję Sędziego</div>
-        </q-card-section>
-      </q-card>
-</q-dialog>
-<q-dialog :position="'top'" v-model="contributionConfirmDownloadAlert">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Pobrano potwierdzenie składki</div>
-        </q-card-section>
-      </q-card>
-</q-dialog>
-<q-dialog :position="'top'" v-model="personalCardDownloadAlert">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Pobrano kartę Klubowicza</div>
-        </q-card-section>
-      </q-card>
-</q-dialog>
-<q-dialog :position="'top'" v-model="csvfile">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Pobrano plik .CSV</div>
-        </q-card-section>
-      </q-card>
-</q-dialog>
 <q-dialog :position="'top'" v-model="success">
       <q-card>
         <q-card-section>
@@ -401,15 +313,15 @@
       </q-card>
 </q-dialog>
 <q-dialog v-model="pzssPortal" persistent @keypress.enter="changePzss (uuid),pzssPortal=false">
-      <q-card>
+      <q-card class="bg-dark text-positive">
         <q-card-section class="row items-center">
           <q-avatar icon="add" color="primary"/>
           <span class="q-ml-sm">Czy Klubowicz został dodany do portalu?</span>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat label="nie" color="primary" v-close-popup />
-          <q-btn label="tak" color="primary" v-close-popup @click="changePzss (uuid)"/>
+          <q-btn text-color="white" label="nie" color="primary" v-close-popup />
+          <q-btn text-color="white" label="tak" color="primary" v-close-popup @click="changePzss (uuid)"/>
         </q-card-actions>
       </q-card>
 </q-dialog>
@@ -425,7 +337,7 @@
       memberStreet,
       memberStreetNumber,
       memberFlatNumber,
-      returningToClub),
+      returningToClub);
       acceptCode=false">
       <q-card class="bg-red-5 text-center">
         <q-card-section class="flex-center">
@@ -452,20 +364,6 @@
         </q-card-actions>
       </q-card>
 </q-dialog>
-<q-dialog :position="'top'" v-model="forbidden">
-      <q-card class="bg-warning">
-        <q-card-section>
-          <div class="text-h6">{{message}}</div>
-        </q-card-section>
-      </q-card>
-</q-dialog>
-<q-dialog :position="'top'" v-model="conflict">
-      <q-card class="bg-warning">
-        <q-card-section>
-          <div class="text-h6">Wystąpił konflikt. Nie można wykonać żądania.</div>
-        </q-card-section>
-      </q-card>
-</q-dialog>
   </q-page>
 </template>
 
@@ -474,43 +372,44 @@
 import Vue from 'vue'
 import axios from 'axios'
 import App from 'src/App.vue'
-import DeklaracjaLOK from 'components/member/DeklaracjaLOK.vue'
+import lazyLoadComponent from 'src/utils/lazyLoadComponent'
+import SkeletonBox from 'src/utils/SkeletonBox'
 Vue.prototype.$axios = axios
 
 export default {
-  components: { DeklaracjaLOK },
+  components: {
+    PersonalCardPDF: lazyLoadComponent({
+      componentFactory: () => import('components/member/PersonalCardPDF.vue'),
+      loading: SkeletonBox
+    }),
+    DeklaracjaLOK: lazyLoadComponent({
+      componentFactory: () => import('components/member/DeklaracjaLOK.vue'),
+      loading: SkeletonBox
+    }),
+    LastContributionPDF: lazyLoadComponent({
+      componentFactory: () => import('components/member/LastContributionPDF.vue'),
+      loading: SkeletonBox
+    }),
+    CSVFile: lazyLoadComponent({
+      componentFactory: () => import('components/member/MemberCSVFile.vue'),
+      loading: SkeletonBox
+    })
+  },
   data () {
     return {
       returningToClub: false,
       peselValue: false,
-      value: false,
-      value1: false,
-      value2: false,
-      alert: false,
       pzss: false,
-      csvfile: false,
-      conflict: false,
       code: null,
       message: null,
-      forbidden: false,
       acceptCode: false,
       alertResponse: null,
-      instructorAlert: false,
-      shootingLeaderAlert: false,
-      arbiterAlert: false,
       success: false,
       failure: false,
-      memberAlert: false,
-      licenseAndPatentAlert: false,
-      weaponAlert: false,
       permissionsShootingLeaderNumber: null,
       permissionsInstructorNumber: null,
       permissionsArbiterNumber: null,
       permissionsArbiterPermissionValidThru: '',
-      contributionDownloadConfirm: false,
-      contributionConfirmDownloadAlert: false,
-      personalCardDownloadConfirm: false,
-      personalCardDownloadAlert: false,
       step: 1,
       number: '',
       validThru: '',
@@ -554,7 +453,7 @@ export default {
       memberFlatNumber: null,
       memberE: null,
       active: true,
-      uuid: null,
+      uuid: '',
       ordinal: '',
       dateVar: /\//gi,
       pzssPortal: false,
@@ -653,7 +552,7 @@ export default {
               this.code = null
               this.alertResponse = null
               this.memberAdultConfirm = this.memberAdult
-              this.conflict = true
+              this.failure = true
               this.getMember(this.uuid)
               this.autoClose()
               return response
@@ -664,7 +563,7 @@ export default {
           response.text().then(
             response => {
               this.message = response
-              this.forbidden = true
+              this.failure = true
               this.autoClose()
               return response
             })
@@ -828,54 +727,6 @@ export default {
         }
       })
     },
-    getContributionPDF () {
-      axios({
-        url: 'http://' + this.local + '/files/downloadContribution/' + this.uuid + '?contributionUUID=null',
-        method: 'GET',
-        responseType: 'blob'
-      }).then(response => {
-        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        const fileLink = document.createElement('a')
-        fileLink.href = fileURL
-        fileLink.setAttribute('download', 'Składka_' + this.memberFirstName + '_' + this.memberSecondName + '.pdf')
-        document.body.appendChild(fileLink)
-        fileLink.click()
-        this.contributionConfirmDownloadAlert = true
-        this.autoClose()
-      })
-    },
-    getPersonalCardPDF () {
-      axios({
-        url: 'http://' + this.local + '/files/downloadPersonalCard/' + this.uuid,
-        method: 'GET',
-        responseType: 'blob'
-      }).then(response => {
-        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        const fileLink = document.createElement('a')
-        fileLink.href = fileURL
-        fileLink.setAttribute('download', 'Karta_Członkowska_' + this.memberFirstName + '_' + this.memberSecondName + '.pdf')
-        document.body.appendChild(fileLink)
-        fileLink.click()
-        this.personalCardDownloadAlert = true
-        this.autoClose()
-      })
-    },
-    getCSVFile () {
-      axios({
-        url: 'http://' + this.local + '/files/downloadCSVFile/' + this.uuid,
-        method: 'GET',
-        responseType: 'blob'
-      }).then(response => {
-        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        const fileLink = document.createElement('a')
-        fileLink.href = fileURL
-        fileLink.setAttribute('download', this.memberFirstName + '_' + this.memberSecondName + '.csv')
-        document.body.appendChild(fileLink)
-        fileLink.click()
-        this.csvfile = true
-        this.autoClose()
-      })
-    },
     getMember (uuid) {
       fetch('http://' + this.local + '/member/uuid/' + uuid, {
         method: 'GET',
@@ -982,7 +833,7 @@ export default {
       let color = ''
       const z = email.includes('@')
       const x = email.includes('.com') || email.includes('.pl') || email.includes('.eu') || email.includes('.ua')
-      if (z & x) {
+      if (z && x) {
         this.isPresentEmail(email).then(() => {
           const a = this.isEmail
           color = a ? 'warning' : 'green-2'
@@ -1013,25 +864,11 @@ export default {
           return response
         })
     },
-    redirectToMemberList () {
-      window.location.href = 'http://' + App.prod + 'member'
-    },
     autoClose () {
       setTimeout(() => {
-        this.memberAlert = false
         this.failure = false
         this.success = false
-        this.licenseAndPatentAlert = false
-        this.weaponAlert = false
-        this.instructorAlert = false
-        this.shootingLeaderAlert = false
-        this.arbiterAlert = false
-        this.contributionConfirmDownloadAlert = false
-        this.personalCardDownloadAlert = false
-        this.csvfile = false
         this.pzss = false
-        this.forbidden = false
-        this.conflict = false
         this.message = null
       }, 2000)
     }

@@ -1,15 +1,12 @@
 <template>
-  <div id="q-app">
+  <div id="q-app" class="bg-dark">
     <router-view />
   </div>
 </template>
-
 <script>
 // import keycloak from '@dsb-norge/vue-keycloak-js'
-import Vue from 'vue'
+// import Vue from 'vue'
 // import router from './router'
-import axios from 'axios'
-Vue.prototype.$axios = axios
 // import store from './store'
 // Vue.config.productionTip = false
 

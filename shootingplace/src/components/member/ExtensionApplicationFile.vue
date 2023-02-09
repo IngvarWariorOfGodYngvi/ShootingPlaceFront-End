@@ -1,23 +1,23 @@
 <template>
   <div class="full-width">
-    <q-btn class="full-width" :disable="disable" @click="dialog=true" color="secondary">Pobierz deklarację członkowską LOK
+    <q-btn class="full-width" :disable="disable" @click="dialog=true" color="secondary">Pobierz Wniosek o przedłużenie licencji
     </q-btn>
-    <q-dialog v-model="dialog" @keypress.enter="dialog=false;membershipDeclarationLOKPDF()">
+    <q-dialog v-model="dialog" @keypress.enter="dialog=false;getApplicationForExtensionOfTheCompetitorsLicense()">
       <q-card class="bg-dark text-positive">
         <q-card-section class="row items-center">
-          <span class="text-h6">Czy na pewno chcesz pobrać Deklarację LOK?</span>
+          <span class="text-h6">Czy na pewno chcesz pobrać wniosek o przedłużenie licencji?</span>
         </q-card-section>
 
         <q-card-actions align="right">
           <q-btn text-color="white" label="anuluj" color="primary" v-close-popup />
-          <q-btn text-color="white" label="Pobierz" color="primary" v-close-popup @click="membershipDeclarationLOKPDF()" />
+          <q-btn text-color="white" label="Pobierz" color="primary" v-close-popup @click="getApplicationForExtensionOfTheCompetitorsLicense()" />
         </q-card-actions>
       </q-card>
     </q-dialog>
     <q-dialog :position="'top'" v-model="download">
       <q-card>
         <q-card-section>
-          <div class="text-h6">Pobrano składkę {{name}}</div>
+          <div class="text-h6">Pobrano wniosek o przedłużenie licencji</div>
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -25,16 +25,15 @@
 </template>
 
 <script>
-
+import App from 'src/App'
 import axios from 'axios'
-import App from 'src/App.vue'
 
 export default {
-  name: 'DeklaracjaLOK.vue',
+  name: 'ExtensionApplicationFile.vue',
   data () {
     return {
-      dialog: false,
       download: false,
+      dialog: false,
       local: App.host
     }
   },
@@ -49,21 +48,21 @@ export default {
     },
     disable: {
       type: Boolean,
-      required: false,
+      required: true,
       default: false
     }
   },
   methods: {
-    membershipDeclarationLOKPDF () {
+    getApplicationForExtensionOfTheCompetitorsLicense () {
       axios({
-        url: 'http://' + this.local + '/files/membershipDeclarationLOK?uuid=' + this.uuid,
+        url: 'http://' + this.local + '/files/downloadApplication/' + this.uuid,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
-        fileLink.setAttribute('download', 'Deklaracja Członkowska LOK ' + this.name + '.pdf')
+        fileLink.setAttribute('download', 'Wniosek ' + this.name + '.pdf')
         document.body.appendChild(fileLink)
         fileLink.click()
         this.download = true
@@ -78,3 +77,7 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+
+</style>

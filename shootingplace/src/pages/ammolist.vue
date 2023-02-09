@@ -2,14 +2,16 @@
   <q-page padding>
     <div>
       <q-item>
-        <div class="text-center col full-width no-outline text-h4 text-bold" tabindex="0">Lista Amunicyjna</div>
+        <div class="text-center col full-width no-outline text-h4 text-bold text-positive" tabindex="0">Lista
+          Amunicyjna
+        </div>
       </q-item>
     </div>
     <div class="row">
-      <q-card class="col-9">
+      <q-card class="col-9 bg-dark text-positive">
         <div class="row">
           <div class="col-3">
-            <q-btn class="col-1 full-width full-height" icon="person_add_alt_1"
+            <q-btn class="col-1 full-width full-height" icon="person_add_alt_1" color="primary"
                    icon-right="person_add_alt_1" @click="getOther();addAmmo=true">
               <q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">Dodaj do listy
               </q-tooltip>
@@ -30,7 +32,7 @@
         </div>
         <div v-else class="col">
           <q-item class="col">
-            <q-item-section class="text-h5 text-bold">
+            <q-item-section class="text-h5 text-bold ">
               Lista Amunicji {{ convertDate(ammoList.date) }} numer {{ ammoList.number }}
             </q-item-section>
             <q-item-section side top>
@@ -62,48 +64,52 @@
                    :key="uuid">
                 <div class="row full-width"
                      @dblclick="legitimationNumber = ammoUsedToEvidenceDTOList.legitimationNumber;memberDial=legitimationNumber!=null">
-                  <q-field color="black" dense class="col-10" standout="bg-accent text-black" label="osoba"
+                  <q-field color="positive" dense class="col-10 text-positive" standout="bg-accent text-positive"
+                           label-color="positive" label="osoba"
                            stack-label>
-                    <div class="row text-black">{{ ammoUsedToEvidenceDTOList.name }}</div>
+                    <div class="row text-positive">{{ ammoUsedToEvidenceDTOList.name }}</div>
                   </q-field>
-                  <q-field class="col-2" dense standout="bg-accent text-black" label="ilość" stack-label>
-                    <div class="row text-black">{{ ammoUsedToEvidenceDTOList.counter }}</div>
+                  <q-field class="col-2" dense standout="bg-accent text-positive" label="ilość" label-color="positive"
+                           stack-label>
+                    <div class="row text-positive">{{ ammoUsedToEvidenceDTOList.counter }}</div>
                   </q-field>
                 </div>
               </div>
               <div class="row reverse">
-                <q-field class="col-2 bg-grey-4" dense standout="bg-accent text-black" label="suma" stack-label>
-                  <div class="text-black">{{ ammoInEvidenceDTOList.quantity }}</div>
+                <q-field class="col-2 bg-dark text-positive" dense standout="bg-accent text-positive"
+                         label-color="positive" label="suma" stack-label>
+                  <div class="text-positive">{{ ammoInEvidenceDTOList.quantity }}</div>
                 </q-field>
               </div>
             </div>
           </div>
         </div>
       </q-card>
-      <q-card class="col-3">
+      <q-card class="col-3 bg-dark">
         <div>
           <q-item>
-            <q-item-label class="text-h5 text-bold">
+            <q-item-label class="text-h5 text-bold text-positive">
               Zamknięte listy
             </q-item-label>
           </q-item>
           <div class="row full-width bg-primary">
-            <div class="self-center text-center col-1 bg-white">
+            <div class="text-left col-1 dark">
               <q-btn icon="arrow_left" @click="pageNumber=pageNumber-1;getClosedEvidence(pageNumber)"
-                     :disable="pageNumber===0" class="full-width text-black" color="white"></q-btn>
+                     :disable="pageNumber===0" class="full-width" text-color="positive" color="dark"></q-btn>
             </div>
             <div class="self-center text-bold text-center text-white col-10">STRONA {{ pageNumber + 1 }}</div>
-            <div class="self-center text-center col-1 bg-white">
+            <div class="text-center col-1 bg-dark">
               <q-btn icon="arrow_right"
                      @click="pageNumber=ammoListClose.length===50?pageNumber+1:pageNumber;getClosedEvidence(pageNumber)"
-                     :disabled="ammoListClose.length!==50" class="full-width text-black" color="white"></q-btn>
+                     :disabled="ammoListClose.length!==50" class="full-width" text-color="positive"
+                     color="dark"></q-btn>
             </div>
           </div>
           <q-virtual-scroll :items="ammoListClose" visible class="full-width q-pa-none" style="height: 70vh;">
             <template v-slot="{ item, index }">
               <q-item :key="index" dense class="q-pa-none"
               >
-                <q-btn class="col full-width full-height"
+                <q-btn class="col full-width full-height text-positive"
                        @click="date = item.date;ammunitionListNumber = item.number;uuid= item.evidenceUUID;getEvidence();ammunitionListInfo=true">
                   <div class="col">
                     <b>{{ item.number }}</b>
@@ -124,7 +130,7 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model="ammunitionListInfo">
-      <q-card>
+      <q-card class="bg-dark text-positive">
         <q-card-section class="col">
           <div class="col q-pa-xs">
             <div class="text-h6">Informacje dla listy z dnia {{ date }}</div>
@@ -161,32 +167,20 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog :position="'top'" v-model="fail">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">{{ message }}</div>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
-    <q-dialog :position="'top'" v-model="failArmory">
-      <q-card class="bg-warning">
-        <q-card-section>
-          <div class="text-h6">Nie można wydać amunicji - Sprawdź stan magazynu</div>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
     <q-dialog v-model="addAmmo">
-      <div class="bg-white">
+      <div class="bg-dark text-positive">
         <div class="row">
           <q-select :label="memberName" class="col"
                     :option-value="opt => opt!==''? opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber : '0 0'"
                     :option-label="opt => opt!==''? opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber : '0 0'"
                     emit-value
                     map-options
-                    label-color="black" v-model="memberName" fill-input filled dense use-input hide-selected
+                    color="positive" input-class="text-positive"
+                    label-color="positive" dark v-model="memberName" fill-input filled dense use-input hide-selected
                     input-debounce="0" :options="options" @input="otherName='0 0'" @filter="filterFn">
             <template v-slot:option="option">
-              <q-item class="rounded" dense style="padding: 0; margin: 0;" v-bind="option.itemProps"
+              <q-item class="rounded bg-dark text-positive" dense style="padding: 0; margin: 0;"
+                      v-bind="option.itemProps"
                       v-on="option.itemEvents">
                 <q-item-section v-if="option.opt.active" style="padding: 0.5em; margin: 0;"
                                 @click="otherName='0 0';memberName = option.opt.secondName+' '+option.opt.firstName+' '+ option.opt.legitimationNumber">
@@ -197,7 +191,7 @@
                     Młodzież
                   </div>
                 </q-item-section>
-                <q-item-section v-else style="padding: 0.5em; margin: 0;" class="bg-red-2 rounded"
+                <q-item-section v-else style="padding: 0.5em; margin: 0;" class="bg-warning rounded"
                                 @click="otherName='0 0';memberName = option.opt.secondName+' '+option.opt.firstName+' '+ option.opt.legitimationNumber">
                   <div v-if="option.opt.adult">{{ option.opt.secondName }} {{ option.opt.firstName }}
                     {{ option.opt.legitimationNumber }} Ogólna - BRAK SKŁADEK
@@ -217,10 +211,14 @@
             </template>
           </q-select>
           <q-select class="col" dense filled v-model="otherName" use-input hide-selected fill-input input-debounce="0"
+                    color="positive" input-class="text-positive" label-color="positive"
+                    popup-content-class="bg-dark text-positive"
                     :options="options1" @input="memberName='0 0'" @filter="filterOther" label="Dodaj osobę spoza klubu">
             <template v-slot:no-option>
-              <div>
-                <div class="q-pa-md bg-grey-5 text-center text-bold">Brak wyników - możesz dodać nową osobę</div>
+              <div class="bg-dark text-center text-bold text-positive">
+                <div class="q-pa-md bg-dark text-center text-bold text-positive">Brak wyników - możesz dodać nową
+                  osobę
+                </div>
                 <div class="q-pa-md bg-grey-5">
                   <q-btn class="full-width" color="primary" label="przejdź do formularza"
                          @click="addNewOtherPerson = true"/>
@@ -232,14 +230,13 @@
         <div class="row">
           <div class="full-width">
             <q-radio v-model="caliberUUID" v-for="(calibers,uuid) in calibers" :key="uuid" :val="calibers.uuid">
-              <q-field borderless class="full-width cursor-pointer">
-                <div class="full-width text-black text-left q-pa-md">{{ calibers.name }}</div>
-              </q-field>
+              <div class="full-width text-positive text-left q-pa-md cursor-pointer">{{ calibers.name }}</div>
             </q-radio>
           </div>
         </div>
         <div class="col">
-          <q-input v-model="ammoQuantity" class="full-width col" dense filled label="Ilość Amunicji"
+          <q-input v-model="ammoQuantity" class="full-width col" color="positive" label-color="positive"
+                   input-class="text-positive" dense filled label="Ilość Amunicji"
                    onkeypress="return (event.charCode > 44 && event.charCode < 58)" placeholder="Tylko cyfry"
                    type="number" @keypress.enter="addMemberAndAmmoToCaliber()"></q-input>
           <q-card-actions class="row" align="right">
@@ -325,7 +322,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog :position="'top'" v-model="forbidden">
+    <q-dialog :position="'top'" v-model="failure">
       <q-card class="bg-warning">
         <q-card-section>
           <div class="text-h6">{{ message }}</div>
@@ -334,14 +331,14 @@
     </q-dialog>
     <q-dialog v-model="confirmation"
               @keypress.enter="showloading();closeEvidence ();getAmmoData();getClosedEvidence(pageNumber);confirmation=false">
-      <q-card>
+      <q-card class="bg-dark text-positive">
         <q-card-section>
           <div class="text-h6">Czy na pewno zamknąć listę amunicyjną</div>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat icon="cancel" color="primary" v-close-popup/>
-          <q-btn icon="done" color="primary" v-close-popup
+          <q-btn text-color="white" flat icon="cancel" color="primary" v-close-popup/>
+          <q-btn text-color="white" icon="done" color="primary" v-close-popup
                  @click="showloading();closeEvidence ();getAmmoData();getClosedEvidence(pageNumber)"/>
         </q-card-actions>
       </q-card>
@@ -366,7 +363,9 @@
     </q-dialog>
   </q-page>
 </template>
+<style src="../style/style.scss" lang="scss">
 
+</style>
 <script>
 
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
@@ -393,19 +392,16 @@ export default {
       ammunitionListInfo: false,
       ammunitionListNumber: null,
       ammunitionListEvidence: ['', []],
-      ammoList: null,
+      ammoList: { ammoInEvidenceDTOList: [], forceOpen: false },
       ammoListClose: [],
       date: '',
       message: null,
       success: false,
-      fail: false,
+      failure: false,
       openList: false,
-      forbidden: false,
       confirmation: false,
       code: null,
-      failArmory: false,
       otherName: null,
-      ammoAdded: false,
       addAmmo: false,
       filters: [],
       filtersOther: [],
@@ -473,8 +469,8 @@ export default {
       fetch('http://' + this.local + '/ammoEvidence/closedEvidences?page=' + pageNumber + '&size=50', {
         method: 'GET'
       }).then(response => {
-        response.json().then(ammoListClose => {
-          this.ammoListClose = ammoListClose
+        response.json().then(response => {
+          this.ammoListClose = response
         })
       })
     },
@@ -506,7 +502,7 @@ export default {
           response.text().then(
             response => {
               this.message = response
-              this.fail = true
+              this.failure = true
               this.autoClose()
             }
           )
@@ -528,19 +524,10 @@ export default {
             this.getClosedEvidence(this.pageNumber)
             this.autoClose()
           })
-        }
-        if (response.status === 403) {
+        } else {
           response.text().then(response => {
             this.message = response
-            this.forbidden = true
-            this.autoClose()
-          }
-          )
-        }
-        if (response.status === 400) {
-          response.text().then(response => {
-            this.message = response
-            this.fail = true
+            this.failure = true
             this.autoClose()
           }
           )
@@ -592,19 +579,12 @@ export default {
             this.showloading()
             this.autoClose()
           })
-        }
-        if (response.status === 400) {
+        } else {
           response.text().then(response => {
             this.message = response
-            this.fail = true
-            this.ammoQuantity = null
+            this.failure = true
             this.autoClose()
           })
-        }
-        if (response.status === 406) {
-          this.failArmory = true
-          this.ammoQuantity = null
-          this.autoClose()
         }
       })
     },
@@ -643,8 +623,11 @@ export default {
           this.getOther()
           this.autoClose()
         } else {
-          this.fail = true
-          this.autoClose()
+          response.text().then(response => {
+            this.message = response
+            this.failure = true
+            this.autoClose()
+          })
         }
       })
     },
@@ -722,9 +705,7 @@ export default {
       setTimeout(() => {
         this.ammunitionListAlert = false
         this.success = false
-        this.fail = false
-        this.forbidden = false
-        this.failArmory = false
+        this.failure = false
         this.addOtherAlert = false
         this.message = null
         this.gunBarcode = null

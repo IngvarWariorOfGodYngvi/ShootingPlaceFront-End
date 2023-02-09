@@ -6,8 +6,9 @@
   "author": "izebr <i.zebrowski.ul@gmail.com>",
   "private": true,
   "scripts": {
-    "lint": "eslint --ext .js,.vue ./",
-    "test": "echo \"No test specified\" && exit 0"
+    "serve": "vue-cli-service --openssl-legacy-provider serve",
+    "build": "vue-cli-service --openssl-legacy-provider build",
+    "lint": "vue-cli-service --openssl-legacy-provider lint"
   },
   "dependencies": {
     "@dsb-norge/vue-keycloak-js": "^1.3.2",

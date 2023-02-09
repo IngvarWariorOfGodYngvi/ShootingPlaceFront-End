@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-card class="text-body2">
+    <q-card class="text-body2 bg-dark">
       <div class="row">
         <div class="q-pa-md text-left col full-width no-outline text-h5 text-bold">Ilość osób
           {{ list.length }}
@@ -18,52 +18,52 @@
             <div class="col" @dblclick="legitimationNumber = item.legitimationNumber;memberDial=true">
               <q-tooltip content-class="text-subtitle2" anchor="top middle">kliknij dwa razy aby wyświetlić podgląd
               </q-tooltip>
-              <q-field dense class="col" label="Nazwisko i Imię" standout="bg-accent text-black" stack-label>
+              <q-field dense class="col" label="Nazwisko i Imię" color="positive" label-color="positive" standout="bg-accent text-positive" stack-label>
                 <div @dblclick="legitimationNumber = item.legitimationNumber;memberDial=true">
-                  <div class="self-center col full-width no-outline row text-black" tabindex="1">{{ item.secondName }}
+                  <div class="self-center col full-width no-outline row" tabindex="1">{{ item.secondName }}
                     {{ item.firstName }}
                   </div>
                 </div>
               </q-field>
             </div>
-            <q-field dense class="col-2" label="Grupa" standout="bg-accent text-black" stack-label>
-              <div class="self-center col full-width no-outline row text-black" tabindex="1">{{item.adult?'Grupa Ogólna':'Grupa Młodzieżowa'}}
+            <q-field dense class="col-2" label="Grupa" color="positive" label-color="positive" standout="bg-accent text-positive" stack-label>
+              <div class="self-center col full-width no-outline row" tabindex="1">{{item.adult?'Grupa Ogólna':'Grupa Młodzieżowa'}}
               </div>
             </q-field>
-            <q-field dense class="col-1" label="Status" standout="bg-accent text-black" stack-label>
+            <q-field dense class="col-1" label="Status" color="positive" label-color="positive" standout="bg-accent text-positive" stack-label>
               <div>
-                <div class="self-center col full-width no-outline row text-black" tabindex="1">{{item.active?'Aktywny':'Nieaktywny'}}</div>
+                <div class="self-center col full-width no-outline row" tabindex="1">{{item.active?'Aktywny':'Nieaktywny'}}</div>
               </div>
             </q-field>
-            <q-field dense class="col-2" label="Data wpłaty" standout="bg-accent text-black" stack-label>
+            <q-field dense class="col-2" label="Data wpłaty" color="positive" label-color="positive" standout="bg-accent text-positive" stack-label>
               <div>
-                <div class="self-center col full-width no-outline row text-black" tabindex="1">{{ item.date }}</div>
+                <div class="self-center col full-width no-outline row" tabindex="1">{{ item.date }}</div>
               </div>
             </q-field>
-            <q-field dense class="col-1" label="Na Rok" standout="bg-accent text-black" stack-label>
-              <div class="self-center col full-width no-outline row text-black" tabindex="1">{{ item.validForYear }}
+            <q-field dense class="col-1" label="Na Rok" color="positive" label-color="positive" standout="bg-accent text-positive" stack-label>
+              <div class="self-center col full-width no-outline row text-positive" tabindex="1">{{ item.validForYear }}
               </div>
             </q-field>
-            <q-field dense :class="item.new?'col-2 bg-warning':'col-2'" label="Rodzaj" :standout="item.new?'bg-warning text-black':'bg-accent'" stack-label>
-              <div class="row text-black" tabindex="1">{{item.new?'Nowa':'Przedłużenie'}}</div>
+            <q-field dense :class="item.new?'col-2 bg-warning':'col-2'" label="Rodzaj" label-color="positive" :standout="item.new?'bg-warning text-black':'bg-accent'" stack-label>
+              <div class="row text-positive" tabindex="1">{{item.new?'Nowa':'Przedłużenie'}}</div>
             </q-field>
           </div>
         </template>
       </q-virtual-scroll>
     </q-card>
     <q-dialog v-model="memberDial" style="min-width: 80vw">
-      <q-card style="min-width: 80vw">
+      <q-card style="min-width: 80vw" class="bg-dark text-positive">
         <q-card-section class="flex-center">
           <Member :member-number-legitimation="legitimationNumber"></Member>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn label="zamknij" color="black" v-close-popup @click="pinCode=null"/>
+          <q-btn text-color="white" label="zamknij" color="primary" v-close-popup @click="pinCode=null"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
     <q-dialog :position="'top'" v-model="failure">
-      <q-card>
+      <q-card >
         <q-card-section>
           <div v-if="message!=null" class="text-h6">{{ message }}</div>
           <div v-else class="text-h6">Nie można wykonać żądania. Sprawdź poprawność danych.</div>
@@ -80,14 +80,14 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model="paymentLicenseAlertPZSS">
-      <q-card>
+      <q-card class="bg-dark text-positive">
         <q-card-section>
           <div class="text-h6">Czy opłacić licencje</div>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat label="anuluj" color="primary" v-close-popup/>
-          <q-btn flat label="Opłać" color="primary" v-close-popup @click="pinWindowPZSS = true"/>
+          <q-btn text-color="white" label="anuluj" color="primary" v-close-popup/>
+          <q-btn text-color="white" label="Opłać" color="primary" v-close-popup @click="pinWindowPZSS = true"/>
         </q-card-actions>
       </q-card>
     </q-dialog>

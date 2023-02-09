@@ -5,13 +5,15 @@
         <q-btn
           flat
           dense
-          class="q-pa-none text-h6"
-          icon="menu"
+          class="q-pa-none text-h6 brand"
+          :icon="icon"
           aria-label="Menu"
-          label="PROGRAM"
+          :label="title"
           @click="leftDrawerOpen = !leftDrawerOpen"
+          @mousemove="leftDrawerOpen?icon='arrow_left':icon='arrow_right'"
+          @mouseleave="icon='menu'"
         />
-
+        <q-toggle v-model="backgroundDark" :val="true" :value="true" color="dark" keep-color @input="changeColor()"></q-toggle>
        <!-- <q-toolbar-title>
           <div class="row">
             <div class="col" id="title">{{$keycloak.keycloak.clientId}} </div>
@@ -56,6 +58,7 @@
           :key="link.title"
           v-bind="link"
           :title="link.title"
+          :visible="link.visible"
           />
         </div>
       </q-list>
@@ -90,6 +93,170 @@
 <style src="../style/style.scss" lang="scss">
 </style>
 
-<script src="../scripts/mainLayout.js">
+<script>
+import { colors } from 'quasar'
+import EssentialLink from 'components/EssentialLink.vue'
+import membersQuantities from 'components/MembersQuantities.vue'
+import WorkTimeList from 'components/WorkTimeList.vue'
+import App from 'src/App.vue'
+export default {
+  name: 'MainLayout',
+  visible2: false,
+  components: {
+    EssentialLink,
+    membersQuantities,
+    WorkTimeList
+  },
+  created () {
+    if (window.localStorage.getItem('BackgroundDark') == null) {
+      window.localStorage.setItem('BackgroundDark', false)
+    } else {
+      this.changeColor()
+    }
+    this.getActualYearMemberCounts()
+  },
+  data () {
+    return {
+      title: '',
+      backgroundDark: JSON.parse(window.localStorage.getItem('BackgroundDark')),
+      icon: 'menu',
+      visible1: true,
+      leftDrawerOpen: false,
+      interval: false,
+      interval2: null,
+      intervalTime: 1200000,
+      distance: 1200000,
+      number: null,
+      members: null,
+      barcode: null,
+      color: 'primary',
+      tournamentCheck: false,
+      quantities: [],
+      hrefTarget: 'http://' + location.hostname + ':8080/strzelnica/#/',
+      local: App.host,
+      essentialLinks: [
+        {
+          title: 'Lista Klubowiczów',
+          icon: 'person',
+          link: 'http://' + App.prod + 'member',
+          visible: this.visible2
+        },
+        {
+          title: 'Licencje',
+          icon: 'person',
+          link: 'http://' + App.prod + 'license',
+          visible: this.visible2
+        },
+        {
+          title: 'Dodaj Nowego Klubowicza',
+          icon: 'person_add',
+          link: 'http://' + App.prod + 'member/adding',
+          visible: this.visible2
+        },
+        {
+          title: 'Lista Amunicyjna',
+          icon: 'list_alt',
+          link: 'http://' + App.prod + 'ammolist',
+          visible: this.visible2
+        },
+        {
+          title: 'Zawody',
+          icon: 'book',
+          link: 'http://' + App.prod + 'competition',
+          visible: this.visible2
+        },
+        {
+          title: 'Lista Osób z Uprawnieniami',
+          icon: 'book',
+          link: 'http://' + App.prod + 'memberwithpermission',
+          visible: this.visible2
+        },
+        {
+          title: 'Zbrojownia',
+          icon: 'storage',
+          link: 'http://' + App.prod + 'armory',
+          visible: this.visible2
+        },
+        {
+          title: 'Statystyki',
+          icon: 'bar_chart',
+          link: 'http://' + App.prod + 'statistics',
+          visible: this.visible2
+        },
+        {
+          title: 'Pozostałe Funkcje',
+          icon: 'menu',
+          link: 'http://' + App.prod + 'otherFunctions',
+          visible: this.visible2
+        },
+        {
+          title: 'Ustawienia',
+          icon: 'settings',
+          link: 'http://' + App.prod + 'settings',
+          visible: this.visible2
+        },
+        {
+          title: 'Pliki',
+          icon: 'download',
+          link: 'http://' + App.prod + 'files',
+          visible: this.visible2
+        },
+        {
+          title: 'Panel Sędziego',
+          icon: 'done',
+          link: 'http://' + App.prod + 'juryPanel',
+          visible: true
+        }
+      ],
+      programName: 'Program'
+    }
+  },
+  methods: {
+    showloading () {
+      this.$q.loading.show({ message: 'Dzieje się coś ważnego... Poczekaj' })
+      this.timer = setTimeout(() => {
+        this.$q.loading.hide()
+        this.timer = 0
+      }, 500)
+    },
+    redirectToAmmoList () {
+      window.location.href = 'http://' + App.prod + 'ammolist'
+    },
+    redirectToCompetitionList () {
+      window.location.href = 'http://' + App.prod + 'competition'
+    },
+    changeColor () {
+      console.log(this.backgroundDark)
+      if (this.backgroundDark) {
+        window.localStorage.setItem('BackgroundDark', true)
+        colors.setBrand('dark-separator', '$grey-6')
+        colors.setBrand('primary', '#374550')
+        colors.setBrand('secondary', '#871421')
+        colors.setBrand('dark', '#1D1D1D')
+        colors.setBrand('positive', '#FFFFFF')
+        colors.setBrand('accent', '#A0A0A0')
+      } else {
+        window.localStorage.setItem('BackgroundDark', false)
+        colors.setBrand('dark-separator', '$grey-2')
+        colors.setBrand('primary', '#871421')
+        colors.setBrand('secondary', '#374550')
+        colors.setBrand('dark', '#FFFFFF')
+        colors.setBrand('positive', '#000000')
+        colors.setBrand('accent', '#f3f3f3')
+      }
+    },
+    getActualYearMemberCounts () {
+      fetch('http://' + this.local + '/statistics/actualYearMemberCounts', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => response.json())
+        .then(response => {
+          this.members = response
+        })
+    }
+  }
+}
 
 </script>

@@ -2,21 +2,21 @@
   <q-page padding>
     <div>
       <q-item>
-        <div class="text-center col full-width no-outline text-h4 text-bold" tabindex="0">Licencje</div>
+        <div class="text-center col full-width no-outline text-h4 text-bold text-positive" tabindex="0">Licencje</div>
       </q-item>
     </div>
     <div class="q-pa-md">
       <DownloadBtn/>
     </div>
-    <q-expansion-item label="Licencje nieważne" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
-      <NotValidLicense ></NotValidLicense>
+    <q-expansion-item label="Licencje nieważne" dense class="text-left text-h6 text-bold bg-dark text-positive round" group="list">
+      <NotValidLicense></NotValidLicense>
     </q-expansion-item>
     <p></p>
-    <q-expansion-item label="Licencje ważne" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
+    <q-expansion-item label="Licencje ważne" dense class="text-left text-h6 text-bold bg-dark text-positive round" group="list">
       <ValidLicense></ValidLicense>
     </q-expansion-item>
     <p/>
-    <q-expansion-item label="Licencje do opłacenia w PZSS" dense class="text-left text-h6 text-bold bg-grey-3"
+    <q-expansion-item label="Licencje do opłacenia w PZSS" dense class="text-left text-h6 text-bold bg-dark text-positive round"
                       group="list">
       <AllLicensePayment></AllLicensePayment>
     </q-expansion-item>

@@ -1,8 +1,8 @@
 <template>
   <div>
-    <q-card class="text-body2">
+    <q-card class="text-body2 bg-dark">
       <div class="row">
-        <div class="q-pa-md text-left col full-width no-outline text-h5 text-bold">Ilość osób {{ list.length }}
+        <div class="q-pa-md text-left col full-width no-outline text-h5 text-bold text-positive">Ilość osób {{ list.length }}
         </div>
         <div v-if="licenseList.length>0" class="q-pa-md text-right">
           <q-btn @click="prolongLicenseAlert=true" label="Przedłuż wybrane Licencje">
@@ -20,33 +20,33 @@
             <div class="col" @dblclick="legitimationNumber = item.legitimationNumber;memberDial=true">
               <q-tooltip content-class="text-subtitle2" anchor="top middle">kliknij dwa razy aby wyświetlić podgląd
               </q-tooltip>
-              <q-field dense class="col" color="black" label="Nazwisko i Imię" standout="bg-accent text-black"
+              <q-field dense class="col" color="positive" label-color="positive" label="Nazwisko i Imię" standout="bg-accent text-positive"
                        stack-label>
                 <div>
-                  <div class="self-center col full-width no-outline row text-black" tabindex="1">{{ item.secondName }}
+                  <div class="self-center col full-width no-outline row text-positive" tabindex="1">{{ item.secondName }}
                     {{ item.firstName }}
                   </div>
                 </div>
               </q-field>
             </div>
-            <q-field dense :class="item.active?'col-1':'col-1 bg-red-3'" color="black" label="Status"
-                     standout="bg-accent text-black" stack-label>
+            <q-field dense :class="item.active?'col-1':'col-1 bg-red-4'" color="positive" :label-color="item.active?'positive':'black'" label="Status"
+                     standout="bg-accent text-positive" stack-label>
               <div>
-                <div class="row text-black" tabindex="1">{{item.active?'Aktywny':'Nieaktywny'}}</div>
+                <div :class="item.active?'row text-positive':'row text-black'" tabindex="1">{{item.active?'Aktywny':'Nieaktywny'}}</div>
               </div>
             </q-field>
-            <q-field dense class="col-1" label="Numer Licencji" standout="bg-accent text-black" stack-label>
-              <div class="self-center col full-width no-outline row text-black" tabindex="1">
+            <q-field dense class="col-1" label="Numer Licencji" color="positive" label-color="positive" standout="bg-accent text-positive" stack-label>
+              <div class="self-center col full-width no-outline row" tabindex="1">
                 {{ item.license.number }}
               </div>
             </q-field>
-            <q-field dense class="col-2" label="Grupa" standout="bg-accent text-black" stack-label>
-              <div class="self-center col full-width no-outline row text-black" tabindex="1">{{item.adult?'Grupa Ogólna':'Grupa Młodzieżowa'}}
+            <q-field dense class="col-2" label="Grupa" color="positive" label-color="positive" standout="bg-accent text-positive" stack-label>
+              <div class="self-center col full-width no-outline row" tabindex="1">{{item.adult?'Grupa Ogólna':'Grupa Młodzieżowa'}}
               </div>
             </q-field>
-            <q-field dense class="col-2" label="Ważność licencji" standout="bg-accent text-black" stack-label>
+            <q-field dense class="col-2" label="Ważność licencji" color="positive" label-color="positive" standout="bg-accent text-positive" stack-label>
               <div>
-                <div class="row text-black" tabindex="1">{{ convertDate(item.license.validThru) }}</div>
+                <div class="row" tabindex="1">{{ convertDate(item.license.validThru) }}</div>
               </div>
             </q-field>
             <q-btn dense color="grey-5" v-if="!item.license.paid && !item.active" class="col-2"
@@ -66,13 +66,13 @@
       </q-virtual-scroll>
     </q-card>
     <q-dialog v-model="memberDial" style="min-width: 80vw">
-      <q-card style="min-width: 80vw">
+      <q-card style="min-width: 80vw" class="bg-dark text-positive">
         <q-card-section class="flex-center">
           <Member :member-number-legitimation="legitimationNumber"></Member>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn label="zamknij" color="black" v-close-popup @click="pinCode=null"/>
+          <q-btn label="zamknij" color="primary" text-color="white" v-close-popup @click="pinCode=null"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -94,14 +94,14 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model="prolongLicenseAlert">
-      <q-card>
+      <q-card class="bg-dark text-positive">
         <q-card-section>
           <div class="text-h6">Czy przedłużyć licencje</div>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat label="anuluj" color="primary" v-close-popup/>
-          <q-btn flat label="Przedłuż" color="primary" v-close-popup @click="pinProlongLicense = true"/>
+          <q-btn text-color="white" label="anuluj" color="primary" v-close-popup/>
+          <q-btn text-color="white" label="Przedłuż" color="primary" v-close-popup @click="pinProlongLicense = true"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -116,6 +116,33 @@
         <q-card-actions align="right">
           <q-btn label="anuluj" color="black" v-close-popup @click="pinCode=null"/>
           <q-btn label="Przedłuż" color="black" v-close-popup @click="prolongLicenseList(); pinCode=null"/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="paymentLicenseAlert">
+      <q-card class="bg-dark text-positive">
+        <q-card-section>
+          <div class="text-h6">Czy opłacić licencję {{ memberName }}</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn text-color="white" label="anuluj" color="primary" v-close-popup/>
+          <q-btn text-color="white" label="Opłać" color="primary" v-close-popup
+                 @click="pinPaymentLicense=true"/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="pinPaymentLicense">
+      <q-card class="bg-red-5 text-center">
+        <q-card-section class="flex-center">
+          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
+          <q-input @keypress.enter="addLicenseHistoryPayment (memberUUID);pinPaymentLicense=false" autofocus type="password"
+                   v-model="pinCode" filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn label="anuluj" color="black" v-close-popup @click="pinCode=null"/>
+          <q-btn label="Przedłuż" color="black" v-close-popup @click="addLicenseHistoryPayment (memberUUID); pinCode=null"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -136,6 +163,8 @@ export default {
       memberUUID: '',
       prolongLicenseAlert: false,
       pinProlongLicense: false,
+      paymentLicenseAlert: false,
+      pinPaymentLicense: false,
       memberDial: false,
       legitimationNumber: null,
       pinCode: null,
@@ -172,39 +201,6 @@ export default {
       }
       return day + '-' + (month) + '-' + current.getFullYear()
     },
-    prolongLicense (uuid, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission) {
-      const data = {
-        pistolPermission: licensePistolPermission,
-        riflePermission: licenseRiflePermission,
-        shotgunPermission: licenseShotgunPermission
-      }
-      fetch('http://' + this.local + '/license/' + uuid, {
-        method: 'PATCH',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.json().then(
-            response => {
-              this.success = true
-              this.message = response
-              this.getMembersWithLicenseNotValid()
-              this.autoClose()
-            }
-          )
-        } else {
-          response.json().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.autoClose()
-            }
-          )
-        }
-      })
-    },
     prolongLicenseList () {
       fetch('http://' + this.local + '/license/prolongAll?licenseList=' + this.licenseList + '&pinCode=' + this.pinCode, {
         method: 'PATCH',
@@ -223,7 +219,7 @@ export default {
             }
           )
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -233,10 +229,37 @@ export default {
         }
       })
     },
+    addLicenseHistoryPayment (uuid) {
+      fetch('http://' + this.local + '/license/history/' + uuid + '?pinCode=' + this.pinCode, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          response.text().then(
+            response => {
+              this.message = response
+              this.success = true
+              this.getMembersWithLicenseNotValid()
+              this.autoClose()
+            })
+        } else {
+          response.text().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            })
+        }
+      })
+    },
     autoClose () {
       setTimeout(() => {
         this.success = false
         this.failure = false
+        this.pinProlongLicense = false
+        this.pinPaymentLicense = false
         this.message = null
         this.pinCode = null
       }, 2000)

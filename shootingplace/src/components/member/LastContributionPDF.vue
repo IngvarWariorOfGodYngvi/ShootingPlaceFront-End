@@ -1,10 +1,29 @@
 <template>
   <div class="full-width">
-    <q-btn class="full-width" @click="getContributionPDF()" color="secondary">Pobierz ostatnie potwierdzenie składki
+    <q-btn class="full-width" @click="dialog=true" color="secondary">Pobierz ostatnie potwierdzenie składki
       <q-tooltip v-if="disable" content-class="text-h6 bg-red" anchor="top middle" self="bottom middle" :offset="[12, 12]">BRAK
         SKŁADEK
       </q-tooltip>
     </q-btn>
+    <q-dialog v-model="dialog" @keypress.enter="dialog=false;getContributionPDF()">
+      <q-card class="bg-dark text-positive">
+        <q-card-section class="row items-center">
+          <span class="text-h6">Czy na pewno chcesz pobrać potwierdzenie składki?</span>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn text-color="white" label="anuluj" color="primary" v-close-popup />
+          <q-btn text-color="white" label="Pobierz" color="primary" v-close-popup @click="getContributionPDF()" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog :position="'top'" v-model="download">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Pobrano składkę {{name}}</div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
@@ -16,6 +35,8 @@ export default {
   name: 'LastContributionPDF.vue',
   data () {
     return {
+      dialog: false,
+      download: false,
       local: App.host
     }
   },
@@ -44,15 +65,18 @@ export default {
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
-        fileLink.setAttribute('download', 'Składka_' + this.name + '_' + this.name2 + '.pdf')
+        fileLink.setAttribute('download', 'Składka ' + this.name + '.pdf')
         document.body.appendChild(fileLink)
         fileLink.click()
+        this.download = true
+        this.autoClose()
       })
+    },
+    autoClose () {
+      setTimeout(() => {
+        this.download = false
+      }, 2000)
     }
   }
 }
 </script>
-
-<style scoped>
-
-</style>

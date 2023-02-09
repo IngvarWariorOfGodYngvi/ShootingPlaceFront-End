@@ -1,23 +1,23 @@
 <template>
   <div class="full-width">
-    <q-btn class="full-width" :disable="disable" @click="dialog=true" color="secondary">Pobierz deklarację członkowską LOK
+    <q-btn class="full-width" @click="dialog=true" color="secondary">Pobierz Plik .csv
     </q-btn>
-    <q-dialog v-model="dialog" @keypress.enter="dialog=false;membershipDeclarationLOKPDF()">
+    <q-dialog v-model="dialog" @keypress.enter="dialog=false;getCSVFile()">
       <q-card class="bg-dark text-positive">
         <q-card-section class="row items-center">
-          <span class="text-h6">Czy na pewno chcesz pobrać Deklarację LOK?</span>
+          <span class="text-h6">Czy na pewno chcesz pobrać Plik?</span>
         </q-card-section>
 
         <q-card-actions align="right">
           <q-btn text-color="white" label="anuluj" color="primary" v-close-popup />
-          <q-btn text-color="white" label="Pobierz" color="primary" v-close-popup @click="membershipDeclarationLOKPDF()" />
+          <q-btn text-color="white" label="Pobierz" color="primary" v-close-popup @click="getCSVFile()" />
         </q-card-actions>
       </q-card>
     </q-dialog>
     <q-dialog :position="'top'" v-model="download">
       <q-card>
         <q-card-section>
-          <div class="text-h6">Pobrano składkę {{name}}</div>
+          <div class="text-h6">Pobrano plik .CSV</div>
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -25,16 +25,15 @@
 </template>
 
 <script>
-
+import App from 'src/App'
 import axios from 'axios'
-import App from 'src/App.vue'
 
 export default {
-  name: 'DeklaracjaLOK.vue',
+  name: 'MemberCSVFile.vue',
   data () {
     return {
-      dialog: false,
       download: false,
+      dialog: false,
       local: App.host
     }
   },
@@ -46,24 +45,19 @@ export default {
     name: {
       type: String,
       required: true
-    },
-    disable: {
-      type: Boolean,
-      required: false,
-      default: false
     }
   },
   methods: {
-    membershipDeclarationLOKPDF () {
+    getCSVFile () {
       axios({
-        url: 'http://' + this.local + '/files/membershipDeclarationLOK?uuid=' + this.uuid,
+        url: 'http://' + this.local + '/files/downloadCSVFile/' + this.uuid,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
-        fileLink.setAttribute('download', 'Deklaracja Członkowska LOK ' + this.name + '.pdf')
+        fileLink.setAttribute('download', this.name + '.csv')
         document.body.appendChild(fileLink)
         fileLink.click()
         this.download = true
@@ -78,3 +72,7 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+
+</style>
