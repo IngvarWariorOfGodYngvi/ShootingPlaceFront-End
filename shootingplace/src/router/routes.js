@@ -19,7 +19,6 @@ const routes = [
       { path: '/files', component: () => import(/* webpackChunkName: "Pliki" */'pages/file.vue') },
       { path: '/armory', name: 'zbrojownia', component: () => import(/* webpackChunkName: "Zbrojownia" */'pages/armory.vue') },
       { path: '/juryPanel', name: 'panel sędziego', component: () => import(/* webpackChunkName: "Panel Sędziego" */'pages/juryPanel.vue') },
-      { path: '/armory/galery', component: () => import(/* webpackChunkName: "Galeria" */'pages/galery.vue') },
       { path: '/test', component: () => import(/* webpackChunkName: "Galeria" */'pages/test.vue') }
     ]
   },

@@ -9,7 +9,6 @@
 // import router from './router'
 // import store from './store'
 // Vue.config.productionTip = false
-
 // Vue.use(keycloak, {
 //   init: {
 //     onLoad: 'login-required'
@@ -40,11 +39,12 @@
 // })
 export default {
   name: 'App',
-  // friend: 'localhost:8080/invoices/#/',
-  prod: location.hostname + ':8081/#/',
+  prod: location.hostname + ':8081/#/', // test //
+  // prod: '192.168.1.30:8080/strzelnica/#/', // test //
+  // prod: '192.168.100.2:8080/strzelnica/#/', // prod //
+  host: location.hostname + ':8080/shootingplace-1.0/' // test + prod //
   // prod: location.hostname + ':8080' + '/strzelnica/#/',
   // host: location.hostname + ':8080' + '/shootingplace-1.0/'
-  host: location.hostname + ':8080'
 }
 
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <q-page padding class="bg-dark text-positive">
+  <q-page v-if="!isMobile()" padding class="bg-dark text-positive">
     <div>
         <q-item>
           <div class="text-center col full-width no-outline text-h4 text-bold text-positive" tabindex="0">Dodaj Nowego Klubowicza</div>
@@ -365,17 +365,16 @@
       </q-card>
 </q-dialog>
   </q-page>
+  <q-page v-else class="text-positive text-center q-pa-md">
+    Nie można wyświetlić zawartości
+  </q-page>
 </template>
 
 <script >
 
-import Vue from 'vue'
-import axios from 'axios'
 import App from 'src/App.vue'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox'
-Vue.prototype.$axios = axios
-
 export default {
   components: {
     PersonalCardPDF: lazyLoadComponent({
@@ -863,6 +862,9 @@ export default {
           this.isEmail = response
           return response
         })
+    },
+    isMobile () {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
     },
     autoClose () {
       setTimeout(() => {

@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <div class="q-pa-md text-bold text-center text-h6">TWORZENIE UŻYTKOWNIKÓW</div>
-    <q-card class="row">
+  <div class="bg-dark">
+    <div class="q-pa-md text-bold text-center text-h6 text-positive">TWORZENIE UŻYTKOWNIKÓW</div>
+    <q-card class="row bg-dark">
       <q-card-section class="col-6 bg-grey-2">
         <q-form>
           <q-item>
@@ -43,12 +43,12 @@
           </q-item>
         </q-form>
       </q-card-section>
-      <q-card-section class="col-6">
+      <q-card-section class="col-6 text-positive">
           <div class="col q-pa-md text-bold text-h6">Użytkownicy :</div>
           <ol>
             <li v-for="(user,id) in users" :key="id" class="col text-bold">
               <div class="row full-width flex-center bg-grey-3 q-ma-sm">
-                <div class="col full-width" style="cursor: pointer;" @click.ctrl="uuid = user.uuid;setSuperUserDialogConfirm=true"
+                <div class="col full-width text-black" style="cursor: pointer;" @click.ctrl="uuid = user.uuid;setSuperUserDialogConfirm=true"
                      @dblclick="uuid = user.uuid;userSubTypeBarCodeSelect = user.subType;inputBarCode=true">
                   {{ user.firstName }} {{ user.secondName }}
                 </div>
@@ -60,17 +60,25 @@
           </ol>
       </q-card-section>
     </q-card>
-    <q-dialog v-model="inputBarCode" persistent>
-      <q-card class="text-center">
+    <q-dialog v-model="inputBarCode">
+      <q-card class="text-center bg-dark">
         <q-card-section>
-          <q-item class="flex-center text-h6 text-bold">Przypisywanie Karty</q-item>
+          <q-item class="flex-center text-h6 text-bold text-positive">Przypisywanie Karty</q-item>
           <q-item>
-            <q-input class="full-width" filled v-model="barCode" type="password" label="zeskanuj kartę tutaj"
+            <q-input color="positive" label-color="positive" input-class="text-positive text-h6" class="full-width" filled v-model="barCode" type="password" label="zeskanuj kartę tutaj"
                      @input="getMasterCardCheck(barCode)"></q-input>
           </q-item>
           <q-item>
-            <q-select class="full-width" filled v-model="userSubTypeBarCodeSelect" use-input :options="userSubType"
-                      dense label="Wybierz Rodzaj">
+            <q-select class="full-width text-positive q-pb-md"
+                      color="positive"
+                      input-class="text-white" label-color="positive" popup-content-class="bg-dark text-positive"
+                      emit-value
+                      map-options
+                      options-dense
+                      v-model="userSubTypeBarCodeSelect"
+                      filled dense use-input hide-selected fill-input
+                      :options="userSubType"
+                      label="Wybierz Rodzaj">
               <template v-slot:no-option>
                 <q-item>
                   <q-item-section class="text-grey">
@@ -84,8 +92,8 @@
           <q-checkbox v-if="master===true" style="display: flex; font-size: 10px;" v-model="master" dense disable
                       label="potwierdzone przez Admina"></q-checkbox>
           <p></p>
-          <q-btn v-close-popup @click="acceptCodeUser1=true">zatwierdź</q-btn>
-          <q-btn v-close-popup @click="barCode=null; uuid = null;master=false">Anuluj</q-btn>
+          <q-btn text-color="white" color="secondary" v-close-popup @click="barCode=null; uuid = null;master=false">Anuluj</q-btn>
+          <q-btn text-color="white" color="primary" v-close-popup @click="acceptCodeUser1=true">zatwierdź</q-btn>
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -143,15 +151,17 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model="userActions">
-      <q-card class="text-center">
+      <q-card class="text-center bg-dark" style="width: 60vw; max-width: 60vw;">
         <q-card-section>
-          <div class="text-h6">Akcje użytkownika</div>
+          <div class="text-h6 text-positive">Akcje użytkownika</div>
           <q-virtual-scroll :items="actions" dense visible class="full-width" style="height: 80vh;">
             <template v-slot="{ item, index }">
               <div class="row">
-                <q-field filled color="black" class="col">{{ index + 1 }} {{ item.classNamePlusMethod }}</q-field>
-                <q-field filled color="black" class="col">{{ item.belongsTo }}</q-field>
-                <q-field filled color="black" class="col">{{ item.timeNow }} {{ item.dayNow }}</q-field>
+                <q-field filled color="positive" class="col">
+                  <div class="col-4">{{ index + 1 }} {{ item.classNamePlusMethod }}</div>
+                  <div class="col-4">{{ item.belongsTo }}</div>
+                  <div class="col-4">{{ item.timeNow }} {{ item.dayNow }}</div>
+                </q-field>
               </div>
             </template>
           </q-virtual-scroll>

@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-
 import routes from './routes'
+
 // import App from 'src/App.vue'
 Vue.use(VueRouter)
 
@@ -17,16 +17,6 @@ Vue.use(VueRouter)
 export default function (/* { store, ssrContext } */) {
   // const local = App.host
   // let userLicense = null
-  const Router = new VueRouter({
-    scrollBehavior: () => ({ x: 0, y: 0 }),
-    routes,
-
-    // Leave these as they are and change in quasar.conf.js instead!
-    // quasar.conf.js -> build -> vueRouterMode
-    // quasar.conf.js -> build -> publicPath
-    mode: process.env.VUE_ROUTER_MODE,
-    base: process.env.VUE_ROUTER_BASE
-  })
   // Router.beforeResolve((to, from, next) => {
   //   fetch('http://' + local + '/settings/termsAndLicense', {
   //     method: 'GET'
@@ -51,5 +41,17 @@ export default function (/* { store, ssrContext } */) {
   //     }
   //   )
   // })
-  return Router
+  return new VueRouter({
+    scrollBehavior: () => ({
+      x: 0,
+      y: 0
+    }),
+    routes,
+
+    // Leave these as they are and change in quasar.conf.js instead!
+    // quasar.conf.js -> build -> vueRouterMode
+    // quasar.conf.js -> build -> publicPath
+    mode: process.env.VUE_ROUTER_MODE,
+    base: process.env.VUE_ROUTER_BASE
+  })
 }

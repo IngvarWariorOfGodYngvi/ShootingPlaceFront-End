@@ -64,7 +64,7 @@
       </q-list>
       <members-quantities class="bg-secondary">
       </members-quantities>
-      <WorkTimeList style="margin: auto;height:auto">
+      <WorkTimeList v-if="!mobile" style="margin: auto;height:auto">
       </WorkTimeList>
       </div>
     </q-drawer>
@@ -99,6 +99,7 @@ import EssentialLink from 'components/EssentialLink.vue'
 import membersQuantities from 'components/MembersQuantities.vue'
 import WorkTimeList from 'components/WorkTimeList.vue'
 import App from 'src/App.vue'
+import { isWindows } from 'mobile-device-detect'
 export default {
   name: 'MainLayout',
   visible2: false,
@@ -118,6 +119,7 @@ export default {
   data () {
     return {
       title: '',
+      mobile: !isWindows,
       backgroundDark: JSON.parse(window.localStorage.getItem('BackgroundDark')),
       icon: 'menu',
       visible1: true,
@@ -139,67 +141,67 @@ export default {
           title: 'Lista Klubowiczów',
           icon: 'person',
           link: 'http://' + App.prod + 'member',
-          visible: this.visible2
+          visible: true
         },
         {
           title: 'Licencje',
           icon: 'person',
           link: 'http://' + App.prod + 'license',
-          visible: this.visible2
+          visible: true
         },
         {
           title: 'Dodaj Nowego Klubowicza',
           icon: 'person_add',
           link: 'http://' + App.prod + 'member/adding',
-          visible: this.visible2
+          visible: isWindows
         },
         {
           title: 'Lista Amunicyjna',
           icon: 'list_alt',
           link: 'http://' + App.prod + 'ammolist',
-          visible: this.visible2
+          visible: true
         },
         {
           title: 'Zawody',
           icon: 'book',
           link: 'http://' + App.prod + 'competition',
-          visible: this.visible2
+          visible: isWindows
         },
         {
           title: 'Lista Osób z Uprawnieniami',
           icon: 'book',
           link: 'http://' + App.prod + 'memberwithpermission',
-          visible: this.visible2
+          visible: isWindows
         },
         {
           title: 'Zbrojownia',
           icon: 'storage',
           link: 'http://' + App.prod + 'armory',
-          visible: this.visible2
+          visible: isWindows
         },
         {
           title: 'Statystyki',
           icon: 'bar_chart',
           link: 'http://' + App.prod + 'statistics',
-          visible: this.visible2
+          visible: true
         },
         {
           title: 'Pozostałe Funkcje',
           icon: 'menu',
           link: 'http://' + App.prod + 'otherFunctions',
-          visible: this.visible2
+          visible: isWindows
         },
         {
           title: 'Ustawienia',
           icon: 'settings',
           link: 'http://' + App.prod + 'settings',
-          visible: this.visible2
+          visible: isWindows
         },
         {
           title: 'Pliki',
           icon: 'download',
           link: 'http://' + App.prod + 'files',
-          visible: this.visible2
+          visible: isWindows
         },
         {
           title: 'Panel Sędziego',
@@ -218,6 +220,9 @@ export default {
         this.$q.loading.hide()
         this.timer = 0
       }, 500)
+    },
+    isMobile () {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
     },
     redirectToAmmoList () {
       window.location.href = 'http://' + App.prod + 'ammolist'

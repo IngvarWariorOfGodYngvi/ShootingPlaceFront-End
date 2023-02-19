@@ -1,53 +1,11 @@
 <template>
-  <div v-if="member!=null">
-    <q-card v-if="member.active" bordered class="row bg-green-3">
-      <q-card-section v-if="member.imageUUID!=null" avatar class="col-2">
-        <div style="width:25vh;height:15vw">
-          <q-tooltip v-if="(member.address.postOfficeCity===null||member.address.postOfficeCity==='')
-                ||(member.address.street===null||member.address.street==='') || (member.weaponPermission.exist&&!member.license.valid) || (member.email===null||member.email==='') || (member.license.number!==null)&&(member.license.valid === false)"
-                     class="row" anchor="top middle" self="bottom middle" :offset="[12, 12]">
-            <q-badge v-if="(member.address.postOfficeCity===null||member.address.postOfficeCity==='')
-                ||(member.address.street===null||member.address.street==='')" transparent align="middle" color="orange"
-                     text-color="black">Brak Adresu
-            </q-badge>
-            <q-badge v-if="(member.weaponPermission.exist&&!member.license.valid)" transparent align="middle"
-                     color="red" text-color="black">Jest Broń i Brak Licencji
-            </q-badge>
-            <q-badge v-if="(member.email===null||member.email==='')" transparent align="middle" color="yellow"
-                     text-color="black">Brak E-mail
-            </q-badge>
-            <q-badge v-if="(member.license.number!==null)&&(member.license.valid === false)" transparent align="middle"
-                     color="yellow" text-color="black">Brak aktualnej licencji
-            </q-badge>
-          </q-tooltip>
-          <q-avatar v-if="member.weaponPermission.exist&&!member.license.valid" class="full" square color="red"
-                    text-color="white">
+  <div v-if="member!=null" :class="mobile?'full-width':'col full-width'">
+    <q-card v-if="member.active" bordered :class="member.active?'row bg-green-3':'row bg-red-3'">
+      <q-card-section v-if="member.imageUUID!=null" avatar :class="mobile?'col-4 q-pa-none q-ma-none':'col-2'" >
             <q-img fit=none height="100%" width="100%" class="text-body1" alt="zdjęcie profilowe"
                    :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/>
-          </q-avatar>
-          <q-avatar v-else-if="member.license.number!=null&&!member.license.valid" class="full" square color="yellow"
-                    text-color="white">
-            <q-img fit=none height="100%" width="100%" class="text-body1" alt="zdjęcie profilowe"
-                   :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/>
-          </q-avatar>
-          <q-avatar v-else-if="(member.email===null||member.email==='')
-            ||(member.address.postOfficeCity===null||member.address.postOfficeCity==='')
-            ||(member.address.street===null||member.address.street==='')" class="full" square color="warning"
-                    text-color="white">
-            <q-img fit=none height="100%" width="100%" img-style="width:100%;height:100%" class="text-body1"
-                   alt="zdjęcie profilowe" :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/>
-          </q-avatar>
-          <q-avatar v-else-if="!member.active" class="full" square color="red" text-color="white">
-            <q-img fit=none height="100%" width="100%" img-style="width:100%;height:100%" class="text-body1"
-                   alt="zdjęcie profilowe" :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/>
-          </q-avatar>
-          <q-avatar v-else class="full" square>
-            <q-img fit=none height="100%" width="100%" img-class="full" class="text-body1" alt="zdjęcie profilowe"
-                   :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/>
-          </q-avatar>
-        </div>
       </q-card-section>
-      <q-card-section v-else avatar class="col-2">
+      <q-card-section v-else avatar :class="mobile?'col-4':'col-2'">
         <q-uploader style="width:100%;height:100%" method="POST"
                     :url="('http://' + local + '/files/member/' + member.uuid)"
                     label="Dodaj zdjęcie / max 400KB" max-file-size="409600" accept=".jpg, image/*"
@@ -91,100 +49,7 @@
         </div>
       </q-card-section>
     </q-card>
-    <q-card v-if="!member.active" bordered class="row bg-red-3">
-      <q-card-section v-if="member.imageUUID!==null" avatar class="col-2">
-        <div style="width:25vh;height:15vw">
-          <q-tooltip v-if="(member.address.postOfficeCity===null||member.address.postOfficeCity==='')
-                ||(member.address.street===null||member.address.street==='') || (member.weaponPermission.exist&&!member.license.valid) || (member.email===null||member.email==='') || (member.license.number!==null)&&(member.license.valid === false)"
-                     class="row" anchor="top middle" self="bottom middle" :offset="[12, 12]">
-            <q-badge v-if="(member.address.postOfficeCity===null||member.address.postOfficeCity==='')
-                ||(member.address.street==null||member.address.street==='')" transparent align="middle" color="orange"
-                     text-color="black">Brak Adresu
-            </q-badge>
-            <q-badge v-if="(member.weaponPermission.exist&&!member.license.valid)" transparent align="middle"
-                     color="red" text-color="black">Jest Broń i Brak Licencji
-            </q-badge>
-            <q-badge v-if="(member.email===null||member.email==='')" transparent align="middle" color="yellow"
-                     text-color="black">Brak E-mail
-            </q-badge>
-            <q-badge v-if="(member.license.number!==null)&&(member.license.valid === false)" transparent align="middle"
-                     color="yellow" text-color="black">Brak aktualnej licencji
-            </q-badge>
-          </q-tooltip>
-          <q-avatar v-if="member.weaponPermission.exist&&!member.license.valid" class="full" square color="red"
-                    text-color="white">
-            <q-img fit=none height="100%" width="100%" img-style="width:100%;height:100%" class="text-body1"
-                   alt="zdjęcie profilowe" :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/>
-          </q-avatar>
-          <q-avatar v-else-if="member.license.number!==null&&!member.license.valid" class="full" square color="yellow"
-                    text-color="white">
-            <q-img fit=none height="100%" width="100%" img-style="width:100%;height:100%" class="text-body1"
-                   alt="zdjęcie profilowe" :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/>
-          </q-avatar>
-          <q-avatar v-else-if="(member.email===null||member.email==='')
-            ||(member.address.postOfficeCity===null||member.address.postOfficeCity==='')
-            ||(member.address.street===null||member.address.street==='')" class="full" square color="warning"
-                    text-color="white">
-            <q-img fit=none height="100%" width="100%" img-style="width:100%;height:100%" class="text-body1"
-                   alt="zdjęcie profilowe" :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/>
-          </q-avatar>
-          <q-avatar v-else-if="!member.active" class="full" square color="red" text-color="white">
-            <q-img fit=none height="100%" width="100%" img-style="width:100%;height:100%" class="text-body1"
-                   alt="zdjęcie profilowe" :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/>
-          </q-avatar>
-          <q-avatar v-else class="full" square color="green" text-color="white">
-            <q-img fit=none height="100%" width="100%" img-style="width:100%;height:100%" class="text-body1"
-                   alt="zdjęcie profilowe" :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/>
-          </q-avatar>
-        </div>
-      </q-card-section>
-      <q-card-section v-else avatar class="col-2">
-        <q-uploader style="width:100%;height:100%" method="POST"
-                    :url="('http://' + local + '/files/member/' + member.uuid)"
-                    label="Dodaj zdjęcie / max 400KB" max-file-size="409600" accept=".jpg, image/*"
-                    @rejected="onRejected" field-name="file" @uploaded="getMemberByUUID(member.uuid)"/>
-      </q-card-section>
-      <q-card-section class="col-4">
-        <q-item-label>{{ member.secondName }} {{ member.firstName }}</q-item-label>
-        <q-item-label caption class="text-bold text-center bg-secondary text-white" style="border-radius: 1em;">{{member.club.name}}</q-item-label>
-        <q-item-label caption lines="2">{{member.adult?'Grupa: Ogólna':'Grupa: Młodzieżowa'}}</q-item-label>
-        <q-item-label caption lines="2">{{member.active?'Status: Aktywny':'Status: Nieaktywny'}}</q-item-label>
-        <q-item-label v-if="member.history.contributionList.length > 0" caption lines="2">Składka ważna do:
-          {{ convertDate(member.history.contributionList[0].validThru) }}
-        </q-item-label>
-        <q-item-label v-if="member.history.contributionList.length > 0" caption lines="2">Składka opłacona dnia:
-          {{ convertDate(member.history.contributionList[0].paymentDay) }}
-        </q-item-label>
-        <div v-if="member.imageUUID!=null">
-          <q-btn color="primary" label="zmień zdjęcie">
-            <q-popup-edit v-model="picture">
-              <q-uploader style="width:100%;height:100%" method="POST"
-                          :url="('http://' + local + '/files/member/' + member.uuid)" label="Dodaj zdjęcie / max 400KB"
-                          max-file-size="409600" accept=".jpg, image/*" @rejected="onRejected" field-name="file"
-                          @uploaded="getMemberByUUID(member.uuid)"/>
-            </q-popup-edit>
-          </q-btn>
-        </div>
-      </q-card-section>
-      <q-card-section class="col-3">
-        <q-item-label :id="member.legitimationNumber">Numer Legitymacji: {{ member.legitimationNumber }}</q-item-label>
-        <q-item-label caption lines="2">Numer PESEL: {{ member.pesel }}</q-item-label>
-        <q-item-label caption lines="2">Data Zapisu do Klubu: {{ convertDate(member.joinDate) }}</q-item-label>
-      </q-card-section>
-      <q-card-section class="col-4">
-        <div v-if="member.erased">
-          <q-item-label>Podstawa skreślenia z listy Klubowiczów</q-item-label>
-          <q-item-label caption lines="2">{{ member.erasedEntity.erasedType }}
-            {{ convertDate(member.erasedEntity.date) }}
-          </q-item-label>
-          <q-item-label v-if="member.erasedEntity.additionalDescription!==null" caption lines="2">
-            {{ member.erasedEntity.additionalDescription }}
-          </q-item-label>
-        </div>
-      </q-card-section>
-    </q-card>
-
-    <q-card bordered class="row bg-dark" style="height: 80vh;">
+    <q-card bordered :class="mobile?'col bg-dark':'row bg-dark'" >
       <q-card-section class="col-3">
         <q-field dense class="col" standout="bg-accent text-positive" color="positive" label-color="positive" stack-label>
           <div class="self-center col full-width no-outline text-center">Historia Składek</div>
@@ -196,7 +61,7 @@
           </div>
         </div>
         <q-expansion-item dense default-opened class="bg-dark full-width q-pa-none text-center text-positive" label="Daty Składek">
-          <q-virtual-scroll class="full-width q-pa-none" style="height: 65vh;" :items="member.history.contributionList">
+          <q-virtual-scroll class="full-width q-pa-none" :style="mobile?'':'height: 65vh;'" :items="member.history.contributionList">
             <template class="row" v-slot="{item}">
               <div class="row full-width"
                    @dblclick="contributionUUID = item.uuid;memberUUID = member.uuid;editContributionPaymentDate=item.paymentDay
@@ -531,48 +396,6 @@
                      label="Przejdź do portalu" color="primary" @click="memberUUID=member.uuid;pzssPortal = true"/>
             </q-item>
           </q-expansion-item>
-<!--          <q-expansion-item dense disable label="Praca na rzecz Klubu" group="right-right-card" class="bg-white">-->
-<!--            <div class="col">-->
-<!--              <div>-->
-<!--                <q-radio v-model="socialWork" :val="false" label="opłata"></q-radio>-->
-<!--                <q-radio v-model="socialWork" :val="true" label="praca"></q-radio>-->
-<!--              </div>-->
-<!--              <div>tutaj będzie lista</div>-->
-<!--              <q-item>-->
-<!--                <q-btn label="dodaj" color="primary"/>-->
-<!--              </q-item>-->
-<!--            </div>-->
-<!--          </q-expansion-item>-->
-<!--          <q-expansion-item dense label="Przydziel Numer Karty" group="right-right-card" class="bg-white">-->
-<!--            <div v-if="member.barCodeCardList.length > 0">-->
-<!--              <div>Przypisane Karty</div>-->
-<!--              <div v-for="(item, id) in member.barCodeCardList" :key="id" class="row text-bold"-->
-<!--                   style="font-size: smaller;">-->
-<!--                <div v-if="item.active" class="row text-left">{{ item.barCode }} Aktywna</div>-->
-<!--                <div v-if="!item.active" class="row text-left">{{ item.barCode }} Nieaktywna</div>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--            <div v-if="!member.erased&&member.clubCardBarCode==null" class="row">-->
-<!--              <q-input v-model="barcode" type="password" filled class="col bg-orange" dark label-color="white"-->
-<!--                       stack-label color="white" label="Zeskanuj Kartę Tutaj"-->
-<!--                       @keypress.enter="uuid = member.uuid;addBarcodeToMember(uuid, barcode)"></q-input>-->
-<!--              <q-item>-->
-<!--                <q-btn label="dodaj" color="primary" @click="uuid = member.uuid;addBarcodeToMember(uuid, barcode)"/>-->
-<!--              </q-item>-->
-<!--            </div>-->
-<!--            <div v-else class="full-width text-center">-->
-<!--              <q-item class="full-width text-center">-->
-<!--                <div>Klubowicz ma przypisany numer karty</div>-->
-<!--              </q-item>-->
-<!--              <q-input v-model="barcode" type="password" filled class="col bg-orange" dark label-color="white"-->
-<!--                       stack-label color="white" label="Zeskanuj Kartę Tutaj"-->
-<!--                       @keypress.enter="uuid = member.uuid;addBarcodeToMember(uuid, barcode)"></q-input>-->
-<!--              <q-item class="full-width">-->
-<!--                <q-btn label="Przydziel Nowy numer" color="primary"-->
-<!--                       @click="uuid = member.uuid;addBarcodeToMember(uuid, barcode)"/>-->
-<!--              </q-item>-->
-<!--            </div>-->
-<!--          </q-expansion-item>-->
           <q-expansion-item dense label="Pokaż statystyki" group="right-right-card"
                             @click="uuid = member.uuid;getPersonalStatistics(uuid)">
             <div v-if="personalStatisticsObject!=null" class="col text-left text-caption">
@@ -761,7 +584,7 @@
         </q-expansion-item>
         <q-expansion-item dense v-if="member.memberPermissions.arbiterNumber!=null" label="Historia sędziowania"
                           group="right-card" class="text-positive">
-          <q-virtual-scroll :items="member.history.judgingHistory" style="height: 52vh;">
+          <q-virtual-scroll :items="member.history.judgingHistory" :style="mobile?'':'height: 52vh;'">
             <template v-slot="{ item }">
           <div class="row">
             <q-field dense class="col" color="positive" label-color="positive" standout="bg-accent text-positive" label="Nazwa" stack-label>
@@ -784,8 +607,8 @@
           </q-virtual-scroll>
         </q-expansion-item>
       </q-card-section>
-    </q-card>
-    <q-card bordered class="row bg-dark text-positive">
+
+    <q-card bordered :class="mobile?'col bg-dark text-positive':'row full-width bg-dark text-positive'">
       <q-card-section class="col-3" style="height:100%;">
         <div class="full-height text-positive" >
           <q-item-label>
@@ -835,20 +658,20 @@
                  @click="memberUUID=member.uuid;memberEmail = member.email;memberPhoneNumber = member.phoneNumber;memberPostOfficeCity = member.address.postOfficeCity;memberZipCode = member.address.zipCode;memberStreet = member.address.street;memberStreetNumber = member.address.streetNumber;memberFlatNumber=member.address.flatNumber;addressConfirm=true"></q-btn>
         </q-item-section>
       </q-card-section>
-      <q-card-section class="col-5">
-        <div class="col full-width">
-          <q-item>
+      <q-card-section v-if="!mobile" class="col-5">
+        <q-item-section class="col full-width">
+          <div class="q-pb-md">
             <q-tooltip v-if="member.club.id !== 1" content-class="text-h6 bg-red" anchor="top middle" self="bottom middle" :offset="[12, 12]">INNY KLUB MACIERZYSTY
             </q-tooltip>
             <DeklaracjaLOK :uuid="member.uuid" :name="(member.firstName + ' ' + member.secondName)" :disable="member.club.id !== 1"/>
-          </q-item>
-          <q-item>
+          </div>
+          <div class="q-pb-md">
             <personalCardPDF :uuid="member.uuid" :name="(member.firstName + ' ' + member.secondName)"/>
-          </q-item>
-          <q-item v-if="member.history.contributionList.length > 0">
+          </div>
+          <div v-if="member.history.contributionList.length > 0" class="q-pb-md">
             <LastContributionPDF :uuid="member.uuid" :name="(member.firstName + ' ' + member.secondName)" :disable="member.history.contributionList.length < 1"/>
-          </q-item>
-          <q-item v-if="!member.erased">
+          </div>
+          <div v-if="!member.erased" class="q-pb-md">
             <q-tooltip v-if="member.club.id !== 1" content-class="text-h6 bg-red" anchor="top middle" self="bottom middle" :offset="[12, 12]">INNY KLUB MACIERZYSTY
             </q-tooltip>
             <q-tooltip v-else-if="member.license.number===null" content-class="text-h6 bg-red" anchor="top middle" self="bottom middle" :offset="[12, 12]">BRAK
@@ -858,17 +681,18 @@
               PATENTU
             </q-tooltip>
             <ExtensionApplicationFile :uuid="member.uuid" :name="(member.firstName + ' ' + member.secondName)" :disable="member.club.id !== 1|| member.license.number===null || member.shootingPatent.patentNumber===null "/>
-          </q-item>
-          <q-item v-if="!member.erased">
+          </div>
+          <div v-if="!member.erased" class="q-pb-md">
             <q-tooltip v-if="member.club.id !== 1" content-class="text-h6 bg-red" anchor="top middle" self="bottom middle" :offset="[12, 12]">INNY KLUB MACIERZYSTY
             </q-tooltip>
             <q-tooltip v-else-if="!member.active" content-class="text-h6 bg-red" anchor="top middle"
                        self="bottom middle" :offset="[12, 12]">BRAK SKŁADEK
             </q-tooltip>
             <CertificateFile :uuid="member.uuid" :name="(member.firstName + ' ' + member.secondName)" :disable="member.club.id !== 1"/>
-          </q-item>
-        </div>
+          </div>
+        </q-item-section>
       </q-card-section>
+    </q-card>
     </q-card>
     <q-dialog v-model="contribution" persistent>
       <q-card class="bg-dark text-positive">
@@ -1509,6 +1333,7 @@ import axios from 'axios'
 import App from 'src/App.vue'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox.vue'
+import { isWindows } from 'mobile-device-detect'
 
 const {
   getScrollTarget,
@@ -1549,6 +1374,7 @@ export default {
   },
   data () {
     return {
+      mobile: !isWindows,
       member: null,
       memberUUID: null,
       picture: false,

@@ -1,26 +1,26 @@
 <template>
   <div class="col">
     <div
-      class="full-width text-h5 text-bold text-center q-pa-none q-ma-none">{{
+      class="full-width text-h5 text-bold text-center q-pa-none q-ma-none text-positive">{{
         competition.countingMethod === 'COMSTOCK' ? competition.name + ' ' + competition.countingMethod : competition.name
       }}
     </div>
     <div class="row q-pa-none q-ma-none">
-      <q-field dense class="col" standout="bg-accent text-black" stack-label>
-        <div class="col-3 self-center no-outline text-left text-black" tabindex="1">Zawodnik</div>
-        <div class="col-3 self-center no-outline text-left text-black" tabindex="2">Klub</div>
-        <div class="col-1 self-center no-outline text-left text-black" tabindex="2">M.</div>
-        <div class="col-1 self-center no-outline text-left text-black" tabindex="2">
+      <q-field dense class="col text-positive" standout="bg-accent text-positive" stack-label>
+        <div class="col-3 self-center no-outline text-left text-positive">Zawodnik</div>
+        <div class="col-3 self-center no-outline text-left text-positive">Klub</div>
+        <div class="col-1 self-center no-outline text-left text-positive">M.</div>
+        <div class="col-1 self-center no-outline text-left text-positive">
           {{ competition.countingMethod === 'COMSTOCK' ? 'tr.' : '10/' }}
         </div>
-        <div class="col-1 self-center no-outline text-right text-black" tabindex="2">
+        <div class="col-1 self-center no-outline text-right text-positive">
           {{ competition.countingMethod === 'COMSTOCK' ? 'cz.' : '10X' }}
         </div>
-        <div v-if="competition.countingMethod === 'COMSTOCK'" class="col-1 self-center no-outline text-right text-black"
-             tabindex="2">proc.
+        <div v-if="competition.countingMethod === 'COMSTOCK'" class="col-1 self-center no-outline text-right text-positive"
+             >proc.
         </div>
         <div
-          :class="competition.countingMethod === 'COMSTOCK'?'col-2 self-center no-outline text-right text-black':'col-3 self-center no-outline text-center text-black'"
+          :class="competition.countingMethod === 'COMSTOCK'?'col-2 self-center no-outline text-right text-positive':'col-3 self-center no-outline text-center text-positive'"
           tabindex="3">
           <div v-if="competition.countingMethod === 'COMSTOCK'" class="text-right">
             <div>
@@ -45,9 +45,9 @@
                  :
                  (temp=item.otherPersonEntity);
                  startNumber=item.metricNumber;competitionTemp = competition">
-              <q-field dense standout="bg-accent text-black row" class="text-black text-caption" stack-label>
+              <q-field dense standout="bg-accent text-positive row" class="text-positive text-caption" stack-label>
                 <div class="q-pa-none row full-width text-caption">
-                  <div class="col-3 text-black self-center no-outline text-left" tabindex="0">
+                  <div :class="index%2===0?'col-3 text-black self-center text-left':'col-3 text-positive self-center no-outline text-left'">
                     <div>
                       {{
                         item.member != null ? temp = item.member.secondName : temp = item.otherPersonEntity.secondName
@@ -57,38 +57,38 @@
                       {{ item.member != null ? temp = item.member.firstName : temp = item.otherPersonEntity.firstName }}
                     </div>
                   </div>
-                  <div class="col-3 text-black self-center no-outline text-left"
+                  <div :class="index%2===0?'col-3 text-black self-center no-outline text-left':'col-3 text-positive self-center no-outline text-left'"
                        tabindex="0">
                     {{ item.member != null ? temp = item.member.club.name : temp = item.otherPersonEntity.club.name }}
                   </div>
-                  <div class="col-1 self-center no-outline text-left text-black"
+                  <div :class="index%2===0?'col-1 self-center no-outline text-left text-black':'col-1 self-center no-outline text-left text-positive'"
                        tabindex="0">{{ item.metricNumber }}
                   </div>
-                  <div class="self-center col-1 no-outline text-left text-black text-caption"
+                  <div :class="index%2===0?'self-center col-1 no-outline text-left text-black text-caption':'self-center col-1 no-outline text-left text-positive text-caption'"
                        tabindex="0">{{competition.countingMethod === 'NORMAL'? item.outerTen - item.innerTen : item.outerTen}}
                   </div>
-                  <div class="self-center col-1 no-outline text-right text-black text-caption"
+                  <div :class="index%2===0?'self-center col-1 no-outline text-right text-black text-caption':'self-center col-1 no-outline text-right text-positive text-caption'"
                        tabindex="0">{{ item.innerTen }}
                   </div>
                   <div v-if="competition.countingMethod === 'COMSTOCK'"
-                       class="self-center col-1 no-outline text-right text-black text-caption"
+                       :class="index%2===0?'self-center col-1 no-outline text-right text-black text-caption':'self-center col-1 no-outline text-right text-positive text-caption'"
                        tabindex="0">{{ item.procedures }}
                   </div>
                   <div :class="competition.countingMethod === 'COMSTOCK'?'col-2':'col-3 text-center'">
                     <div v-if="item.dnf||item.dsq||item.pk"
-                         class="self-center full-width no-outline text-center " tabindex="0">
+                         class="self-center full-width no-outline text-center">
                       <div v-if="item.dnf">DNF</div>
                       <div v-if="item.dsq">DSQ</div>
                       <div v-if="item.pk">PK</div>
                     </div>
                     <div v-else
-                         :class="competition.countingMethod === 'COMSTOCK'?'self-center full-width no-outline text-right text-black text-caption':'self-center full-width no-outline text-center text-black text-caption'"
+                         :class="competition.countingMethod === 'COMSTOCK'?'self-center full-width no-outline text-right text-caption':'self-center full-width no-outline text-center text-caption'"
                          tabindex="0">
-                      <div v-if="competition.countingMethod === 'COMSTOCK'">
+                      <div v-if="competition.countingMethod === 'COMSTOCK'" :class="index%2===0?'text-black':'text-positive'">
                         <div>{{item.score}}</div>
                         <div>{{item.hf}}</div>
                       </div>
-                      <div v-else>{{item.score}}</div>
+                      <div v-else :class="index%2===0?'text-black text-center self-center':'text-positive text-center self-center'">{{item.score}}</div>
                     </div>
                   </div>
                 </div>
@@ -99,126 +99,126 @@
       </template>
     </q-virtual-scroll>
     <q-dialog v-model="toggleDSQDNF">
-      <q-card style="min-width: 95vw;min-height: 95vh;">
+      <q-card style="min-width: 95vw;min-height: 95vh;" class="bg-dark">
         <q-card-section class="full-width">
           <div>
-            <div class="text-h5 text-bold text-center">{{ temp.secondName }} {{ temp.firstName }}</div>
+            <div class="text-h5 text-positive text-bold text-center">{{ temp.secondName }} {{ temp.firstName }} nr M{{startNumber}}</div>
           </div>
           <div>
-            <div class="text-h5 text-bold text-center">{{ competitionTemp.name }}</div>
+            <div class="text-h5 text-positive text-bold text-center">{{ competitionTemp.name }}</div>
           </div>
           <div v-if="competitionTemp.disciplines==null && competitionTemp.countingMethod === 'COMSTOCK'"
                class="row full-width">
             <q-input v-if="alfa === '' && charlie === '' && delta === ''" type="number"
-                     input-class="text-center" v-model="outerTen" class="col-3"
+                     input-class="text-center text-positive text-h4" v-model="outerTen" class="col-3"
                      @keypress.enter=" onEnter(scoreUUID)"
-                     stack-label label="trafienia"
+                     stack-label label="trafienia" label-color="positive"
                      onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
             <q-input
               @keypress.enter=" onEnter(scoreUUID)" type="number"
-              input-class="text-center" v-model="alfa" class="col-3" stack-label label="Alfa"
+              input-class="text-center text-positive text-h4" v-model="alfa" class="col-3" stack-label label="Alfa" label-color="positive"
               onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
             <q-input
               @keypress.enter=" onEnter(scoreUUID)" type="number"
-              input-class="text-center" v-model="charlie" class="col-3" stack-label label="Charlie"
+              input-class="text-center text-positive text-h4" v-model="charlie" class="col-3" stack-label label="Charlie" label-color="positive"
               onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
             <q-input
               @keypress.enter=" onEnter(scoreUUID)" type="number"
-              input-class="text-center" v-model="delta" class="col-3" stack-label label="Delta"
+              input-class="text-center text-positive text-h4" v-model="delta" class="col-3" stack-label label="Delta" label-color="positive"
               onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
           </div>
           <div v-if="competitionTemp.disciplines!=null && competitionTemp.countingMethod === 'COMSTOCK'"
                class="row full-width">
             <div v-if="competitionTemp.disciplines.includes('Pistolet')" class="row">
                 <q-input v-if="alfa === '' && charlie === '' && delta === ''"
-                         input-class="text-center" v-model="outerTen"
+                         input-class="text-center text-positive text-h4" v-model="outerTen"
                          @keypress.enter=" onEnter(scoreUUID)"
-                         stack-label label="trafienia"
+                         stack-label label="trafienia" label-color="positive"
                          onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                 <q-input
                   @keypress.enter=" onEnter(scoreUUID)"
-                  input-class="text-center" v-model="alfa" stack-label label="Alfa"
+                  input-class="text-center text-positive text-h4" v-model="alfa" stack-label label="Alfa" label-color="positive"
                   onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                 <q-input
                   @keypress.enter=" onEnter(scoreUUID)"
-                  input-class="text-center" v-model="charlie" stack-label label="Charlie"
+                  input-class="text-center text-positive text-h4" v-model="charlie" stack-label label="Charlie" label-color="positive"
                   onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                 <q-input
                   @keypress.enter=" onEnter(scoreUUID)"
-                  input-class="text-center" v-model="delta" stack-label label="Delta"
+                  input-class="text-center text-positive text-h4" v-model="delta" stack-label label="Delta" label-color="positive"
                   onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
             </div>
             <div v-if="competitionTemp.disciplines.includes('Karabin')" class="row">
                 <q-input v-if="alfa === '' && charlie === '' && delta === ''"
-                         input-class="text-center" v-model="outerTen"
+                         input-class="text-center text-positive text-h4" v-model="outerTen"
                          @keypress.enter=" onEnter(scoreUUID)"
-                         stack-label label="trafienia"
+                         stack-label label="trafienia" label-color="positive"
                          onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                 <q-input
                   @keypress.enter=" onEnter(scoreUUID)"
-                  input-class="text-center" v-model="alfa" stack-label label="Alfa"
+                  input-class="text-center text-positive text-h4" v-model="alfa" stack-label label="Alfa" label-color="positive"
                   onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                 <q-input
                   @keypress.enter=" onEnter(scoreUUID)"
-                  input-class="text-center" v-model="charlie" stack-label label="Charlie"
+                  input-class="text-center text-positive text-h4" v-model="charlie" stack-label label="Charlie" label-color="positive"
                   onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                 <q-input
                   @keypress.enter=" onEnter(scoreUUID)"
-                  input-class="text-center" v-model="delta" stack-label label="Delta"
+                  input-class="text-center text-positive text-h4" v-model="delta" stack-label label="Delta" label-color="positive"
                   onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
             </div>
             <div v-if="competitionTemp.disciplines.includes('Strzelba')" class="row">
                 <q-input v-if="alfa === '' && charlie === '' && delta === ''"
-                         input-class="text-center" v-model="outerTen"
+                         input-class="text-center text-positive text-h4" v-model="outerTen"
                          @keypress.enter=" onEnter(scoreUUID)"
-                         stack-label label="trafienia"
+                         stack-label label="trafienia" label-color="positive"
                          onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                 <q-input
                   @keypress.enter=" onEnter(scoreUUID)"
-                  input-class="text-center" v-model="alfa" stack-label label="Alfa"
+                  input-class="text-center text-positive text-h4" v-model="alfa" stack-label label="Alfa" label-color="positive"
                   onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                 <q-input
                   @keypress.enter=" onEnter(scoreUUID)"
-                  input-class="text-center" v-model="charlie" stack-label label="Charlie"
+                  input-class="text-center text-positive text-h4" v-model="charlie" stack-label label="Charlie" label-color="positive"
                   onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                 <q-input
                   @keypress.enter=" onEnter(scoreUUID)"
-                  input-class="text-center" v-model="delta" stack-label label="Delta"
+                  input-class="text-center text-positive text-h4" v-model="delta" stack-label label="Delta" label-color="positive"
                   onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
             </div>
           </div>
           <div v-if="competitionTemp.countingMethod === 'COMSTOCK'" class="row full-width">
-                <q-input input-class="text-center" v-model="innerTen" type="number"
+                <q-input input-class="text-center text-positive text-h4" v-model="innerTen" type="number"
                          @keypress.enter=" onEnter(scoreUUID)"
-                         stack-label label="czas" class="col-10"
+                         stack-label label="czas" label-color="positive" class="col-10"
                          onkeypress="return (event.charCode > 47 && event.charCode < 58) || event.charCode > 44 || event.charCode < 46"/>
           </div>
           <!-- procedures -->
           <div v-if="competitionTemp.countingMethod === 'COMSTOCK'" class="row full-width">
-                <q-input input-class="text-center" v-model="procedures" type="number"
+                <q-input input-class="text-center text-positive text-h4" v-model="procedures" type="number"
                          @keypress.enter="onEnter(scoreUUID)"
-                         stack-label label="procedury + 3 sek" class="col-10"
+                         stack-label label="procedury + 3 sek" label-color="positive" class="col-10"
                          onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
           </div>
           <div v-if="competitionTemp.countingMethod === 'NORMAL'" class="row full-width">
-                <q-input input-class="text-center" v-model="outerTen" type="number"
+                <q-input input-class="text-center text-positive text-h4" v-model="outerTen" type="number"
                          @keypress.enter="onEnter(scoreUUID)"
-                         stack-label label="ilość 10 Ogólnie" class="col-10"
+                         stack-label label="ilość 10 Ogólnie" label-color="positive" class="col-10"
                          onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
           </div>
           <div v-if="competitionTemp.countingMethod === 'NORMAL'" class="row full-width">
-                <q-input input-class="text-center" v-model="innerTen" type="number"
+                <q-input input-class="text-center text-positive text-h4" v-model="innerTen" type="number"
                          @keypress.enter="onEnter(scoreUUID)"
-                         stack-label label="ilość 10 X" class="col-10"
+                         stack-label label="ilość 10 X" label-color="positive" class="col-10"
                          onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
           </div>
           <!-- wynik -->
           <div class="row full-width">
-            <q-input input-class="text-center" v-model="scoreLabel" type="number"
+            <q-input input-class="text-center text-positive text-h4" v-model="scoreLabel" type="number"
                      @keypress.enter="onEnter(scoreUUID)"
-                     stack-label label="Wynik" class="col-10"
+                     stack-label label="Wynik" label-color="positive" class="col-10"
                      onkeypress="return (event.charCode > 47 && event.charCode < 58) || event.charCode > 44 || event.charCode < 46"/>
-            <q-btn color="primary" label="Zapisz" class="col-2"
+            <q-btn color="primary" label="Zapisz" text-color="white" class="col-2"
                    @click="setScore(scoreUUID,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
           </div>
           <div class="row q-pa-md">
@@ -231,7 +231,7 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat label="Anuluj" color="primary" v-close-popup/>
+          <q-btn text-color="white" label="Anuluj" color="primary" v-close-popup/>
         </q-card-actions>
       </q-card>
     </q-dialog>

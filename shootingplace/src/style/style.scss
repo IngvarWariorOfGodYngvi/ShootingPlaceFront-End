@@ -3,6 +3,11 @@
   opacity: 1;
   z-index: 1;
 }
+#layout {
+  background: url("img/logo.png") fixed center no-repeat;
+  object-position: center;
+  object-fit: scale-down;
+}
 .thead-sticky tr:last-child > * {
   top: 0;
 }

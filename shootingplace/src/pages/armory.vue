@@ -1,83 +1,119 @@
 <template>
   <q-page padding>
-      <div v-if="!persentation">
+      <div>
         <q-item>
-          <div class="text-center col full-width no-outline text-h4 text-bold" tabindex="0">Zbrojownia</div>
+          <div class="text-center col full-width text-h4 text-bold text-positive" >Zbrojownia</div>
         </q-item>
       </div>
-      <div class="col" align="left">
-        <q-btn class="text-black" type="a" :href="('http://' + prod + 'armory/galery')" target="_self" >Otwórz Pokaz Broni</q-btn>
+<!--      <div class="col" align="left">-->
+<!--        <q-btn class="text-black" type="a" :href="('http://' + prod + 'armory/galery')" target="_self" >Otwórz Pokaz Broni</q-btn>-->
+<!--      </div>-->
+<!--      <p></p>-->
+<!--      <q-expansion-item dense label="Broń" class="text-h6 text-bold bg-dark text-positive">-->
+<!--      <q-card class="bg-dark">-->
+<!--        <q-card-section>-->
+<!--          <div class="row q-pb-md">-->
+<!--              <q-btn color="primary" @click="open = !open">{{open?'zamknij':'otwórz'}} wszystko</q-btn>-->
+<!--              <q-btn color="secondary" text-color="white" @click="gunAdding=true">wprowadź na stan</q-btn>-->
+<!--              <q-btn color="secondary" text-color="white" @click="transportCertificate=true" >wystaw list przewozowy</q-btn>-->
+<!--              <q-btn color="secondary" text-color="white" @click="openGunList = true">pobierz listę broni</q-btn>-->
+<!--              <q-btn color="secondary" text-color="white" @click="newGunType=true">utwórz nowy typ Broni</q-btn>-->
+<!--          </div>-->
+<!--          <q-expansion-item :value="open" v-for="(item ,index) in allGuns" :key="index" :label="item.typeName + ' ' + item.gunEntityList.length + ' sztuki'" expand-separator dense class="text-h6 text-bold bg-dark text-positive">-->
+<!--              <div class="row bg-dark">-->
+<!--            <div v-for="(item,index) in item.gunEntityList" :key="index" @dblclick="gunUUID = item.uuid;getGunUsedHistory();gunInfo=true;usedGunInfo=item" class="col-2 bg-dark q-pa-xs">-->
+<!--              <q-field dense clickable class="col q-ma-xs text-caption text-bold" color="black" standout="bg-accent text-positive">-->
+<!--                <div class="col text-left text-positive">-->
+<!--                  <div>{{item.modelName}}</div>-->
+<!--                  <div>{{item.serialNumber}}</div>-->
+<!--                  <div>{{item.gunCertificateSerialNumber}}</div>-->
+<!--                  <div>{{item.recordInEvidenceBook}}</div>-->
+<!--                </div>-->
+<!--              </q-field>-->
+<!--            </div>-->
+<!--            </div>-->
+<!--          </q-expansion-item>-->
+<!--        <p></p>-->
+<!--        </q-card-section>-->
+<!--      </q-card>-->
+<!--      </q-expansion-item>-->
+          <q-expansion-item label="Broń" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
+          <q-card class="bg-dark">
+                      <div class="row q-pb-md">
+                          <q-btn color="primary" @click="open = !open">{{open?'zwiń':'rozwiń'}} wszystko</q-btn>
+                          <q-btn color="secondary" text-color="white" @click="gunAdding=true">wprowadź na stan</q-btn>
+                          <q-btn color="secondary" text-color="white" @click="transportCertificate=true" >wystaw list przewozowy</q-btn>
+                          <q-btn color="secondary" text-color="white" @click="openGunList = true">pobierz listę broni</q-btn>
+                          <q-btn color="secondary" text-color="white" @click="newGunType=true">utwórz nowy typ Broni</q-btn>
+                      </div>
+            <q-card-section class="col">
+    <q-field color="positive" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
+      <div class="col-3 self-center text-bold text-left">marka i model</div>
+      <div class="col-1 self-center text-bold text-left">kaliber</div>
+      <div class="col-2 self-center text-bold text-left">numer i seria</div>
+      <div class="col-1 self-center text-bold text-left">Poz. z książki ewidencji</div>
+      <div class="col-1 self-center text-bold text-left">ilość magazynków</div>
+      <div class="col-2 self-center text-bold text-left">numer świadectwa</div>
+      <div class="col-2 self-center text-bold text-left">podstawa wpisu</div>
+    </q-field>
+    <p></p>
+    <q-expansion-item :value="open" v-for="(gunType,id) in allGuns" :key="id" :label="gunType.typeName + ' ' + gunType.gunEntityList.length + ' sztuki'" class="bg-grey-4 col full-width no-outline text-h6 text-center text-bold">
+      <div v-for="(gun,uuid) in gunType.gunEntityList" :key="uuid" @dblclick="gunUUID = gun.uuid,getGunUsedHistory(),gunInfo=true,usedGunInfo=gun">
+        <q-field clickable color="positive" class="bg-dark" standout="bg-warning text-black" stack-label>
+          <div class="row full-width">
+            <div class="col-3 self-center text-bold text-left">{{gun.modelName}}</div>
+            <div class="col-1 self-center text-bold text-left">{{gun.caliber}}</div>
+            <div class="col-2 self-center text-bold text-left">{{gun.serialNumber}}</div>
+            <div class="col-1 self-center text-bold text-left">{{gun.recordInEvidenceBook}}</div>
+            <div class="col-1 self-center text-bold text-left">{{gun.numberOfMagazines}}</div>
+            <div class="col-2 self-center text-bold text-left">{{gun.gunCertificateSerialNumber}}</div>
+            <div class="col-2 self-center text-bold text-left">{{gun.basisForPurchaseOrAssignment}}</div>
+            <div v-if="gun.imgUUID!=null" class="col-1 self-center text-center box"><q-icon name="menu"></q-icon><q-tooltip :delay="1000" @hide ="url = ''" @before-show ="getUrl (gun.imgUUID)" anchor="center middle" self="center middle" transition-show="scale" class="text-center"
+                                                                                                                                      transition-hide="scale" content-style="width: 30%; height: 70%"><q-img :src="url" spinner-color="white" style="height: 100%; width: 100%" ratio="1" contain /></q-tooltip></div>
+          </div>
+        </q-field>
       </div>
-      <p></p>
-      <q-expansion-item dense label="Broń" class="text-h6 text-bold bg-grey-3">
-      <q-card>
-        <q-card-section>
-          <q-btn v-if="open" @click="open = !open">zamknij wszystko</q-btn>
-          <q-btn v-if="!open" @click="open = !open">otwórz wszystko</q-btn>
-          <q-expansion-item :value="open" v-for="(item ,index) in allGuns" :key="index" :label="item.typeName + ' ' + item.gunEntityList.length + ' sztuki'" expand-separator dense class="text-h6 text-bold bg-grey-3">
-              <div class="row bg-white">
-            <div v-for="(item,index) in item.gunEntityList" :key="index" @click="wydaj" @dblclick="gunUUID = item.uuid,getGunUsedHistory(),gunInfo=true,usedGunInfo=item" clickable class="col-2 bg-white q-pa-xs">
-              <q-popup-edit anchor="center start" self="center middle">
-                <div class="text-black text-bold text-body2 full-width full-height q-pa-none" style="width:100%;height:100%" @dblclick="gunUUID = item.uuid,getGunUsedHistory(),gunInfo=true,usedGunInfo=item">
-                  <div class="col text-left">
-                  <div>{{item.modelName}}</div>
-                  <div class="text-justify full-width">{{item.serialNumber}} | {{item.gunCertificateSerialNumber}} | {{item.recordInEvidenceBook}}</div>
-                  <div>{{item.caliber}} | {{item.gunType}}</div>
-                </div>
-                  <div class="col">
-                    <q-radio v-model="nameOrCard" :val="true">Nazwisko</q-radio>
-                    <q-radio v-model="nameOrCard" :val="false">Numer karty</q-radio>
-                    <q-select v-if="nameOrCard" class="full-width" filled v-model="memberName" color="black" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filter" @input="allMember = false,getMemberByLegitimationNumber(filter)" label="Nazwisko - Imię - nr Leg">
-                      <template v-slot:no-option>
-                        <q-item>
-                          <q-item-section class="text-grey">
-                            Brak wyników - sprawdź w nieaktywnych
-                          </q-item-section>
-                        </q-item>
-                      </template>
-                    </q-select>
-                    <q-input v-if="!nameOrCard" filled label="Numer Karty" color="black"></q-input>
-                  <q-btn>przycisk1</q-btn>
-                  <q-btn>przycisk2</q-btn>
-                  </div>
-                </div>
-              </q-popup-edit>
-              <q-field dense clickable class="col q-ma-xs text-caption text-bold" color="black" standout="bg-accent text-black">
-                <div class="col text-left">
-                  <div>{{item.modelName}}</div>
-                  <div>{{item.serialNumber}} | {{item.gunCertificateSerialNumber}}</div>
-                </div>
-              </q-field>
-            </div>
-            </div>
-          </q-expansion-item>
-        <p></p>
-        </q-card-section>
-      </q-card>
-      </q-expansion-item>
+    </q-expansion-item>
+    </q-card-section>
+    </q-card>
+    </q-expansion-item>
+    <q-card>
+      <div class="row">
+        <div v-for="(gunImage,id) in images" :key="id" class="col-4 q-pa-xl flex flex-center">
+          <q-img
+            :src="('http://' + local + '/files/getFile?uuid=' + gunImage.uuid)"
+            style="height: 100%; width: 100%" class="q-pa-md flex flex-center">
+            <q-tooltip :delay="500" anchor="center middle" self="center middle" transition-show="scale"
+                       transition-hide="scale" content-style="height: 800px; width: 800px"><q-img
+              :src="('http://' + local + '/files/getFile?uuid=' + gunImage.uuid)"
+              style="height: 100%; width: 100%" class="q-pa-md"/></q-tooltip>
+          </q-img>
+        </div>
+      </div>
+    </q-card>
       <p></p>
       <q-expansion-item label="Dodawanie amunicji" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
-      <q-card v-if="!persentation">
-        <q-card-section class="col">
+      <q-card>
+        <q-card-section class="col bg-dark">
           <div class="row q-pa-md">
-          <q-input dense v-model="caliberName" placeholder="Nowy kaliber" filled></q-input>
-          <q-btn dense @click="addCaliber = true">dodaj kaliber do bazy danych</q-btn>
+          <q-input dense v-model="caliberName" input-class="text-positive text-h6" placeholder="Nowy kaliber" filled></q-input>
+          <q-btn color="primary" text-color="white" dense @click="addCaliber = true">dodaj kaliber do bazy danych</q-btn>
           </div>
           <div class="col">
-              <q-item class="col">
-                <div class="self-center col-3 no-outline text-left text-bold" style="text-center">KALIBER</div>
-                <div class="self-center col-3 no-outline text-left text-bold" style="text-center">ILOŚĆ NA STANIE</div>
-                <div class="self-center col no-outline text-center text-bold" style="text-center"></div>
+              <q-item class="col text-positive">
+                <div class="self-center col-3 no-outline text-left text-bold text-center">KALIBER</div>
+                <div class="self-center col-3 no-outline text-left text-bold text-center">ILOŚĆ NA STANIE</div>
+                <div class="self-center col no-outline text-center text-bold text-center"></div>
               </q-item>
           </div>
               <div class="row" v-for="(caliber,id) in calibers" :key="id">
-              <q-item dense @dblclick="caliberUUID = caliber.uuid, caliberInfo=true" class="col">
-                <q-field dense color="black" class="self-center col-6 no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
-                    <div class="self-center col-6 no-outline text-left text-bold" style="text-center">{{caliber.name}}</div>
-                    <div class="self-center col-6 no-outline text-left text-bold" style="text-center">{{caliber.quantity}}</div>
+              <q-item dense @dblclick="caliberUUID = caliber.uuid; caliberInfo=true" class="col">
+                <q-field dense color="positive" class="self-center col-6 no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
+                    <div class="self-center col-6 no-outline text-left text-bold text-center">{{caliber.name}}</div>
+                    <div class="self-center col-6 no-outline text-left text-bold text-center">{{caliber.quantity}}</div>
                 </q-field>
-                <q-btn dense @click="caliberUUID = caliber.uuid, addCaliberDialog = true" class="col">aktualizuj stan {{caliber.name}}</q-btn>
-                <q-btn dense @click="caliberUUID = caliber.uuid, caliberHistory = true, getCaliberHistory ()" class="col">historia dodawania</q-btn>
+                <q-btn color="primary" text-color="white" dense @click="caliberUUID = caliber.uuid; addCaliberDialog = true" class="col">aktualizuj stan {{caliber.name}}</q-btn>
+                <q-btn color="secondary" text-color="white" dense @click="caliberUUID = caliber.uuid; caliberHistory = true; getCaliberHistory ()" class="col">historia dodawania</q-btn>
               </q-item>
             </div>
         </q-card-section>
@@ -87,11 +123,11 @@
         <q-expansion-item label="Zużycie" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
         <q-card class="text-body2">
         <div class="row">
-        <q-card-section class="col-4">
-            <q-item class="col">
-              <q-input dense class="full-width" color="black" mask="####-##-##" filled v-model="firstDate" label="Data początkowa">
+        <q-card-section class="col-4 bg-dark">
+            <q-item class="col text-positive">
+              <q-input dense class="full-width" label-color="positive" input-class="text-positive text-h6" color="positive" mask="####-##-##" filled v-model="firstDate" label="Data początkowa">
                 <template v-slot:append>
-                  <q-icon name="event" class="cursor-pointer">
+                  <q-icon name="event" color="positive" class="cursor-pointer">
                     <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
                       <q-date no-unset @input="getSum()" v-model="firstDate">
                         <div class="row items-center justify-end">
@@ -104,9 +140,9 @@
               </q-input>
             </q-item>
              <q-item class="col">
-              <q-input dense class="full-width" color="black" mask="####-##-##" filled v-model="secondDate" label="Data końcowa">
+              <q-input dense class="full-width" label-color="positive" input-class="text-positive text-h6" color="positive" mask="####-##-##" filled v-model="secondDate" label="Data końcowa">
                 <template v-slot:append>
-                  <q-icon name="event" class="cursor-pointer">
+                  <q-icon name="event" color="positive" class="cursor-pointer">
                     <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
                       <q-date @input="getSum()" v-model="secondDate">
                         <div class="row items-center justify-end">
@@ -119,19 +155,19 @@
               </q-input>
             </q-item>
             <div @click="getSum()" class="q-pa-md" align="right">
-              <q-btn>Wyszukaj</q-btn>
+              <q-btn color="primary" text-color="white">Wyszukaj</q-btn>
             </div>
         </q-card-section>
-        <q-card-section class="col-8">
+        <q-card-section class="col-8 bg-dark text-positive">
             <div class="q-pa-md self-center col full-width no-outline text-bold text-center text-h6" v-if="quantitySum.length<1">Brak wyników - Wybierz daty</div>
             <div class="q-pa-md self-center col full-width no-outline text-bold text-center">
-              <q-field v-if="quantitySum.length>0" color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
+              <q-field v-if="quantitySum.length>0" color="positive" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
                   <div class="self-center col full-width no-outline text-center text-bold">kaliber</div>
                   <div class="self-center col full-width no-outline text-center text-bold">ilość zużytej amunicji</div>
               </q-field>
             <p v-if="quantitySum.length>0"></p>
             <div v-for="(ammo,id) in quantitySum" :key="id">
-              <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
+              <q-field color="positive" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
                   <div class="self-center col full-width no-outline text-center text-bold">{{ammo.name}}</div>
                   <div class="self-center col full-width no-outline text-center text-bold">{{ammo.quantity}}</div>
               </q-field>
@@ -143,149 +179,88 @@
         </q-expansion-item>
         <p></p>
       <p></p>
-      <q-expansion-item label="Broń" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
-      <q-card v-if="!persentation">
-        <q-card-section class="col">
-          <div class="row q-pa-md">
-            <div class="col-3">
-              Wydaj Broń do czyszczenia
-            <div class="col-3 bg-grey-1"><q-input type="password" v-model="barcode" color="black" dense filled label="zeskanuj kod tutaj" @keypress.enter="addUsedHistoryToGun(barcode)"></q-input></div>
-            </div>
-            <div class="col">
-              <q-expansion-item label="Historia Użycia Broni" dense class="text-left text-h6 text-bold bg-grey-3">
-        <q-card class="text-body2">
-        <div class="row">
-        <q-card-section class="col-4">
-            <q-item class="col">
-              <q-input class="full-width" color="black" filled v-model="firstDateHistory" label="Data początkowa">
-                <template v-slot:append>
-                  <q-icon name="event" class="cursor-pointer">
-                    <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                      <q-date no-unset @input="getUsedGunHistory()" v-model="firstDateHistory">
-                        <div class="row items-center justify-end">
-                          <q-btn v-close-popup label="Zamknij" color="primary" flat />
-                        </div>
-                      </q-date>
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
-              </q-input>
-            </q-item>
-             <q-item class="col">
-              <q-input class="full-width" color="black" filled v-model="secondDateHistory" label="Data końcowa">
-                <template v-slot:append>
-                  <q-icon name="event" class="cursor-pointer">
-                    <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                      <q-date @input="getUsedGunHistory()" v-model="secondDateHistory">
-                        <div class="row items-center justify-end">
-                          <q-btn v-close-popup label="Zamknij" color="primary" flat />
-                        </div>
-                      </q-date>
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
-              </q-input>
-            </q-item>
-            <div @click="getUsedGunHistory()" class="q-pa-md" align="right">
-              <q-btn>Wyszukaj</q-btn>
-            </div>
-        </q-card-section>
-        <q-card-section class="col-8">
-            <div class="q-pa-md self-center col full-width no-outline text-bold text-center text-h6" v-if="gunsHistory.length<1">Brak wyników - Wybierz daty</div>
-            <div class="q-pa-md self-center col full-width no-outline text-bold text-center">
-              <q-field v-if="gunsHistory.length>0" color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
-                  <div class="self-center col full-width no-outline text-center text-bold">Data</div>
-                  <div class="self-center col full-width no-outline text-center text-bold">Nazwa</div>
-                  <div class="self-center col full-width no-outline text-center text-bold">Numer Seryjny</div>
-                  <div class="self-center col full-width no-outline text-center text-bold">Rodzaj Użycia</div>
-              </q-field>
-            <p v-if="gunsHistory.length>0"></p>
-            <div v-for="(guns,id) in gunsHistory" :key="id">
-              <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
-                  <div class="self-center col full-width no-outline text-center text-bold">{{guns.date}}</div>
-                  <div class="self-center col full-width no-outline text-center text-bold">{{guns.gunName}}</div>
-                  <div class="self-center col full-width no-outline text-center text-bold">{{guns.gunSerialNumber}}</div>
-                  <div class="self-center col full-width no-outline text-center text-bold">{{guns.usedType}}</div>
-              </q-field>
-            </div>
-            </div>
-        </q-card-section>
-        </div>
-      </q-card>
-        </q-expansion-item>
-            </div>
-          </div>
-          <div class="row q-pb-md">
-          <div class="col" align="left">
-            <q-btn color="grey-3" class="text-black" @click="gunAdding=true">wprowadź na stan</q-btn>
-          </div>
-          <div class="col" align="center">
-            <q-btn color="grey-3" class="text-black" @click="transportCertificate=true" >wystaw list przewozowy</q-btn>
-          </div>
-          <div class="col" align="center">
-            <q-btn color="grey-3" class="text-black" @click="openGunList = true">pobierz listę broni</q-btn>
-          </div>
-          <div class="col" align="right">
-            <q-btn color="grey-3" class="text-black" @click="newGunType=true">utwórz nowy typ Broni</q-btn>
-          </div>
-          </div>
-                <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
-                    <div class="col-3 self-center text-bold text-left">marka i model</div>
-                    <div class="col-1 self-center text-bold text-left">kaliber</div>
-                    <div class="col-2 self-center text-bold text-left">numer i seria</div>
-                    <div class="col-1 self-center text-bold text-left">Poz. z książki ewidencji</div>
-                    <div class="col-1 self-center text-bold text-left">ilość magazynków</div>
-                    <div class="col-2 self-center text-bold text-left">numer świadectwa</div>
-                    <div class="col-2 self-center text-bold text-left">podstawa wpisu</div>
-                </q-field>
-                <p></p>
-                <q-expansion-item v-for="(gunType,id) in allGuns" :key="id" :label="gunType.typeName + ' ' + gunType.gunEntityList.length + ' sztuki'" class="bg-grey-4 col full-width no-outline text-h6 text-center text-bold">
-                <div v-for="(gun,uuid) in gunType.gunEntityList" :key="uuid" @dblclick="gunUUID = gun.uuid,getGunUsedHistory(),gunInfo=true,usedGunInfo=gun" clickable class="bg-white">
-                <q-field clickable color="black" class="bg-white" standout="bg-warning text-black" stack-label>
-                    <div class="row full-width">
-                    <div clickable class="col-3 self-center text-bold text-left">{{gun.modelName}}</div>
-                    <div clickable class="col-1 self-center text-bold text-left">{{gun.caliber}}</div>
-                    <div clickable class="col-2 self-center text-bold text-left">{{gun.serialNumber}}</div>
-                    <div clickable class="col-1 self-center text-bold text-left">{{gun.recordInEvidenceBook}}</div>
-                    <div clickable class="col-1 self-center text-bold text-left">{{gun.numberOfMagazines}}</div>
-                    <div clickable class="col-2 self-center text-bold text-left">{{gun.gunCertificateSerialNumber}}</div>
-                    <div clickable class="col-2 self-center text-bold text-left">{{gun.basisForPurchaseOrAssignment}}</div>
-                    <div v-if="gun.imgUUID!=null" clickable class="col-1 self-center text-center box"><q-icon name="menu"></q-icon><q-tooltip :delay="1000" @hide ="url = ''" @before-show ="getUrl (gun.imgUUID)" anchor="center middle" self="center middle" transition-show="scale" class="text-center"
-                      transition-hide="scale" content-style="width: 30%; height: 70%"><q-img :src="url" spinner-color="white" style="height: 100%; width: 100%" ratio="1" contain /></q-tooltip></div>
-                    </div>
-                </q-field>
-                </div>
-                </q-expansion-item>
-        </q-card-section>
-      </q-card>
-      </q-expansion-item>
-      <q-card v-if="persentation" >
-        <div class="col" align="right">
-          <q-btn color="grey-3" class="text-black" @click="persentation=false">Zamknij pokaz</q-btn>
-        </div>
-        <div class="row">
-        <div v-for="(gunImage,id) in images" :key="id" class="col-4 q-pa-xl flex flex-center">
-        <q-img
-          :src="('http://' + local + '/files/getFile?uuid=' + gunImage.uuid)"
-          style="height: 100%; width: 100%" class="q-pa-md flex flex-center">
-          <q-tooltip :delay="500" anchor="center middle" self="center middle" transition-show="scale"
-                      transition-hide="scale" content-style="height: 800px; width: 800px"><q-img
-          :src="('http://' + local + '/files/getFile?uuid=' + gunImage.uuid)"
-          style="height: 100%; width: 100%" class="q-pa-md"/></q-tooltip>
-        </q-img>
-      </div>
-      </div>
-      </q-card>
+<!--      <q-expansion-item label="Broń" dense class="text-left text-h6 text-bold bg-grey-3" group="list">-->
+<!--      <q-card v-if="!persentation">-->
+<!--        <q-card-section class="col">-->
+<!--          <div class="row q-pa-md">-->
+<!--            <div class="col-3">-->
+<!--              Wydaj Broń do czyszczenia-->
+<!--            <div class="col-3 bg-grey-1"><q-input type="password" v-model="barcode" color="black" dense filled label="zeskanuj kod tutaj" @keypress.enter="addUsedHistoryToGun(barcode)"></q-input></div>-->
+<!--            </div>-->
+<!--            <div class="col">-->
+<!--              <q-expansion-item label="Historia Użycia Broni" dense class="text-left text-h6 text-bold bg-grey-3">-->
+<!--        <q-card class="text-body2">-->
+<!--        <div class="row">-->
+<!--        <q-card-section class="col-4">-->
+<!--            <q-item class="col">-->
+<!--              <q-input class="full-width" color="black" filled v-model="firstDateHistory" label="Data początkowa">-->
+<!--                <template v-slot:append>-->
+<!--                  <q-icon name="event" class="cursor-pointer">-->
+<!--                    <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">-->
+<!--                      <q-date no-unset @input="getUsedGunHistory()" v-model="firstDateHistory">-->
+<!--                        <div class="row items-center justify-end">-->
+<!--                          <q-btn v-close-popup label="Zamknij" color="primary" flat />-->
+<!--                        </div>-->
+<!--                      </q-date>-->
+<!--                    </q-popup-proxy>-->
+<!--                  </q-icon>-->
+<!--                </template>-->
+<!--              </q-input>-->
+<!--            </q-item>-->
+<!--             <q-item class="col">-->
+<!--              <q-input class="full-width" color="black" filled v-model="secondDateHistory" label="Data końcowa">-->
+<!--                <template v-slot:append>-->
+<!--                  <q-icon name="event" class="cursor-pointer">-->
+<!--                    <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">-->
+<!--                      <q-date @input="getUsedGunHistory()" v-model="secondDateHistory">-->
+<!--                        <div class="row items-center justify-end">-->
+<!--                          <q-btn v-close-popup label="Zamknij" color="primary" flat />-->
+<!--                        </div>-->
+<!--                      </q-date>-->
+<!--                    </q-popup-proxy>-->
+<!--                  </q-icon>-->
+<!--                </template>-->
+<!--              </q-input>-->
+<!--            </q-item>-->
+<!--            <div @click="getUsedGunHistory()" class="q-pa-md" align="right">-->
+<!--              <q-btn>Wyszukaj</q-btn>-->
+<!--            </div>-->
+<!--        </q-card-section>-->
+<!--        <q-card-section class="col-8">-->
+<!--            <div class="q-pa-md self-center col full-width no-outline text-bold text-center text-h6" v-if="gunsHistory.length<1">Brak wyników - Wybierz daty</div>-->
+<!--            <div class="q-pa-md self-center col full-width no-outline text-bold text-center">-->
+<!--              <q-field v-if="gunsHistory.length>0" color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>-->
+<!--                  <div class="self-center col full-width no-outline text-center text-bold">Data</div>-->
+<!--                  <div class="self-center col full-width no-outline text-center text-bold">Nazwa</div>-->
+<!--                  <div class="self-center col full-width no-outline text-center text-bold">Numer Seryjny</div>-->
+<!--                  <div class="self-center col full-width no-outline text-center text-bold">Rodzaj Użycia</div>-->
+<!--              </q-field>-->
+<!--            <p v-if="gunsHistory.length>0"></p>-->
+<!--            <div v-for="(guns,id) in gunsHistory" :key="id">-->
+<!--              <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>-->
+<!--                  <div class="self-center col full-width no-outline text-center text-bold">{{guns.date}}</div>-->
+<!--                  <div class="self-center col full-width no-outline text-center text-bold">{{guns.gunName}}</div>-->
+<!--                  <div class="self-center col full-width no-outline text-center text-bold">{{guns.gunSerialNumber}}</div>-->
+<!--                  <div class="self-center col full-width no-outline text-center text-bold">{{guns.usedType}}</div>-->
+<!--              </q-field>-->
+<!--            </div>-->
+<!--            </div>-->
+<!--        </q-card-section>-->
+<!--        </div>-->
+<!--      </q-card>-->
+<!--        </q-expansion-item>-->
+<!--            </div>-->
+<!--          </div>-->
 <q-dialog v-model="addCaliberDialog">
-<q-card>
+<q-card class="bg-dark">
   <q-card-section>
-    <div class="text-h6">Dodawanie amunicji</div>
-      <q-item><q-input filled class="full-width col" v-model="ammoQuantity" onkeypress="return (event.charCode > 44 && event.charCode < 58)" label="Ilość Amunicji"></q-input></q-item>
-      <q-item><q-input filled class="full-width col" v-model="ammoDescription" label="opis"></q-input></q-item>
+    <div class="text-h6 text-positive">Dodawanie amunicji</div>
+      <q-item><q-input filled class="full-width col" label-color="positive" input-class="text-positive" v-model="ammoQuantity" onkeypress="return (event.charCode > 44 && event.charCode < 58)" label="Ilość Amunicji"></q-input></q-item>
+      <q-item><q-input filled class="full-width col" label-color="positive" input-class="text-positive" v-model="ammoDescription" label="opis"></q-input></q-item>
       <q-item>
-        <q-input class="full-width" filled v-model="ammoDate" mask="####-##-##" label="data" hint="użyj kalendarza">
+        <q-input label-color="positive" input-class="text-positive" class="full-width" filled v-model="ammoDate" mask="####-##-##" label="data" hint="użyj kalendarza">
           <template v-slot:append>
-            <q-icon name="event" class="cursor-pointer">
+            <q-icon color="positive" name="event" class="cursor-pointer">
               <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
                 <q-date v-model="ammoDate">
                   <div class="row items-center justify-end">
@@ -300,14 +275,14 @@
   </q-card-section>
 
   <q-card-actions align="right">
-    <q-btn flat label="anuluj" color="primary" v-close-popup @click="caliberUUID = null, ammoDate = null, ammoQuantity = null, ammoDescription = null"/>
-    <q-btn flat label="dodaj" color="primary" v-close-popup @click="addAmmoToCaliber ()" />
+    <q-btn label="anuluj" text-color="white" color="secondary" v-close-popup @click="caliberUUID = null, ammoDate = null, ammoQuantity = null, ammoDescription = null"/>
+    <q-btn label="dodaj" text-color="white" color="primary" v-close-popup @click="addAmmoToCaliber ()" />
   </q-card-actions>
 </q-card>
 </q-dialog>
 <q-dialog v-model="openGunList">
-<q-card>
-  <q-card-section>
+<q-card class="bg-dark">
+  <q-card-section class="text-positive">
     <div class="text-h6 text-center">Generuj listę dla wybranych rodzajów broni</div>
     <div v-for="(gunType,id) in allGuns" :key="id">
       <div>
@@ -317,15 +292,15 @@
   </q-card-section>
 
   <q-card-actions align="right">
-    <q-btn flat label="Anuluj" color="primary" v-close-popup/>
-    <q-btn flat label="Pobierz" color="primary" v-close-popup @click="getGunRegistry(),gunListSelect = []" />
+    <q-btn text-color="white" label="Anuluj" color="secondary" v-close-popup/>
+    <q-btn text-color="white" label="Pobierz" color="primary" v-close-popup @click="getGunRegistry();gunListSelect = []" />
   </q-card-actions>
 </q-card>
 </q-dialog>
 <q-dialog v-model="gunInfo">
-<q-card style="width: 100%; max-width: 70vw;">
+<q-card style="width: 100%; max-width: 50vw;" class="bg-dark">
   <div class="row">
-  <q-card-section class="col">
+  <q-card-section class="col text-positive">
     <div class="text-h6">Informacje dodatkowe o broni</div>
     <div>Nazwa : {{usedGunInfo.modelName}}</div>
     <div>Kaliber : {{usedGunInfo.caliber}}</div>
@@ -340,75 +315,75 @@
     <div>Uwagi : {{usedGunInfo.comment}}</div>
     <div>Numer Kodu Kreskowego : {{usedGunInfo.barcode}}</div>
   </q-card-section>
-  <q-card-section class="col">
-    <q-virtual-scroll :items="gunUsedInfo" style="height: 100%;">
-      <template v-slot:before>
-        <q-item>
-          <div class="row full-width">
-            <q-field class="full-width" color="black" label="" standout="bg-accent text-black" stack-label>
-              <div class="col">Data</div>
-              <div class="col">Cel</div>
-              <div class="col">Pobierający</div>
-              <div class="col">Zdający</div>
-            </q-field>
-          </div>
-        </q-item>
-      </template>
-      <template v-slot="{ item, index }">
-        <q-item :key="index" dense>
-          <div class="row full-width">
-            <q-field class="full-width" color="black" label="" standout="bg-accent text-black" stack-label>
-              <div class="col">{{item.date}}</div>
-              <div class="col">{{item.usedType}}</div>
-              <div class="col">{{item.usedType}}</div>
-              <div class="col">{{item.usedType}}</div>
-              <div class="col">{{item.usedType}}</div>
-           </q-field>
-          </div>
-        </q-item>
-      </template>
-    </q-virtual-scroll>
-  </q-card-section>
+<!--  <q-card-section class="col">-->
+<!--    <q-virtual-scroll :items="gunUsedInfo" style="height: 100%;">-->
+<!--      <template v-slot:before>-->
+<!--        <q-item>-->
+<!--          <div class="row full-width">-->
+<!--            <q-field class="full-width" color="black" label="" standout="bg-accent text-black" stack-label>-->
+<!--              <div class="col">Data</div>-->
+<!--              <div class="col">Cel</div>-->
+<!--              <div class="col">Pobierający</div>-->
+<!--              <div class="col">Zdający</div>-->
+<!--            </q-field>-->
+<!--          </div>-->
+<!--        </q-item>-->
+<!--      </template>-->
+<!--      <template v-slot="{ item, index }">-->
+<!--        <q-item :key="index" dense>-->
+<!--          <div class="row full-width">-->
+<!--            <q-field class="full-width" color="black" label="" standout="bg-accent text-black" stack-label>-->
+<!--              <div class="col">{{item.date}}</div>-->
+<!--              <div class="col">{{item.usedType}}</div>-->
+<!--              <div class="col">{{item.usedType}}</div>-->
+<!--              <div class="col">{{item.usedType}}</div>-->
+<!--              <div class="col">{{item.usedType}}</div>-->
+<!--           </q-field>-->
+<!--          </div>-->
+<!--        </q-item>-->
+<!--      </template>-->
+<!--    </q-virtual-scroll>-->
+<!--  </q-card-section>-->
   </div>
   <q-card-section class="row">
     <div class="col q-pa-md">
-    <q-btn class="col" color="red" @click="gunUUID = usedGunInfo.uuid, acceptCode=true">usuń z ewidencji</q-btn>
-    <q-btn class="col" @click="gunUUID = usedGunInfo.uuid, getAllImages(),imgDialog = true">wybierz zdjęcie dla broni</q-btn>
-    <q-btn class="col" @click="gunUUID = usedGunInfo.uuid,
-    gunModelName = usedGunInfo.modelName,
-    gunCaliber = usedGunInfo.caliber,
-    gunType = usedGunInfo.gunType,
-    gunSerialNumber = usedGunInfo.serialNumber,
-    gunProductionYear = usedGunInfo.productionYear,
-    gunNumberOfMagazines = usedGunInfo.numberOfMagazines,
-    gunCertificateSerialNumber = usedGunInfo.gunCertificateSerialNumber,
-    gunAdditionalEquipment = usedGunInfo.additionalEquipment,
-    gunRecordInEvidenceBook = usedGunInfo.recordInEvidenceBook,
-    gunComment = usedGunInfo.comment,
-    gunBasisForPurchaseOrAssignment = usedGunInfo.basisForPurchaseOrAssignment,
-    gunBarcode = usedGunInfo.barcode,
+    <q-btn class="col" color="negative" @click="gunUUID = usedGunInfo.uuid; acceptCode=true">usuń z ewidencji</q-btn>
+<!--    <q-btn class="col" @click="gunUUID = usedGunInfo.uuid; getAllImages();imgDialog = true">wybierz zdjęcie dla broni</q-btn>-->
+    <q-btn class="col" color="primary" text-color="white" @click="gunUUID = usedGunInfo.uuid;
+    gunModelName = usedGunInfo.modelName;
+    gunCaliber = usedGunInfo.caliber;
+    gunType = usedGunInfo.gunType;
+    gunSerialNumber = usedGunInfo.serialNumber;
+    gunProductionYear = usedGunInfo.productionYear;
+    gunNumberOfMagazines = usedGunInfo.numberOfMagazines;
+    gunCertificateSerialNumber = usedGunInfo.gunCertificateSerialNumber;
+    gunAdditionalEquipment = usedGunInfo.additionalEquipment;
+    gunRecordInEvidenceBook = usedGunInfo.recordInEvidenceBook;
+    gunComment = usedGunInfo.comment;
+    gunBasisForPurchaseOrAssignment = usedGunInfo.basisForPurchaseOrAssignment;
+    gunBarcode = usedGunInfo.barcode;
     editGun=true">edytuj</q-btn>
     </div>
   </q-card-section>
 
   <q-card-actions align="right">
-    <q-btn flat label="zamknij" color="primary" v-close-popup/>
+    <q-btn text-color="white" label="zamknij" color="primary" v-close-popup/>
   </q-card-actions>
 </q-card>
 </q-dialog>
 <q-dialog v-model="transportCertificate" full-width>
-<q-card>
-  <q-card-actions align="right">
-    <q-btn flat label="zamknij" color="primary" v-close-popup/>
-    <q-btn label="pobierz" color="primary" v-close-popup @click="getGunTransportCertificate(),selection = []"/>
-  </q-card-actions>
-  <q-card-section>
+<q-card class="bg-dark">
+<!--  <q-card-actions align="right">-->
+<!--    <q-btn flat label="zamknij" color="primary" v-close-popup/>-->
+<!--    <q-btn label="pobierz" color="primary" v-close-popup @click="getGunTransportCertificate(),selection = []"/>-->
+<!--  </q-card-actions>-->
+  <q-card-section class="text-positive">
     <div class="text-h6 text-center">Wystawianie listu przewozowego</div>
     <div class="row">
       <q-item>
-        <q-input class="full-width" filled v-model="date" mask="####-##-##" label="data początkowa" hint="użyj kalendarza">
+        <q-input label-color="positive" input-class="text-positive text-h6" class="full-width" filled v-model="date" mask="####-##-##" label="data początkowa" hint="użyj kalendarza">
           <template v-slot:append>
-            <q-icon name="event" class="cursor-pointer">
+            <q-icon color="positive" name="event" class="cursor-pointer">
               <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
                 <q-date v-model="date">
                   <div class="row items-center justify-end">
@@ -421,9 +396,9 @@
         </q-input>
       </q-item>
       <q-item>
-        <q-input class="full-width" filled v-model="date1" mask="####-##-##" label="data końcowa" hint="użyj kalendarza">
+        <q-input label-color="positive" input-class="text-positive text-h6" class="full-width" filled v-model="date1" mask="####-##-##" label="data końcowa" hint="użyj kalendarza">
           <template v-slot:append>
-            <q-icon name="event" class="cursor-pointer">
+            <q-icon color="positive" name="event" class="cursor-pointer">
               <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
                 <q-date v-model="date1">
                   <div class="row items-center justify-end">
@@ -436,7 +411,7 @@
         </q-input>
       </q-item>
       </div>
-        <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
+        <q-field color="positive" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
             <div class="col-1 self-center text-bold text-left"></div>
             <div class="col-3 self-center text-bold text-left">marka i model</div>
             <div class="col-1 self-center text-bold text-left">kaliber</div>
@@ -447,18 +422,18 @@
             <div class="col-2 self-center text-bold text-left">podstawa wpisu</div>
         </q-field>
         <p></p>
-              <q-expansion-item v-for="(gunType,id) in allGuns" :key="id" :label="gunType.typeName" class="bg-grey-4 col full-width no-outline text-h6 text-center text-bold">
-                <div v-for="(gun,uuid) in gunType.gunEntityList" :key="uuid" @dblclick="gunInfo=true,usedGunInfo=gun" clickable class="bg-white">
-                <q-field clickable color="black" class="bg-white" standout="bg-accent text-black" stack-label>
+              <q-expansion-item v-for="(gunType,id) in allGuns" :key="id" :label="gunType.typeName" class="bg-grey-4 col text-black full-width no-outline text-h6 text-center text-bold">
+                <div v-for="(gun,uuid) in gunType.gunEntityList" :key="uuid" @dblclick="gunInfo=true;usedGunInfo=gun" class="bg-dark">
+                <q-field clickable color="positive" standout="bg-accent text-black" stack-label>
                     <div class="row full-width">
                     <q-checkbox color="primary" v-model="selection" :val="gun.uuid" class="col-1"></q-checkbox>
-                    <div clickable class="col-3 self-center text-bold text-left">{{gun.modelName}}</div>
-                    <div clickable class="col-1 self-center text-bold text-left">{{gun.caliber}}</div>
-                    <div clickable class="col-2 self-center text-bold text-left">{{gun.serialNumber}}</div>
-                    <div clickable class="col-1 self-center text-bold text-left">{{gun.recordInEvidenceBook}}</div>
-                    <div clickable class="col-1 self-center text-bold text-left">{{gun.numberOfMagazines}}</div>
-                    <div clickable class="col-1 self-center text-bold text-left">{{gun.gunCertificateSerialNumber}}</div>
-                    <div clickable class="col-2 self-center text-bold text-left">{{gun.basisForPurchaseOrAssignment}}</div>
+                    <div class="col-3 self-center text-bold text-left">{{gun.modelName}}</div>
+                    <div class="col-1 self-center text-bold text-left">{{gun.caliber}}</div>
+                    <div class="col-2 self-center text-bold text-left">{{gun.serialNumber}}</div>
+                    <div class="col-1 self-center text-bold text-left">{{gun.recordInEvidenceBook}}</div>
+                    <div class="col-1 self-center text-bold text-left">{{gun.numberOfMagazines}}</div>
+                    <div class="col-1 self-center text-bold text-left">{{gun.gunCertificateSerialNumber}}</div>
+                    <div class="col-2 self-center text-bold text-left">{{gun.basisForPurchaseOrAssignment}}</div>
                     </div>
                 </q-field>
                 </div>
@@ -466,8 +441,8 @@
   </q-card-section>
 
   <q-card-actions align="right">
-    <q-btn flat label="zamknij" color="primary" v-close-popup/>
-    <q-btn label="pobierz" color="primary" v-close-popup @click="getGunTransportCertificate(),selection = []"/>
+    <q-btn text-color="white" label="zamknij" color="secondary" v-close-popup/>
+    <q-btn text-color="white" label="pobierz" color="primary" v-close-popup @click="getGunTransportCertificate();selection = []"/>
   </q-card-actions>
 </q-card>
 </q-dialog>
@@ -476,37 +451,37 @@
   <q-card-section class="col">
     <q-item class="col">
       <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
-          <div class="self-center col full-width no-outline text-center" style="text-center">data</div>
+          <div class="self-center col full-width no-outline text-center" >data</div>
       </q-field>
       <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
-          <div class="self-center col full-width no-outline text-center" style="text-center">opis</div>
+          <div class="self-center col full-width no-outline text-center" s>opis</div>
       </q-field>
       <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
-          <div class="self-center col full-width no-outline text-center" style="text-center">stan końcowy</div>
+          <div class="self-center col full-width no-outline text-center" >stan końcowy</div>
       </q-field>
       <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
-          <div class="self-center col full-width no-outline text-center" style="text-center">ilość</div>
+          <div class="self-center col full-width no-outline text-center" >ilość</div>
       </q-field>
       <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
-          <div class="self-center col full-width no-outline text-center" style="text-center">poprzedni stan</div>
+          <div class="self-center col full-width no-outline text-center" >poprzedni stan</div>
       </q-field>
     </q-item>
       <div class="row" v-for="(caliber,uuid) in history" :key="uuid">
         <q-item class="col">
           <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
-              <div class="self-center col full-width no-outline text-center" style="text-center">{{caliber.date}}</div>
+              <div class="self-center col full-width no-outline text-center">{{caliber.date}}</div>
           </q-field>
           <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
-              <div class="self-center col full-width no-outline text-center" style="text-center">{{caliber.description}}</div>
+              <div class="self-center col full-width no-outline text-center">{{caliber.description}}</div>
           </q-field>
           <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
-              <div class="self-center col full-width no-outline text-center" style="text-center">{{caliber.finalStateForAddedDay}}</div>
+              <div class="self-center col full-width no-outline text-center">{{caliber.finalStateForAddedDay}}</div>
           </q-field>
           <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
-              <div class="self-center col full-width no-outline text-center" style="text-center">{{caliber.ammoAdded}}</div>
+              <div class="self-center col full-width no-outline text-center">{{caliber.ammoAdded}}</div>
           </q-field>
           <q-field color="black" class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black" stack-label>
-              <div class="self-center col full-width no-outline text-center" style="text-center">{{caliber.stateForAddedDay}}</div>
+              <div class="self-center col full-width no-outline text-center">{{caliber.stateForAddedDay}}</div>
           </q-field>
         </q-item>
       </div>
@@ -518,12 +493,12 @@
 </q-card>
 </q-dialog>
 <q-dialog v-model="gunAdding">
-<q-card style="width: 600px;">
-  <q-card-section class="col">
-    <div class="self-center col full-width no-outline text-center text-h6 text-bold">Dodawanie broni do magazynu</div>
-    <q-item><q-input filled class="full-width col" v-model="gunModelName" label="nazwa i marka"></q-input></q-item>
+<q-card style="width: 600px;" class="bg-dark">
+  <q-card-section class="col text-positive">
+    <div class="self-center col full-width text-center text-h6 text-bold">Dodawanie broni do magazynu</div>
+    <q-item><q-input color="positive" label-color="positive" input-class="text-positive" filled class="full-width col" v-model="gunModelName" label="nazwa i marka"></q-input></q-item>
     <q-item>
-    <q-select class="full-width" filled v-model="gunCaliber" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filter" label="kaliber">
+    <q-select color="positive" label-color="positive" input-class="text-positive" class="full-width" filled v-model="gunCaliber" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filter" label="kaliber">
       <template v-slot:no-option>
         <q-item>
           <q-item-section class="text-grey">
@@ -534,7 +509,7 @@
     </q-select>
     </q-item>
     <q-item>
-    <q-select class="full-width" filled v-model="gunType" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filterGunTypes" label="typ">
+    <q-select color="positive" label-color="positive" input-class="text-positive" class="full-width" filled v-model="gunType" use-input hide-selected fill-input input-debounce="0" :options="options" @filter="filterGunTypes" label="typ">
       <template v-slot:no-option>
         <q-item>
           <q-item-section class="text-grey">
@@ -544,20 +519,20 @@
       </template>
     </q-select>
     </q-item>
-    <q-item><q-input filled class="full-width col" v-model="gunSerialNumber" label="numer seryjny"></q-input></q-item>
-    <q-item><q-input filled class="full-width col" onkeypress="return (event.charCode > 44 && event.charCode < 58)" mask="####" v-model="gunProductionYear" label="rok produkcji"></q-input></q-item>
-    <q-item><q-input filled class="full-width col" onkeypress="return (event.charCode > 44 && event.charCode < 58)" v-model="gunRecordInEvidenceBook" label="pozycja z książki ewidencji"></q-input></q-item>
-    <q-item><q-input filled class="full-width col" onkeypress="return (event.charCode > 44 && event.charCode < 58)" v-model="gunNumberOfMagazines" label="ilość magazynków"></q-input></q-item>
-    <q-item><q-input filled class="full-width col" v-model="gunCertificateSerialNumber" fill-mask="X" label="numer świadectwa"></q-input></q-item>
-    <q-item><q-input filled class="full-width col" v-model="gunBasisForPurchaseOrAssignment" label="podstawa wpisu"></q-input></q-item>
-    <q-item><q-input filled class="full-width col" v-model="gunAdditionalEquipment" label="wyposażenie dodatkowe"></q-input></q-item>
-    <q-item><q-input filled class="full-width col" v-model="gunComment" label="uwagi"></q-input></q-item>
-    <q-item><q-input filled class="full-width col" v-model="gunBarcode" label="kod kreskowy"></q-input></q-item>
+    <q-item><q-input color="positive" label-color="positive" input-class="text-positive" filled class="full-width col" v-model="gunSerialNumber" label="numer seryjny"></q-input></q-item>
+    <q-item><q-input color="positive" label-color="positive" input-class="text-positive" filled class="full-width col" onkeypress="return (event.charCode > 44 && event.charCode < 58)" mask="####" v-model="gunProductionYear" label="rok produkcji"></q-input></q-item>
+    <q-item><q-input color="positive" label-color="positive" input-class="text-positive" filled class="full-width col" onkeypress="return (event.charCode > 44 && event.charCode < 58)" v-model="gunRecordInEvidenceBook" label="pozycja z książki ewidencji"></q-input></q-item>
+    <q-item><q-input color="positive" label-color="positive" input-class="text-positive" filled class="full-width col" onkeypress="return (event.charCode > 44 && event.charCode < 58)" v-model="gunNumberOfMagazines" label="ilość magazynków"></q-input></q-item>
+    <q-item><q-input color="positive" label-color="positive" input-class="text-positive" filled class="full-width col" v-model="gunCertificateSerialNumber" fill-mask="X" label="numer świadectwa"></q-input></q-item>
+    <q-item><q-input color="positive" label-color="positive" input-class="text-positive" filled class="full-width col" v-model="gunBasisForPurchaseOrAssignment" label="podstawa wpisu"></q-input></q-item>
+    <q-item><q-input color="positive" label-color="positive" input-class="text-positive" filled class="full-width col" v-model="gunAdditionalEquipment" label="wyposażenie dodatkowe"></q-input></q-item>
+    <q-item><q-input color="positive" label-color="positive" input-class="text-positive" filled class="full-width col" v-model="gunComment" label="uwagi"></q-input></q-item>
+    <q-item><q-input color="positive" label-color="positive" input-class="text-positive" filled class="full-width col" v-model="gunBarcode" label="kod kreskowy"></q-input></q-item>
   </q-card-section>
 
   <q-card-actions align="right">
-    <q-btn flat label="zamknij" color="primary" v-close-popup/>
-    <q-btn label="Dodaj" color="primary" v-close-popup @click="addGun ()"/>
+    <q-btn text-color="white" label="zamknij" color="secondary" v-close-popup/>
+    <q-btn text-color="white" label="Dodaj" color="primary" v-close-popup @click="addGun ()"/>
   </q-card-actions>
 </q-card>
 </q-dialog>
@@ -622,17 +597,17 @@
       </q-card>
 </q-dialog>
 <q-dialog v-model="newGunType">
-  <q-card class="q-pa-md">
+  <q-card class="q-pa-md bg-dark text-positive">
     <div class="self-center col full-width no-outline text-center text-h5 text-bold">Nadawanie nowego Typu Broni</div>
     <div>
-      <q-item><q-input filled class="full-width col" v-model="newGunTypeName" label="Nowa nazwa"></q-input></q-item>
+      <q-item><q-input label-color="positive" input-class="text-positive" filled class="full-width col" v-model="newGunTypeName" label="Nowa nazwa"></q-input></q-item>
     </div>
     <q-card-section class="col">
   </q-card-section>
 
   <q-card-actions align="right">
-    <q-btn label="Anuluj" color="primary" v-close-popup/>
-    <q-btn label="Utwórz" color="primary" @click="createNewGunTYpe ()" v-close-popup/>
+    <q-btn text-color="white" label="Anuluj" color="secondary" v-close-popup/>
+    <q-btn text-color="white" label="Utwórz" color="primary" @click="createNewGunTYpe ()" v-close-popup/>
   </q-card-actions>
   </q-card>
 </q-dialog>
@@ -737,7 +712,6 @@ export default {
   data () {
     return {
       caliberInfo: false,
-      persentation: false,
       ok: false,
       options: stringOptions,
       url: '',

@@ -2,10 +2,10 @@
   <q-page padding>
     <div>
       <q-item>
-        <div class="text-center col full-width no-outline text-h4 text-bold" tabindex="0">Zawody</div>
+        <div class="text-center col full-width no-outline text-h4 text-bold text-positive">Zawody</div>
       </q-item>
     </div>
-    <q-card class="row">
+    <q-card class="row bg-dark text-positive">
       <q-card-section v-if="tournaments==null">
         <q-btn
           color="primary"
@@ -22,14 +22,13 @@
       </q-card-section>
     </q-card>
     <div class="row">
-      <q-card class="col-10">
-        <div v-if="tournaments!=null" class="row bg-grey-2 text-h6">
+      <q-card class="col-10 bg-dark text-positive">
+        <div v-if="tournaments!=null" class="row text-h6">
           <div class="col-6">
             <q-item-section class="col q-pa-md">
               <div class="col">
                 <q-item-label>{{ tournaments.name }} {{ tournaments.date }}</q-item-label>
-                <q-item-label v-if="tournaments.wzss" caption lines="2">zawody wpisane do kalendarza Wojewódzkiego
-                  związku
+                <q-item-label v-if="tournaments.wzss" caption lines="2" class="text-positive">zawody wpisane do kalendarza Wojewódzkiego Związku Strzelectwa Sportowego
                 </q-item-label>
                 <q-item-label v-if="!tournaments.wzss" caption lines="2">zawody nie wpisane do kalendarza Wojewódzkiego
                   związku
@@ -162,44 +161,44 @@
               </q-btn>
             </q-item>
           </div>
-          <div class="full-width row bg-grey-2">
+          <div class="full-width row bg-dark">
             <div class="col">
               <div class="row">
                 <div class="col">
-                  <q-field standout="bg-accent text-black" stack-label>
-                    <div class="text-bold self-center full-width no-outline text-black" tabindex="0">Sędzia główny</div>
+                  <q-field standout="bg-accent text-positive" stack-label>
+                    <div class="text-bold self-center full-width no-outline text-positive" >Sędzia główny</div>
                   </q-field>
-                  <q-field v-if="tournaments.mainArbiter!=null" class="col" standout="bg-accent text-black">
-                    <div class="self-center col full-width no-outline text-black" tabindex="0">
+                  <q-field v-if="tournaments.mainArbiter!=null" class="col" standout="bg-accent text-positive">
+                    <div class="self-center col full-width no-outline text-positive" >
                       {{ tournaments.mainArbiter.firstName }} {{ tournaments.mainArbiter.secondName }}
                       {{ tournaments.mainArbiter.memberPermissions.arbiterClass }}
                     </div>
                   </q-field>
-                  <q-field v-if="tournaments.otherMainArbiter!=null" class="col" standout="bg-accent text-black">
-                    <div class="self-center col full-width no-outline text-black" tabindex="0">
+                  <q-field v-if="tournaments.otherMainArbiter!=null" class="col" standout="bg-accent text-positive">
+                    <div class="self-center col full-width no-outline text-positive" >
                       {{ tournaments.otherMainArbiter.firstName }} {{ tournaments.otherMainArbiter.secondName }}
                       {{ tournaments.otherMainArbiter.permissionsEntity.arbiterClass }}
                     </div>
                   </q-field>
                 </div>
                 <div class="col">
-                  <q-field standout="bg-accent text-black" stack-label>
-                    <div class="text-bold self-center full-width no-outline text-black" tabindex="0">Sędziowie
+                  <q-field standout="bg-accent text-positive" stack-label>
+                    <div class="text-bold self-center full-width no-outline text-positive" >Sędziowie
                       stanowiskowi
                     </div>
                   </q-field>
                   <div v-if="tournaments.arbitersList.length>0">
                     <q-field v-for="(arbiters,uuid) in tournaments.arbitersList" :key="uuid"
-                             standout="bg-accent text-black">
-                      <div class="self-center full-width no-outline text-black" tabindex="0">{{ arbiters.firstName }}
+                             standout="bg-accent text-positive">
+                      <div class="self-center full-width no-outline text-positive" >{{ arbiters.firstName }}
                         {{ arbiters.secondName }} {{ arbiters.memberPermissions.arbiterClass }}
                       </div>
                     </q-field>
                   </div>
                   <div v-if="tournaments.otherArbitersList.length>0">
                     <q-field v-for="(otherArbitersList,id) in tournaments.otherArbitersList" :key="id"
-                             standout="bg-accent text-black">
-                      <div class="text-bold self-center full-width no-outline text-black" tabindex="0">
+                             standout="bg-accent text-positive">
+                      <div class="text-bold self-center full-width no-outline text-positive" >
                         {{ otherArbitersList.firstName }} {{ otherArbitersList.secondName }}
                         {{ otherArbitersList.permissionsEntity.arbiterClass }}
                       </div>
@@ -209,20 +208,20 @@
               </div>
               <div class="row">
                 <div class="col">
-                  <q-field standout="bg-accent text-black" stack-label>
-                    <div class="text-bold self-center full-width no-outline text-black" tabindex="0">Sędzia komisji
+                  <q-field standout="bg-accent text-positive" stack-label>
+                    <div class="text-bold self-center full-width no-outline text-positive" >Sędzia komisji
                       RTS
                     </div>
                   </q-field>
-                  <q-field v-if="tournaments.commissionRTSArbiter!=null" class="col" standout="bg-accent text-black">
-                    <div class="self-center col full-width no-outline text-black" tabindex="0">
+                  <q-field v-if="tournaments.commissionRTSArbiter!=null" class="col" standout="bg-accent text-positive">
+                    <div class="self-center col full-width no-outline text-positive" >
                       {{ tournaments.commissionRTSArbiter.firstName }} {{ tournaments.commissionRTSArbiter.secondName }}
                       {{ tournaments.commissionRTSArbiter.memberPermissions.arbiterClass }}
                     </div>
                   </q-field>
                   <q-field v-if="tournaments.otherCommissionRTSArbiter!=null" class="col"
-                           standout="bg-accent text-black">
-                    <div class="self-center col full-width no-outline text-black" tabindex="0">
+                           standout="bg-accent text-positive">
+                    <div class="self-center col full-width no-outline text-positive" >
                       {{ tournaments.otherCommissionRTSArbiter.firstName }}
                       {{ tournaments.otherCommissionRTSArbiter.secondName }}
                       {{ tournaments.otherCommissionRTSArbiter.permissionsEntity.arbiterClass }}
@@ -230,15 +229,15 @@
                   </q-field>
                 </div>
                 <div class="col">
-                  <q-field standout="bg-accent text-black" stack-label>
-                    <div class="text-bold self-center full-width no-outline text-black" tabindex="0">Sędziowie biura
+                  <q-field standout="bg-accent text-positive" stack-label>
+                    <div class="text-bold self-center full-width no-outline text-positive" >Sędziowie biura
                       obliczeń
                     </div>
                   </q-field>
                   <div v-if="tournaments.arbitersRTSList.length>0">
                     <q-field v-for="(arbitersRTSList,uuid) in tournaments.arbitersRTSList" :key="uuid"
-                             standout="bg-accent text-black">
-                      <div class="self-center full-width no-outline text-black" tabindex="0">
+                             standout="bg-accent text-positive">
+                      <div class="self-center full-width no-outline text-positive" >
                         {{ arbitersRTSList.firstName }} {{ arbitersRTSList.secondName }}
                         {{ arbitersRTSList.memberPermissions.arbiterClass }}
                       </div>
@@ -246,8 +245,8 @@
                   </div>
                   <div v-if="tournaments.otherArbitersRTSList.length>0">
                     <q-field v-for="(otherArbitersRTSList,id) in tournaments.otherArbitersRTSList" :key="id"
-                             standout="bg-accent text-black">
-                      <div class="text-bold self-center full-width no-outline text-black" tabindex="0">
+                             standout="bg-accent text-positive">
+                      <div class="text-bold self-center full-width no-outline text-positive" >
                         {{ otherArbitersRTSList.firstName }} {{ otherArbitersRTSList.secondName }}
                         {{ otherArbitersRTSList.permissionsEntity.arbiterClass }}
                       </div>
@@ -257,56 +256,56 @@
               </div>
             </div>
             <div class="col-5">
-              <q-field standout="bg-accent text-black" stack-label>
-                <div class="text-bold self-center full-width no-outline text-black">Lista Konkurencji</div>
+              <q-field standout="bg-accent text-positive" stack-label>
+                <div class="text-bold self-center full-width no-outline text-positive">Lista Konkurencji</div>
               </q-field>
               <div class="row" v-for="(competitionsList,uuid) in tournaments.competitionsList" :key="uuid">
-                <q-field class="col" standout="bg-accent text-black" stack-label>
+                <q-field class="col" standout="bg-accent ttext-positive" stack-label>
                   <div v-if="competitionsList.countingMethod === 'COMSTOCK'"
-                       class="self-center full-width no-outline text-black" tabindex="0">{{ competitionsList.name }}
+                       class="self-center full-width no-outline text-positive" >{{ competitionsList.name }}
                     ({{ competitionsList.countingMethod }})
                   </div>
-                  <div v-else class="self-center full-width no-outline text-black" tabindex="0">
+                  <div v-else class="self-center full-width no-outline text-positive" >
                     {{ competitionsList.name }}
                   </div>
                 </q-field>
-                <q-btn v-if="competitionsList.scoreList<1" color="white" class="col-2 text-black" tabindex="0"
+                <q-btn v-if="competitionsList.scoreList<1" color="grey-8" text-color="white" class="col-2"
                        @click="competitionListUUID = competitionsList.uuid;tournamentUUID = tournaments.uuid;deleteListFromTournament()">
                   usuń
                 </q-btn>
               </div>
             </div>
           </div>
-          <q-card class="full-width">
-            <div class="row bg-grey-3">
-              <div class="text-h6 col-6 text-center self-center no-outline" tabindex="0">Dodawanie zawodników</div>
-              <div class="col">Wydaj Broń na zawody
-                <div class="full-width bg-grey-1">
-                  <q-input type="password" v-model="barcode" color="black" bg-color="grey-4" dense filled
-                           label="zeskanuj kod tutaj"
-                           @keypress.enter="tournamentUUID = tournaments.uuid; addGunToTournament(barcode)"></q-input>
-                  <div>
-                    <q-expansion-item exact label="Lista Broni Na Zawodach" dense
-                                      class="text-left text-h6 text-bold bg-grey-3"
-                                      @click="tournamentUUID = tournaments.uuid; getGunInTournament()">
-                      <q-virtual-scroll :items="gunsUsed" visible class="full-width q-pa-none text-caption"
-                                        style="height: 200px;">
-                        <template v-slot="{ item, index }">
-                          <q-item :key="index" dense>
-                            <div class="col">{{ item.gunName }}</div>
-                            <div class="col-4">{{ item.gunSerialNumber }}</div>
-                          </q-item>
-                        </template>
-                      </q-virtual-scroll>
-                    </q-expansion-item>
-                  </div>
-                </div>
-              </div>
+          <q-card class="full-width bg-dark">
+            <div class="row">
+              <div class="text-h6 col-6 text-center self-center no-outline">Dodawanie zawodników</div>
+<!--              <div class="col">Wydaj Broń na zawody-->
+<!--                <div class="full-width bg-grey-1">-->
+<!--                  <q-input type="password" v-model="barcode" color="black" bg-color="grey-4" dense filled-->
+<!--                           label="zeskanuj kod tutaj"-->
+<!--                           @keypress.enter="tournamentUUID = tournaments.uuid; addGunToTournament(barcode)"></q-input>-->
+<!--                  <div>-->
+<!--                    <q-expansion-item exact label="Lista Broni Na Zawodach" dense-->
+<!--                                      class="text-left text-h6 text-bold bg-grey-3"-->
+<!--                                      @click="tournamentUUID = tournaments.uuid; getGunInTournament()">-->
+<!--                      <q-virtual-scroll :items="gunsUsed" visible class="full-width q-pa-none text-caption"-->
+<!--                                        style="height: 200px;">-->
+<!--                        <template v-slot="{ item, index }">-->
+<!--                          <q-item :key="index" dense>-->
+<!--                            <div class="col">{{ item.gunName }}</div>-->
+<!--                            <div class="col-4">{{ item.gunSerialNumber }}</div>-->
+<!--                          </q-item>-->
+<!--                        </template>-->
+<!--                      </q-virtual-scroll>-->
+<!--                    </q-expansion-item>-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--              </div>-->
             </div>
             <div class="row">
               <q-card-section class="col-6">
                 <div class="col">
-                  <q-select label="Wybierz osobę z Klubu"
+                  <q-select label="Wybierz osobę z Klubu" input-class="text-positive" label-color="positive" popup-content-class="bg-dark text-positive" color="positive"
                             :option-value="opt => opt!=='0 0'? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber).toString() : String('0 0')"
                             :option-label="opt => opt!=='0 0'? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber).toString() : String('0 0')"
                             emit-value
@@ -325,7 +324,7 @@
                             {{ option.opt.legitimationNumber }} Młodzież
                           </div>
                         </q-item-section>
-                        <q-item-section v-else style="padding: 0.5em; margin: 0;" class="bg-red-2 rounded"
+                        <q-item-section v-else style="padding: 0.5em; margin: 0;" class="bg-warning rounded text-black"
                                         @click="otherName='0 0';memberName = option.opt.secondName+' '+option.opt.firstName+' '+ option.opt.legitimationNumber">
                           <div v-if="option.opt.adult">{{ option.opt.secondName }} {{ option.opt.firstName }}
                             {{ option.opt.legitimationNumber }} Ogólna - BRAK SKŁADEK
@@ -344,7 +343,8 @@
                       </q-item>
                     </template>
                   </q-select>
-                  <q-select v-model="otherName" options-dense filled dense use-input hide-selected fill-input
+                  <q-select  input-class="text-positive" label-color="positive" popup-content-class="bg-dark text-positive" color="positive"
+                            v-model="otherName" options-dense filled dense use-input hide-selected fill-input
                             :options="options" @input="memberName='0 0'" @filter="filterOther"
                             label="Wybierz osobę spoza klubu">
                     <template v-slot:no-option>
@@ -376,14 +376,14 @@
                   </q-btn>
                   <q-btn v-else
                          @click="tournamentUUID = tournaments.uuid; getCompetitionsInTournament();competitionsInfo=true"
-                         class="full-width" label="wybierz konkurencje"/>
+                         class="full-width" color="primary" text-color="white" label="wybierz konkurencje"/>
                 </div>
                 <div>
                   <div>
                     <p></p>
                     <q-btn v-if="memberName===''||otherName===''" class="col full-width" label="Drukuj metryki"
                            color="grey-5"/>
-                    <q-btn v-else class="col full-width" label="Drukuj metryki" color="primary"
+                    <q-btn v-else class="col full-width" label="Drukuj metryki" color="secondary"
                            @click="tournamentUUID = tournaments.uuid;getMemberUUIDFromLegitimationNumber ();getScoreInfoByLegitimation();getMetricNumber ()"/>
                   </div>
                 </div>
@@ -395,7 +395,7 @@
           </q-card>
         </div>
       </q-card>
-      <q-card class="col-2">
+      <q-card class="col-2 bg-dark text-positive">
         <div>
           <q-item>
             <q-item-label class="text-h5 text-bold">
@@ -403,9 +403,9 @@
             </q-item-label>
           </q-item>
           <q-virtual-scroll :items="tournamentsClosed" style="height: 600px;">
-            <template v-slot="{ item, index }">
-              <q-item :key="index" dense class="col">
-                <q-btn class="col" :label="item.date"
+            <template v-slot="{ item, index }" class="col">
+              <q-item :key="index" dense >
+                <q-btn class="col" text-color="white" color="primary" :label="item.date"
                        @click="tournamentClosedName=item.name;tournamentUUID = item.tournamentUUID;name= item.name;date = item.date;closedTournamentInfo=true;getStatistics ()"></q-btn>
               </q-item>
               <p></p>
@@ -414,7 +414,7 @@
         </div>
       </q-card>
     </div>
-    <q-dialog v-model="createNewCompetiton" persistent>
+    <q-dialog v-model="createNewCompetiton">
       <q-card>
         <q-card-section class="row items-center">
           <q-item-section v-if="!notUsed">
@@ -659,7 +659,7 @@
           <div class="row full-width">
             <div class="q-pa-md bg-grey-2 col-6">
               <q-item>
-                <div class="text-center full-width" tabindex="0">Sędzia Główny</div>
+                <div class="text-center full-width" >Sędzia Główny</div>
               </q-item>
               <div>
                 <q-input @input="otherMainArbiterName ='0 0' " color="secondary" class="full-width" filled type="password"
@@ -687,7 +687,7 @@
             </div>
             <div class="q-pa-md bg-grey-2 col-6">
               <q-item standout stack-label>
-                <div class="text-center full-width" tabindex="0">Sędzia RTS</div>
+                <div class="text-center full-width" >Sędzia RTS</div>
               </q-item>
               <div>
                 <q-input @input="otherRTSArbiterName ='0 0'" class="full-width" color="secondary" filled type="password"
@@ -718,7 +718,7 @@
           <div class="row full-width">
             <div class="q-pa-md bg-grey-3 col-6">
               <q-item standout stack-label>
-                <div class="text-center full-width" tabindex="0">Sędziowie stanowiskowi</div>
+                <div class="text-center full-width" >Sędziowie stanowiskowi</div>
               </q-item>
               <div>
                 <q-input @input="otherArbitersList = '0 0'" color="secondary" class="full-width" filled type="password"
@@ -760,7 +760,7 @@
             </div>
             <div class="q-pa-md bg-grey-3 col-6">
               <q-item standout stack-label>
-                <div class="text-center full-width" tabindex="0">Sędziowie biura obliczeń
+                <div class="text-center full-width" >Sędziowie biura obliczeń
                 </div>
               </q-item>
               <div>
@@ -1003,7 +1003,7 @@
           </q-item>
           <q-item class="full-width">
             <q-field class="full-width" standout stack-label>
-              <div class="self-center full-width col no-outline" tabindex="0">Uprawnienia Sędziowskie - można zostawić
+              <div class="self-center full-width col no-outline" >Uprawnienia Sędziowskie - można zostawić
                 puste
               </div>
             </q-field>
@@ -1192,6 +1192,13 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <q-dialog :position="'top'" v-model="listDownload">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Pobrano Dokument</div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
     <q-dialog v-model="openList" persistent>
       <q-card class="bg-red-5 text-center">
         <q-card-section class="flex-center">
@@ -1225,12 +1232,6 @@ import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox.vue'
 
 export default {
-  // components: {
-  //   SingleCompetition: lazyLoadComponent({
-  //     componentFactory: () => import('components/SingleCompetition.vue'),
-  //     loading: SkeletonBox
-  //   })
-  // },
   components: {
     SingleCompetition: lazyLoadComponent({
       componentFactory: () => import('components/SingleCompetition.vue'),
@@ -1287,7 +1288,7 @@ export default {
       choice14: '',
       options2: [],
       competition: null,
-      tournaments: null,
+      tournaments: { competitionsList: Object() },
       competitions: [],
       filters: [],
       filtersPermission: [],
@@ -1729,7 +1730,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.showloading()
               this.getListTournaments()
@@ -1740,7 +1741,7 @@ export default {
             }
           )
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -2096,20 +2097,6 @@ export default {
       update(() => {
         const needle = val.toLowerCase()
         this.options = this.filters.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
-      })
-    },
-    filterMp (val, update) {
-      if (val === '') {
-        update(() => {
-          const needle = val.toLowerCase()
-          this.options = this.filtersPermission.filter(v => v.toLowerCase().indexOf(needle) > -1)
-        })
-        return
-      }
-
-      update(() => {
-        const needle = val.toLowerCase()
-        this.options = this.filtersPermission.filter(v => v.toLowerCase().indexOf(needle) > -1)
       })
     },
     filterOther (val, update) {

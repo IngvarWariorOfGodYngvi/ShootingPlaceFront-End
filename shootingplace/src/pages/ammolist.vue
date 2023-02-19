@@ -12,12 +12,12 @@
         <div class="row">
           <div class="col-3">
             <q-btn class="col-1 full-width full-height" icon="person_add_alt_1" color="primary"
-                   icon-right="person_add_alt_1" @click="getOther();addAmmo=true">
+                   @click="getOther();addAmmo=true">
               <q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">Dodaj do listy
               </q-tooltip>
             </q-btn>
           </div>
-          <div v-if="ammoList!=null && ammoList.forceOpen" class="col-9">
+          <div v-if="ammoList!==null && ammoList.forceOpen" class="col-9">
             <div class=" q-pa-md bg-red-3 text-center text-bold">UWAGA! LISTA OTWARTA PONOWNIE. NA KONIEC DNIA PAMIĘTAJ
               O JEJ ZAMKNIĘCIU!
             </div>
@@ -170,9 +170,10 @@
     <q-dialog v-model="addAmmo">
       <div class="bg-dark text-positive">
         <div class="row">
-          <q-select :label="memberName" class="col"
-                    :option-value="opt => opt!==''? opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber : '0 0'"
-                    :option-label="opt => opt!==''? opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber : '0 0'"
+          <q-select label="Wybierz osobę z Klubu"
+                    popup-content-class="bg-dark text-positive"
+                    :option-value="opt => opt!==''? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber).toString() : ''"
+                    :option-label="opt => opt!==''? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber).toString() : ''"
                     emit-value
                     map-options
                     color="positive" input-class="text-positive"
@@ -635,15 +636,13 @@ export default {
       if (val === '') {
         update(() => {
           const needle = val.toLowerCase()
-          this.options = this.filters.filter(v => v.secondName.toLowerCase().indexOf(needle) > -1)
-          // this.memberName = this.filters.filter(v => v.secondName.toLowerCase().indexOf(needle) > -1)
+          this.options = this.filters.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
         })
         return
       }
       update(() => {
         const needle = val.toLowerCase()
-        this.options = this.filters.filter(v => v.secondName.toLowerCase().indexOf(needle) > -1)
-        // this.memberName = this.filters.filter(v => v.secondName.toLowerCase().indexOf(needle) > -1)
+        this.options = this.filters.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
       })
     },
     filterOther (val, update) {

@@ -1,6 +1,6 @@
 <template>
   <div class="col-4">
-    <q-card-section class="items-center" style="height: 80vh">
+    <q-card-section class="items-center" :style="isMobile?'':'height: 80vh'">
       <q-item-section class="col" v-if="license.number===null||adult">
         <div v-if="shootingPatent.patentNumber!=null" class="col"
              @dblclick="editLicense=true">
@@ -90,7 +90,7 @@
                         v-if="licensePaymentHistory.length>0" label="Daty Opłacenia Licencji">
         <q-virtual-scroll class="full-width q-pa-none" :style="(!shootingPatent.pistolPermission
                 ||!shootingPatent.riflePermission
-                ||!shootingPatent.shotgunPermission)?'height: 44vh':'height: 54vh'" :items="licensePaymentHistory">
+                ||!shootingPatent.shotgunPermission)&&!mobile?'height: 44vh':mobile?'':'height: 54vh'" :items="licensePaymentHistory">
           <template v-slot="{ item }">
             <div v-if="item.new" class="full-width bg-warning">
               <q-field dense standout="bg-accent text-black" stack-label>
@@ -451,11 +451,12 @@
 
 <script>
 import App from 'src/App'
-
+import { isWindows } from 'mobile-device-detect'
 export default {
   name: 'MemberLicense.vue',
   data () {
     return {
+      mobile: !isWindows,
       license: '',
       licensePaymentHistory: [],
       code: null,
@@ -544,6 +545,9 @@ export default {
         month = '0' + (month)
       }
       return day + '-' + (month) + '-' + current.getFullYear()
+    },
+    isMobile () {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
     },
     async getLicense (licenseUUID) {
       await fetch('http://' + this.local + '/license/getLicense?licenseUUID=' + licenseUUID, {

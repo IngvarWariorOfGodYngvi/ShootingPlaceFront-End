@@ -5,16 +5,17 @@
           <div class="text-center col full-width no-outline text-h4 text-bold text-positive" tabindex="0">Lista Klubowiczów</div>
         </q-item>
       </div>
-      <q-card class="row bg-dark" style="height:20vh;">
+      <q-card :class="mobile?'col bg-dark':'row bg-dark'" :style="mobile?'':'height:20vh;'">
         <div class="col-4">
-          <q-item>
-            <q-select class="full-width rounded text-positive"
+            <q-select class="full-width rounded text-positive q-pb-md"
                       label="Wybierz osobę"
+                      color="white"
                       input-class="text-white" label-color="white" popup-content-class="bg-dark text-positive"
                       :option-value="opt => opt!==''? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber).toString() : ''"
                       :option-label="opt => opt!==''? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber).toString() : ''"
                       emit-value
                       map-options
+                      options-dense
                       v-model="memberName"
                       bg-color="primary" filled dense use-input hide-selected fill-input
                       :options="options" @filter="filter" @input="allMember = false">
@@ -38,7 +39,7 @@
                     </q-item>
                   </template>
                 </q-select>
-          </q-item>
+
 <!--          <q-item>-->
 <!--            <div class="col-9 bg-grey-1"><q-input type="password" v-model="barcode" dense class="full-width" filled label="numer karty" @keypress.enter="findMemberByBarCode();allMember = false;memberName=null"></q-input></div>-->
 <!--            <div class="col-3 text-grey"><q-btn class="text-black full-width full-height" label="wyszukaj" @click="findMemberByBarCode();allMember = false;memberName=null"/></div>-->
@@ -116,7 +117,7 @@
         <td style="width:15%;" v-if="item.license.number==null" class="text-center"><q-icon name="density_large"/><q-icon name="density_large"/><q-icon name="density_large"/><q-icon name="density_large"/><q-icon name="density_large"/></td>
         <td :class="item.active?'bg-green-3 text-center text-black':'bg-red-3 text-center text-black'">{{item.active?'Klubowicz Aktywny':'Klubowicz Nieaktywny'}}</td>
       </tr>
-      <tr v-if="item.erased" :key="index" style="cursor:pointer" class="full-width rounded" @click="showloading();allMember=false;memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber;temp = item.legitimationNumber">
+      <tr v-if="item.erased" :key="index" style="cursor:pointer" class="full-width bg-dark text-positive rounded" @click="showloading();allMember=false;memberName =item.secondName + ' '+item.firstName+' leg. '+item.legitimationNumber;temp = item.legitimationNumber">
         <td style="width:25%;" class="xyz"><b>{{index +1}}</b> {{item.secondName}} {{item.firstName}}</td>
         <td style="width:10%;" class="text-center">{{convertDate(item.joinDate)}}</td>
         <td style="width:10%;" class="text-center text-bold">{{item.legitimationNumber}}</td>

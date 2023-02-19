@@ -1,14 +1,14 @@
 <template>
-  <q-page padding>
+  <q-page padding class="bg-dark">
     <div>
       <q-item>
-        <div class="text-center col full-width no-outline text-h4 text-bold" tabindex="0">USTAWIENIA {{ respo }}</div>
+        <div class="text-center col full-width no-outline text-h4 text-bold text-positive">USTAWIENIA</div>
       </q-item>
     </div>
     <div>
       <SuperUser></SuperUser>
       <Users></Users>
-          <div class="q-pa-md text-bold text-center text-h6">TWORZENIE KLUBU MACIERZYSTEGO</div>
+          <div class="q-pa-md text-bold text-center text-h6 text-positive">TWORZENIE KLUBU MACIERZYSTEGO</div>
           <q-card class="row">
             <q-card-section class="col-6 bg-grey-2">
               <q-item>
@@ -38,54 +38,13 @@
                 <q-btn @click="createMotherClub ()" label="Dodaj" color="secondary"/>
               </q-item>
             </q-card-section>
-            <q-card-section class="col-6">
+            <q-card-section class="col-6 bg-dark">
               <q-item id="club" v-if="clubMessage!=null">
-                <div class="full-width text-bold text-center">{{ clubMessage }}</div>
+                <div class="full-width text-bold text-center text-positive">{{ clubMessage }}</div>
               </q-item>
             </q-card-section>
           </q-card>
-<!--          <q-card class="row">-->
-<!--            <q-card-section class="bg-grey-2 col-4">-->
-<!--              <q-item>składki grupy dorosłej</q-item>-->
-<!--              <q-item>-->
-<!--                <q-radio> składka 1 miesiąc</q-radio>-->
-<!--              </q-item>-->
-<!--              <q-item>-->
-<!--                <q-radio> składka 2 miesiące</q-radio>-->
-<!--              </q-item>-->
-<!--              <q-item>-->
-<!--                <q-radio> składka 3 miesiące</q-radio>-->
-<!--              </q-item>-->
-<!--              <q-item>-->
-<!--                <q-radio> składka 6 miesięcy</q-radio>-->
-<!--              </q-item>-->
-<!--              <q-item>-->
-<!--                <q-radio> składka 12 miesięcy</q-radio>-->
-<!--              </q-item>-->
-<!--            </q-card-section>-->
-<!--            <q-card-section class="bg-grey-2 col-4">-->
-<!--              <q-item>składki grupy młodzieżowej</q-item>-->
-<!--              <q-item>-->
-<!--                <q-radio> składka 1 miesiąc</q-radio>-->
-<!--              </q-item>-->
-<!--              <q-item>-->
-<!--                <q-radio> składka 2 miesiące</q-radio>-->
-<!--              </q-item>-->
-<!--              <q-item>-->
-<!--                <q-radio> składka 3 miesiące</q-radio>-->
-<!--              </q-item>-->
-<!--              <q-item>-->
-<!--                <q-radio> składka 6 miesięcy</q-radio>-->
-<!--              </q-item>-->
-<!--              <q-item>-->
-<!--                <q-radio> składka 12 miesięcy</q-radio>-->
-<!--              </q-item>-->
-<!--            </q-card-section>-->
-<!--            <q-card-section class="col-4">-->
-<!--              coś innego-->
-<!--            </q-card-section>-->
-<!--          </q-card>-->
-          <div class="q-pa-md text-bold text-center text-h6">ADRES KWP WPA</div>
+          <div class="q-pa-md text-bold text-center text-h6 text-positive">ADRES KWP WPA</div>
           <q-card class="row">
             <q-card-section class="bg-grey-2 col-3">
               <div class="col">
@@ -197,7 +156,6 @@ export default {
       acceptCodeUser1: false,
       formData: null,
       code: null,
-      respo: null,
       // memberUUID: '',
       // uuid: '',
       url: '',

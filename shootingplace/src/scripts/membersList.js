@@ -2,12 +2,14 @@ import { scroll } from 'quasar'
 import App from 'src/App.vue'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox.vue'
+import { isWindows } from 'mobile-device-detect'
 
 const { getScrollTarget, setScrollPosition } = scroll
 
 export default {
   data () {
     return {
+      mobile: !isWindows,
       temp: null,
       memberName: '',
       sortLicense: false,

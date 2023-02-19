@@ -1,10 +1,10 @@
 <template>
-  <q-page>
+  <q-page :id="mobile?'layout':''">
     <div class="row">
       <main-list>
       </main-list>
     <div class="col flex flex-center full-width q-pa-xl">
-    <img draggable="false" class="fun" alt="logo" src="~assets/logo.jpg">
+    <img v-if="!mobile" draggable="false" class="fun" alt="logo" src="~assets/logo.jpg">
     </div>
     </div>
   </q-page>
@@ -15,10 +15,12 @@
 import App from 'src/App.vue'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox.vue'
+import { isWindows } from 'mobile-device-detect'
 export default {
   name: 'PageIndex',
   data () {
     return {
+      mobile: !isWindows,
       app: 'http://' + App.prod
     }
   },
@@ -28,6 +30,11 @@ export default {
       loading: SkeletonBox
     })
   },
+  // computed: {
+  //   backgroundImageInlineStyle () {
+  //     return `background-image: url("./assets/${this.news.img}");`;
+  //   }
+  // },
   methods: {
     showloading () {
       this.$q.loading.show({ message: 'Dzieje się coś ważnego... Poczekaj' })
@@ -35,6 +42,9 @@ export default {
         this.$q.loading.hide()
         this.timer = 0
       }, 500)
+    },
+    isMobile () {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
     }
   }
 }
