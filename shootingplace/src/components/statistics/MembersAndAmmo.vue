@@ -1,13 +1,13 @@
 <template>
   <div>
-    <div class="text-body2 bg-white">
-      <div class="row">
+    <div class="text-body2 bg-dark text-positive" style="border: 0">
+      <div :class="mobile?'col':'row'">
         <q-card-section class="col-3">
           <q-item class="col">
-            <q-input class="full-width" color="black" dense filled v-model="firstDateAmmo" mask="####-##-##"
+            <q-input class="full-width" color="positive" input-class="text-positive" label-color="positive" dense filled v-model="firstDateAmmo" mask="####-##-##"
                      label="Data początkowa">
               <template v-slot:append>
-                <q-icon name="event" class="cursor-pointer">
+                <q-icon name="event" color="positive" class="cursor-pointer">
                   <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
                     <q-date @input="memberAmmoTakesInTime ()" v-model="firstDateAmmo">
                       <div class="row items-center justify-end">
@@ -20,10 +20,10 @@
             </q-input>
           </q-item>
           <q-item class="col">
-            <q-input class="full-width" color="black" dense filled v-model="secondDateAmmo" mask="####-##-##"
+            <q-input class="full-width" color="positive" input-class="text-positive" label-color="positive" dense filled v-model="secondDateAmmo" mask="####-##-##"
                      label="Data końcowa">
               <template v-slot:append>
-                <q-icon name="event" class="cursor-pointer">
+                <q-icon name="event" color="positive" class="cursor-pointer">
                   <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
                     <q-date @input="memberAmmoTakesInTime ()" v-model="secondDateAmmo">
                       <div class="row items-center justify-end">
@@ -36,7 +36,7 @@
             </q-input>
           </q-item>
           <div class="q-pa-md">
-            <q-btn @click="memberAmmoTakesInTime ()">Wyszukaj</q-btn>
+            <q-btn color="primary" text-color="white" @click="memberAmmoTakesInTime ()">Wyszukaj</q-btn>
           </div>
         </q-card-section>
         <q-card-section class="col">
@@ -111,13 +111,13 @@
       </div>
     </div>
     <q-dialog v-model="memberDial" style="min-width: 80vw">
-      <q-card style="min-width: 80vw">
+      <q-card class="bg-dark" style="min-width: 80vw">
         <q-card-section class="flex-center">
           <Member :member-number-legitimation="legitimationNumber"></Member>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn label="zamknij" color="black" v-close-popup/>
+          <q-btn label="zamknij" color="primary" text-color="white" v-close-popup/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -138,6 +138,7 @@ export default {
       firstDateAmmo: null,
       secondDateAmmo: this.createTodayDate(),
       quantityAmmo: [],
+      mobile: App.mobile,
       local: App.host
     }
   },

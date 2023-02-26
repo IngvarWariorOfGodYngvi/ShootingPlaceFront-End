@@ -64,7 +64,7 @@
       </q-list>
       <members-quantities class="bg-secondary">
       </members-quantities>
-      <WorkTimeList v-if="!mobile" style="margin: auto;height:auto">
+      <WorkTimeList v-if="!mobile&&main" style="margin: auto;height:auto">
       </WorkTimeList>
       </div>
     </q-drawer>
@@ -110,7 +110,7 @@ export default {
   },
   created () {
     if (window.localStorage.getItem('BackgroundDark') == null) {
-      window.localStorage.setItem('BackgroundDark', false)
+      window.localStorage.setItem('BackgroundDark', 'false')
     } else {
       this.changeColor()
     }
@@ -120,6 +120,7 @@ export default {
     return {
       title: '',
       mobile: !isWindows,
+      main: App.main,
       backgroundDark: JSON.parse(window.localStorage.getItem('BackgroundDark')),
       icon: 'menu',
       visible1: true,
@@ -134,7 +135,7 @@ export default {
       color: 'primary',
       tournamentCheck: false,
       quantities: [],
-      hrefTarget: 'http://' + location.hostname + ':8080/strzelnica/#/',
+      hrefTarget: 'http://' + App.prod,
       local: App.host,
       essentialLinks: [
         {
@@ -153,7 +154,7 @@ export default {
           title: 'Dodaj Nowego Klubowicza',
           icon: 'person_add',
           link: 'http://' + App.prod + 'member/adding',
-          visible: isWindows
+          visible: App.main
         },
         {
           title: 'Lista Amunicyjna',
@@ -165,19 +166,19 @@ export default {
           title: 'Zawody',
           icon: 'book',
           link: 'http://' + App.prod + 'competition',
-          visible: isWindows
+          visible: App.main
         },
-        {
-          title: 'Lista Osób z Uprawnieniami',
-          icon: 'book',
-          link: 'http://' + App.prod + 'memberwithpermission',
-          visible: isWindows
-        },
+        // {
+        //   title: 'Lista Osób z Uprawnieniami',
+        //   icon: 'book',
+        //   link: 'http://' + App.prod + 'memberwithpermission',
+        //   visible: App.main
+        // },
         {
           title: 'Zbrojownia',
           icon: 'storage',
           link: 'http://' + App.prod + 'armory',
-          visible: isWindows
+          visible: App.main
         },
         {
           title: 'Statystyki',
@@ -189,19 +190,19 @@ export default {
           title: 'Pozostałe Funkcje',
           icon: 'menu',
           link: 'http://' + App.prod + 'otherFunctions',
-          visible: isWindows
+          visible: App.main
         },
         {
           title: 'Ustawienia',
           icon: 'settings',
           link: 'http://' + App.prod + 'settings',
-          visible: isWindows
+          visible: App.main
         },
         {
           title: 'Pliki',
           icon: 'download',
           link: 'http://' + App.prod + 'files',
-          visible: isWindows
+          visible: App.main
         },
         {
           title: 'Panel Sędziego',
@@ -221,9 +222,6 @@ export default {
         this.timer = 0
       }, 500)
     },
-    isMobile () {
-      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-    },
     redirectToAmmoList () {
       window.location.href = 'http://' + App.prod + 'ammolist'
     },
@@ -231,9 +229,8 @@ export default {
       window.location.href = 'http://' + App.prod + 'competition'
     },
     changeColor () {
-      console.log(this.backgroundDark)
       if (this.backgroundDark) {
-        window.localStorage.setItem('BackgroundDark', true)
+        window.localStorage.setItem('BackgroundDark', 'true')
         colors.setBrand('dark-separator', '$grey-6')
         colors.setBrand('primary', '#374550')
         colors.setBrand('secondary', '#871421')
@@ -241,7 +238,7 @@ export default {
         colors.setBrand('positive', '#FFFFFF')
         colors.setBrand('accent', '#A0A0A0')
       } else {
-        window.localStorage.setItem('BackgroundDark', false)
+        window.localStorage.setItem('BackgroundDark', 'false')
         colors.setBrand('dark-separator', '$grey-2')
         colors.setBrand('primary', '#871421')
         colors.setBrand('secondary', '#374550')

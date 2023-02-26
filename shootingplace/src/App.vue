@@ -37,14 +37,30 @@
 //     }).$mount('App')
 //   }
 // })
+import { isWindows } from 'mobile-device-detect'
 export default {
+  created () {
+    this.createMain()
+  },
+  methods: {
+    createMain () {
+      if (window.localStorage.getItem('main') == null) {
+        window.localStorage.setItem('main', 'false')
+      }
+    }
+  },
   name: 'App',
-  prod: location.hostname + ':8081/#/', // test //
-  // prod: '192.168.1.30:8080/strzelnica/#/', // test //
+  mobile: !isWindows,
+  main: JSON.parse(window.localStorage.getItem('main')), // dev //
+  // main: location.hostname === '192.168.100.2', // prod //
+  // main: false,
+  // ip: '192.168.100.2:8080', // prod //
+  // prod: location.hostname + ':8081/#/', // dev //
+  prod: '192.168.1.30:8080/strzelnica/#/', // test //
   // prod: '192.168.100.2:8080/strzelnica/#/', // prod //
-  host: location.hostname + ':8080/shootingplace-1.0/' // test + prod //
-  // prod: location.hostname + ':8080' + '/strzelnica/#/',
-  // host: location.hostname + ':8080' + '/shootingplace-1.0/'
+  host: location.hostname + ':8080/shootingplace-1.0/' // test + prod + dev //
+  // host: location.hostname + ':8080/' // test + prod + dev //
+
 }
 
 </script>

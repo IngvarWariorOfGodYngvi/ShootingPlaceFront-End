@@ -2,7 +2,7 @@
   <q-page padding>
       <div>
         <q-item>
-          <div class="text-center col full-width no-outline text-h4 text-bold" tabindex="0">Pozostałe Funkcje</div>
+          <div class="text-center col full-width no-outline text-h4 text-bold text-positive" >Pozostałe Funkcje</div>
         </q-item>
       </div>
       <q-expansion-item label="Lista osób spoza klubu" dense class="text-left text-h6 text-bold bg-grey-3 q-mb-md" group="list">
@@ -16,9 +16,9 @@
       </q-expansion-item>
       <p></p>
     <div v-if="!access">
-    <q-input dense v-model="accessCode" label="wprowadź kod" type="password" mask="####" @keypress.enter="getAccess(accessCode)" filled></q-input>
+    <q-input dense input-class="text-positive" label-color="positive" color="positive" v-model="accessCode" label="Wprowadź kod" type="password" mask="####" @keypress.enter="getAccess(accessCode)" filled></q-input>
     <q-item dense>{{accessMessage}}</q-item>
-      <q-btn dense label="wprowadź" @click="getAccess(accessCode)"></q-btn>
+      <q-btn color="primary" text-color="white" dense label="wprowadź" @click="getAccess(accessCode)"></q-btn>
     </div>
       <q-expansion-item v-if="access" label="Dodatkowe Funkcje" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
         <q-card class="text-body2">

@@ -16,7 +16,7 @@
             </div>
         </q-item>
       </div>
-      <div v-if="!mobile" @click="showloading();changeTitleInMainLayout('Dodaj Nowego Klubowicza')" class="q-pa-xs">
+      <div v-if="main" @click="showloading();changeTitleInMainLayout('Dodaj Nowego Klubowicza')" class="q-pa-xs">
         <q-item class="q-pa-none xyz2" clickable tag="a" target="_self" :href="app + 'member/adding'" width="max">
             <div class="row text-grey-7 text-left">
               <q-icon class="q-pa-md text-h5" name="person_add" />
@@ -38,7 +38,7 @@
           </div>
         </q-item>
       </div>
-      <div v-if="!mobile" @click="showloading();changeTitleInMainLayout('Zawody')" class="q-pa-xs">
+      <div v-if="main" @click="showloading();changeTitleInMainLayout('Zawody')" class="q-pa-xs">
         <q-item v-if="tournamentCheck" class="q-pa-none xyz2 bg-secondary" clickable tag="a" target="_self" :href="app + 'competition'" width="max">
           <div class="row text-white full-width">
               <q-icon class="q-pa-md text-h5" name="book" />
@@ -52,15 +52,15 @@
           </div>
         </q-item>
       </div>
-      <div v-if="!mobile" @click="showloading();changeTitleInMainLayout('Lista Osób z Uprawnieniami')" class="q-pa-xs">
-        <q-item class="q-pa-none xyz2" clickable tag="a" target="_self" :href="app + 'memberwithpermission'" width="max">
-            <div class="row text-grey-7 text-left">
-              <q-icon class="q-pa-md text-h5" name="book" />
-            <div class="self-center text-black">Lista Osób z Uprawnieniami</div>
-            </div>
-        </q-item>
-      </div>
-      <div v-if="!mobile" @click="showloading();changeTitleInMainLayout('Zbrojownia')" class="q-pa-xs">
+<!--      <div v-if="main" @click="showloading();changeTitleInMainLayout('Lista Osób z Uprawnieniami')" class="q-pa-xs">-->
+<!--        <q-item class="q-pa-none xyz2" clickable tag="a" target="_self" :href="app + 'memberwithpermission'" width="max">-->
+<!--            <div class="row text-grey-7 text-left">-->
+<!--              <q-icon class="q-pa-md text-h5" name="book" />-->
+<!--            <div class="self-center text-black">Lista Osób z Uprawnieniami</div>-->
+<!--            </div>-->
+<!--        </q-item>-->
+<!--      </div>-->
+      <div v-if="main" @click="showloading();changeTitleInMainLayout('Zbrojownia')" class="q-pa-xs">
         <q-item class="q-pa-none xyz2" clickable tag="a" target="_self" :href="app + 'armory'" width="max">
             <div class="row text-grey-7 text-left">
               <q-icon class="q-pa-md text-h5" name="storage" />
@@ -76,7 +76,7 @@
             </div>
         </q-item>
       </div>
-      <div v-if="!mobile" @click="showloading();changeTitleInMainLayout('Pozostałe Funkcje')" class="q-pa-xs">
+      <div v-if="main" @click="showloading();changeTitleInMainLayout('Pozostałe Funkcje')" class="q-pa-xs">
         <q-item class="q-pa-none xyz2" clickable tag="a" target="_self" :href="app + 'otherFunctions'" width="max">
             <div class="row text-grey-7 text-left">
               <q-icon class="q-pa-md text-h5" name="menu"/>
@@ -84,7 +84,7 @@
             </div>
         </q-item>
       </div>
-      <div v-if="!mobile" @click="showloading();changeTitleInMainLayout('Ustawienia')" class="q-pa-xs">
+      <div v-if="main" @click="showloading();changeTitleInMainLayout('Ustawienia')" class="q-pa-xs">
         <q-item class="q-pa-none xyz2" clickable tag="a" target="_self" :href="app + 'settings'" width="max">
             <div class="row text-grey-7 text-left">
               <q-icon class="q-pa-md text-h5" name="settings"/>
@@ -116,7 +116,6 @@
 
 <script>
 import App from 'src/App.vue'
-import { isWindows } from 'mobile-device-detect'
 export default {
   name: 'MainList',
   data () {
@@ -125,7 +124,8 @@ export default {
       friend: 'http://' + App.friend,
       color: 'primary',
       tournamentCheck: false,
-      mobile: !isWindows,
+      mobile: App.mobile,
+      main: App.main,
       title: '',
       local: App.host
     }
@@ -170,9 +170,6 @@ export default {
         this.checkAnyOpenAmmoList()
         this.checkTournament()
       }, 300000)
-    },
-    isMobile () {
-      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
     }
   }
 }

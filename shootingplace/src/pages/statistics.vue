@@ -2,11 +2,11 @@
   <q-page padding class="rounded">
     <div>
       <q-item>
-        <div class="text-center col full-width no-outline text-h4 text-bold text-positive" tabindex="0">Statystyki</div>
+        <div class="text-center col full-width no-outline text-h4 text-bold text-positive">Statystyki</div>
       </q-item>
     </div>
     <q-expansion-item label="Składki" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
-      <Contributions class="bg-positive"></Contributions>
+      <Contributions></Contributions>
     </q-expansion-item>
     <p></p>
     <q-expansion-item label="Zapisy do klubu" dense class="text-left text-h6 text-bold bg-grey-3" group="list">

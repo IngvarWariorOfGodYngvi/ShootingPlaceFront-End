@@ -5,7 +5,7 @@
         <div class="text-center col full-width no-outline text-h4 text-bold text-positive" tabindex="0">Licencje</div>
       </q-item>
     </div>
-    <div class="q-pa-md">
+    <div v-if="mobile&&main" class="q-pa-md">
       <DownloadBtn/>
     </div>
     <q-expansion-item label="Licencje nieważne" dense class="text-left text-h6 text-bold bg-dark text-positive round" group="list">
@@ -20,12 +20,15 @@
                       group="list">
       <AllLicensePayment></AllLicensePayment>
     </q-expansion-item>
+    <Canva style="width: 0vw;height: 0%;max-width: 0vw;max-height: 0vh;"></Canva>
   </q-page>
 </template>
 
 <script>
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox.vue'
+import { isWindows } from 'mobile-device-detect'
+import App from 'src/App'
 
 export default {
   components: {
@@ -44,7 +47,17 @@ export default {
     AllLicensePayment: lazyLoadComponent({
       componentFactory: () => import('components/license/AllLicensePayment.vue'),
       loading: SkeletonBox
+    }),
+    Canva: lazyLoadComponent({
+      componentFactory: () => import('components/signature/canvas.vue'),
+      loading: SkeletonBox
     })
+  },
+  data () {
+    return {
+      mobile: !isWindows,
+      main: App.main
+    }
   },
   name: 'license'
 }

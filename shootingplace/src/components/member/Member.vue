@@ -1,6 +1,6 @@
 <template>
   <div v-if="member!=null" :class="mobile?'full-width':'col full-width'">
-    <q-card v-if="member.active" bordered :class="member.active?'row bg-green-3':'row bg-red-3'">
+    <q-card bordered :class="member.active?'row bg-green-3':'row bg-red-3'">
       <q-card-section v-if="member.imageUUID!=null" avatar :class="mobile?'col-4 q-pa-none q-ma-none':'col-2'" >
             <q-img fit=none height="100%" width="100%" class="text-body1" alt="zdjęcie profilowe"
                    :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)"/>
@@ -54,7 +54,7 @@
         <q-field dense class="col" standout="bg-accent text-positive" color="positive" label-color="positive" stack-label>
           <div class="self-center col full-width no-outline text-center">Historia Składek</div>
         </q-field>
-        <div v-if="!member.erased">
+        <div v-if="!member.erased&&main&&!mobile">
           <div>
             <q-btn class="full-width" color="green" label="Przedłuż składkę"
                    @click="memberUUID = member.uuid;name = member.firstName;name2 = member.secondName;contribution=true"/>
@@ -64,8 +64,8 @@
           <q-virtual-scroll class="full-width q-pa-none" :style="mobile?'':'height: 65vh;'" :items="member.history.contributionList">
             <template class="row" v-slot="{item}">
               <div class="row full-width"
-                   @dblclick="contributionUUID = item.uuid;memberUUID = member.uuid;editContributionPaymentDate=item.paymentDay
-                   ;editContributionValidThruDate=item.validThru;editContribution=true">
+                   @dblclick="!main&&!mobile?'':(contributionUUID = item.uuid,memberUUID = member.uuid,editContributionPaymentDate=item.paymentDay
+                   ,editContributionValidThruDate=item.validThru,editContribution=true)">
                 <q-field dense class="col-6" label="Opłacona dnia : " standout="bg-accent" color="positive" label-color="positive" stack-label>
                   <div class="self-center col full-width no-outline text-left">
                     {{ convertDate(item.paymentDay) }}
@@ -186,7 +186,7 @@
             </q-field>
           </q-expansion-item>
         </q-item-section>
-        <q-expansion-item dense label="Wydawanie Amunicji" class="col items-center bg-dark text-positive" group="right-card">
+        <q-expansion-item v-if="!member.erased&&main&&!mobile" dense label="Wydawanie Amunicji" class="col items-center bg-dark text-positive" group="right-card">
           <div>
             <div class="row">
               <q-field dense class="full-width col" standout="bg-accent text-positive" color="positive" label-color="positive" stack-label>
@@ -231,7 +231,7 @@
             </div>
           </div>
         </q-expansion-item>
-        <q-expansion-item dense v-if="!member.erased" label="Opcje Dodatkowe" group="right-card" class="bg-dark text-positive">
+        <q-expansion-item dense v-if="!member.erased&&main&&!mobile" label="Opcje Dodatkowe" group="right-card" class="bg-dark text-positive">
           <q-expansion-item dense v-if="!member.erased"
                             :label="member.shootingPatent.patentNumber!==null? (helpersDefault[0] + ': ' + member.shootingPatent.patentNumber):helpersDefault[0]"
                             group="right-right-card" class="text-positive">
@@ -380,10 +380,10 @@
               <q-field dense v-if="!member.pzss" class="col q-pa-md" bg-color="red-3" standout="bg-red-3 text-black"
                        stack-label>
                 <div class="self-center full-width no-outline text-center text-black"
-                     @dblclick="memberUUID=member.uuid;pzssPortal=true">Nie Wprowadzony do Portalu
+                     @dblclick="main&&!mobile?(memberUUID=member.uuid,pzssPortal=true):''">Nie Wprowadzony do Portalu
                 </div>
               </q-field>
-              <q-item class="q-pa-md">
+              <q-item v-if="main&&!mobile" class="q-pa-md">
                 <CSVFile :uuid="member.uuid" :name="(member.firstName + ' ' + member.secondName)"></CSVFile>
               </q-item>
             </div>
@@ -507,11 +507,13 @@
             </div>
           </q-expansion-item>
           <q-expansion-item dense label="Przypisane dokumenty" class="text-center"
-                            @click="getAllMemberFiles(member.uuid)">
-            <q-virtual-scroll class="full-width q-pa-none" :items="personalFiles" style="height: 15vh;">
+                            @click="personalFiles=[];getAllMemberFiles(member.uuid)">
+            <q-virtual-scroll class="full-width q-pa-none" :items="personalFiles" style="height: 20vh;">
               <template v-slot="{ item }">
-                <q-field dense color="positive" standout="bg-accent text-positive" borderless class="cursor-pointer full-width"
-                         stack-label>{{item.name}} {{item.date}}</q-field>
+                <div @dblclick="showloading();getFile(item.uuid, item.name)" class="cursor-pointer full-width row text-center" style="padding-bottom: 3px;border: 1px solid; border-radius: 5px"><div class="col-10">{{item.name}}</div><div class="col-2">{{item.date}}</div>
+                  <q-tooltip content-class="text-h6 bg-red" anchor="top middle" self="bottom middle" :offset="[12, 12]">Kliknij 2 razy aby pobrać plik
+                  </q-tooltip>
+                </div>
               </template>
             </q-virtual-scroll>
           </q-expansion-item>
@@ -563,7 +565,7 @@
                          label="Konkurencje" stack-label>
                   <div v-for="(disc,id) in item.disciplines" :key="id"
                        class="text-left col">
-                    <div class="col">{{disc}}</div>
+                    <div class="col text-positive">{{disc}}</div>
                   </div>
                 </q-field>
                 <q-field dense class="col-3" color="positive" label-color="positive" standout="bg-accent text-positive text-center" label="WZSS" stack-label>
@@ -609,7 +611,7 @@
       </q-card-section>
 
     <q-card bordered :class="mobile?'col bg-dark text-positive':'row full-width bg-dark text-positive'">
-      <q-card-section class="col-3" style="height:100%;">
+      <q-card-section :class="main&&!mobile?'col-3':'col-6'" style="height:100%;">
         <div class="full-height text-positive" >
           <q-item-label>
             <q-icon name="person_search" size="1.5rem"/>
@@ -627,7 +629,7 @@
                  @click="memberUUID=member.uuid;memberIdCard = member.idcard;memberFirstName = member.firstName;memberSecondName = member.secondName;basicDataConfirm=true"></q-btn>
         </div>
       </q-card-section>
-      <q-card-section class="col-4">
+      <q-card-section :class="main&&!mobile?'col-4':'col-6'">
         <q-item-section>
           <q-item-label>
             <q-icon name="contact_mail" size="1.5rem"/>
@@ -658,7 +660,7 @@
                  @click="memberUUID=member.uuid;memberEmail = member.email;memberPhoneNumber = member.phoneNumber;memberPostOfficeCity = member.address.postOfficeCity;memberZipCode = member.address.zipCode;memberStreet = member.address.street;memberStreetNumber = member.address.streetNumber;memberFlatNumber=member.address.flatNumber;addressConfirm=true"></q-btn>
         </q-item-section>
       </q-card-section>
-      <q-card-section v-if="!mobile" class="col-5">
+      <q-card-section v-if="!member.erased&&main&&!mobile" class="col-5">
         <q-item-section class="col full-width">
           <div class="q-pb-md">
             <q-tooltip v-if="member.club.id !== 1" content-class="text-h6 bg-red" anchor="top middle" self="bottom middle" :offset="[12, 12]">INNY KLUB MACIERZYSTY
@@ -765,8 +767,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat icon="cancel" color="primary" v-close-popup/>
-          <q-btn flat label="Aktualizuj" color="primary" v-close-popup @click="addressConfirm1=true"/>
+          <q-btn text-color="white" icon="cancel" color="secondary" v-close-popup/>
+          <q-btn text-color="white" icon="done" color="primary" v-close-popup @click="addressConfirm1=true"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -815,8 +817,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat icon="cancel" color="primary" v-close-popup/>
-          <q-btn flat label="Aktualizuj" color="primary" v-close-popup @click="basicDataConfirm1=true"/>
+          <q-btn text-color="white" icon="cancel" color="secondary" v-close-popup/>
+          <q-btn text-color="white" icon="done" color="primary" v-close-popup @click="basicDataConfirm1=true"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -828,8 +830,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat icon="cancel" color="primary" v-close-popup/>
-          <q-btn flat label="zmień" color="primary" v-close-popup
+          <q-btn text-color="white" icon="cancel" color="secondary" v-close-popup/>
+          <q-btn text-color="white" icon="done" color="primary" v-close-popup
                  @click="updateIDCardAndName(memberUUID,memberIdCard,memberFirstName,memberSecondName)"/>
         </q-card-actions>
       </q-card>
@@ -1375,6 +1377,7 @@ export default {
   data () {
     return {
       mobile: !isWindows,
+      main: App.main,
       member: null,
       memberUUID: null,
       picture: false,
@@ -2285,6 +2288,20 @@ export default {
             this.clubs.push(response[i])
           }
         })
+    },
+    getFile (uuid, name) {
+      axios({
+        url: 'http://' + this.local + '/files/getFile?uuid=' + uuid,
+        method: 'GET',
+        responseType: 'blob'
+      }).then(response => {
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        const fileLink = document.createElement('a')
+        fileLink.href = fileURL
+        fileLink.setAttribute('download', name)
+        document.body.appendChild(fileLink)
+        fileLink.click()
+      })
     },
     addBarcodeToMember (uuid, barcode) {
       const data = {

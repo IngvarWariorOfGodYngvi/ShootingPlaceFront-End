@@ -1,12 +1,12 @@
 <template>
 <div>
-  <div class="text-body2 bg-white" style="border: 0">
-    <div class="row">
+  <div class="text-body2 bg-dark text-positive" style="border: 0">
+    <div :class="mobile?'col':'row'">
       <q-card-section class="col-3">
         <q-item class="col">
-          <q-input class="full-width" color="black" dense filled v-model="firstDate" mask="####-##-##" label="Data początkowa">
+          <q-input class="full-width" color="positive" input-class="text-positive" label-color="positive" dense filled v-model="firstDate" mask="####-##-##" label="Data początkowa">
             <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
+              <q-icon name="event" color="positive" class="cursor-pointer">
                 <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
                   <q-date no-unset @input="getSum()" v-model="firstDate">
                     <div class="row items-center justify-end">
@@ -19,9 +19,9 @@
           </q-input>
         </q-item>
         <q-item class="col">
-          <q-input class="full-width" color="black" dense filled v-model="secondDate" mask="####-##-##" label="Data końcowa">
+          <q-input class="full-width" color="positive" input-class="text-positive" label-color="positive" dense filled v-model="secondDate" mask="####-##-##" label="Data końcowa">
             <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
+              <q-icon name="event" color="positive" class="cursor-pointer">
                 <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
                   <q-date @input="getSum()" v-model="secondDate">
                     <div class="row items-center justify-end">
@@ -35,14 +35,14 @@
         </q-item>
         <div class="row-reverse">
           <div class="row-reverse">
-            <q-radio @input="rearrangeSumTable ()" class="q-pa-md" v-model="adultCondition" :val="false">
+            <q-radio color="primary" @input="rearrangeSumTable ()" class="q-pa-md text-positive" v-model="adultCondition" :val="false">
               młodzież
             </q-radio>
-            <q-radio @input="rearrangeSumTable ()" class="q-pa-md" v-model="adultCondition" :val="true">
+            <q-radio color="primary" @input="rearrangeSumTable ()" class="q-pa-md text-positive" v-model="adultCondition" :val="true">
               dorośli
             </q-radio>
           </div>
-          <q-btn align=right @click="getSum();rearrangeSumTable ()">Wyszukaj</q-btn>
+          <q-btn color="primary" text-color="white" align=right @click="getSum();rearrangeSumTable ()">Wyszukaj</q-btn>
         </div>
       </q-card-section>
       <q-card-section class="col">
@@ -51,7 +51,7 @@
           <template v-slot:before>
             <thead class="thead-sticky text-left">
             <tr>
-              <th class="text-left" ><div>{{quantitySumRearrangeTable.length}} Nazwisko i Imię</div></th>
+              <th class="text-left"><div>{{quantitySumRearrangeTable.length}} Nazwisko i Imię</div></th>
               <th class="text-left" style="width: 20%"><div>Numer</div><div>Legitymacji</div></th>
               <th class="text-left" style="width: 20%"><div>Numer</div><div>Licencji</div></th>
               <th class="text-left" style="width: 20%">Status</th>
@@ -104,6 +104,7 @@ export default {
       adultCondition: null,
       quantitySumRearrangeTable: [],
       legitimationNumber: null,
+      mobile: App.mobile,
       local: App.host
     }
   },

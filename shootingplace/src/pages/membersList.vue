@@ -16,6 +16,7 @@
                       emit-value
                       map-options
                       options-dense
+                      options-selected-class="bg-negative text-positive"
                       v-model="memberName"
                       bg-color="primary" filled dense use-input hide-selected fill-input
                       :options="options" @filter="filter" @input="allMember = false">

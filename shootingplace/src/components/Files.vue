@@ -1,10 +1,10 @@
 <template>
   <div>
     <div v-if="!access">
-      <q-input dense v-model="accessCode" label="wprowadź kod" type="password" mask="####"
+      <q-input color="positive" label-color="positive" input-class="text-positive" dense v-model="accessCode" label="wprowadź kod" type="password" mask="####"
                @keypress.enter="getAccess(accessCode)" filled></q-input>
       <q-item dense>{{ accessMessage }}</q-item>
-      <q-btn dense label="wprowadź" @click="getAccess(accessCode)"></q-btn>
+      <q-btn color="primary" text-color="white" dense label="wprowadź" @click="getAccess(accessCode)"></q-btn>
     </div>
     <div v-if="access">
       <div class="q-pa-md">
@@ -14,23 +14,23 @@
       </div>
       <div class="row full-width bg-grey-5">
         <div class="self-center text-center col-1">
-          <q-btn icon="arrow_left" :disable="pageNumber===0" @click="pageNumber=pageNumber-1;getAllFiles(pageNumber)"
+          <q-btn icon="arrow_left" :disable="pageNumber===0" @click="showloading();pageNumber=pageNumber-1;getAllFiles(pageNumber)"
                  class="full-width text-black" color="white"></q-btn>
         </div>
         <div class="self-center text-bold text-center col-10">STRONA {{ pageNumber + 1 }}</div>
         <div class="self-center text-center col-1">
           <q-btn icon="arrow_right"
-                 @click="pageNumber=files.length===50?pageNumber+1:pageNumber;getAllFiles(pageNumber)"
+                 @click="showloading();pageNumber=files.length===50?pageNumber+1:pageNumber;getAllFiles(pageNumber)"
                  :disabled="files.length!==50" class="full-width text-black" color="white"></q-btn>
         </div>
       </div>
       <div class="row">
-        <q-field color="black" class="self-center col full-width no-outline text-bold text-center" dense
-                 standout="bg-accent text-black" stack-label>
+        <q-field color="positive" class="self-center col full-width no-outline text-bold text-center" dense
+                 standout="bg-accent text-positive" stack-label>
           <div class="col-5 self-center text-bold text-left">Nazwa pliku</div>
           <div class="col-1 self-center text-bold text-center">Data utworzenia</div>
           <div class="col-1 self-center text-bold text-center">Godzina utworzenia</div>
-          <div class="col-1 self-center text-bold text-center">Rozmiar</div>
+          <div class="col-1 self-center text-bold text-center">Rozmiar KB</div>
           <div class="col-2 self-center text-bold text-center">Typ</div>
           <div class="col-2 self-center text-center">
             <div>Pobierz plik</div>
@@ -40,7 +40,7 @@
       <q-virtual-scroll :items="files" dense visible class="full-width" style="height: 80vh;">
         <template v-slot="{ item, index }">
           <div :key="index">
-            <q-field color="black" dense
+            <q-field color="positive" dense
                      class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black"
                      stack-label>
               <q-tooltip v-if="item.type.includes('image')" :delay="750" @hide="url = ''"
@@ -49,13 +49,13 @@
                          transition-hide="scale" content-style="width: 30%; height: 70%">
                 <q-img :src="url" spinner-color="white" style="height: 100%; width: 100%"/>
               </q-tooltip>
-              <div class="col-5 self-center text-bold text-justify">{{ index + 1 }} {{ item.name }}</div>
+              <div class="col-5 self-center text-bold text-justify">{{ (index + 1) + ((pageNumber)*50) }} {{ item.name }}</div>
               <div class="col-1 self-center text-bold text-center">{{ item.date }}</div>
               <div class="col-1 self-center text-bold text-center">{{ item.time }}</div>
-              <div class="col-1 self-center text-bold text-center">{{ item.size }}</div>
+              <div class="col-1 self-center text-bold text-center">{{ Math.round((item.size / 1024)).toFixed(0) }}</div>
               <div class="col-2 self-center text-bold text-center">{{ item.type }}</div>
               <div class="col-2 q-pa-xs self-center text-center">
-                <q-btn color="primary" dense @click="fileName = item.name;getFile (item.uuid)">pobierz plik</q-btn>
+                <q-btn color="primary" dense @click="showloading();fileName = item.name;getFile (item.uuid)">pobierz plik</q-btn>
               </div>
             </q-field>
           </div>
@@ -106,6 +106,13 @@ export default {
     }
   },
   methods: {
+    showloading () {
+      this.$q.loading.show({ message: 'Dzieje się coś ważnego... Poczekaj' })
+      this.timer = setTimeout(() => {
+        this.$q.loading.hide()
+        this.timer = 0
+      }, 1000)
+    },
     getAccess (accessCode) {
       fetch('http://' + this.local + '/users/getAccess?pinCode=' + accessCode, {
         method: 'GET',

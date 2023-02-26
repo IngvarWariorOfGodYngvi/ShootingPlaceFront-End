@@ -437,7 +437,7 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model="metricsInfo">
-      <q-card>
+      <q-card class="bg-dark text-positive">
         <q-card-section class="col">
           <div class="q-ml-sm text-h6 text-center text-bold">POBIERZ METRYKI STARTOWE ZAWODNIKA</div>
           <div class="q-ml-sm text-h6 text-center text-bold">{{ name }}</div>
@@ -495,13 +495,13 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model="memberDial" style="min-width: 80vw">
-      <q-card style="min-width: 80vw">
+      <q-card class="bg-dark" style="min-width: 80vw">
         <q-card-section class="flex-center">
           <Member :member-number-legitimation="memberLeg"></Member>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn label="zamknij" color="black" v-close-popup/>
+          <q-btn text-color="white" label="zamknij" color="primary" v-close-popup/>
         </q-card-actions>
       </q-card>
     </q-dialog>

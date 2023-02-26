@@ -42,9 +42,6 @@ export default {
         this.$q.loading.hide()
         this.timer = 0
       }, 500)
-    },
-    isMobile () {
-      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
     }
   }
 }

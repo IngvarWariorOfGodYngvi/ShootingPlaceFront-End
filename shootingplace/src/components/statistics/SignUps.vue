@@ -1,12 +1,12 @@
 <template>
 <div>
-  <div class="text-body2  bg-white">
-    <div class="row">
+  <div class="text-body2 bg-dark text-positive" style="border: 0">
+    <div :class="mobile?'col':'row'">
       <q-card-section class="col-3">
         <q-item class="col">
-          <q-input class="full-width" color="black" dense filled v-model="firstDateJoinDate" mask="####-##-##" label="Data początkowa">
+          <q-input class="full-width" color="positive" input-class="text-positive" label-color="positive" dense filled v-model="firstDateJoinDate" mask="####-##-##" label="Data początkowa">
             <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
+              <q-icon name="event" color="positive" class="cursor-pointer">
                 <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
                   <q-date @input="getSumJoinDate ()" v-model="firstDateJoinDate">
                     <div class="row items-center justify-end">
@@ -19,9 +19,9 @@
           </q-input>
         </q-item>
         <q-item class="col">
-          <q-input class="full-width" color="black" dense filled v-model="secondDateJoinDate" mask="####-##-##" label="Data końcowa">
+          <q-input class="full-width" color="positive" input-class="text-positive" label-color="positive" dense filled v-model="secondDateJoinDate" mask="####-##-##" label="Data końcowa">
             <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
+              <q-icon name="event" color="positive" class="cursor-pointer">
                 <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
                   <q-date @input="getSumJoinDate ()" v-model="secondDateJoinDate">
                     <div class="row items-center justify-end">
@@ -34,10 +34,10 @@
           </q-input>
         </q-item>
         <div class="q-pa-md">
-          <q-btn @click="getSumJoinDate()" label="Wyszukaj"></q-btn>
+          <q-btn color="primary" text-color="positive" @click="getSumJoinDate()" label="Wyszukaj"></q-btn>
           <p></p>
           <q-btn v-if="firstDateJoinDate!=null&&secondDateJoinDate!=null" @click="getSumJoinDateXLSXFile()" label="pobierz plik xlsx" color="green-3" text-color="black"></q-btn>
-          <q-btn v-else label="pobierz plik xlsx" color="green-3" disabled text-color="black"></q-btn>
+          <q-btn v-else-if="!mobile" label="pobierz plik xlsx" color="green-3" disabled text-color="black"></q-btn>
         </div>
       </q-card-section>
       <q-card-section class="col">
@@ -73,13 +73,13 @@
     </div>
   </div>
   <q-dialog v-model="memberDial" style="min-width: 80vw">
-    <q-card style="min-width: 80vw">
+    <q-card class="bg-dark text-positive" style="min-width: 80vw">
       <q-card-section class="flex-center">
         <Member :member-number-legitimation="legitimationNumber"></Member>
       </q-card-section>
 
       <q-card-actions align="right">
-        <q-btn label="zamknij" color="black" v-close-popup/>
+        <q-btn text-color="white" label="zamknij" color="primary" v-close-popup/>
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -108,6 +108,7 @@ export default {
       secondDateJoinDate: this.createTodayDate(),
       quantitySumJoinDate: [],
       quantitySumJoinDateRearrangeTable: [],
+      mobile: App.mobile,
       local: App.host
     }
   },

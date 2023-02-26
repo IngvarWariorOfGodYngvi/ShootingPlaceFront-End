@@ -352,13 +352,13 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model="memberDial" style="min-width: 80vw">
-      <q-card style="min-width: 80vw">
+      <q-card style="min-width: 80vw" class="bg-dark">
         <q-card-section class="flex-center">
           <Member :member-number-legitimation="legitimationNumber"></Member>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn label="zamknij" color="black" v-close-popup @click="code=null"/>
+          <q-btn text-color="white" label="zamknij" color="primary" v-close-popup @click="code=null"/>
         </q-card-actions>
       </q-card>
     </q-dialog>

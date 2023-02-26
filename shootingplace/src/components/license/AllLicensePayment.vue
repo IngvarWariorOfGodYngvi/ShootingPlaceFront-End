@@ -112,11 +112,14 @@
 import App from 'src/App.vue'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox.vue'
+import { isWindows } from 'mobile-device-detect'
 
 export default {
   name: 'AllLicencePayment',
   data () {
     return {
+      mobile: !isWindows,
+      main: App.main,
       list: [],
       payPZSSList: [],
       memberName: '',

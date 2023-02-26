@@ -39,7 +39,7 @@
           <div class="col-3">
             <q-item>
               <q-btn-dropdown @click="tournamentUUID = tournaments.uuid;date= tournaments.date;name = tournaments.name"
-                              align="center" class="full-width" label="pobierz komunikat" color="primary">
+                              align="center" content-class="bg-dark" class="full-width" label="pobierz komunikat" color="primary">
                 <q-list>
                   <q-item v-close-popup class="q-pa-none">
                     <q-item-section>
@@ -1079,7 +1079,7 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model="statistics">
-      <q-card>
+      <q-card class="bg-dark text-positive">
         <q-card-section class="col items-center">
           <span class="q-ml-sm text-h6 text-bold">STATYSTYKI ZAWODÓW</span>
           <div class="text-bold">
@@ -1097,7 +1097,7 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model="competitionsInfo">
-      <q-card>
+      <q-card class="bg-dark text-positive">
         <q-card-section>
           <div v-for="(item,id) in options2" :key="id">
             <div>
@@ -1107,7 +1107,7 @@
           <div class="row q-pa-md">
             <q-btn class="col full-width" color="red" label="Usuń z listy"
                    @click="removeMemberFromCompetition();finder = null"></q-btn>
-            <q-btn class="col full-width" label="Dodaj do listy"
+            <q-btn class="col full-width" color="secondary" label="Dodaj do listy"
                    @click="addMemberToCompetition(memberName); (finder = null)"></q-btn>
           </div>
         </q-card-section>
@@ -1157,8 +1157,8 @@
           </div>
           <div>
             <q-item>
-              <q-btn-dropdown align="center" class="full-width" label="pobierz komunikat" color="primary">
-                <q-list>
+              <q-btn-dropdown align="center" class="full-width"  label="pobierz komunikat" color="primary">
+                <q-list dark>
                   <q-item v-close-popup class="q-pa-none">
                     <q-item-section>
                       <q-btn @click="getAnnouncementFromCompetition()" class="full-width bg-red-6"
@@ -1356,6 +1356,7 @@ export default {
     this.getCompetitions()
     this.getClosedTournaments()
     this.getOther()
+    this.getListCalibers()
     this.getOtherArbiters()
     this.getAllClubsToTournament()
   },
@@ -1386,6 +1387,14 @@ export default {
       }).then(response => response.json())
         .then(response => {
           this.competitions = response
+        })
+    },
+    getListCalibers () {
+      fetch('http://' + this.local + '/armory/calibers', {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(calibers => {
+          this.calibers = calibers
         })
     },
     showloading () {

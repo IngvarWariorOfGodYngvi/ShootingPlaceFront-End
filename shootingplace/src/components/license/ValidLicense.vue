@@ -168,11 +168,14 @@
 <script>
 import App from 'src/App.vue'
 import Member from 'components/member/Member.vue'
+import { isWindows } from 'mobile-device-detect'
 
 export default {
   name: 'ValidLicense',
   data () {
     return {
+      mobile: !isWindows,
+      main: App.main,
       list: [],
       licenseList: [],
       memberName: '',

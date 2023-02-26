@@ -1,12 +1,12 @@
 <template>
 <div>
-  <div class="text-body2 bg-white">
-    <div class="row">
+  <div class="text-body2 bg-dark text-positive" style="border: 0">
+    <div :class="mobile?'col':'row'">
       <q-card-section class="col-3">
         <q-item class="col">
-          <q-input class="full-width" color="black" dense filled v-model="firstDateLicense" mask="####-##-##" label="Data początkowa">
+          <q-input class="full-width" color="positive" input-class="text-positive" label-color="positive" dense filled v-model="firstDateLicense" mask="####-##-##" label="Data początkowa">
             <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
+              <q-icon name="event" color="positive" class="cursor-pointer">
                 <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
                   <q-date @input="getSumLicensed ()" v-model="firstDateLicense">
                     <div class="row items-center justify-end">
@@ -19,9 +19,9 @@
           </q-input>
         </q-item>
         <q-item class="col">
-          <q-input class="full-width" color="black" dense filled v-model="secondDateLicense" mask="####-##-##" label="Data końcowa">
+          <q-input class="full-width" color="positive" input-class="text-positive" label-color="positive" dense filled v-model="secondDateLicense" mask="####-##-##" label="Data końcowa">
             <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
+              <q-icon name="event" color="positive" class="cursor-pointer">
                 <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
                   <q-date @input="getSumLicensed ()" v-model="secondDateLicense">
                     <div class="row items-center justify-end">
@@ -34,7 +34,7 @@
           </q-input>
         </q-item>
         <div class="q-pa-md">
-          <q-btn @click="getSumLicensed ()" >Wyszukaj</q-btn>
+          <q-btn color="primary" text-color="positive" @click="getSumLicensed ()" >Wyszukaj</q-btn>
         </div>
         <div class="row">
           <q-radio @input="paid = null; newLicense = null; getSumLicensed ()" v-model="allLicense" :val="true">Wszystkie</q-radio>
@@ -67,7 +67,7 @@
             <tr :key="index" class="rounded" style="cursor:pointer" @dblclick="legitimationNumber = item.legitimationNumber; memberDial=true">
               <q-tooltip content-class="text-subtitle2" anchor="top middle">kliknij dwa razy aby wyświetlić podgląd
               </q-tooltip>
-              <td v-if="!item.payInPZSSPortal" class="text-left xyz"><q-checkbox dense v-model="licenseArray" :val="item.licenseUUID" :label="(index+1) + ' ' +item.secondName + ' ' + item.firstName "></q-checkbox></td>
+              <td v-if="!item.payInPZSSPortal" class="text-left xyz"><b>{{index+1}}</b><q-checkbox color="primary" dense v-model="licenseArray" :val="item.licenseUUID" :label="item.secondName + ' ' + item.firstName "></q-checkbox></td>
               <td v-else class="text-left xyz"><b>{{index+1}}</b> {{item.secondName}} {{item.firstName}} </td>
               <td class="text-left">nr leg. {{item.legitimationNumber}}</td>
               <td v-if="item.adult" class="text-left"><div>Ogólna</div></td>
@@ -86,13 +86,13 @@
     </div>
   </div>
   <q-dialog v-model="memberDial" style="min-width: 80vw">
-    <q-card style="min-width: 80vw">
+    <q-card class="bg-dark text-positive" style="min-width: 80vw">
       <q-card-section class="flex-center">
         <Member :member-number-legitimation="legitimationNumber"></Member>
       </q-card-section>
 
       <q-card-actions align="right">
-        <q-btn label="zamknij" color="black" v-close-popup/>
+        <q-btn text-color="white" label="zamknij" color="primary" v-close-popup/>
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -157,6 +157,7 @@ export default {
       success: false,
       message: null,
       code: null,
+      mobile: App.mobile,
       local: App.host
     }
   },

@@ -620,14 +620,14 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.success = true
               this.message = response
               this.autoClose()
             })
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true

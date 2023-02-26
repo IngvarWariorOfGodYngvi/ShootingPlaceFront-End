@@ -13,17 +13,17 @@
       <q-virtual-scroll :items="list" virtual-scroll-slice-size="100" style="height: 50vh">
         <template v-slot="{ item, index }">
           <div :key="index" class="row">
+            <div class="self-center">{{ index + 1 }}.</div>
             <q-checkbox dense v-if="item.license.paid" v-model="licenseList" value="" :val="item.uuid" left-label>
-              {{ index + 1 }}.
             </q-checkbox>
-            <q-checkbox value="" dense color="grey" v-else disable left-label>{{ index + 1 }}.</q-checkbox>
+            <q-checkbox value="" dense color="grey" v-else disable left-label></q-checkbox>
             <div class="col" @dblclick="legitimationNumber = item.legitimationNumber;memberDial=true">
               <q-tooltip content-class="text-subtitle2" anchor="top middle">kliknij dwa razy aby wyświetlić podgląd
               </q-tooltip>
               <q-field dense class="col" color="positive" label-color="positive" label="Nazwisko i Imię" standout="bg-accent text-positive"
                        stack-label>
                 <div>
-                  <div class="self-center col full-width no-outline row text-positive" tabindex="1">{{ item.secondName }}
+                  <div class="self-center col full-width no-outline row text-positive" >{{ item.secondName }}
                     {{ item.firstName }}
                   </div>
                 </div>
@@ -32,21 +32,21 @@
             <q-field dense :class="item.active?'col-1':'col-1 bg-red-4'" color="positive" :label-color="item.active?'positive':'black'" label="Status"
                      standout="bg-accent text-positive" stack-label>
               <div>
-                <div :class="item.active?'row text-positive':'row text-black'" tabindex="1">{{item.active?'Aktywny':'Nieaktywny'}}</div>
+                <div :class="item.active?'row text-positive':'row text-black'" >{{item.active?'Aktywny':'Nieaktywny'}}</div>
               </div>
             </q-field>
             <q-field dense class="col-1" label="Numer Licencji" color="positive" label-color="positive" standout="bg-accent text-positive" stack-label>
-              <div class="self-center col full-width no-outline row" tabindex="1">
+              <div class="self-center col full-width no-outline row" >
                 {{ item.license.number }}
               </div>
             </q-field>
             <q-field dense class="col-2" label="Grupa" color="positive" label-color="positive" standout="bg-accent text-positive" stack-label>
-              <div class="self-center col full-width no-outline row" tabindex="1">{{item.adult?'Grupa Ogólna':'Grupa Młodzieżowa'}}
+              <div class="self-center col full-width no-outline row" >{{item.adult?'Grupa Ogólna':'Grupa Młodzieżowa'}}
               </div>
             </q-field>
             <q-field dense class="col-2" label="Ważność licencji" color="positive" label-color="positive" standout="bg-accent text-positive" stack-label>
               <div>
-                <div class="row" tabindex="1">{{ convertDate(item.license.validThru) }}</div>
+                <div class="row" >{{ convertDate(item.license.validThru) }}</div>
               </div>
             </q-field>
             <q-btn dense color="grey-5" v-if="!item.license.paid && !item.active" class="col-2"
@@ -152,11 +152,14 @@
 <script>
 import Member from 'components/member/Member.vue'
 import App from 'src/App.vue'
+import { isWindows } from 'mobile-device-detect'
 
 export default {
   name: 'NotValidLicense',
   data () {
     return {
+      mobile: !isWindows,
+      main: App.main,
       list: [],
       licenseList: [],
       memberName: '',

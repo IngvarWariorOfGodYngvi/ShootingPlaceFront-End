@@ -1,15 +1,15 @@
 <template>
   <div class="col-4">
-    <q-card-section class="items-center" :style="isMobile?'':'height: 80vh'">
+    <q-card-section class="items-center" :style="mobile?'':'height: 80vh'">
       <q-item-section class="col" v-if="license.number===null||adult">
         <div v-if="shootingPatent.patentNumber!=null" class="col"
-             @dblclick="editLicense=true">
+             @dblclick="main&&!mobile?'':editLicense=true">
           <q-field dense class="col" standout="bg-accent text-positive" color="positive" label-color="positive" stack-label>
             <div class="self-center col full-width no-outline text-center" >Licencja</div>
           </q-field>
         </div>
         <div v-if="shootingPatent.patentNumber==null"
-             @dblclick="editLicense=true"
+             @dblclick="zeditLicense=true"
              class="col">
           <q-field class="col" standout="bg-accent text-positive" color="positive" label-color="positive" stack-label>
             <div class="self-center col full-width no-outline text-center">Licencja</div>
@@ -50,7 +50,7 @@
         </div>
       </q-item-section>
       <q-btn
-        v-if="(shootingPatent.patentNumber!=null&&license.number==null&&license.paid)||(!adult&&license.number==null)"
+        v-if="((shootingPatent.patentNumber!=null&&license.number==null&&license.paid)||(!adult&&license.number==null))&&main&&!mobile"
         class="full-width" color="primary" label="WYDAJ LICENCJĘ" @click="
                 patentPistolPermission1=shootingPatent.pistolPermission;
                 patentRiflePermission1=shootingPatent.riflePermission;
@@ -61,7 +61,7 @@
       <q-btn class="full-width" color="primary" v-if="license.number!=null&&(
                 (!license.pistolPermission&&shootingPatent.pistolPermission)
                 ||(!license.riflePermission&&shootingPatent.riflePermission)
-                ||(!license.shotgunPermission&&shootingPatent.shotgunPermission))&&clubID===1" label="Rozszerz Licencję" @click="
+                ||(!license.shotgunPermission&&shootingPatent.shotgunPermission))&&clubID===1&&main&&!mobile" label="Rozszerz Licencję" @click="
                 patentPistolPermission1=shootingPatent.pistolPermission;
                 patentRiflePermission1=shootingPatent.riflePermission;
                 patentShotgunPermission1=shootingPatent.shotgunPermission;
@@ -71,7 +71,7 @@
                 memberAdultConfirm=adult;
                 updateLicenseConfirm=true"></q-btn>
       <div
-        v-if="(license.number!=null&&(license.pistolPermission||license.riflePermission||license.shotgunPermission))&&clubID===1&&license.paid===true">
+        v-if="(license.number!=null&&(license.pistolPermission||license.riflePermission||license.shotgunPermission))&&clubID===1&&license.paid===true&&main&&!mobile">
         <q-btn class="full-width" v-if="license.canProlong&&license.paid===true"
                label="przedłuż licencję" color="primary" @click="
                 licensePistolPermission1=license.pistolPermission;
@@ -84,7 +84,7 @@
                 licenseShotgunPermission1=license.shotgunPermission;
                 noDomesticStarts=true"></q-btn>
       </div>
-      <q-btn v-if="(((shootingPatent.patentNumber!==null&&license.paid===false&&clubID===1))) " :disable="!active" class="full-width"
+      <q-btn v-if="(((shootingPatent.patentNumber!==null&&license.paid===false&&clubID===1)))&&main&&!mobile&&active" class="full-width"
              label="opłać licencję" color="secondary" text-color="white" @click="licensePayment=true"></q-btn>
       <q-expansion-item dense default-opened class="bg-dark text-center text-positive"
                         v-if="licensePaymentHistory.length>0" label="Daty Opłacenia Licencji">
@@ -99,7 +99,7 @@
               </q-field>
               <div class="row full-width">
                 <div class="col-5"
-                     @dblclick="paymentUUID = item.uuid;editLicensePaymentDate = item.date; editLicensePaymentYear = item.validForYear; editLicensePayment=true">
+                     >
                   <q-field dense label="Opłacona dnia : " standout="bg-accent text-black" stack-label>
                     <div class="self-center col full-width no-outline text-left text-black" >
                       {{ convertDate(item.date) }}
@@ -107,7 +107,7 @@
                   </q-field>
                 </div>
                 <div class="col-4"
-                     @dblclick="paymentUUID = item.uuid;editLicensePaymentDate = item.date;editLicensePaymentYear = item.validForYear;editLicensePayment=true">
+                     @dblclick="main&&!mobile?(paymentUUID = item.uuid,editLicensePaymentDate = item.date,editLicensePaymentYear = item.validForYear,editLicensePayment=true):''">
                   <q-field dense standout="bg-accent text-black" label="Na rok : " stack-label>
                     <div class="self-center col full-width no-outline text-left text-black" >
                       {{ item.validForYear }}
@@ -115,7 +115,7 @@
                   </q-field>
                 </div>
                 <div class="col-3"
-                     @dblclick="paymentUUID = item.uuid;togglePaymentAlert = true">
+                     @dblclick="main&&!mobile?(paymentUUID = item.uuid,togglePaymentAlert = true):''">
                   <q-field dense v-if="item.payInPZSSPortal" standout="bg-accent text-black" label="PZSS : "
                            stack-label>
                     <div class="self-center col full-width no-outline text-left text-black">{{item.payInPZSSPortal?'Tak':'Nie'}}</div>
@@ -125,7 +125,7 @@
             </div>
             <div v-if="!item.new" class="row full-width">
               <div class="col-5"
-                   @dblclick="paymentUUID=item.uuid;editLicensePaymentDate = item.date;editLicensePaymentYear = item.validForYear;editLicensePayment=true">
+                   @dblclick="main&&!mobile?(paymentUUID=item.uuid,editLicensePaymentDate = item.date,editLicensePaymentYear = item.validForYear,editLicensePayment=true):''">
                 <q-field dense label="Opłacona dnia : " standout="bg-accent text-positive" color="positive" label-color="positive" stack-label>
                   <div class="self-center col full-width no-outline text-left">
                     {{ convertDate(item.date) }}
@@ -133,7 +133,7 @@
                 </q-field>
               </div>
               <div class="col-4"
-                   @dblclick="paymentUUID=item.uuid;editLicensePaymentDate = item.date;editLicensePaymentYear = item.validForYear;editLicensePayment=true">
+                   @dblclick="main&&!mobile?(paymentUUID=item.uuid,editLicensePaymentDate = item.date,editLicensePaymentYear = item.validForYear,editLicensePayment=true):''">
                 <q-field dense standout="bg-accent text-positive" color="positive" label-color="positive" label="Na rok : " stack-label>
                   <div class="self-center col full-width no-outline text-left" >
                     {{ item.validForYear }}
@@ -141,7 +141,7 @@
                 </q-field>
               </div>
               <div class="col-3"
-                   @dblclick="paymentUUID=item.uuid;togglePaymentAlert = true">
+                   @dblclick="main&&!mobile?(paymentUUID=item.uuid,togglePaymentAlert = true):''">
                 <q-field dense :class="item.payInPZSSPortal?'':'bg-red'" :standout="item.payInPZSSPortal?'bg-accent':'bg-red-4'" color="positive" label-color="positive" label="PZSS : "
                          stack-label>
                   <div class="full-width text-center" ><q-icon :name="item.payInPZSSPortal?'done':'cancel'"></q-icon></div>
@@ -457,6 +457,7 @@ export default {
   data () {
     return {
       mobile: !isWindows,
+      main: App.main,
       license: '',
       licensePaymentHistory: [],
       code: null,
@@ -545,9 +546,6 @@ export default {
         month = '0' + (month)
       }
       return day + '-' + (month) + '-' + current.getFullYear()
-    },
-    isMobile () {
-      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
     },
     async getLicense (licenseUUID) {
       await fetch('http://' + this.local + '/license/getLicense?licenseUUID=' + licenseUUID, {
