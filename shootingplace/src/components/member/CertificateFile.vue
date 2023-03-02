@@ -8,17 +8,17 @@
           <div class="q-ml-sm full-width text-h5 text-bold text-center">Wybierz zaświadczenie</div>
         </q-card-section>
         <q-card-section>
-          <q-select class="full-width" filled v-model="certificateChoice" label-color="positive" color="positive" input-class="text-positive"
-                    label="Wybierz rodzaj zaświadczenia" use-input hide-selected fill-input popup-content-class="bg-dark text-positive"
+          <q-select class="full-width" options-dense :dark="darkSet()" filled v-model="certificateChoice" label-color="positive" color="positive" input-class="text-positive"
+                    label="Wybierz rodzaj zaświadczenia" fill-input popup-content-class="bg-dark text-positive"
                     :options="certificateChoices">
           </q-select>
         </q-card-section>
         <q-card-section class="row items-center">
-          <q-select v-if="certificateChoice==='ZAŚWIADCZENIE DO POLICJI'" class="full-width" v-model="city" filled color="positive" input-class="text-positive"
+          <q-select v-if="certificateChoice!==certificateChoices[0]&&certificateChoice!==null" class="full-width" v-model="city" filled color="positive" input-class="text-positive"
                     use-input hide-selected fill-input :options="cities" label-color="positive" popup-content-class="bg-dark text-positive"
                     label="wybierz miasto"></q-select>
           <div v-if="certificateChoice!=null" class="q-pa-md row full-width">
-            <q-checkbox v-if="certificateChoice==='ZAŚWIADCZENIE DO POLICJI'" dense value="" v-model="toggleEnlargement" label="rozszerzenie" class="col"></q-checkbox>
+            <q-checkbox v-if="certificateChoice!==certificateChoices[0&&certificateChoice!==null]" dense value="" v-model="toggleEnlargement" label="rozszerzenie" class="col"></q-checkbox>
 <!--            <q-btn color="primary" class="items-center col" :disable="disable&&certificateChoice===certificateChoices[0]" :label="certificateChoice" @click="certificateDownload = true"></q-btn>-->
           </div>
         </q-card-section>
@@ -46,7 +46,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog :position="'top'" v-model="download">
+    <q-dialog position="top" v-model="download">
       <q-card>
         <q-card-section>
           <div class="text-h6">Pobrano Zaświadczenia</div>
@@ -67,7 +67,7 @@ export default {
       download: false,
       dialog: false,
       certificateDownload: false,
-      certificateChoices: ['ZAŚWIADCZENIE DO POLICJI', 'ZAŚWIADCZENIE ZWYKŁE'],
+      certificateChoices: [{ label: 'ZAŚWIADCZENIE ZWYKŁE', disable: false }, { label: 'BROŃ SPORTOWA DO CELÓW SPORTOWYCH', disable: false }, { label: 'BROŃ SPORTOWA DO CELÓW KOLEKCJONERSKICH', disable: true }, { label: 'BROŃ CIĘCIWOWA W POSTACI KUSZ', disable: true }],
       certificateChoice: null,
       city: 'Łódź',
       cities: ['Białystok', 'Bydgoszcz', 'Gdańsk', 'Gorzów Wielkopolski', 'Katowice', 'Kielce', 'Kraków', 'Lublin', 'Łódź', 'Olsztyn', 'Opole', 'Poznań', 'Rzeszów', 'Szczecin', 'Warszawa', 'Wrocław'],
@@ -93,14 +93,14 @@ export default {
   methods: {
     getDownloadCertificateOfClubMembership () {
       axios({
-        url: 'http://' + this.local + '/files/downloadCertificateOfClubMembership/' + this.uuid + '?reason=' + this.certificateChoice + '&city=' + this.city + '&enlargement=' + this.toggleEnlargement,
+        url: 'http://' + this.local + '/files/downloadCertificateOfClubMembership/' + this.uuid + '?reason=' + this.certificateChoice.label + '&city=' + this.city + '&enlargement=' + this.toggleEnlargement,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
-        fileLink.setAttribute('download', 'Zaświadczenie ' + this.name + '.pdf')
+        fileLink.setAttribute('download', 'Zaświadczenie ' + this.certificateChoice.label + ' ' + this.name + '.pdf')
         document.body.appendChild(fileLink)
         fileLink.click()
         this.certificateChoice = null
@@ -108,6 +108,9 @@ export default {
         this.toggleEnlargement = false
         this.autoClose()
       })
+    },
+    darkSet () {
+      return JSON.parse(window.localStorage.getItem('BackgroundDark'))
     },
     autoClose () {
       setTimeout(() => {

@@ -665,13 +665,13 @@
           <div class="q-pb-md">
             <q-tooltip v-if="member.club.id !== 1" content-class="text-h6 bg-red" anchor="top middle" self="bottom middle" :offset="[12, 12]">INNY KLUB MACIERZYSTY
             </q-tooltip>
-            <DeklaracjaLOK :uuid="member.uuid" :name="(member.firstName + ' ' + member.secondName)" :disable="member.club.id !== 1"/>
+            <DeklaracjaLOK :uuid="member.uuid" :name="(member.secondName + ' ' + member.firstName)" :disable="member.club.id !== 1"/>
           </div>
           <div class="q-pb-md">
-            <personalCardPDF :uuid="member.uuid" :name="(member.firstName + ' ' + member.secondName)"/>
+            <personalCardPDF :uuid="member.uuid" :name="(member.secondName + ' ' + member.firstName)"/>
           </div>
           <div v-if="member.history.contributionList.length > 0" class="q-pb-md">
-            <LastContributionPDF :uuid="member.uuid" :name="(member.firstName + ' ' + member.secondName)" :disable="member.history.contributionList.length < 1"/>
+            <LastContributionPDF :uuid="member.uuid" :name="(member.secondName + ' ' + member.firstName)" :disable="member.history.contributionList.length < 1"/>
           </div>
           <div v-if="!member.erased" class="q-pb-md">
             <q-tooltip v-if="member.club.id !== 1" content-class="text-h6 bg-red" anchor="top middle" self="bottom middle" :offset="[12, 12]">INNY KLUB MACIERZYSTY
@@ -682,7 +682,7 @@
             <q-tooltip v-else-if="member.shootingPatent.patentNumber===null" content-class="text-h6 bg-red" anchor="top middle" self="bottom middle" :offset="[12, 12]">BRAK
               PATENTU
             </q-tooltip>
-            <ExtensionApplicationFile :uuid="member.uuid" :name="(member.firstName + ' ' + member.secondName)" :disable="member.club.id !== 1|| member.license.number===null || member.shootingPatent.patentNumber===null "/>
+            <ExtensionApplicationFile :uuid="member.uuid" :name="(member.secondName + ' ' + member.firstName)" :disable="member.club.id !== 1|| member.license.number===null || member.shootingPatent.patentNumber===null "/>
           </div>
           <div v-if="!member.erased" class="q-pb-md">
             <q-tooltip v-if="member.club.id !== 1" content-class="text-h6 bg-red" anchor="top middle" self="bottom middle" :offset="[12, 12]">INNY KLUB MACIERZYSTY
@@ -690,7 +690,7 @@
             <q-tooltip v-else-if="!member.active" content-class="text-h6 bg-red" anchor="top middle"
                        self="bottom middle" :offset="[12, 12]">BRAK SKŁADEK
             </q-tooltip>
-            <CertificateFile :uuid="member.uuid" :name="(member.firstName + ' ' + member.secondName)" :disable="member.club.id !== 1"/>
+            <CertificateFile :uuid="member.uuid" :name="(member.secondName + ' ' + member.firstName)" :disable="member.club.id !== 1"/>
           </div>
         </q-item-section>
       </q-card-section>

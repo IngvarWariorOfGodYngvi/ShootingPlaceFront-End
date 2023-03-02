@@ -52,14 +52,12 @@ export default {
   name: 'App',
   mobile: !isWindows,
   main: JSON.parse(window.localStorage.getItem('main')), // dev //
-  // main: location.hostname === '192.168.100.2', // prod //
-  // main: false,
   // ip: '192.168.100.2:8080', // prod //
-  // prod: location.hostname + ':8081/#/', // dev //
-  prod: '192.168.1.30:8080/strzelnica/#/', // test //
+  prod: location.hostname + ':8081/#/', // dev //
+  // prod: '192.168.1.30:8080/strzelnica/#/', // test //
   // prod: '192.168.100.2:8080/strzelnica/#/', // prod //
-  host: location.hostname + ':8080/shootingplace-1.0/' // test + prod + dev //
-  // host: location.hostname + ':8080/' // test + prod + dev //
+  // host: location.hostname + ':8080/shootingplace-1.0/' // test + prod + dev //
+  host: location.hostname + ':8080/' // test + prod + dev //
 
 }
 
