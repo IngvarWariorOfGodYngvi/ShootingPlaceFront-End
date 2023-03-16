@@ -1234,7 +1234,7 @@ import SkeletonBox from 'src/utils/SkeletonBox.vue'
 export default {
   components: {
     SingleCompetition: lazyLoadComponent({
-      componentFactory: () => import('components/SingleCompetition.vue'),
+      componentFactory: () => import('components/tournament/SingleCompetition.vue'),
       loading: SkeletonBox
     })
   },

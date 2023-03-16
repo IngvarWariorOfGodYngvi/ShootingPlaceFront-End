@@ -15,7 +15,7 @@ export default {
   name: 'juryPanel.vue',
   components: {
     SingleCompetitionJuryPanel: lazyLoadComponent({
-      componentFactory: () => import('components/SingleCompetitionJuryPanel.vue'),
+      componentFactory: () => import('components/tournament/SingleCompetitionJuryPanel.vue'),
       loading: SkeletonBox
     })
   },

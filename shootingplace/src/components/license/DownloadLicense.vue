@@ -8,11 +8,9 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import axios from 'axios'
 import App from 'src/App.vue'
 import { isWindows } from 'mobile-device-detect'
-Vue.prototype.$axios = axios
 export default {
   name: 'downloadBtn',
   data () {

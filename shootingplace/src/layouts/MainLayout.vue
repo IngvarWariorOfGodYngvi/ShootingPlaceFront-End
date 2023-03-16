@@ -47,7 +47,7 @@
       content-style="height:100vh;"
       style="width: 50px;"
     >
-    <div class="full-height bg-secondary">
+    <div class="bg-secondary">
       <q-list class="bg-secondary">
           <q-item @click="showloading()" class="flex flex-center q-pa-md bg-primary text-white xyz1" clickable tag="a" target="_self" :href="hrefTarget" width="max">
             <div class="text-h6 text-bold text-center"><div>PROGRAM</div> STRONA GŁÓWNA</div>

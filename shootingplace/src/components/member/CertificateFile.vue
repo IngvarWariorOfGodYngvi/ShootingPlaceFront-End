@@ -8,9 +8,9 @@
           <div class="q-ml-sm full-width text-h5 text-bold text-center">Wybierz zaświadczenie</div>
         </q-card-section>
         <q-card-section>
-          <q-select class="full-width" options-dense :dark="darkSet()" filled v-model="certificateChoice" label-color="positive" color="positive" input-class="text-positive"
-                    label="Wybierz rodzaj zaświadczenia" fill-input popup-content-class="bg-dark text-positive"
-                    :options="certificateChoices">
+          <q-select class="full-width" options-dense :dark="darkSet()" filled label-color="positive" color="positive" input-class="text-positive"
+                    fill-input popup-content-class="bg-dark text-positive" options-selected-class="bg-dark text-positive" :options-dark="darkSet()"
+                    label="Wybierz rodzaj zaświadczenia" :options="certificateChoices" v-model="certificateChoice">
           </q-select>
         </q-card-section>
         <q-card-section class="row items-center">
@@ -67,7 +67,7 @@ export default {
       download: false,
       dialog: false,
       certificateDownload: false,
-      certificateChoices: [{ label: 'ZAŚWIADCZENIE ZWYKŁE', disable: false }, { label: 'BROŃ SPORTOWA DO CELÓW SPORTOWYCH', disable: false }, { label: 'BROŃ SPORTOWA DO CELÓW KOLEKCJONERSKICH', disable: true }, { label: 'BROŃ CIĘCIWOWA W POSTACI KUSZ', disable: true }],
+      certificateChoices: [{ label: 'ZAŚWIADCZENIE ZWYKŁE', disable: false }, { label: 'BROŃ SPORTOWA DO CELÓW SPORTOWYCH', disable: false }, { label: 'BROŃ SPORTOWA DO CELÓW KOLEKCJONERSKICH', disable: false }, { label: 'BROŃ CIĘCIWOWA W POSTACI KUSZ', disable: false }],
       certificateChoice: null,
       city: 'Łódź',
       cities: ['Białystok', 'Bydgoszcz', 'Gdańsk', 'Gorzów Wielkopolski', 'Katowice', 'Kielce', 'Kraków', 'Lublin', 'Łódź', 'Olsztyn', 'Opole', 'Poznań', 'Rzeszów', 'Szczecin', 'Warszawa', 'Wrocław'],

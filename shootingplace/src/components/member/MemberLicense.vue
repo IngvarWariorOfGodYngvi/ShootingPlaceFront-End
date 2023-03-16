@@ -1,53 +1,86 @@
 <template>
   <div class="col-4">
     <q-card-section class="items-center" :style="mobile?'':'height: 80vh'">
-      <q-item-section class="col" v-if="license.number===null||adult">
-        <div v-if="shootingPatent.patentNumber!=null" class="col"
-             @dblclick="main&&!mobile?'':editLicense=true">
-          <q-field dense class="col" standout="bg-accent text-positive" color="positive" label-color="positive" stack-label>
-            <div class="self-center col full-width no-outline text-center" >Licencja</div>
+      <q-item-section class="col">
+        <div @dblclick="main&&!mobile?editLicense=true:''" class="full-width text-center">
+          <q-field dense class="col" standout="bg-accent text-positive" color="positive" label-color="positive"
+                   stack-label>
+            <div class="self-center full-width text-center">Licencja</div>
           </q-field>
-        </div>
-        <div v-if="shootingPatent.patentNumber==null"
-             @dblclick="zeditLicense=true"
-             class="col">
-          <q-field class="col" standout="bg-accent text-positive" color="positive" label-color="positive" stack-label>
-            <div class="self-center col full-width no-outline text-center">Licencja</div>
-            <q-tooltip v-if="adult" content-class="text-body2 text-center" self="top middle"
-                       anchor="top middle" :offset="[12, 12]">Klubowicz nie ma patentu<p>wprowadź patent aby móc dodać
-              licencję</p></q-tooltip>
-          </q-field>
-        </div>
-        <div>
           <div class="row">
             <div class="col">
-              <q-field dense class="col" v-if="license.number!=null" color="positive" label-color="positive" label="Numer Licencji"
+              <q-field dense class="col" v-if="license.number!=null" color="positive" label-color="positive"
+                       label="Numer Licencji i Ważność" label-slot
                        standout="bg-accent text-positive" stack-label>
                 <div class="self-center col full-width no-outline text-left">
                   {{ license.number }}
                 </div>
+                <div class="self-center col full-width no-outline text-left">
+                  {{ convertDate(license.validThru) }}
+                </div>
               </q-field>
             </div>
-            <q-field dense class="col" v-if="license.validThru!=null" color="positive" label-color="positive" label="Ważna do :"
-                     standout="bg-accent text-positive" stack-label>
-              <div class="self-center col full-width no-outline text-left">
-                {{ convertDate(license.validThru) }}
-              </div>
-            </q-field>
           </div>
           <div
             v-if="shootingPatent.pistolPermission === true || shootingPatent.riflePermission === true || shootingPatent.shotgunPermission === true"
             class="row">
-            <q-field dense label="Dyscypliny" class="col" standout="bg-accent text-positive" color="positive" label-color="positive" stack-label>
-              <div v-if="license.pistolPermission" class="self-center text-center col-4 no-outline">Pistolet
+            <q-field dense label="Dyscypliny" class="col" standout="bg-accent text-positive" color="positive"
+                     label-color="positive" stack-label>
+              <div v-if="license.pistolPermission" class="self-center text-center col-4">Pistolet
               </div>
-              <div v-if="license.riflePermission" class="self-center text-center col-4 no-outline">Karabin
+              <div v-if="license.riflePermission" class="self-center text-center col-4">Karabin
               </div>
-              <div v-if="license.shotgunPermission" class="self-center text-center col-4 no-outline">Strzelba
+              <div v-if="license.shotgunPermission" class="self-center text-center col-4">Strzelba
               </div>
             </q-field>
           </div>
         </div>
+        <!--        <div v-if="shootingPatent.patentNumber!=null&&adult" class="col"-->
+        <!--             @dblclick="main&&!mobile?'':editLicense=true">-->
+        <!--          <q-field dense class="col" standout="bg-accent text-positive" color="positive" label-color="positive" stack-label>-->
+        <!--            <div class="self-center col full-width no-outline text-center" >Licencja</div>-->
+        <!--          </q-field>-->
+        <!--        </div>-->
+        <!--        <div v-if="shootingPatent==null||!adult"-->
+        <!--             @dblclick="editLicense=true"-->
+        <!--             class="col">-->
+        <!--          <q-field class="col" standout="bg-accent text-positive" color="positive" label-color="positive" stack-label>-->
+        <!--            <div class="self-center col full-width no-outline text-center" @dblclick="main&&!mobile?'':editLicense=true">Licencja</div>-->
+        <!--            <q-tooltip v-if="adult" content-class="text-body2 text-center" self="top middle"-->
+        <!--                       anchor="top middle" :offset="[12, 12]">Klubowicz nie ma patentu<p>wprowadź patent aby móc dodać-->
+        <!--              licencję</p></q-tooltip>-->
+        <!--          </q-field>-->
+        <!--        </div>-->
+        <!--        <div>-->
+        <!--          <div class="row">-->
+        <!--            <div class="col">-->
+        <!--              <q-field dense class="col" v-if="license.number!=null" color="positive" label-color="positive" label="Numer Licencji"-->
+        <!--                       standout="bg-accent text-positive" stack-label>-->
+        <!--                <div class="self-center col full-width no-outline text-left">-->
+        <!--                  {{ license.number }}-->
+        <!--                </div>-->
+        <!--              </q-field>-->
+        <!--            </div>-->
+        <!--            <q-field dense class="col" v-if="license.validThru!=null" color="positive" label-color="positive" label="Ważna do :"-->
+        <!--                     standout="bg-accent text-positive" stack-label>-->
+        <!--              <div class="self-center col full-width no-outline text-left">-->
+        <!--                {{ convertDate(license.validThru) }}-->
+        <!--              </div>-->
+        <!--            </q-field>-->
+        <!--          </div>-->
+        <!--          <div-->
+        <!--            v-if="shootingPatent.pistolPermission === true || shootingPatent.riflePermission === true || shootingPatent.shotgunPermission === true"-->
+        <!--            class="row">-->
+        <!--            <q-field dense label="Dyscypliny" class="col" standout="bg-accent text-positive" color="positive" label-color="positive" stack-label>-->
+        <!--              <div v-if="license.pistolPermission" class="self-center text-center col-4 no-outline">Pistolet-->
+        <!--              </div>-->
+        <!--              <div v-if="license.riflePermission" class="self-center text-center col-4 no-outline">Karabin-->
+        <!--              </div>-->
+        <!--              <div v-if="license.shotgunPermission" class="self-center text-center col-4 no-outline">Strzelba-->
+        <!--              </div>-->
+        <!--            </q-field>-->
+        <!--          </div>-->
+        <!--        </div>-->
       </q-item-section>
       <q-btn
         v-if="((shootingPatent.patentNumber!=null&&license.number==null&&license.paid)||(!adult&&license.number==null))&&main&&!mobile"
@@ -61,7 +94,8 @@
       <q-btn class="full-width" color="primary" v-if="license.number!=null&&(
                 (!license.pistolPermission&&shootingPatent.pistolPermission)
                 ||(!license.riflePermission&&shootingPatent.riflePermission)
-                ||(!license.shotgunPermission&&shootingPatent.shotgunPermission))&&clubID===1&&main&&!mobile" label="Rozszerz Licencję" @click="
+                ||(!license.shotgunPermission&&shootingPatent.shotgunPermission))&&clubID===1&&main&&!mobile"
+             label="Rozszerz Licencję" @click="
                 patentPistolPermission1=shootingPatent.pistolPermission;
                 patentRiflePermission1=shootingPatent.riflePermission;
                 patentShotgunPermission1=shootingPatent.shotgunPermission;
@@ -84,24 +118,25 @@
                 licenseShotgunPermission1=license.shotgunPermission;
                 noDomesticStarts=true"></q-btn>
       </div>
-      <q-btn v-if="(((shootingPatent.patentNumber!==null&&license.paid===false&&clubID===1)))&&main&&!mobile&&active" class="full-width"
+      <q-btn v-if="(((license.paid===false&&clubID===1)))&&main&&!mobile&&active" class="full-width"
              label="opłać licencję" color="secondary" text-color="white" @click="licensePayment=true"></q-btn>
       <q-expansion-item dense default-opened class="bg-dark text-center text-positive"
                         v-if="licensePaymentHistory.length>0" label="Daty Opłacenia Licencji">
         <q-virtual-scroll class="full-width q-pa-none" :style="(!shootingPatent.pistolPermission
                 ||!shootingPatent.riflePermission
-                ||!shootingPatent.shotgunPermission)&&!mobile?'height: 44vh':mobile?'':'height: 54vh'" :items="licensePaymentHistory">
+                ||!shootingPatent.shotgunPermission)&&!mobile?'height: 44vh':mobile?'':'height: 54vh'"
+                          :items="licensePaymentHistory">
           <template v-slot="{ item }">
             <div v-if="item.new" class="full-width bg-warning">
               <q-field dense standout="bg-accent text-black" stack-label>
-                <div class="self-center col full-width no-outline text-center text-black" >Licencja Nowa
+                <div class="self-center col full-width no-outline text-center text-black">Licencja Nowa
                 </div>
               </q-field>
               <div class="row full-width">
                 <div class="col-5"
-                     >
+                >
                   <q-field dense label="Opłacona dnia : " standout="bg-accent text-black" stack-label>
-                    <div class="self-center col full-width no-outline text-left text-black" >
+                    <div class="self-center col full-width no-outline text-left text-black">
                       {{ convertDate(item.date) }}
                     </div>
                   </q-field>
@@ -109,7 +144,7 @@
                 <div class="col-4"
                      @dblclick="main&&!mobile?(paymentUUID = item.uuid,editLicensePaymentDate = item.date,editLicensePaymentYear = item.validForYear,editLicensePayment=true):''">
                   <q-field dense standout="bg-accent text-black" label="Na rok : " stack-label>
-                    <div class="self-center col full-width no-outline text-left text-black" >
+                    <div class="self-center col full-width no-outline text-left text-black">
                       {{ item.validForYear }}
                     </div>
                   </q-field>
@@ -118,7 +153,9 @@
                      @dblclick="main&&!mobile?(paymentUUID = item.uuid,togglePaymentAlert = true):''">
                   <q-field dense v-if="item.payInPZSSPortal" standout="bg-accent text-black" label="PZSS : "
                            stack-label>
-                    <div class="self-center col full-width no-outline text-left text-black">{{item.payInPZSSPortal?'Tak':'Nie'}}</div>
+                    <div class="self-center col full-width no-outline text-left text-black">
+                      {{ item.payInPZSSPortal ? 'Tak' : 'Nie' }}
+                    </div>
                   </q-field>
                 </div>
               </div>
@@ -126,7 +163,8 @@
             <div v-if="!item.new" class="row full-width">
               <div class="col-5"
                    @dblclick="main&&!mobile?(paymentUUID=item.uuid,editLicensePaymentDate = item.date,editLicensePaymentYear = item.validForYear,editLicensePayment=true):''">
-                <q-field dense label="Opłacona dnia : " standout="bg-accent text-positive" color="positive" label-color="positive" stack-label>
+                <q-field dense label="Opłacona dnia : " standout="bg-accent text-positive" color="positive"
+                         label-color="positive" stack-label>
                   <div class="self-center col full-width no-outline text-left">
                     {{ convertDate(item.date) }}
                   </div>
@@ -134,17 +172,22 @@
               </div>
               <div class="col-4"
                    @dblclick="main&&!mobile?(paymentUUID=item.uuid,editLicensePaymentDate = item.date,editLicensePaymentYear = item.validForYear,editLicensePayment=true):''">
-                <q-field dense standout="bg-accent text-positive" color="positive" label-color="positive" label="Na rok : " stack-label>
-                  <div class="self-center col full-width no-outline text-left" >
+                <q-field dense standout="bg-accent text-positive" color="positive" label-color="positive"
+                         label="Na rok : " stack-label>
+                  <div class="self-center col full-width no-outline text-left">
                     {{ item.validForYear }}
                   </div>
                 </q-field>
               </div>
               <div class="col-3"
                    @dblclick="main&&!mobile?(paymentUUID=item.uuid,togglePaymentAlert = true):''">
-                <q-field dense :class="item.payInPZSSPortal?'':'bg-red'" :standout="item.payInPZSSPortal?'bg-accent':'bg-red-4'" color="positive" label-color="positive" label="PZSS : "
+                <q-field dense :class="item.payInPZSSPortal?'':'bg-red'"
+                         :standout="item.payInPZSSPortal?'bg-accent':'bg-red-4'" color="positive" label-color="positive"
+                         label="PZSS : "
                          stack-label>
-                  <div class="full-width text-center" ><q-icon :name="item.payInPZSSPortal?'done':'cancel'"></q-icon></div>
+                  <div class="full-width text-center">
+                    <q-icon :name="item.payInPZSSPortal?'done':'cancel'"></q-icon>
+                  </div>
                 </q-field>
               </div>
             </div>
@@ -157,18 +200,18 @@
         <q-card-section class="col">
           <div class="text-h5 text-bold text-center">Edytuj Licencje</div>
           <div class="text-h6">Uwaga! Wprowadzając zmiany bądź pewny tego co robisz</div>
-          <div class="row bg-grey-3">
+          <div class="row bg-dark">
             <div class="q-pa-md col-6">
-              <q-input filled standout="bg-accent text-black" stack-label v-model="editLicenseNumber"
+              <q-input filled color="positive" input-class="text-positive" onkeypress="return (event.charCode > 47 && event.charCode < 58)" label-color="positive" stack-label v-model="editLicenseNumber"
                        label="Numer Licencji"></q-input>
             </div>
             <div class="q-pa-md col-6">
-              <q-input filled standout="bg-accent text-black" stack-label v-model="editLicenseDate" mask="####-12-31"
+              <q-input filled color="positive" input-class="text-positive" label-color="positive" stack-label v-model="editLicenseDate" mask="####-12-31"
                        label="Ważność licencji">
                 <template v-slot:append>
-                  <q-icon name="event" class="cursor-pointer">
+                  <q-icon name="event" class="cursor-pointer" color="positive">
                     <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                      <q-date v-model="editLicenseDate">
+                      <q-date v-model="editLicenseDate" mask="YYYY-MM-DD">
                         <div class="row items-center justify-end">
                           <q-btn v-close-popup label="Zamknij" color="primary" flat/>
                         </div>
@@ -178,18 +221,19 @@
                 </template>
               </q-input>
             </div>
-<!--            <div>-->
-<!--              <q-checkbox value="" label="Oznacz jako opłacona"/>-->
-<!--            </div>-->
+              <div>
+                <div class="text-positive">{{license.paid?'Licencja jest oznaczona jako opłacona':'Licencja jest oznaczona jako nieopłacona'}}</div>
+                <q-checkbox value="" v-model="editLicensePaid" color="primary" keep-color class="text-positive" :label="editLicensePaid==null?'Nie wybrano oznaczenia':editLicensePaid?'Oznacz Licencję jako opłaconą':'Oznacz Licencję jako nieopłaconą'"/>
+              </div>
           </div>
-          <div class="q-pa-md row full-width bg-grey-3">
+          <div class="q-pa-md row full-width">
             <q-btn class="full-width" label="wprowadź zmiany" color="primary" v-close-popup
                    @click="editLicenseCode=true"/>
           </div>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat text-color="positive"  label="zamknij" color="primary" v-close-popup/>
+          <q-btn text-color="white" label="zamknij" color="primary" v-close-popup @click="editLicensePaid=null"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -209,35 +253,36 @@
             </q-item>
           </q-card-section>
           <q-card-actions align="right">
-            <q-btn flat text-color="positive" icon="cancel" color="primary" v-close-popup/>
-            <q-btn flat text-color="positive" icon="done" color="primary" v-close-popup
+            <q-btn text-color="white" label="anuluj" color="secondary" v-close-popup/>
+            <q-btn text-color="white" label="zapisz" color="primary" v-close-popup
                    @click="addLicense(memberUUID, license.number, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission)"/>
           </q-card-actions>
         </q-card>
       </div>
-    </q-dialog><q-dialog v-model="prolongLicenseConfirm">
-    <div>
-      <q-card class="bg-dark text-positive">
-        <q-item>Przedłuż licencję</q-item>
-        <q-card-section class="col items-center">
-          <q-item v-if="licensePistolPermission1">
-            <q-checkbox v-model="licensePistolPermission" label="Pistolet"/>
-          </q-item>
-          <q-item v-if="licenseRiflePermission1">
-            <q-checkbox v-model="licenseRiflePermission" label="Karabin"/>
-          </q-item>
-          <q-item v-if="licenseShotgunPermission1">
-            <q-checkbox v-model="licenseShotgunPermission" label="Strzelba"/>
-          </q-item>
-        </q-card-section>
-        <q-card-actions align="right">
-          <q-btn flat icon="cancel" color="primary" v-close-popup/>
-          <q-btn label="Przedłuż" color="primary" v-close-popup
-                 @click="prolongLicense(memberUUID, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission)"/>
-        </q-card-actions>
-      </q-card>
-    </div>
-  </q-dialog>
+    </q-dialog>
+    <q-dialog v-model="prolongLicenseConfirm">
+      <div>
+        <q-card class="bg-dark text-positive">
+          <q-item>Przedłuż licencję</q-item>
+          <q-card-section class="col items-center">
+            <q-item v-if="licensePistolPermission1">
+              <q-checkbox v-model="licensePistolPermission" label="Pistolet"/>
+            </q-item>
+            <q-item v-if="licenseRiflePermission1">
+              <q-checkbox v-model="licenseRiflePermission" label="Karabin"/>
+            </q-item>
+            <q-item v-if="licenseShotgunPermission1">
+              <q-checkbox v-model="licenseShotgunPermission" label="Strzelba"/>
+            </q-item>
+          </q-card-section>
+          <q-card-actions align="right">
+            <q-btn label="anuluj" color="secondary" v-close-popup/>
+            <q-btn label="Przedłuż" color="primary" v-close-popup
+                   @click="prolongLicense(memberUUID, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission)"/>
+          </q-card-actions>
+        </q-card>
+      </div>
+    </q-dialog>
     <q-dialog v-model="licenseConfirm">
       <div>
         <q-card>
@@ -260,8 +305,8 @@
             </q-item>
           </q-card-section>
           <q-card-actions align="right">
-            <q-btn flat icon="cancel" color="primary" v-close-popup/>
-            <q-btn flat label="Dodaj" color="primary" v-close-popup
+            <q-btn label="anuluj" color="secondary" v-close-popup/>
+            <q-btn label="Dodaj" color="primary" v-close-popup
                    @click="addLicense(memberUUID, newLicenseNumber, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission)"/>
           </q-card-actions>
         </q-card>
@@ -272,7 +317,8 @@
         <h4 class="text-bold text-center">Klubowicz nie ma zaliczonej wymaganej ilości startów </h4>
         <h4 class="text-bold text-center">Upewnij się, że klubowicz może udokumentować swoje starty</h4>
         <q-card-actions align="right">
-          <q-btn flat text-color="positive" label="zamknij" color="primary" v-close-popup @click="prolongLicenseConfirm=true"/>
+          <q-btn flat text-color="positive" label="zamknij" color="primary" v-close-popup
+                 @click="prolongLicenseConfirm=true"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -284,8 +330,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat class="text-positive" icon="cancel" color="primary" v-close-popup/>
-          <q-btn flat class="text-positive" label="Tak" color="primary" v-close-popup @click="licensePaymentCode=true"/>
+          <q-btn label="anuluj" color="secondary" v-close-popup/>
+          <q-btn label="Tak" color="primary" v-close-popup @click="licensePaymentCode=true"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -294,14 +340,16 @@
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
           <div>
-            <q-input @keypress.enter="licensePaymentCode=false;addLicenseHistoryPayment (memberUUID, code)" autofocus type="password" v-model="code" filled
+            <q-input @keypress.enter="licensePaymentCode=false;addLicenseHistoryPayment (memberUUID, code)" autofocus
+                     type="password" v-model="code" filled
                      color="Yellow" class="bg-yellow text-bold" mask="####"></q-input>
           </div>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn icon="cancel" color="black" v-close-popup @click="code=null"/>
-          <q-btn id="3" label="OK" color="black" v-close-popup @click="licensePaymentCode=false;addLicenseHistoryPayment (memberUUID, code)"/>
+          <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
+          <q-btn label="OK" color="black" v-close-popup
+                 @click="licensePaymentCode=false;addLicenseHistoryPayment (memberUUID, code)"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -357,7 +405,8 @@
 
         <q-card-actions align="right">
           <q-btn text-color="positive" flat label="nie" color="primary" v-close-popup/>
-          <q-btn text-color="positive" label="tak" color="primary" v-close-popup @click="toggleHistoryPaymentCode = true"/>
+          <q-btn text-color="positive" label="tak" color="primary" v-close-popup
+                 @click="toggleHistoryPaymentCode = true"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -377,7 +426,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog :position="'top'" v-model="failure">
+    <q-dialog position="top" v-model="failure">
       <q-card class="bg-dark text-positive">
         <q-card-section>
           <div v-if="message!=null" class="text-h6">{{ message }}</div>
@@ -385,7 +434,7 @@
 
       </q-card>
     </q-dialog>
-    <q-dialog :position="'top'" v-model="success">
+    <q-dialog position="top" v-model="success">
       <q-card class="bg-dark text-positive">
         <q-card-section>
           <div v-if="message!=null" class="text-h6">{{ message }}</div>
@@ -398,14 +447,14 @@
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
           <div>
-            <q-input @keypress.enter="forceUpdateLicence();editLicenseCode=false" autofocus type="password"
+            <q-input @keypress.enter="forceUpdateLicence(memberUUID, editLicenseNumber, editLicenseDate, editLicensePaid);editLicenseCode=false" autofocus type="password"
                      v-model="code" filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input>
           </div>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn icon="cancel" color="black" v-close-popup @click="code=null"/>
-          <q-btn id="3" label="Wprowadź zmiany" color="black" v-close-popup @click="forceUpdateLicence()"/>
+          <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
+          <q-btn label="OK" color="black" v-close-popup @click="forceUpdateLicence(memberUUID, editLicenseNumber, editLicenseDate, editLicensePaid)"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -433,7 +482,8 @@
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
           <h3><span class="q-ml-sm">Usuń wpłatę</span></h3>
           <div>
-            <q-input @keypress.enter="deleteLicenseHistoryPayment(paymentUUID);code=null;deleteLicensePaymentCode=false" autofocus
+            <q-input @keypress.enter="deleteLicenseHistoryPayment(paymentUUID);code=null;deleteLicensePaymentCode=false"
+                     autofocus
                      type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold"
                      mask="####"></q-input>
           </div>
@@ -452,6 +502,7 @@
 <script>
 import App from 'src/App'
 import { isWindows } from 'mobile-device-detect'
+
 export default {
   name: 'MemberLicense.vue',
   data () {
@@ -465,6 +516,7 @@ export default {
       newLicenseNumber: '',
       editLicenseNumber: '',
       editLicenseDate: '',
+      editLicensePaid: null,
       licensePaymentCode: false,
       editLicenseCode: false,
       togglePaymentAlert: false,
@@ -535,6 +587,7 @@ export default {
     }
   },
   methods: {
+    log (v) { console.log(v) },
     convertDate (date) {
       const current = new Date(date)
       let month = current.getMonth() + 1
@@ -751,8 +804,8 @@ export default {
         }
       })
     },
-    forceUpdateLicence () {
-      fetch('http://' + this.local + '/license/forceUpdate?memberUUID=' + this.memberUUID + '&number=' + this.editLicenseNumber + '&date=' + this.editLicenseDate.replace(/\//gi, '-') + '&pinCode=' + this.code, {
+    forceUpdateLicence (uuid, number, date, paid) {
+      fetch('http://' + this.local + '/license/forceUpdate?memberUUID=' + uuid + '&number=' + number + '&date=' + date.replace(/\//gi, '-') + '&isPaid=' + paid + '&pinCode=' + this.code, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -763,15 +816,15 @@ export default {
             response => {
               this.message = response
               this.success = true
-              this.editLicenseNumber = null
-              this.editLicenseDate = null
+              this.editLicenseNumber = ''
+              this.editLicenseDate = ''
+              this.editLicensePaid = null
               this.code = null
               this.getLicense(this.license.uuid)
               this.getLicensePaymentHistory(this.memberUUID)
               this.autoClose()
             })
-        }
-        if (response.status === 400) {
+        } else {
           response.text().then(
             response => {
               this.message = response

@@ -115,13 +115,7 @@
 
 <script>
 
-import { scroll } from 'quasar'
-const { getScrollTarget, setScrollPosition } = scroll
-import Vue from 'vue'
-import axios from 'axios'
 import App from 'src/App.vue'
-Vue.prototype.$axios = axios
-
 export default {
   data () {
     return {
@@ -145,13 +139,6 @@ export default {
         this.$q.loading.hide()
         this.timer = 0
       }, 1000)
-    },
-    handleScroll (search) {
-      const ele = document.getElementById(search)
-      const target = getScrollTarget(ele)
-      const offset = ele.offsetTop - ele.scrollHeight
-      const duration = 500
-      setScrollPosition(target, offset, duration)
     },
     getListMembers () {
       fetch('http://' + this.local + '/member/membersWithPermissions', {

@@ -275,7 +275,7 @@
           <q-item dense><q-radio dense v-model="ordinal" :val="3" label="Klasa 1" color="secondary" /></q-item>
           <q-item dense><q-radio dense v-model="ordinal" :val="4" label="Klasa Państwowa" color="secondary" /></q-item>
           <q-item dense><q-radio dense v-model="ordinal" :val="5" label="Klasa Międzynarodowa" color="secondary" /></q-item>
-          <q-item dense><q-btn label="Dodaj" color="secondary" @click="showloading(),updateMemberPermissions(uuid, permissionsArbiterNumber,permissionsArbiterPermissionValidThru, ordinal)"/></q-item>
+          <q-item dense><q-btn label="Dodaj" color="secondary" @click="showloading();updateMemberPermissions(uuid, permissionsArbiterNumber,permissionsArbiterPermissionValidThru, ordinal)"/></q-item>
         </div>
       </q-card-section>
       </q-card>
@@ -312,7 +312,7 @@
         </q-card-section>
       </q-card>
 </q-dialog>
-<q-dialog v-model="pzssPortal" persistent @keypress.enter="changePzss (uuid),pzssPortal=false">
+<q-dialog v-model="pzssPortal" persistent @keypress.enter="changePzss (uuid);pzssPortal=false">
       <q-card class="bg-dark text-positive">
         <q-card-section class="row items-center">
           <q-avatar icon="add" color="primary"/>

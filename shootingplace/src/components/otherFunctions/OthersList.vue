@@ -28,7 +28,7 @@
                   <div class="self-center col full-width no-outline text-left text-black row" tabindex="1">{{others.email}}</div>
                 </div>
               </q-field>
-              <q-btn dense class="col-1" color="primary" @click="othersID = others.id;alert=true" icon="delete"><q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">Usuń</q-tooltip></q-btn>
+              <q-btn dense class="col-1" color="primary" @click="othersID = others.id;alertDial=true" icon="delete"><q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">Usuń</q-tooltip></q-btn>
               <q-btn dense class="col-1" color="secondary" @click="othersID = others.id;otherPersonFirstName = others.firstName;otherPersonSecondName = others.secondName;otherPersonPhoneNumber = others.phoneNumber;otherPersonEmail = others.email;clubNamePerson = others.club.name;getAllClubsToTournament();editOtherPerson=true" icon="edit"><q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">Edytuj</q-tooltip></q-btn>
             </div>
             <p></p>
@@ -56,7 +56,7 @@
       </q-card-actions>
     </q-card>
   </q-dialog>
-    <q-dialog v-model="alert">
+    <q-dialog v-model="alertDial">
       <q-card>
         <q-card-section>
           <div class="text-h6">Czy na pewno usunąć? Zmiana będzie trwała.</div>
@@ -113,7 +113,7 @@ export default {
       clubNames: [],
       filterOptions: [],
       othersID: null,
-      alert: false,
+      alertDial: false,
       success: false,
       failure: false,
       message: null,

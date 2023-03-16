@@ -24,7 +24,7 @@
         </q-item-label>
         <div v-if="member.imageUUID!=null">
           <q-btn color="primary" label="zmień zdjęcie">
-            <q-popup-edit v-model="picture">
+            <q-popup-edit>
               <q-uploader style="width:100%;height:100%" method="POST"
                           :url="('http://' + local + '/files/member/' + member.uuid)"
                           label="Dodaj zdjęcie / max 400KB" max-file-size="409600" accept=".jpg, image/*"
@@ -52,7 +52,7 @@
     <q-card bordered :class="mobile?'col bg-dark':'row bg-dark'" >
       <q-card-section class="col-3">
         <q-field dense class="col" standout="bg-accent text-positive" color="positive" label-color="positive" stack-label>
-          <div class="self-center col full-width no-outline text-center">Historia Składek</div>
+          <div class="self-center full-width text-center">Historia Składek</div>
         </q-field>
         <div v-if="!member.erased&&main&&!mobile">
           <div>
@@ -223,7 +223,7 @@
               <div v-if="!member.erased" class="row">
               <q-input dense
                        @keypress.enter="memberUUID=member.uuid;legNumber=member.legitimationNumber; addAmmoConfirm=true"
-                       ref="search" filled class="full-width col" color="positive" label-color="positive" input-class="text-positive" v-model="quantity"
+                       filled class="full-width col" color="positive" label-color="positive" input-class="text-positive" v-model="quantity"
                        placeholder="Tylko cyfry" onkeypress="return (event.charCode > 44 && event.charCode < 58)"
                        label="Ilość Amunicji"></q-input>
               <q-btn dense class="full-width col" color="primary" label="wydaj amunicję"
@@ -241,7 +241,6 @@
                 patentPistolPermission1=member.shootingPatent.pistolPermission;
                 patentRiflePermission1=member.shootingPatent.riflePermission;
                 patentShotgunPermission1=member.shootingPatent.shotgunPermission;
-                memberAdultConfirm=member.adult;
                 patentConfirm2=true">
             </q-btn>
             <q-btn class="full-width" color="primary" v-else
@@ -346,7 +345,7 @@
                   <q-radio dense class="flex" v-if="member.memberPermissions.arbiterNumber==null" v-model="ordinal"
                            :val="2" label="Klasa 2" color="primary"/>
                   <q-radio dense class="flex" v-if="member.memberPermissions.arbiterNumber==null" v-model="ordinal"
-                           :val="3" label="Klasa 1" color="secoprimaryndary"/>
+                           :val="3" label="Klasa 1" color="primary"/>
                   <q-radio dense class="flex" v-if="member.memberPermissions.arbiterNumber==null" v-model="ordinal"
                            :val="4" label="Klasa Państwowa" color="primary"/>
                   <q-radio dense class="flex" v-if="member.memberPermissions.arbiterNumber==null" v-model="ordinal"
@@ -703,7 +702,7 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn text-color="positive" flat icon="cancel" color="primary" v-close-popup/>
+          <q-btn text-color="positive" label="anuluj" color="secondary" v-close-popup/>
           <q-btn text-color="positive" label="przedłuż" color="primary" v-close-popup @click="contributionCode=true"/>
         </q-card-actions>
       </q-card>
@@ -717,7 +716,7 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn icon="cancel" color="black" v-close-popup @click="code=null"/>
+          <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
           <q-btn label="Przedłuż" color="black" v-close-popup @click="prolongContribution(memberUUID);code=null"/>
         </q-card-actions>
       </q-card>
@@ -733,7 +732,7 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn icon="cancel" color="black" v-close-popup @click="code=null"/>
+          <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
           <q-btn label="Przedłuż" color="black" v-close-popup
                  @click="addHistoryContributionRecord (memberUUID, historyContributionRecord);code=null"/>
         </q-card-actions>
@@ -767,8 +766,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn text-color="white" icon="cancel" color="secondary" v-close-popup/>
-          <q-btn text-color="white" icon="done" color="primary" v-close-popup @click="addressConfirm1=true"/>
+          <q-btn text-color="white" label="anuluj" color="secondary" v-close-popup/>
+          <q-btn text-color="white" label="zapisz" color="primary" v-close-popup @click="addressConfirm1=true"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -780,8 +779,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat icon="cancel" color="primary" v-close-popup/>
-          <q-btn flat label="zmień" color="primary" v-close-popup @click="updateMember(memberUUID, memberEmail, memberPhoneNumber);
+          <q-btn label="anuluj" color="secondary" v-close-popup/>
+          <q-btn label="zmień" color="primary" v-close-popup @click="updateMember(memberUUID, memberEmail, memberPhoneNumber);
                 updateAddress(memberUUID, memberZipCode, memberPostOfficeCity, memberStreet, memberStreetNumber, memberFlatNumber)"/>
         </q-card-actions>
       </q-card>
@@ -794,7 +793,7 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat label="nie" color="primary" v-close-popup/>
+          <q-btn label="nie" color="primary" v-close-popup/>
           <q-btn label="tak" color="primary" v-close-popup @click="changePzss (memberUUID)"/>
         </q-card-actions>
       </q-card>
@@ -817,7 +816,7 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn text-color="white" icon="cancel" color="secondary" v-close-popup/>
+          <q-btn text-color="white" label="anuluj" color="secondary" v-close-popup/>
           <q-btn text-color="white" icon="done" color="primary" v-close-popup @click="basicDataConfirm1=true"/>
         </q-card-actions>
       </q-card>
@@ -825,13 +824,12 @@
     <q-dialog v-model="basicDataConfirm1" persistent>
       <q-card>
         <q-card-section class="row items-center">
-          <q-avatar icon="add" color="primary"/>
           <span class="q-ml-sm">Czy na pewno zmienić dane podstawowe?</span>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn text-color="white" icon="cancel" color="secondary" v-close-popup/>
-          <q-btn text-color="white" icon="done" color="primary" v-close-popup
+          <q-btn text-color="white" label="anuluj" color="secondary" v-close-popup/>
+          <q-btn text-color="white" label="zapisz" color="primary" v-close-popup
                  @click="updateIDCardAndName(memberUUID,memberIdCard,memberFirstName,memberSecondName)"/>
         </q-card-actions>
       </q-card>
@@ -844,8 +842,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat icon="cancel" color="primary" v-close-popup/>
-          <q-btn flat label="przenieś" color="primary" v-close-popup @click="activeCode=true"/>
+          <q-btn label="anuluj" color="secondary" v-close-popup/>
+          <q-btn label="przenieś" color="primary" v-close-popup @click="activeCode=true"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -857,8 +855,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat icon="cancel" color="primary" v-close-popup/>
-          <q-btn flat label="przywróć" color="primary" v-close-popup @click="activeCode=true"/>
+          <q-btn label="anuluj" color="secondary" v-close-popup/>
+          <q-btn label="przywróć" color="primary" v-close-popup @click="activeCode=true"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -871,7 +869,7 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn icon="cancel" color="black" v-close-popup @click="code=null"/>
+          <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
           <q-btn label="Przenieś" color="black" v-close-popup @click="changeActive (memberUUID);code=null"/>
         </q-card-actions>
       </q-card>
@@ -884,8 +882,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat icon="cancel" color="primary" v-close-popup/>
-          <q-btn flat label="usuń" color="primary" v-close-popup @click="removeWeaponPermissionOrAdmission()"/>
+          <q-btn label="anuluj" color="secondary" v-close-popup/>
+          <q-btn label="usuń" color="primary" v-close-popup @click="removeWeaponPermissionOrAdmission()"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -897,8 +895,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat icon="cancel" color="primary" v-close-popup/>
-          <q-btn flat label="usuń" color="primary" v-close-popup @click="removeWeaponPermissionOrAdmission()"/>
+          <q-btn label="anuluj" color="secondary" v-close-popup/>
+          <q-btn label="usuń" color="primary" v-close-popup @click="removeWeaponPermissionOrAdmission()"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -911,8 +909,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat icon="cancel" color="primary" v-close-popup/>
-          <q-btn flat label="Tak" color="primary" v-close-popup
+          <q-btn label="anuluj" color="secondary" v-close-popup/>
+          <q-btn label="Tak" color="primary" v-close-popup
                  @click="updateMemberPermissions(memberUUID, permissionsInstructorNumber);value=true"/>
         </q-card-actions>
       </q-card>
@@ -926,8 +924,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat icon="cancel" color="primary" v-close-popup/>
-          <q-btn flat label="Tak" color="primary" v-close-popup
+          <q-btn label="anuluj" color="secondary" v-close-popup/>
+          <q-btn label="Tak" color="primary" v-close-popup
                  @click="updateMemberPermissions(memberUUID, permissionsShootingLeaderNumber);value1=true"/>
         </q-card-actions>
       </q-card>
@@ -941,8 +939,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat icon="cancel" color="primary" v-close-popup/>
-          <q-btn flat label="Tak" color="primary" v-close-popup
+          <q-btn label="anuluj" color="secondary" v-close-popup/>
+          <q-btn label="Tak" color="primary" v-close-popup
                  @click="updateMemberPermissions(memberUUID, permissionsArbiterNumber, permissionsArbiterPermissionValidThru)"/>
         </q-card-actions>
       </q-card>
@@ -956,7 +954,7 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat icon="cancel" color="primary" v-close-popup/>
+          <q-btn label="anuluj" color="secondary" v-close-popup/>
           <q-btn label="Przedłuż" color="primary" v-close-popup
                  @click="updateMemberPermissions(memberUUID, permissionsArbiterPermissionValidThru);value3=true"/>
         </q-card-actions>
@@ -971,8 +969,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat icon="cancel" color="primary" v-close-popup/>
-          <q-btn flat label="podnieś" color="primary" v-close-popup @click="updateMemberArbiterClass(memberUUID)"/>
+          <q-btn label="anuluj" color="secondary" v-close-popup/>
+          <q-btn label="podnieś" color="primary" v-close-popup @click="updateMemberArbiterClass(memberUUID)"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -984,8 +982,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat icon="cancel" color="white" v-close-popup/>
-          <q-btn flat label="usuń" color="white" v-close-popup @click="eraseCode=true"/>
+          <q-btn label="anuluj" color="white" v-close-popup/>
+          <q-btn label="usuń" color="white" v-close-popup @click="eraseCode=true"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -996,8 +994,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat icon="cancel" color="white" v-close-popup/>
-          <q-btn flat label="przywróć" color="white" v-close-popup @click="eraseCode=true"/>
+          <q-btn label="anuluj" color="white" v-close-popup/>
+          <q-btn label="przywróć" color="white" v-close-popup @click="eraseCode=true"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -1010,21 +1008,20 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn icon="cancel" color="black" v-close-popup @click="code=null"/>
+          <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
           <q-btn label="skreśl" color="black" v-close-popup @click="eraseMember(memberUUID);code=null"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="changeAdultConfirm" persistent @keypress.enter="changeAdultCode=true;changeAdultConfirm=false">
-      <q-card>
+    <q-dialog v-model="changeAdultConfirm" @keypress.enter="changeAdultCode=true;changeAdultConfirm=false">
+      <q-card class="bg-dark text-positive text-body2">
         <q-card-section class="row items-center">
-          <q-avatar icon="warning"/>
-          <span class="q-ml-sm">Czy na pewno chcesz przenieść Klubowicza do grupy powszechnej?</span>
+          <span class="q-ml-sm">Czy na pewno chcesz przenieść Klubowicza do grupy Ogólnej?</span>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat icon="cancel" color="primary" v-close-popup/>
-          <q-btn flat label="Przenieś" color="primary" v-close-popup @click="changeAdultCode=true"/>
+          <q-btn text-color="white" label="anuluj" color="secondary" v-close-popup/>
+          <q-btn text-color="white" label="Przenieś" color="primary" v-close-popup @click="changeAdultCode=true"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -1037,12 +1034,12 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn icon="cancel" color="black" v-close-popup @click="code=null"/>
-          <q-btn label="Przedłuż" color="black" v-close-popup @click="changeAdult(memberUUID);code=null"/>
+          <q-btn text-color="white" label="anuluj" color="black" v-close-popup @click="code=null"/>
+          <q-btn text-color="white" label="Przedłuż" color="black" v-close-popup @click="changeAdult(memberUUID);code=null"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="contributionDownloadConfirm" persistent
+    <q-dialog v-model="contributionDownloadConfirm"
               @keypress.enter="contributionDownloadConfirm=false;getContributionPDF()">
       <q-card>
         <q-card-section class="row items-center">
@@ -1050,8 +1047,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat icon="cancel" color="primary" v-close-popup/>
-          <q-btn flat label="Pobierz" color="primary" v-close-popup @click="getContributionPDF()"/>
+          <q-btn label="anuluj" color="secondary" v-close-popup/>
+          <q-btn label="Pobierz" color="primary" v-close-popup @click="getContributionPDF()"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -1062,7 +1059,7 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn text-color="positive" flat icon="cancel" color="primary" v-close-popup/>
+          <q-btn text-color="positive" label="anuluj" color="secondary" v-close-popup/>
           <q-btn text-color="positive" label="wydaj" color="primary" v-close-popup @click="addMemberAndAmmoToCaliber()"/>
         </q-card-actions>
       </q-card>
@@ -1105,8 +1102,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat icon="cancel" color="primary" v-close-popup/>
-          <q-btn flat label="Dodaj" color="primary" v-close-popup @click="patentConfirm1=true"/>
+          <q-btn label="anuluj" color="secondary" v-close-popup/>
+          <q-btn label="Dodaj" color="primary" v-close-popup @click="patentConfirm1=true"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -1148,7 +1145,7 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn text-color="white" flat icon="cancel" color="primary" v-close-popup/>
+          <q-btn text-color="white" flat label="anuluj" color="secondary" v-close-popup/>
           <q-btn text-color="white" label="Dodaj" color="primary" v-close-popup @click="patentConfirm1=true"/>
         </q-card-actions>
       </q-card>
@@ -1161,20 +1158,13 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat icon="cancel" color="primary" v-close-popup/>
-          <q-btn flat label="Dodaj" color="primary" v-close-popup
+          <q-btn label="anuluj" color="secondary" v-close-popup/>
+          <q-btn label="Dodaj" color="primary" v-close-popup
                  @click="addPatent(memberUUID, patentNumber, patentPistolPermission, patentRiflePermission, patentShotgunPermission,patentDate)"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog :position="'top'" v-model="downloaded">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Pobrano</div>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
-    <q-dialog v-model="contributionAlert" :position="'top'">
+    <q-dialog v-model="contributionAlert" position="top">
       <q-card>
         <q-card-section>
           <div class="text-h6">Składka została przedłużona</div>
@@ -1189,7 +1179,7 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn icon="cancel" color="black" v-close-popup/>
+          <q-btn label="anuluj" color="black" v-close-popup/>
           <q-btn label="Usuń" color="black" v-close-popup @click="contributionRemoveRecordQueryCode=true"/>
         </q-card-actions>
       </q-card>
@@ -1206,23 +1196,12 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn icon="cancel" color="black" v-close-popup @click="code=null"/>
+          <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
           <q-btn id="3" label="Usuń" color="black" v-close-popup @click="removeContributionRecord()"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="eraseAlert">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Wykonano. Nastąpi przeładowanie</div>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup/>
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-    <q-dialog :position="'top'" v-model="failure">
+    <q-dialog position="top" v-model="failure">
       <q-card>
         <q-card-section>
           <div v-if="message!=null" class="text-h6">{{ message }}</div>
@@ -1230,16 +1209,8 @@
 
       </q-card>
     </q-dialog>
-    <q-dialog :position="'top'" v-model="success">
+    <q-dialog position="top" v-model="success">
       <q-card>
-        <q-card-section>
-          <div v-if="message!=null" class="text-h6">{{ message }}</div>
-        </q-card-section>
-
-      </q-card>
-    </q-dialog>
-    <q-dialog :position="'top'" v-model="forbidden">
-      <q-card class="bg-warning">
         <q-card-section>
           <div v-if="message!=null" class="text-h6">{{ message }}</div>
         </q-card-section>
@@ -1320,7 +1291,7 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn icon="cancel" color="black" v-close-popup @click="code=null"/>
+          <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
           <q-btn id="3" label="Wprowadź zmiany" color="black" v-close-popup
                  @click="editContributionRecord(); code=null"/>
         </q-card-actions>
@@ -1330,18 +1301,11 @@
 </template>
 <style src="src/style/style.scss" lang="scss"></style>
 <script>
-import { scroll } from 'quasar'
 import axios from 'axios'
 import App from 'src/App.vue'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox.vue'
 import { isWindows } from 'mobile-device-detect'
-
-const {
-  getScrollTarget,
-  setScrollPosition
-} = scroll
-
 export default {
   name: 'Member',
   components: {
@@ -1380,43 +1344,30 @@ export default {
       main: App.main,
       member: null,
       memberUUID: null,
-      picture: false,
-      socialWork: true,
       editContribution: false,
       editContributionPaymentDate: null,
       editContributionValidThruDate: null,
       editContributionCode: false,
-      filters: [],
-      options: [],
       memberName: '',
       name: null,
       name2: null,
-      active: null,
-      adult: null,
-      erase: false,
       value: false,
       value1: false,
       value2: false,
       value3: false,
-      value4: false,
       changeAdultConfirm: false,
       changeAdultCode: false,
-      eraseAlert: false,
-      backAlert: false,
       eraseConfirm: false,
       eraseBackConfirm: false,
       eraseCode: false,
       resurrectCode: false,
       backConfirm: false,
       activeCode: false,
-      contributionRecord: '',
       contributionUUID: null,
       basicDataConfirm: false,
       basicDataConfirm1: false,
       contributionAlert: false,
       contributionDownloadConfirm: false,
-      contributionConfirmDownloadAlert: false,
-      personalCardDownloadConfirm: false,
       addressConfirm: false,
       addressConfirm1: false,
       historyContributionRecord: Date.now,
@@ -1430,7 +1381,6 @@ export default {
       patentConfirm1: false,
       patentConfirm2: false,
       contribution: false,
-      certificates: false,
       contributionCode: false,
       contributionHistoryCode: false,
       deactivate: false,
@@ -1445,12 +1395,9 @@ export default {
       success: false,
       message: null,
       barcode: null,
-      number: '',
       legNumber: null,
       patentNumber: '',
-      validThru: '',
       calibers: [],
-      quantities: [],
       erasedTypes: [],
       erasedType: null,
       patentDate: null,
@@ -1460,7 +1407,6 @@ export default {
       patentPistolPermission1: false,
       patentRiflePermission1: false,
       patentShotgunPermission1: false,
-      downloaded: false,
       permissionsInstructorNumber: '',
       permissionsShootingLeaderNumber: '',
       permissionsArbiterNumber: '',
@@ -1486,16 +1432,10 @@ export default {
       memberStreet: '',
       memberStreetNumber: '',
       memberFlatNumber: '',
-      memberAdultConfirm: null,
-      search: '',
       caliberUUID: null,
       quantity: '',
       dateVar: /\//gi,
-      allMember: true,
-      certificateDownload: false,
       pzssPortal: false,
-      forbidden: false,
-      toggleEnlargement: false,
       personalStatisticsObject: null,
       personalFiles: null,
       clubs: ['DZIESIĄTKA Łódź'],
@@ -1539,14 +1479,10 @@ export default {
         headers: {
           'Content-Type': 'application/json'
         }
-      }).then(response => {
-        if (response.status === 200) {
-          response.json().then(
-            response => {
-              this.personalStatisticsObject = response
-            })
-        }
-      })
+      }).then(response => response.json())
+        .then(response => {
+          this.personalStatisticsObject = response
+        })
     },
     getAllMemberFiles (uuid) {
       this.showloading()
@@ -1576,14 +1512,6 @@ export default {
       }
       return day + '-' + (month) + '-' + current.getFullYear()
     },
-    handleScroll (search) {
-      const word = search.split(' ')
-      const ele = document.getElementById(word[0])
-      const target = getScrollTarget(ele)
-      const offset = ele.offsetTop - ele.scrollHeight
-      const duration = 500
-      setScrollPosition(target, offset, duration)
-    },
     addHistoryContributionRecord (uuid, date) {
       fetch('http://' + this.local + '/contribution/history/' + uuid + '?date=' + date.replace(/\//gi, '-') + '&pinCode=' + this.code, {
         method: 'POST',
@@ -1601,14 +1529,7 @@ export default {
               this.getMemberByUUID(this.memberUUID)
               this.autoClose()
             })
-        }
-        if (response.status === 403) {
-          this.forbidden = true
-          this.message = response
-          this.code = null
-          this.autoClose()
-        }
-        if (response.status === 400) {
+        } else {
           response.text().then(
             response => {
               this.message = response
@@ -1625,13 +1546,14 @@ export default {
         headers: {
           'Content-Type': 'application/json'
         }
-      }).then(response => response.json()).then(response => {
-        this.showloading()
-        if (this.member !== null && this.member !== response) {
-          this.resetHelpers()
-        }
-        this.member = response
-      })
+      }).then(response => response.json())
+        .then(response => {
+          this.showloading()
+          if (this.member !== null && this.member !== response) {
+            this.resetHelpers()
+          }
+          this.member = response
+        })
     },
     getMemberByUUID (uuid) {
       fetch('http://' + this.local + '/member/uuid/' + uuid, {
@@ -1664,17 +1586,7 @@ export default {
               this.getMemberByUUID(this.memberUUID)
               this.autoClose()
             })
-        }
-        if (response.status === 403) {
-          response.text().then(
-            response => {
-              this.forbidden = true
-              this.message = response
-              this.code = null
-              this.autoClose()
-            })
-        }
-        if (response.status === 400) {
+        } else {
           response.text().then(
             response => {
               this.message = response
@@ -1702,17 +1614,7 @@ export default {
               this.getMemberByUUID(this.memberUUID)
               this.autoClose()
             })
-        }
-        if (response.status === 403) {
-          response.text().then(
-            response => {
-              this.forbidden = true
-              this.message = response
-              this.code = null
-              this.autoClose()
-            })
-        }
-        if (response.status === 400) {
+        } else {
           response.text().then(
             response => {
               this.message = response
@@ -1739,17 +1641,7 @@ export default {
               this.autoClose()
               this.code = null
             })
-        }
-        if (response.status === 403) {
-          response.text().then(
-            response => {
-              this.forbidden = true
-              this.message = response
-              this.code = null
-              this.autoClose()
-            })
-        }
-        if (response.status === 400) {
+        } else {
           response.text().then(
             response => {
               this.message = response
@@ -1931,24 +1823,6 @@ export default {
         }
       })
     },
-    getDownloadCertificateOfClubMembership () {
-      axios({
-        url: 'http://' + this.local + '/files/downloadCertificateOfClubMembership/' + this.memberUUID + '?reason=' + this.certificateChoice + '&city=' + this.city + '&enlargement=' + this.toggleEnlargement,
-        method: 'GET',
-        responseType: 'blob'
-      }).then(response => {
-        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        const fileLink = document.createElement('a')
-        fileLink.href = fileURL
-        fileLink.setAttribute('download', 'Zaświadczenie_' + this.name + '_' + this.name2 + '.pdf')
-        document.body.appendChild(fileLink)
-        fileLink.click()
-        this.certificateChoice = null
-        this.downloaded = true
-        this.toggleEnlargement = false
-        this.autoClose()
-      })
-    },
     addPatent (uuid, patentNumber, patentPistolPermission, patentRiflePermission, patentShotgunPermission, patentDate) {
       const data = {
         patentNumber: patentNumber,
@@ -2094,17 +1968,7 @@ export default {
               this.getMemberByUUID(this.memberUUID)
               this.autoClose()
             })
-        }
-        if (response.status === 403) {
-          response.text().then(
-            response => {
-              this.forbidden = true
-              this.message = response
-              this.code = null
-              this.autoClose()
-            })
-        }
-        if (response.status === 400) {
+        } else {
           response.text().then(
             response => {
               this.message = response
@@ -2209,7 +2073,7 @@ export default {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.success = true
@@ -2219,7 +2083,7 @@ export default {
               this.autoClose()
             })
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -2345,8 +2209,6 @@ export default {
       setTimeout(() => {
         this.failure = false
         this.success = false
-        this.forbidden = false
-        this.downloaded = false
         this.message = null
         this.barcode = null
         this.clubChoice = null

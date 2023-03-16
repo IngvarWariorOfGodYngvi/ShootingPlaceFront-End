@@ -44,7 +44,7 @@
           <div>Kaliber: {{competition.caliberUUID}}</div>
           <q-field class="col-2 cursor-pointer" standout="bg-accent text-black" label="ZMIEŃ NUMER KOLEJNOŚCI NA LISTACH">
             <q-popup-edit @keypress.enter="compID=competition.uuid;updateCompetition()">
-              <q-input v-model="orderNumber" input-class="text-center" dense autofocus stack-label label="zmień na inny numer" onkeypress="return (event.charCode > 47 && event.charCode < 58)" @keypress.enter="compID=competition.uuid,updateCompetition()"/>
+              <q-input v-model="orderNumber" input-class="text-center" dense autofocus stack-label label="zmień na inny numer" onkeypress="return (event.charCode > 47 && event.charCode < 58)" @keypress.enter="compID=competition.uuid;updateCompetition()"/>
               <div class="q-pa-xs">
                 <q-btn align="left" color="primary" label="Anuluj" v-close-popup></q-btn>
                 <q-btn align="right" color="primary" label="Zmień" v-close-popup @click="compID=competition.uuid;updateCompetition()"></q-btn>
@@ -53,7 +53,7 @@
           </q-field>
           <q-field class="col-2 cursor-pointer" standout="bg-accent text-black" label="ZMIEŃ ILOŚĆ STRZAŁÓW PRÓBNYCH">
             <q-popup-edit @keypress.enter="compID=competition.uuid;updateCompetition()">
-              <q-input v-model="practiceShots" input-class="text-center" dense autofocus stack-label label="zmień na inny numer" onkeydown="return (event.charCode > 47 && event.charCode < 58)" @keypress.enter="compID=competition.uuid,updateCompetition()"/>
+              <q-input v-model="practiceShots" input-class="text-center" dense autofocus stack-label label="zmień na inny numer" onkeydown="return (event.charCode > 47 && event.charCode < 58)" @keypress.enter="compID=competition.uuid;updateCompetition()"/>
               <div class="q-pa-xs">
                 <q-btn align="left" color="primary" label="Anuluj" v-close-popup></q-btn>
                 <q-btn align="right" color="primary" label="Zmień" v-close-popup @click="compID=competition.uuid;updateCompetition()"></q-btn>
@@ -62,7 +62,7 @@
           </q-field>
           <q-field class="col-2 cursor-pointer" standout="bg-accent text-black" label="ZMIEŃ KALIBER">
             <q-popup-edit @keypress.enter="compID=competition.uuid;updateCompetition()">
-              <q-input v-model="caliberUUID" input-class="text-center" dense autofocus stack-label label="zmień na inny numer" onkeypress="return (event.charCode > 47 && event.charCode < 58)" @keypress.enter="compID=competition.uuid,updateCompetition()"/>
+              <q-input v-model="caliberUUID" input-class="text-center" dense autofocus stack-label label="zmień na inny numer" onkeypress="return (event.charCode > 47 && event.charCode < 58)" @keypress.enter="compID=competition.uuid;updateCompetition()"/>
               <div class="q-pa-xs">
                 <q-btn align="left" color="primary" label="Anuluj" v-close-popup></q-btn>
                 <q-btn align="right" color="primary" label="Zmień" v-close-popup @click="compID=competition.uuid;updateCompetition()"></q-btn>

@@ -58,7 +58,7 @@
     </q-field>
     <p></p>
     <q-expansion-item :value="open" v-for="(gunType,id) in allGuns" :key="id" :label="gunType.typeName + ' ' + gunType.gunEntityList.length + ' sztuki'" class="bg-grey-4 col full-width no-outline text-h6 text-center text-bold">
-      <div v-for="(gun,uuid) in gunType.gunEntityList" :key="uuid" @dblclick="gunUUID = gun.uuid,getGunUsedHistory(),gunInfo=true,usedGunInfo=gun">
+      <div v-for="(gun,uuid) in gunType.gunEntityList" :key="uuid" @dblclick="gunUUID = gun.uuid;getGunUsedHistory();gunInfo=true;usedGunInfo=gun">
         <q-field clickable color="positive" class="bg-dark" standout="bg-warning text-black" stack-label>
           <div class="row full-width">
             <div class="col-3 self-center text-bold text-left">{{gun.modelName}}</div>
@@ -92,7 +92,7 @@
       </div>
     </q-card>
       <p></p>
-      <q-expansion-item label="Dodawanie amunicji" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
+      <q-expansion-item label="Amunicja" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
       <q-card>
         <q-card-section class="col bg-dark">
           <div class="row q-pa-md">
@@ -120,7 +120,7 @@
       </q-card>
       </q-expansion-item>
       <p></p>
-        <q-expansion-item label="Zużycie" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
+        <q-expansion-item label="Zużycie amunicji" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
         <q-card class="text-body2">
         <div class="row">
         <q-card-section class="col-4 bg-dark">
@@ -275,7 +275,7 @@
   </q-card-section>
 
   <q-card-actions align="right">
-    <q-btn label="anuluj" text-color="white" color="secondary" v-close-popup @click="caliberUUID = null, ammoDate = null, ammoQuantity = null, ammoDescription = null"/>
+    <q-btn label="anuluj" text-color="white" color="secondary" v-close-popup @click="caliberUUID = null; ammoDate = null; ammoQuantity = null; ammoDescription = null"/>
     <q-btn label="dodaj" text-color="white" color="primary" v-close-popup @click="addAmmoToCaliber ()" />
   </q-card-actions>
 </q-card>
@@ -620,7 +620,7 @@
 
   </q-card>
 </q-dialog>
-<q-dialog v-model="addCaliber" @keypress.enter="addNewCaliber(),code=null,addCaliber=false">
+<q-dialog v-model="addCaliber" @keypress.enter="addNewCaliber();code=null;addCaliber=false">
   <q-card class="bg-green-5 text-center">
     <!-- <q-card-section class="col">
     <div class="self-center col full-width no-outline text-center text-h5 text-bold">Czy na pewno kaliber {{caliberName}} do bazy?</div>
@@ -631,7 +631,7 @@
     </q-card-section>
     <q-card-actions align="right">
       <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
-      <q-btn label="Dodaj" color="black" v-close-popup @click="addNewCaliber(),code=null" />
+      <q-btn label="Dodaj" color="black" v-close-popup @click="addNewCaliber();code=null" />
     </q-card-actions>
   </q-card>
 </q-dialog>
@@ -643,7 +643,7 @@
 
   </q-card>
 </q-dialog>
-<q-dialog v-model="acceptCode" persistent @keypress.enter="removeGun(),acceptCode=false">
+<q-dialog v-model="acceptCode" persistent @keypress.enter="removeGun();acceptCode=false">
       <q-card class="bg-red-5 text-center">
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
@@ -652,7 +652,7 @@
 
         <q-card-actions align="right">
           <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
-          <q-btn label="usuń" color="black" v-close-popup @click="removeGun(),code=null" />
+          <q-btn label="usuń" color="black" v-close-popup @click="removeGun();code=null" />
         </q-card-actions>
       </q-card>
 </q-dialog>

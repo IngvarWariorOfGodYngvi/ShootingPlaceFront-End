@@ -5,7 +5,7 @@
         <div class="text-center col full-width no-outline text-h4 text-bold text-positive" tabindex="0">Licencje</div>
       </q-item>
     </div>
-    <div v-if="mobile&&main" class="q-pa-md">
+    <div v-if="!mobile&&main" class="q-pa-md">
       <DownloadBtn/>
     </div>
     <q-expansion-item label="Licencje nieważne" dense class="text-left text-h6 text-bold bg-dark text-positive round" group="list">

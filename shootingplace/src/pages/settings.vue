@@ -133,46 +133,19 @@ export default {
   },
   data () {
     return {
-      // inputBarCode: false,
-      // userActions: false,
-      // actions: [],
-      // barCode: null,
-      // userSubType: ['Pracownik', 'Zarząd', 'Komisja Rewizyjna', 'Gość', 'Pracownik/Zarząd', 'Prezes/Zarząd'],
-      // userSubTypeSelect: null,
-      // userSubTypeBarCodeSelect: null,
       cities: ['Białystok', 'Bydgoszcz', 'Gdańsk', 'Gorzów Wielkopolski', 'Katowice', 'Kielce', 'Kraków', 'Lublin', 'Łódź', 'Olsztyn', 'Opole', 'Poznań', 'Rzeszów', 'Szczecin', 'Warszawa', 'Wrocław', 'BRAK WYNIKÓW'],
       ulAl: ['ul. ', 'al. '],
       ul_al: '',
-      selected_file: '',
-      // step: 1,
       policeCity: '',
       policeZipCode: '',
       policeStreet: '',
       policeStreetNumber: '',
       policeAddressError: false,
-      // superUsers: [],
-      // users: [],
-      // acceptCodeUser: false,
       acceptCodeUser1: false,
-      formData: null,
       code: null,
-      // memberUUID: '',
-      // uuid: '',
       url: '',
       fileName: '',
-      model: '',
       city: null,
-      // superUserFirstName: null,
-      // superUserSecondName: null,
-      // superUserCode: null,
-      // superUserCodeConfirm: null,
-      // userFirstName: null,
-      // userSecondName: null,
-      // userCode: null,
-      // userCodeConfirm: null,
-      // message: null,
-      // failure: false,
-      // success: false,
       clubMessage: null,
       clubName: null,
       clubFullName: null,
@@ -182,17 +155,8 @@ export default {
       clubAddress: null,
       clubURL: null,
       clubs: [],
-      files: [],
-      pageNumber: 0,
-      // master: false,
-      // accept: false,
       local: App.host
     }
-  },
-  created () {
-    this.getAllFiles(0)
-    // this.getAllUsers()
-    // this.getAllSuperUsers()
   },
   methods: {
     showloading () {
@@ -202,29 +166,6 @@ export default {
         this.timer = 0
       }, 1000)
     },
-    // file_selected (file) {
-    //   this.selected_file = file[0]
-    // },
-    // getUserActions (uuid) {
-    //   fetch('http://' + this.local + '/users/userActions?uuid=' + uuid, {
-    //     method: 'GET'
-    //   }).then(response => response.json())
-    //     .then(response => {
-    //       this.actions = response
-    //     })
-    // },
-    // getAllFiles (pageNumber) {
-    //   this.showloading()
-    //   if (pageNumber < 0) {
-    //     this.pageNumber = 0
-    //   }
-    //   fetch('http://' + this.local + '/files/getAllFiles?page=' + pageNumber + '&size=50', {
-    //     method: 'GET'
-    //   }).then(response => response.json())
-    //     .then(response => {
-    //       this.files = response
-    //     })
-    // },
     getAllClubs () {
       fetch('http://' + this.local + '/club/', {
         method: 'GET'
@@ -233,147 +174,6 @@ export default {
           this.clubs = response
         })
     },
-    // getAllSuperUsers () {
-    //   fetch('http://' + this.local + '/users/superUserList/', {
-    //     method: 'GET'
-    //   }).then(response => response.json())
-    //     .then(response => {
-    //       this.superUsers = response
-    //     })
-    // },
-    // getAllUsers () {
-    //   fetch('http://' + this.local + '/users/userList/', {
-    //     method: 'GET'
-    //   }).then(response => response.json())
-    //     .then(response => {
-    //       this.users = response
-    //     })
-    // },
-    // getMasterCardCheck (code) {
-    //   if (code.length > 3) {
-    //     fetch('http://' + this.local + '/barCode/?code=' + code, {
-    //       method: 'GET'
-    //     }).then(response => response.json())
-    //       .then(response => {
-    //         this.master = response
-    //       })
-    //   }
-    // },
-    // sleep (ms) {
-    //   return new Promise(resolve => setTimeout(resolve, ms))
-    // },
-    // checkPinCode (code, uuid) {
-    //   if (code.length > 3) {
-    //     fetch('http://' + this.local + '/users/checkPinCode?pinCode=' + code + '&uuid=' + uuid, {
-    //       method: 'GET'
-    //     }).then(response => response.json())
-    //       .then(response => {
-    //         this.accept = response
-    //       })
-    //   }
-    // },
-    // addNewCardToUser (barCode, uuid, userSubType) {
-    //   this.sleep(400).then(() => {
-    //     if (barCode === null || barCode === '') {
-    //       this.message = 'Nie podano numeru karty'
-    //       this.failure = true
-    //       return
-    //     }
-    //     const data = {
-    //       barCode: barCode,
-    //       isActive: true,
-    //       belongsTo: uuid,
-    //       subType: userSubType,
-    //       isMaster: this.master
-    //     }
-    //     console.log('coś2')
-    //     console.log(this.accept)
-    //     if (this.accept) {
-    //       fetch('http://' + this.local + '/barCode/', {
-    //         method: 'POST',
-    //         body: JSON.stringify(data),
-    //         headers: { 'Content-Type': 'Application/json' }
-    //       }).then(response => {
-    //         if (response.status === 200) {
-    //           response.text().then(
-    //             response => {
-    //               this.success = true
-    //               this.message = response
-    //             }
-    //           )
-    //         }
-    //         if (response.status === 400) {
-    //           response.text().then(
-    //             response => {
-    //               this.failure = true
-    //               this.message = response
-    //             }
-    //           )
-    //         }
-    //       })
-    //     } else {
-    //       this.failure = true
-    //       this.message = 'Podano zły pin. Spróbuj ponownie'
-    //     }
-    //     this.autoClose()
-    //   })
-    // },
-    // createSuperUser () {
-    //   if (this.superUserCode !== this.superUserCodeConfirm && this.superUsers.length > 0) {
-    //     this.message = 'Coś poszło nie tak'
-    //     this.failure = true
-    //   } else {
-    //     fetch('http://' + this.local + '/users/createSuperUser?firstName=' + this.superUserFirstName + '&secondName=' + this.superUserSecondName + '&pinCode=' + this.superUserCode, {
-    //       method: 'POST'
-    //     }).then(response => {
-    //       if (response.status === 201) {
-    //         response.text().then(
-    //           response => {
-    //             this.message = response
-    //             this.success = true
-    //             this.getAllUsers()
-    //           }
-    //         )
-    //       } else {
-    //         response.text().then(
-    //           response => {
-    //             this.message = response
-    //             this.failure = true
-    //           }
-    //         )
-    //       }
-    //       this.autoClose()
-    //     })
-    //   }
-    // },
-    // createUser () {
-    //   if (this.userCode !== this.userCodeConfirm) {
-    //     this.message = 'Coś poszło nie tak'
-    //     this.failure = true
-    //   } else {
-    //     fetch('http://' + this.local + '/users/createUser?firstName=' + this.userFirstName + '&secondName=' + this.userSecondName + '&subType=' + this.userSubTypeSelect + '&pinCode=' + this.userCode + '&superPinCode=' + this.code + '&memberUUID=' + this.memberUUID, {
-    //       method: 'POST'
-    //     }).then(response => {
-    //       if (response.status === 201) {
-    //         response.text().then(
-    //           response => {
-    //             this.message = response
-    //             this.success = true
-    //             this.getAllUsers()
-    //           }
-    //         )
-    //       } else {
-    //         response.text().then(
-    //           response => {
-    //             this.message = response
-    //             this.failure = true
-    //           }
-    //         )
-    //       }
-    //       this.autoClose()
-    //     })
-    //   }
-    // },
     createMotherClub () {
       if (this.clubs.length > 0) {
         this.clubMessage = 'Nie można dodać więcej macierzystego Klubu'
@@ -403,62 +203,6 @@ export default {
         })
       }
     },
-    // getFile (uuid) {
-    //   axios({
-    //     url: 'http://' + this.local + '/files/getFile?uuid=' + uuid,
-    //     method: 'GET',
-    //     responseType: 'blob'
-    //   }).then(response => {
-    //     const fileURL = window.URL.createObjectURL(new Blob([response.data]))
-    //     const fileLink = document.createElement('a')
-    //     fileLink.href = fileURL
-    //     fileLink.setAttribute('download', this.fileName)
-    //     document.body.appendChild(fileLink)
-    //     fileLink.click()
-    //   })
-    // },
-    // deleteFile (uuid) {
-    //   fetch('http://' + this.local + '/files/deleteFile?uuid=' + uuid, {
-    //     method: 'DELETE'
-    //   }).then(response => {
-    //     if (response.status === 200) {
-    //       response.text().then(
-    //         response => {
-    //           this.showloading()
-    //           this.message = response
-    //           this.success = true
-    //           this.getAllFiles()
-    //           this.autoClose()
-    //         }
-    //       )
-    //     } else {
-    //       response.text().then(
-    //         response => {
-    //           this.message = response
-    //           this.failure = true
-    //           this.autoClose()
-    //         }
-    //       )
-    //     }
-    //   })
-    // },
-    redirect () {
-      window.location.href = 'http://localhost:8080/strzelnica/#/member'
-    },
-    // getUrl (uuid) {
-    //   axios({
-    //     url: 'http://' + this.local + '/files/getFile?uuid=' + uuid,
-    //     method: 'GET',
-    //     responseType: 'blob'
-    //   }).then(response => {
-    //     this.url = window.URL.createObjectURL(new Blob([response.data]))
-    //   })
-    // },
-    // onRejected () {
-    //   this.message = 'Coś poszło nie tak'
-    //   this.failure = true
-    //   this.autoClose()
-    // },
     autoClose () {
       setTimeout(() => {
         this.failure = false

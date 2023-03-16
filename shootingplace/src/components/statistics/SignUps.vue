@@ -8,7 +8,7 @@
             <template v-slot:append>
               <q-icon name="event" color="positive" class="cursor-pointer">
                 <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                  <q-date @input="getSumJoinDate ()" v-model="firstDateJoinDate">
+                  <q-date @input="getSumJoinDate ()" v-model="firstDateJoinDate"  mask="YYYY-MM-DD">
                     <div class="row items-center justify-end">
                       <q-btn v-close-popup label="Zamknij" color="primary" flat />
                     </div>
@@ -23,7 +23,7 @@
             <template v-slot:append>
               <q-icon name="event" color="positive" class="cursor-pointer">
                 <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                  <q-date @input="getSumJoinDate ()" v-model="secondDateJoinDate">
+                  <q-date @input="getSumJoinDate ()" v-model="secondDateJoinDate" mask="YYYY-MM-DD">
                     <div class="row items-center justify-end">
                       <q-btn v-close-popup label="Zamknij" color="primary" flat />
                     </div>

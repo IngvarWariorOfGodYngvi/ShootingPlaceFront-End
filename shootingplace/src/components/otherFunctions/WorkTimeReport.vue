@@ -1,44 +1,27 @@
 <template>
   <div class="col">
-    <div>
-      <q-select filled v-model="yearSelect1" fill-input @input="monthSelect1=null;getAllWorkingMonthInYear(yearSelect1)"
-                :options="workingYear" dense label="Wybierz Rok">
-        <template v-slot:no-option>
-          <q-item>
-            <q-item-section class="text-grey">
-              Brak wyników
-            </q-item-section>
-          </q-item>
-        </template>
+    <div class="full-width col-4">
+      <q-select class="col-4" dense options-dense :dark="darkSet()" filled label-color="positive" color="positive" input-class="text-positive"
+                fill-input popup-content-class="bg-dark text-positive" options-selected-class="bg-dark text-positive" :options-dark="darkSet()"
+                v-model="yearSelect1" :options="workingYear" label="Wybierz Rok" @input="monthSelect1=null;getAllWorkingMonthInYear(yearSelect1)">
       </q-select>
-      <q-select v-if="yearSelect1 != null" filled v-model="monthSelect1" use-input :options="month" dense
+      <q-select class="col-4" dense options-dense :dark="darkSet()" filled label-color="positive" color="positive" input-class="text-positive"
+                fill-input popup-content-class="bg-dark text-positive" options-selected-class="bg-dark text-positive" :options-dark="darkSet()"
+                v-if="yearSelect1 != null" v-model="monthSelect1" :options="month"  @input="workTypeSelect1=null;getAllWorkingTypeInMonthAndYear(yearSelect1,monthSelect1)"
                 label="Wybierz Miesiąc">
-        <template v-slot:no-option>
-          <q-item>
-            <q-item-section class="text-grey">
-              Brak wyników
-            </q-item-section>
-          </q-item>
-        </template>
       </q-select>
-      <q-select v-if="monthSelect1 != null" filled v-model="workTypeSelect1" use-input :options="workType1" dense
-                label="Wybierz Rodzaj">
-        <template v-slot:no-option>
-          <q-item>
-            <q-item-section class="text-grey">
-              Brak wyników
-            </q-item-section>
-          </q-item>
-        </template>
+      <q-select class="col-4" dense options-dense :dark="darkSet()" filled label-color="positive" color="positive" input-class="text-positive"
+                fill-input popup-content-class="bg-dark text-positive" options-selected-class="bg-dark text-positive" :options-dark="darkSet()"
+                v-if="monthSelect1 != null" v-model="workTypeSelect1" :options="workType1" label="Wybierz Rodzaj">
       </q-select>
       <div>
-        <q-btn @click="getAllWorkingTimeEvidenceInMonth(yearSelect1,monthSelect1,workTypeSelect1)">wyświetl listę
+        <q-btn color="primary" text-color="white" @click="getAllWorkingTimeEvidenceInMonth(yearSelect1,monthSelect1,workTypeSelect1)">wyświetl listę
           pracy
         </q-btn>
       </div>
     </div>
-    <div class="col">
-      <div v-if="workList.length>0" class="row bg-secondary text-white">
+    <div v-if="workList.length>0" class="col">
+      <div class="row bg-secondary text-white">
         <div class="text-right self-center q-pl-md" style="width: 2vw">lp</div>
         <div class="col-2 text-center self-center">Start</div>
         <div class="col-2 text-center self-center">Stop</div>
@@ -51,20 +34,19 @@
             <div>Zatwierdzone</div>
             <div class="bg-primary">
               <q-checkbox v-model="checked" color="secondary" dark keep-color
-                          :label="!checked ? 'zaznacz wyszystko' : 'odznacz wszystko'"
+                          :label="!checked ? 'zaznacz wszystko' : 'odznacz wszystko'"
                           @input="checkedAll(workList,checked)"></q-checkbox>
             </div>
           </div>
         </div>
       </div>
-      <div v-for="(item1) in workList" :key="item1" class="q-pa-none text-black full-width">
-          <div class="row">
-            <q-expansion-item class="col bg-grey-5"
-                              :label="item1.secondName + ' ' + item1.firstName + ' ' + item1.subType + ' czas pracy: ' + item1.workTime">
-              <q-field :key="index" v-for="(item, index) in item1.wtedtoList" dense class="bg-grey-2" color="black"
+      <div class="q-pa-none text-black full-width">
+            <q-expansion-item dense class="col bg-grey-5" v-for="(i,index) in workList" :key="index"
+                              :label="i.secondName + ' ' + i.firstName + ' ' + i.subType + ' czas pracy: ' + i.workTime">
+              <q-field :key="index" v-for="(item, index) in i.wtedtoList" dense class="bg-grey-2" color="black"
                        standout="bg-accent text-black">
-                <div class="row full-width" @dblclick="uuid = item.uuid; editWorkTime=true">
-                  <div class="text-left self-center text-bold" style="width: 2vw" @dblclick="editWorkTime=true">
+                <div class="row full-width" @dblclick="uuid = item.uuid;workTimeStart = item.start.replace('T', ' ').substring(0, 16); workTimeStop = item.stop.replace('T', ' ').substring(0, 16); editWorkTime=true">
+                  <div class="text-left self-center text-bold" style="width: 2vw">
                     {{ index + 1 }}
                   </div>
                   <div class="col-2 text-center self-center">{{ item.start.replace('T', ' ').substring(0, 19) }}
@@ -83,36 +65,29 @@
                 </div>
               </q-field>
             </q-expansion-item>
-          </div>
       </div>
       <div class="row q-pt-md q-pb-md">
         <div class="col">
-          <q-btn dense @click="changeWorkingTimeDial=true" :disable="workTimeChangeArray.length<1"
-                 label="wprowadź zmiany"></q-btn>
+          <q-btn color="primary" text-color="white" dense @click="changeWorkingTimeDial=true" :disable="workTimeChangeArray.length<1"
+                 :label="workTimeChangeArray.length>0?'wprowadź zmiany':'Brak Zmian'"></q-btn>
         </div>
         <div class="reverse">
-          <q-btn dense label="zatwierdź czas pracy" @click="acceptWorkingTimeDial=true"></q-btn>
+          <q-btn color="secondary" text-color="white" dense label="zatwierdź czas pracy" :disable="acceptedList.length<1" @click="acceptWorkingTimeDial=true"></q-btn>
         </div>
       </div>
     </div>
-    <q-select class="col-3 q-pa-none" filled v-model="workTypeSelect" use-input :options="workType" dense
-              label="Wybierz Rodzaj" @input="getAllUsers(workTypeSelect); uuid=null">
-      <template v-slot:no-option>
-        <q-item>
-          <q-item-section class="text-grey">
-            Brak wyników
-          </q-item-section>
-        </q-item>
-      </template>
+    <q-select  dense options-dense :dark="darkSet()" filled label-color="positive" color="positive" input-class="text-positive"
+               fill-input popup-content-class="bg-dark text-positive" options-selected-class="bg-dark text-positive" :options-dark="darkSet()"
+               v-model="yearSelect" @input="monthSelect=null;getAllWorkingMonthInYear(yearSelect)" :options="workingYear" label="Wybierz Rok">
     </q-select>
-    <p></p>
-    <q-select v-if="workTypeSelect!=null" class="col-3 q-pa-none" filled v-model="uuid" use-input :options="usersList"
-              dense label="Wybierz osobę" option-disable="false"
-              :option-label="(item) => item === null ? 'Null value' : item.firstName + ' ' +  item.secondName">
+    <q-select class="q-pa-none" dense options-dense :dark="darkSet()" filled label-color="positive" color="positive" input-class="text-positive"
+              fill-input popup-content-class="bg-dark text-positive" options-selected-class="bg-dark text-positive" :options-dark="darkSet()"
+              v-if="yearSelect!=null" v-model="monthSelect" @input="workTypeSelect=null;getAllWorkingTypeInMonthAndYear(yearSelect,monthSelect)"
+              :options="month" label="Wybierz Miesiąc">
     </q-select>
-    <p></p>
-    <q-select v-if="workTypeSelect!=null" class="col-3 q-pa-none" filled v-model="monthSelect" use-input
-              :options="month" dense label="Wybierz Miesiąc">
+    <q-select class="col-4" dense options-dense :dark="darkSet()" filled label-color="positive" color="positive" input-class="text-positive"
+              fill-input popup-content-class="bg-dark text-positive" options-selected-class="bg-dark text-positive" :options-dark="darkSet()"
+              v-if="monthSelect!=null" v-model="workTypeSelect" :options="workType" label="Wybierz Rodzaj" @input="getAllUsers(workTypeSelect); uuid=null">
       <template v-slot:no-option>
         <q-item>
           <q-item-section class="text-grey">
@@ -125,34 +100,31 @@
     <q-item v-if="monthSelect!=null&& workTypeSelect!=null">
       <q-toggle v-model="detailed">szczegółowy</q-toggle>
     </q-item>
-    <q-item v-if="monthSelect===null|| workTypeSelect===null" class="col-4 q-pa-none">
-      <q-btn class="q-pa-none" disable color="primary" label="Pobierz raport czasu pracy"/>
-    </q-item>
-    <q-item v-else class="col-4 q-pa-none">
-      <q-btn class="q-pa-none" color="primary" label="Pobierz raport czasu pracy"
-             @click="showloading();getWorkTimeReport (monthSelect, uuid.uuid, workTypeSelect, detailed,false)"/>
+    <q-item class="col-4 q-pa-none">
+      <q-btn class="q-pa-none" color="primary" :disable="monthSelect===null|| workTypeSelect===null" label="Pobierz raport czasu pracy"
+             @click="showloading();getWorkTimeReport (yearSelect, monthSelect, workTypeSelect, detailed)"/>
     </q-item>
     <q-dialog v-model="editWorkTime">
-      <q-card style="width: 45vw; max-width: 45vw">
+      <q-card style="width: 45vw; max-width: 45vw" class="bg-dark text-positive">
         <q-card-section>
           <div class="q-pa-md">
             <div class="row">
-              <q-date flat today-btn v-model="workTimeStart" mask="YYYY-MM-DD HH:mm" color="primary"
+              <q-date class="bg-dark" today-btn v-model="workTimeStart" mask="YYYY-MM-DD HH:mm" color="primary"
                       name="start pracy"/>
-              <q-time flat now-btn v-model="workTimeStart" mask="YYYY-MM-DD HH:mm" color="primary"/>
+              <q-time class="bg-dark" now-btn v-model="workTimeStart" mask="YYYY-MM-DD HH:mm" color="primary"/>
             </div>
           </div>
           <q-item>
-            <q-input v-model="workTimeStart" class="full-width" filled label="Start Pracy"></q-input>
+            <q-input color="positive" label-color="positive" input-class="text-positive" v-model="workTimeStart" class="full-width" filled label="Start Pracy"></q-input>
           </q-item>
           <div class="q-pa-md">
             <div class="row">
-              <q-date flat today-btn v-model="workTimeStop" mask="YYYY-MM-DD HH:mm" color="secondary"/>
-              <q-time flat now-btn v-model="workTimeStop" mask="YYYY-MM-DD HH:mm" color="secondary"/>
+              <q-date class="bg-dark" today-btn v-model="workTimeStop" mask="YYYY-MM-DD HH:mm" color="secondary"/>
+              <q-time class="bg-dark" now-btn v-model="workTimeStop" mask="YYYY-MM-DD HH:mm" color="secondary"/>
             </div>
           </div>
           <q-item>
-            <q-input v-model="workTimeStop" class="full-width" filled label="Stop Pracy"></q-input>
+            <q-input color="positive" label-color="positive" input-class="text-positive" v-model="workTimeStop" class="full-width" filled label="Stop Pracy"></q-input>
           </q-item>
           <q-item class="full-width">
             <q-btn class="full-width" label="usuń wpis" color="red"></q-btn>
@@ -161,7 +133,7 @@
         <q-card-actions>
           <div class="row full-width">
             <div class="col">
-              <q-btn flat label="zamknij" color="primary" v-close-popup/>
+              <q-btn text-color="white" label="zamknij" color="secondary" v-close-popup/>
             </div>
             <div class="reverse">
               <q-btn label="zapisz *" color="primary" v-close-popup
@@ -233,18 +205,19 @@ import App from 'src/App'
 export default {
   name: 'WorkTimeReport.vue',
   created () {
-    this.getWorkingType()
+    // this.getWorkingType()
     this.getAllWorkingYear()
   },
   data () {
     return {
-      uuid: '',
+      uuid: null,
       c: 0,
       code: null,
       editWorkTime: false,
       month: ['Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec', 'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień'],
       monthSelect: null,
       monthSelect1: null,
+      yearSelect: null,
       yearSelect1: null,
       workType: ['Pracownik', 'Zarząd'],
       workType1: ['Pracownik', 'Zarząd'],
@@ -275,29 +248,49 @@ export default {
         this.timer = 0
       }, 2000)
     },
-    getWorkingType () {
-      fetch('http://' + this.local + '/work/workType', {
-        method: 'GET'
-      }).then(response => response.json())
-        .then(response => {
-          this.workType = response
-          this.workType1 = response
-        })
+    darkSet () {
+      return JSON.parse(window.localStorage.getItem('BackgroundDark'))
     },
     getAllWorkingTimeEvidenceInMonth (year, month, workType) {
       fetch('http://' + this.local + '/work/month?year=' + year + '&month=' + month + '&workType=' + workType, {
         method: 'GET'
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(response => {
-            this.workList = response
-          })
+          response.json().then(
+            response => {
+              this.workList = response
+            }
+          )
         } else {
-          response.text().then(response => {
-            this.message = response
-            this.failure = true
-            this.autoClose()
-          })
+          response.text().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            }
+          )
+        }
+      })
+    },
+    getAllWorkingTypeInMonthAndYear (year, month) {
+      fetch('http://' + this.local + '/work/getAllWorkingTypeInMonthAndYear?year=' + year + '&month=' + month, {
+        method: 'GET'
+      }).then(response => {
+        if (response.status === 200) {
+          response.json().then(
+            response => {
+              this.workType = response
+              this.workType1 = response
+            }
+          )
+        } else {
+          response.text().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            }
+          )
         }
       })
     },
@@ -317,20 +310,17 @@ export default {
           this.month = response
         })
     },
-    getWorkTimeReport (month, uuid, workType, detailed, incrementVersion) {
-      if (workType === null) {
-        workType = 'Pracownik'
-      }
+    getWorkTimeReport (year, month, workType, detailed) {
       if (month !== null) {
         axios({
-          url: 'http://' + this.local + '/files/downloadWorkReport?month=' + month + '&uuid=' + uuid + '&workType=' + workType + '&detailed=' + Boolean(detailed) + '&incrementVersion=' + incrementVersion,
+          url: 'http://' + this.local + '/files/downloadWorkReport?year=' + year + '&month=' + month + '&workType=' + workType + '&detailed=' + Boolean(detailed),
           method: 'GET',
           responseType: 'blob'
         }).then(response => {
           const fileURL = window.URL.createObjectURL(new Blob([response.data]))
           const fileLink = document.createElement('a')
           fileLink.href = fileURL
-          fileLink.setAttribute('download', 'raport_pracy_' + month + '.pdf')
+          fileLink.setAttribute('download', 'raport_pracy_' + month + '_' + year + '_' + workType + '.pdf')
           document.body.appendChild(fileLink)
           fileLink.click()
           this.autoClose()
@@ -365,8 +355,8 @@ export default {
             response => {
               this.success = true
               this.message = response
-              this.workTimeChangeArray = []
-              this.getAllWorkingTimeEvidenceInMonth(this.monthSelect1)
+              this.acceptedList = []
+              this.getAllWorkingTimeEvidenceInMonth(this.yearSelect1, this.monthSelect1, this.workTypeSelect1)
               this.autoClose()
             }
           )
@@ -388,13 +378,14 @@ export default {
           'Content-Type': 'application/json'
         }
       }).then(response => {
+        this.showloading()
         if (response.status === 200) {
           response.text().then(
             response => {
               this.success = true
               this.message = response
-              this.acceptedList = []
-              this.getAllWorkingTimeEvidenceInMonth(this.monthSelect1)
+              // this.workTimeChangeArray = []
+              this.getAllWorkingTimeEvidenceInMonth(this.yearSelect1, this.monthSelect1, this.workTypeSelect1)
               this.autoClose()
             }
           )
@@ -420,7 +411,7 @@ export default {
         })
       } else {
         list.forEach(e => {
-          e.wtedtoList.forEach(g => {
+          e.wtedtoList.forEach(() => {
             this.acceptedList = []
           })
         })
