@@ -10,6 +10,7 @@
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox.vue'
 import App from 'src/App.vue'
+import { isWindows } from 'mobile-device-detect'
 
 export default {
   name: 'juryPanel.vue',
@@ -25,6 +26,8 @@ export default {
   data () {
     return {
       tournaments: null,
+      mobile: !isWindows,
+      main: App.main,
       local: App.host
     }
   },

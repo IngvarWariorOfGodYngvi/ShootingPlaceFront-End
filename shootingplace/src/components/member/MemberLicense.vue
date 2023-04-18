@@ -35,52 +35,6 @@
             </q-field>
           </div>
         </div>
-        <!--        <div v-if="shootingPatent.patentNumber!=null&&adult" class="col"-->
-        <!--             @dblclick="main&&!mobile?'':editLicense=true">-->
-        <!--          <q-field dense class="col" standout="bg-accent text-positive" color="positive" label-color="positive" stack-label>-->
-        <!--            <div class="self-center col full-width no-outline text-center" >Licencja</div>-->
-        <!--          </q-field>-->
-        <!--        </div>-->
-        <!--        <div v-if="shootingPatent==null||!adult"-->
-        <!--             @dblclick="editLicense=true"-->
-        <!--             class="col">-->
-        <!--          <q-field class="col" standout="bg-accent text-positive" color="positive" label-color="positive" stack-label>-->
-        <!--            <div class="self-center col full-width no-outline text-center" @dblclick="main&&!mobile?'':editLicense=true">Licencja</div>-->
-        <!--            <q-tooltip v-if="adult" content-class="text-body2 text-center" self="top middle"-->
-        <!--                       anchor="top middle" :offset="[12, 12]">Klubowicz nie ma patentu<p>wprowadź patent aby móc dodać-->
-        <!--              licencję</p></q-tooltip>-->
-        <!--          </q-field>-->
-        <!--        </div>-->
-        <!--        <div>-->
-        <!--          <div class="row">-->
-        <!--            <div class="col">-->
-        <!--              <q-field dense class="col" v-if="license.number!=null" color="positive" label-color="positive" label="Numer Licencji"-->
-        <!--                       standout="bg-accent text-positive" stack-label>-->
-        <!--                <div class="self-center col full-width no-outline text-left">-->
-        <!--                  {{ license.number }}-->
-        <!--                </div>-->
-        <!--              </q-field>-->
-        <!--            </div>-->
-        <!--            <q-field dense class="col" v-if="license.validThru!=null" color="positive" label-color="positive" label="Ważna do :"-->
-        <!--                     standout="bg-accent text-positive" stack-label>-->
-        <!--              <div class="self-center col full-width no-outline text-left">-->
-        <!--                {{ convertDate(license.validThru) }}-->
-        <!--              </div>-->
-        <!--            </q-field>-->
-        <!--          </div>-->
-        <!--          <div-->
-        <!--            v-if="shootingPatent.pistolPermission === true || shootingPatent.riflePermission === true || shootingPatent.shotgunPermission === true"-->
-        <!--            class="row">-->
-        <!--            <q-field dense label="Dyscypliny" class="col" standout="bg-accent text-positive" color="positive" label-color="positive" stack-label>-->
-        <!--              <div v-if="license.pistolPermission" class="self-center text-center col-4 no-outline">Pistolet-->
-        <!--              </div>-->
-        <!--              <div v-if="license.riflePermission" class="self-center text-center col-4 no-outline">Karabin-->
-        <!--              </div>-->
-        <!--              <div v-if="license.shotgunPermission" class="self-center text-center col-4 no-outline">Strzelba-->
-        <!--              </div>-->
-        <!--            </q-field>-->
-        <!--          </div>-->
-        <!--        </div>-->
       </q-item-section>
       <q-btn
         v-if="((shootingPatent.patentNumber!=null&&license.number==null&&license.paid)||(!adult&&license.number==null))&&main&&!mobile"

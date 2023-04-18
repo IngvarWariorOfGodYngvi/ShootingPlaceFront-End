@@ -2,8 +2,6 @@
     <div>
   <q-btn label="pobierz listę osób z licencją" color="primary" @click="download()">
     </q-btn>
-<!--  <q-btn label="przykładowy docx" @click="download1()">-->
-<!--    </q-btn>-->
     </div>
 </template>
 

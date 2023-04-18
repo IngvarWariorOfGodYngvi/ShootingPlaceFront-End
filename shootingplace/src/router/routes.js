@@ -34,6 +34,10 @@ if (App.main) {
           component: () => import(/* webpackChunkName: "Lista Klubowiczów" */'pages/membersList.vue')
         },
         {
+          path: '/signature',
+          component: () => import(/* webpackChunkName: "podpis" */'pages/SignaturePage.vue')
+        },
+        {
           path: '/license',
           name: 'licencje',
           component: () => import(/* webpackChunkName: "Licencje" */'pages/license.vue')
@@ -97,6 +101,10 @@ if (App.main) {
         {
           path: '',
           component: () => import(/* webpackChunkName: "Index" */'pages/Index.vue')
+        },
+        {
+          path: '/signature',
+          component: () => import(/* webpackChunkName: "podpis" */'pages/SignaturePage.vue')
         },
         {
           path: '/member',

@@ -225,8 +225,8 @@
                        @keypress.enter="memberUUID=member.uuid;legNumber=member.legitimationNumber; addAmmoConfirm=true"
                        filled class="full-width col" color="positive" label-color="positive" input-class="text-positive" v-model="quantity"
                        placeholder="Tylko cyfry" onkeypress="return (event.charCode > 44 && event.charCode < 58)"
-                       label="Ilość Amunicji"></q-input>
-              <q-btn dense class="full-width col" color="primary" label="wydaj amunicję"
+                       label="Ilość Amunicji" type="number"></q-input>
+              <q-btn dense class="full-width col" :disable="caliberUUID==null||quantity.length===0" color="primary" label="wydaj amunicję"
                      @click="memberUUID=member.uuid;legNumber=member.legitimationNumber; addAmmoConfirm=true"></q-btn>
             </div>
           </div>
@@ -1812,13 +1812,13 @@ export default {
           response.text().then(response => {
             this.message = response
             this.failure = true
-            this.quantity = null
+            this.quantity = ''
             this.autoClose()
           })
         }
         if (response.status === 406) {
           this.failure = true
-          this.quantity = null
+          this.quantity = ''
           this.autoClose()
         }
       })

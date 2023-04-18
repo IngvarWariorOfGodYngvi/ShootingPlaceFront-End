@@ -22,7 +22,7 @@
         class="bg-dark"
         :done="step > 1"
       >
-      <q-card class="row bg-dark text-positivev">
+      <q-card class="row bg-dark text-positive">
       <q-card-section class="col-6 bg-dark-separator">
       <div class="full-width">
       <q-item><q-input class="full-width" @input="memberFirstNameC = memberFirstName.length===0? '':memberFirstNameC = memberFirstName.length<3 ? 'red-2':'green-2'" dense :bg-color="memberFirstNameC" label-color="positive" v-model="memberFirstName" label="Imię *" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode === 32" filled/></q-item>
@@ -74,7 +74,7 @@
           &&memberZipCode!=null
           &&memberStreet!=null
           &&memberStreetNumber!=null"
-           class="reverse"><q-btn class="full-width text-bold" style="font-weight: bold; font-size: medium; letter-spacing: 1em;" color="primary" @click="acceptCode=true">dodaj do klubu</q-btn></q-item>
+           class="reverse"><q-btn class="full-width text-bold" :loading="loading[0]" style="font-weight: bold; font-size: medium; letter-spacing: 1em;" color="primary" @click="acceptCode=true">dodaj do klubu</q-btn></q-item>
           <q-item v-else class="reverse"><q-btn class="full-width text-bold" style="font-weight: bold; letter-spacing: 1em; font-size: medium;" color="secondary" disable>dodaj do klubu</q-btn><q-tooltip content-class="bg-red text-subtitle2" anchor="top middle" >Uzupełnij dane z gwiazdką</q-tooltip></q-item>
           <q-checkbox v-if="isPresent" v-model="returningToClub" color="primary" label="Przywróć do klubu"></q-checkbox>
         </div>
@@ -375,6 +375,7 @@
 import App from 'src/App.vue'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox'
+import { ref } from 'vue'
 export default {
   components: {
     PersonalCardPDF: lazyLoadComponent({
@@ -393,6 +394,26 @@ export default {
       componentFactory: () => import('components/member/MemberCSVFile.vue'),
       loading: SkeletonBox
     })
+  },
+  setup () {
+    const loading = ref([
+      false
+    ])
+    const progress = ref(false)
+
+    function simulateProgress (number) {
+      loading.value[number] = true
+      this.addMemberAndAmmoToCaliber()
+      setTimeout(() => {
+        loading.value[number] = false
+      }, 0)
+    }
+
+    return {
+      loading,
+      progress,
+      simulateProgress
+    }
   },
   data () {
     return {
@@ -693,7 +714,7 @@ export default {
         }
       })
     },
-    updateMemberPermissions (uuid, permissionsShootingLeaderNumber, permissionsInstructorNumber, permissionsArbiterNumber, permissionsArbiterPermissionValidThru) {
+    updateMemberPermissions (uuid) {
       const data = {
         shootingLeaderNumber: this.permissionsShootingLeaderNumber,
         instructorNumber: this.permissionsInstructorNumber,

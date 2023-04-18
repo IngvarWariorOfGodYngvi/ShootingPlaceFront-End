@@ -20,7 +20,7 @@
                       group="list">
       <AllLicensePayment></AllLicensePayment>
     </q-expansion-item>
-    <Canva style="width: 0vw;height: 0%;max-width: 0vw;max-height: 0vh;"></Canva>
+    <Canva style="width: 50vw;height: 50%;max-width: 50vw;max-height: 50vh;"></Canva>
   </q-page>
 </template>
 

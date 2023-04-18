@@ -1,25 +1,16 @@
 <template>
-  <q-page :id="mobile?'layout':''">
-    <div class="row">
-      <main-list>
-      </main-list>
-    <div class="col flex flex-center full-width q-pa-xl">
-<!--      <Canva style="width: 50vw;height: 50%;max-width: 50vw;max-height: 50vh;"></Canva>-->
-<!--      <VueSignaturePad class="fit" style="width: 100px;height: 100px"></VueSignaturePad>-->
-    <img v-if="!mobile" draggable="false" class="fun" alt="logo" src="~assets/logo.jpg">
-    </div>
-    </div>
-  </q-page>
+  <div>
+    <Canva style="height: 100%;width: 100%; max-width: 100%; max-height: 100%"></Canva>
+  </div>
 </template>
-<style src="../style/style.scss" lang="scss">
-</style>
+
 <script>
 import App from 'src/App.vue'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox.vue'
 import { isWindows } from 'mobile-device-detect'
 export default {
-  name: 'PageIndex',
+  name: 'SignatuePage.vue',
   data () {
     return {
       mobile: !isWindows,
@@ -27,8 +18,8 @@ export default {
     }
   },
   components: {
-    MainList: lazyLoadComponent({
-      componentFactory: () => import('components/MainList.vue'),
+    Canva: lazyLoadComponent({
+      componentFactory: () => import('components/signature/canvas.vue'),
       loading: SkeletonBox
     })
   },
@@ -48,3 +39,7 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+
+</style>
