@@ -376,7 +376,7 @@
 
         <q-card-actions align="right">
           <q-btn icon="cancel" color="black" v-close-popup @click="code=null"/>
-          <q-btn id="3" label="OK" color="black" v-close-popup @click="toggleHistoryPayment(paymentUUID)"/>
+          <q-btn label="OK" color="black" v-close-popup @click="toggleHistoryPayment(paymentUUID)"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -425,7 +425,7 @@
 
         <q-card-actions align="right">
           <q-btn icon="cancel" color="black" v-close-popup @click="code=null"/>
-          <q-btn id="3" label="Wprowadź zmiany" color="black" v-close-popup
+          <q-btn label="Wprowadź zmiany" color="black" v-close-popup
                  @click="editLicenseHistoryPayment(); code=null"/>
         </q-card-actions>
       </q-card>

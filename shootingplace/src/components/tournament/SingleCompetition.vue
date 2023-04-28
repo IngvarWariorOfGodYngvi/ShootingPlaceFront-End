@@ -13,49 +13,16 @@
         <div class="col self-center text-center text-positive">Wynik</div>
       </q-field>
     </div>
-    <q-virtual-scroll :items="competition.scoreList" visible class="full-width q-pa-none">
-      <template v-slot="{ item, index }">
-        <div :key="index">
+    <div v-for="(item, index) in competition.scoreList" :key="index" class="full-width q-pa-none">
           <div class="row text-body2 full-width">
             <!-- button -->
-            <div class="col-1">
-              <div class="row" v-if="item.ammunition === false && item.gun === false">
-                <div class="col-5 self-center">{{ index + 1 }}.</div>
-                <q-btn dense glossy class="col" icon="book"
+            <div class="col self-center">{{ index + 1 }}.</div>
+            <div class="col-1 row">
+                <q-btn dense glossy class="full-width" :icon="item.ammunition === false && item.gun === false? 'book' : item.ammunition === true && item.gun === false?'done book':item.ammunition === false && item.gun === true?'book done':item.ammunition === true && item.gun === true?'done':'book'"
                        @click="scoreUUID = item.uuid;temp=item.member!=null?item.member:item.otherPersonEntity.secondName;item.member!=null?(memberLeg = item.member.legitimationNumber,otherID = 0):(otherID = item.otherPersonEntity.id,memberLeg = 0); getListCalibers();caliberUUID = competition.caliberUUID;ammoQuantity = competition.practiceShots + competition.numberOfShots;addAmmo=true">
-                  <q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Wydaj broń lub
-                    amunicję
-                    {{ item.member != null ? temp = item.member.secondName : temp = item.otherPersonEntity.secondName }}
+                  <q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">{{ item.ammunition === false && item.gun === false?'Wydaj broń lub amunicję':item.ammunition === true && item.gun === false?'Amunicja wydana':item.ammunition === false && item.gun === true?'Broń wydana':'Broń i Amunicja Wydane' }}
                   </q-tooltip>
                 </q-btn>
-              </div>
-              <div class="row" v-if="item.ammunition === true && item.gun === false">
-                <div class="col-5 self-center">{{ index + 1 }}.</div>
-                <q-btn dense glossy class="col" color="primary"
-                       :icon="item.ammunition === true && item.gun === false?'done book':'book'"
-                       @click="scoreUUID = item.uuid;item.member!=null?(memberLeg = item.member.legitimationNumber,otherID = 0):(otherID = item.otherPersonEntity.id,memberLeg=0); getListCalibers();caliberUUID = competition.caliberUUID;ammoQuantity = competition.practiceShots + competition.numberOfShots;addAmmo=true">
-                  <q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Amunicja wydana
-                  </q-tooltip>
-                </q-btn>
-              </div>
-              <div class="row" v-if="item.ammunition === false && item.gun === true">
-                <div class="col-5 self-center">{{ index + 1 }}.</div>
-                <q-btn dense glossy class="col" color="secondary"
-                       :icon="item.ammunition === false && item.gun === true?'book done':'book'"
-                       @click="scoreUUID = item.uuid;item.member!=null?(memberLeg = item.member.legitimationNumber,otherID = 0):(otherID = item.otherPersonEntity.id,memberLeg=0); getListCalibers();caliberUUID = competition.caliberUUID;ammoQuantity = competition.practiceShots + competition.numberOfShots;addAmmo=true">
-                  <q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Broń wydana
-                  </q-tooltip>
-                </q-btn>
-              </div>
-              <div class="row" v-if="item.ammunition === true && item.gun === true">
-                <div class="col-5 self-center">{{ index + 1 }}.</div>
-                <q-btn dense glossy class="col" color="primary" icon="done"
-                       @click="scoreUUID = item.uuid;item.member!=null?(memberLeg = item.member.legitimationNumber,otherID = 0):(otherID = item.otherPersonEntity.id,memberLeg=0); getListCalibers();caliberUUID = competition.caliberUUID;ammoQuantity = competition.practiceShots + competition.numberOfShots;addAmmo=true">
-                  <q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Broń i Amunicja
-                    wydana
-                  </q-tooltip>
-                </q-btn>
-              </div>
             </div>
             <!-- name & club -->
             <div class="col-5"
@@ -81,7 +48,7 @@
               </q-field>
             </div>
             <!-- metric -->
-            <div class="col-1 text-positive" @dblclick="scoreUUID = item.uuid;toggleDSQDNF=true">
+            <div class="col-1 text-positive" @dblclick="scoreUUID = item.uuid;metric = item.metricNumber; toggleDSQDNF=true">
               <q-field dense class="text-center row" label-color="positive" standout="bg-accent" stack-label
                        label="metryka">
                 <div class="self-center full-width col no-outline text-center text-positive text-caption"
@@ -94,23 +61,23 @@
                  class="box col-1 text-positive">
               <q-field dense class="row text-positive" label-color="positive" color="positive"
                        standout="bg-accent text-positive" label="trafienia" stack-label>
-                <q-popup-edit v-model="outerTen">
+                <q-popup-edit v-model="outerTen" value="" content-class="bg-dark text-positive">
                   <q-input v-if="alfa === '' && charlie === '' && delta === ''" @focus="scoreUUID = item.uuid"
                            input-class="text-center text-positive" v-model="outerTen"
                            @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
-                           stack-label label="trafienia"
+                           stack-label label="trafienia" label-color="positive"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                  <q-input @focus="scoreUUID = item.uuid"
+                  <q-input @focus="scoreUUID = item.uuid" label-color="positive"
                            @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
-                           input-class="text-center" v-model="alfa" stack-label label="Alfa"
+                           input-class="text-center text-positive" v-model="alfa" stack-label label="Alfa"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                  <q-input @focus="scoreUUID = item.uuid"
+                  <q-input @focus="scoreUUID = item.uuid" label-color="positive"
                            @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
-                           input-class="text-center" v-model="charlie" stack-label label="Charlie"
+                           input-class="text-center text-positive" v-model="charlie" stack-label label="Charlie"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                  <q-input @focus="scoreUUID = item.uuid"
+                  <q-input @focus="scoreUUID = item.uuid" label-color="positive"
                            @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
-                           input-class="text-center" v-model="delta" stack-label label="Delta"
+                           input-class="text-center text-positive" v-model="delta" stack-label label="Delta"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                   <div class="q-pa-xs">
                     <q-btn color="primary" label="Anuluj" v-close-popup
@@ -127,23 +94,23 @@
             <div v-if="competition.disciplines!=null && competition.countingMethod === 'COMSTOCK'" class="box col-1 ">
               <q-field dense v-if="competition.disciplines.includes('Pistolet')" class="row"
                        standout="bg-accent" label="p" stack-label>
-                <q-popup-edit v-model="outerTen">
+                <q-popup-edit v-model="outerTen" value="">
                   <q-input v-if="alfa === '' && charlie === '' && delta === ''" @focus="scoreUUID = item.uuid"
-                           input-class="text-center" v-model="outerTen"
+                           input-class="text-center text-positive" v-model="outerTen"
                            @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
                            stack-label label="trafienia"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                   <q-input @focus="scoreUUID = item.uuid"
                            @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
-                           input-class="text-center" v-model="alfa" stack-label label="Alfa"
+                           input-class="text-center text-positive" v-model="alfa" stack-label label="Alfa"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                   <q-input @focus="scoreUUID = item.uuid"
                            @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
-                           input-class="text-center" v-model="charlie" stack-label label="Charlie"
+                           input-class="text-center text-positive" v-model="charlie" stack-label label="Charlie"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                   <q-input @focus="scoreUUID = item.uuid"
                            @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
-                           input-class="text-center" v-model="delta" stack-label label="Delta"
+                           input-class="text-center text-positive" v-model="delta" stack-label label="Delta"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                   <div class="q-pa-xs">
                     <q-btn color="primary" label="Anuluj" v-close-popup
@@ -158,23 +125,23 @@
               </q-field>
               <q-field dense v-if="competition.disciplines.includes('Karabin')" class="row"
                        standout="bg-accent" label="k" stack-label>
-                <q-popup-edit v-model="outerTen">
+                <q-popup-edit v-model="outerTen" value="">
                   <q-input v-if="alfa === '' && charlie === '' && delta === ''" @focus="scoreUUID = item.uuid"
-                           input-class="text-center" v-model="outerTen"
+                           input-class="text-center text-positive" v-model="outerTen"
                            @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
                            stack-label label="trafienia"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                   <q-input @focus="scoreUUID = item.uuid"
                            @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
-                           input-class="text-center" v-model="alfa" stack-label label="Alfa"
+                           input-class="text-center text-positive" v-model="alfa" stack-label label="Alfa"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                   <q-input @focus="scoreUUID = item.uuid"
                            @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
-                           input-class="text-center" v-model="charlie" stack-label label="Charlie"
+                           input-class="text-center text-positive" v-model="charlie" stack-label label="Charlie"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                   <q-input @focus="scoreUUID = item.uuid"
                            @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
-                           input-class="text-center" v-model="delta" stack-label label="Delta"
+                           input-class="text-center text-positive" v-model="delta" stack-label label="Delta"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                   <div class="q-pa-xs">
                     <q-btn color="primary" label="Anuluj" v-close-popup
@@ -189,23 +156,23 @@
               </q-field>
               <q-field dense v-if="competition.disciplines.includes('Strzelba')" class="row"
                        standout="bg-accent" label="s" stack-label>
-                <q-popup-edit v-model="outerTen">
+                <q-popup-edit v-model="outerTen" value="">
                   <q-input v-if="alfa === '' && charlie === '' && delta === ''" @focus="scoreUUID = item.uuid"
-                           input-class="text-center" v-model="outerTen"
+                           input-class="text-center text-positive" v-model="outerTen"
                            @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
                            stack-label label="trafienia"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                   <q-input @focus="scoreUUID = item.uuid"
                            @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
-                           input-class="text-center" v-model="alfa" stack-label label="Alfa"
+                           input-class="text-center text-positive" v-model="alfa" stack-label label="Alfa"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                   <q-input @focus="scoreUUID = item.uuid"
                            @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
-                           input-class="text-center" v-model="charlie" stack-label label="Charlie"
+                           input-class="text-center text-positive" v-model="charlie" stack-label label="Charlie"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                   <q-input @focus="scoreUUID = item.uuid"
                            @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
-                           input-class="text-center" v-model="delta" stack-label label="Delta"
+                           input-class="text-center text-positive" v-model="delta" stack-label label="Delta"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                   <div class="q-pa-xs">
                     <q-btn color="primary" label="Anuluj" v-close-popup
@@ -223,10 +190,10 @@
               <q-field dense standout="bg-accent" class="row" color="positive" label-color="positive"
                        label="czas"
                        stack-label>
-                <q-popup-edit v-model="innerTen">
-                  <q-input @focus="scoreUUID = item.uuid" input-class="text-center" v-model="innerTen"
+                <q-popup-edit v-model="innerTen" value="" content-class="bg-dark text-positive">
+                  <q-input @focus="scoreUUID = item.uuid" input-class="text-center text-positive" v-model="innerTen"
                            @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
-                           stack-label label="czas"
+                           stack-label label="czas" label-color="positive"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58) || event.charCode > 44 || event.charCode < 46"/>
                   <div class="q-pa-xs">
                     <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
@@ -243,10 +210,10 @@
             <div v-if="competition.countingMethod === 'COMSTOCK'" class="box col-1 ">
               <q-field dense standout="bg-accent" class="row" color="positive" label-color="positive"
                        label="procedury" stack-label>
-                <q-popup-edit v-model="procedures">
-                  <q-input @focus="scoreUUID = item.uuid" input-class="text-center" v-model="procedures"
+                <q-popup-edit v-model="procedures" value="" content-class="bg-dark text-positive">
+                  <q-input @focus="scoreUUID = item.uuid" input-class="text-center text-positive" v-model="procedures"
                            @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
-                           stack-label label="procedury + 3 sek"
+                           stack-label label="procedury + 3 sek" label-color="positive"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                   <div class="q-pa-xs row full-width">
                     <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
@@ -275,11 +242,11 @@
             </div>
             <div v-if="competition.countingMethod === 'NORMAL'" class="box col-2 ">
               <q-field dense standout="bg-accent" class="row" color="positive" label-color="positive"
-                       label="10 ogólnie" stack-label>
-                <q-popup-edit v-model="outerTen">
-                  <q-input @focus="scoreUUID = item.uuid" input-class="text-center" v-model="outerTen"
+                       label="10 zwykłe" stack-label>
+                <q-popup-edit v-model="outerTen" value="" content-class="bg-dark text-positive">
+                  <q-input @focus="scoreUUID = item.uuid" input-class="text-center text-positive" v-model="outerTen"
                            @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
-                           stack-label label="ilość 10 ogólnie"
+                           stack-label label="ilość 10 zwykłe" label-color="positive"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                   <div class="q-pa-xs">
                     <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
@@ -295,10 +262,10 @@
             <div v-if="competition.countingMethod === 'NORMAL'" class="box col-2 ">
               <q-field dense standout="bg-accent" class="row" color="positive" label-color="positive"
                        label="10 wewnętrzne" stack-label>
-                <q-popup-edit>
-                  <q-input @focus="scoreUUID = item.uuid" input-class="text-center" v-model="innerTen"
+                <q-popup-edit value="" content-class="bg-dark">
+                  <q-input @focus="scoreUUID = item.uuid" input-class="text-center text-positive" v-model="innerTen"
                            @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
-                           stack-label label="ilość 10 wewnętrznych"
+                           stack-label label="ilość 10 wewnętrznych" label-color="positive"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                   <div class="q-pa-xs">
                     <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
@@ -315,19 +282,19 @@
             <div class="box col-1 ">
               <q-field dense standout="bg-accent" label="Wynik" class="row" color="positive" label-color="positive"
                        stack-label>
-                <q-popup-edit v-if="item.series.length>0" @before-show="series = setSeriesValues (item.series)">
+                <q-popup-edit v-if="item.series.length>0" @before-show="series = setSeriesValues (item.series)" value="" content-class="bg-dark text-positive">
                   <q-input v-for="(item,index) in item.series" :key="index"
                            @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58) || event.charCode === 44  || event.charCode === 46"
-                           @focus="scoreUUID = item.uuid" v-model="series[index]" stack-label
-                           :label="'Seria ' + (index + 1)" input-class="text-center"/>
+                           @focus="scoreUUID = item.uuid" v-model="series[index]" stack-label label-color="positive"
+                           :label="'Seria ' + (index + 1)" input-class="text-center text-positive"/>
                   <div class="q-pa-xs">
                     <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
                     <q-btn color="primary" label="Zapisz" v-close-popup
                            @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures,series)"></q-btn>
                   </div>
                 </q-popup-edit>
-                <q-popup-edit v-else>
+                <q-popup-edit v-else value="">
                   <q-input @focus="scoreUUID = item.uuid" input-class="text-center" v-model="scoreLabel"
                            @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
                            stack-label label="Wynik"
@@ -351,11 +318,9 @@
             </div>
           </div>
           <!--          </div>-->
-        </div>
-      </template>
-    </q-virtual-scroll>
+      </div>
     <q-dialog v-model="toggleDSQDNF">
-      <q-card>
+      <q-card class="bg-dark text-positive">
         <q-card-section>
           <div>
             <div class="text-h5 text-bold text-center">Kary dla zawodnika z numerem {{ metric }}</div>
@@ -370,7 +335,7 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat label="Anuluj" color="primary" v-close-popup/>
+          <q-btn label="Anuluj" color="primary" v-close-popup/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -461,10 +426,6 @@
           <ol class="col">
             <li class="row" v-for="info in infoScore" :key="info">
               <q-checkbox color="secondary" class="col" v-model="compList" :val="info" :label="info"/>
-              <!--              <div>-->
-              <!--                <q-btn class="col-3" color="primary" label="Wydaj amunicję"-->
-              <!--                       @click="compName=info;getListCalibers();addAmmo=true"/>-->
-              <!--              </div>-->
             </li>
           </ol>
           <div>
@@ -491,7 +452,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog :position="'top'" v-model="listDownload">
+    <q-dialog position="top" v-model="listDownload">
       <q-card>
         <q-card-section class="col">
           <div class="self-center col full-width no-outline text-center text-h5 text-bold">Pobrano</div>
@@ -547,23 +508,7 @@ export default {
   },
   data () {
     return {
-      competition: {
-        hf: '',
-        dsq: false,
-        dnf: false,
-        pk: false,
-        countingMethod: '',
-        disciplines: [],
-        discipline: null,
-        attachedToTournament: '',
-        scoreList: {
-          ammunition: false,
-          otherPersonEntity: '',
-          metricNumber: ''
-        },
-        date: '',
-        scoreListSize: ''
-      },
+      competition: [],
       controlSize: 0,
       a5rotate: false,
       val: [],
@@ -651,10 +596,6 @@ export default {
         })
       })
     },
-    call (uuid) {
-      console.log('wołam reset')
-      console.log(uuid)
-    },
     onEnter (scoreUUID) {
       this.setScore(scoreUUID, this.scoreLabel, this.innerTen, this.outerTen, this.alfa, this.charlie, this.delta, this.procedures, this.series)
     },
@@ -741,7 +682,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.showloading()
               this.scoreLabel = null
@@ -759,7 +700,7 @@ export default {
             }
           )
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -798,7 +739,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.showloading()
               this.scoreLabel = null
@@ -815,7 +756,7 @@ export default {
             }
           )
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -833,7 +774,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.success = true
@@ -842,7 +783,7 @@ export default {
             }
           )
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -862,7 +803,6 @@ export default {
         if (response.status === 200) {
           response.json().then(
             response => {
-              console.log(response)
               this.message = response
               this.success = true
               this.getCompetitionByID(this.uuid)
@@ -890,7 +830,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.getCompetitionByID(this.uuid)
               this.message = response
@@ -899,7 +839,7 @@ export default {
             }
           )
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -917,7 +857,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.getCompetitionByID(this.uuid)
               this.message = response
@@ -926,7 +866,7 @@ export default {
             }
           )
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -944,7 +884,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.getCompetitionByID(this.uuid)
               this.message = response
@@ -953,7 +893,7 @@ export default {
             }
           )
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true

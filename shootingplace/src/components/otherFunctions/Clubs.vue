@@ -1,45 +1,33 @@
 <template>
   <div>
-    <div class="text-body2 bg-white">
+    <div class="bg-dark text-positive">
       <q-card-section>
         <div class="q-pa-md text-center col full-width no-outline text-h5 text-bold" tabindex="0">Lista znanych klubów
         </div>
-        <div class="q-pb-md">
-          <q-btn @click="createClub=true" label="utwórz nowy klub"></q-btn>
+        <q-btn @click="createClub = true" color="primary" label="dodaj nowy klub"></q-btn>
+        <div class="row col">
+          <div class="q-pr-md">lp</div>
+          <div class="col">Nazwa</div>
+          <div class="col">Strona</div>
+          <div class="col">Telefon</div>
+          <div class="col">e-mail</div>
+          <div class="col">adres</div>
         </div>
         <q-scroll-area class="full-width q-pa-none" style="height: 400px;">
-          <div v-for="(club,id) in clubs" :key="id">
-            <div v-if="club.name!=='BRAK'" class="row">
-              <div @dblclick="clubInfoModel=club;clubInfo=true" class="col-3">
-                <q-field dense label="Klub" standout="bg-accent text-black" stack-label clickable>
-                  <div class="self-center full-width no -outline text-left text-black" tabindex="1">
-                    {{ club.name }}
-                  </div>
-                </q-field>
-              </div>
-              <div class="col-3">
-                <a :href="club.url" target="_blank">
-                  <q-field dense class="col" label="strona" standout="bg-accent text-black" stack-label>
-                    <div class="self-center col full-width no-outline text-left text-black" tabindex="1">
-                      {{ club.url }}
-                    </div>
-                  </q-field>
-                </a>
-              </div>
-              <div class="col-3">
-                <q-field dense label="adres" standout="bg-accent text-black" stack-label>
-                  <div class="self-center col full-width no-outline text-left text-black" tabindex="1">
-                    {{ club.address }}
-                  </div>
-                </q-field>
-              </div>
-              <q-btn dense class="col-1" @click="clubID = club.id;editClub=true" icon="edit">
+          <div v-for="(club, index) in clubs" :key="index">
+            <div v-if="club.name !== 'BRAK'" class="row text-positive">
+              <div class="self-center q-pr-md">{{ index + 1 }}</div>
+              <div @dblclick="clubInfoModel = club; clubInfo = true" class=" col self-center">{{ club.name }}</div>
+              <div class="col self-center"><a :href="club.url" target="_blank">{{ club.url }}</a></div>
+              <div class="col self-center">{{ club.phoneNumber }}</div>
+              <div class="col self-center">{{ club.email }}</div>
+              <div class="col self-center">{{ club.address }}</div>
+              <q-btn dense class="col-1" @click="clubID = club.id; editClub = true" color="primary" icon="edit">
                 <q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">Edytuj
                   {{ club.name }}
                 </q-tooltip>
               </q-btn>
             </div>
-            <p></p>
           </div>
         </q-scroll-area>
       </q-card-section>
@@ -56,86 +44,57 @@
           <div>adres : {{ clubInfoModel.address }}</div>
         </q-card-section>
         <q-card-actions align="right">
-          <q-btn flat label="zamknij" color="primary" v-close-popup/>
+          <q-btn flat label="zamknij" color="primary" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
     <q-dialog v-model="createClub">
-      <q-card>
+      <q-card class="bg-dark text-positive" style="min-width: 50vw">
         <q-card-section>
-          <div class="text-h6" style="min-width: 500px">Utwórz nowy Klub</div>
+          <div class="text-h6">Dodaj nowy Klub</div>
         </q-card-section>
         <q-card-section>
-          <q-item>
-            <q-input v-model="clubName" class="full-width" filled label="Nazwa"></q-input>
-          </q-item>
-          <q-item>
-            <q-input v-model="clubFullName" class="full-width" filled label="Pełna nazwa do dokumentów"></q-input>
-          </q-item>
-          <q-item v-if="clubID === 1">
-            <q-input v-model="clubLicenseNumber" class="full-width" filled label="Numer licencji Klubowej"></q-input>
-          </q-item>
-          <q-item>
-            <q-input v-model="clubPhoneNumber" type="tel" class="full-width" mask="### ### ###" filled
-                     label="Telefon"></q-input>
-          </q-item>
-          <q-item>
-            <q-input v-model="clubEmail" type="email" class="full-width" filled label="email"></q-input>
-          </q-item>
-          <q-item>
-            <q-input v-model="clubAddress" type="address" class="full-width" filled label="Adres"></q-input>
-          </q-item>
-          <q-item>
-            <q-input v-model="clubURL" type="url" class="full-width" filled label="Strona internetowa"></q-input>
-          </q-item>
+            <q-input v-model="clubName" dense class="full-width" input-class="text-positive" label-color="positive" filled label="Nazwa"></q-input>
+            <q-input v-model="clubFullName" dense class="full-width" input-class="text-positive" label-color="positive" filled label="Pełna nazwa do dokumentów"></q-input>
+            <q-input v-if="clubID === 1" v-model="clubLicenseNumber" dense class="full-width" input-class="text-positive" label-color="positive" filled label="Numer licencji Klubowej"></q-input>
+            <q-input v-model="clubPhoneNumber" type="tel" dense class="full-width" input-class="text-positive" label-color="positive" mask="### ### ###" filled
+              label="Telefon"></q-input>
+            <q-input v-model="clubEmail" type="email" dense class="full-width" input-class="text-positive" label-color="positive" filled label="email"></q-input>
+            <q-input v-model="clubAddress" type="address" dense class="full-width" input-class="text-positive" label-color="positive" filled label="Adres"></q-input>
+            <q-input v-model="clubURL" type="url" dense class="full-width" input-class="text-positive" label-color="positive" filled label="Strona internetowa"></q-input>
         </q-card-section>
-
         <q-card-actions align="right">
-          <q-btn flat icon="cancel" color="primary" v-close-popup/>
-          <q-btn icon="save" color="primary" v-close-popup @click="createNewClub()"/>
+          <q-btn label="anuluj" color="secondary" v-close-popup />
+          <q-btn label="zapisz" color="primary" v-close-popup @click="createNewClub()" />
         </q-card-actions>
       </q-card>
     </q-dialog>
     <q-dialog v-model="editClub">
-      <q-card>
+      <q-card class="bg-dark text-positive" style="min-width: 50vw">
         <q-card-section>
-          <div class="text-h6" style="min-width: 500px">Zmień dane klubu</div>
+          <div class="text-h6" >Zmień dane klubu</div>
         </q-card-section>
         <q-card-section>
-          <q-item>
-            <q-input v-model="clubName" class="full-width" filled label="Nazwa"></q-input>
-          </q-item>
-          <q-item>
-            <q-input v-model="clubFullName" class="full-width" filled label="Pełna nazwa do dokumentów"></q-input>
-          </q-item>
-          <q-item v-if="clubID === 1">
-            <q-input v-model="clubLicenseNumber" class="full-width" filled label="Numer licencji Klubowej"></q-input>
-          </q-item>
-          <q-item>
-            <q-input v-model="clubPhoneNumber" type="tel" class="full-width" mask="### ### ###" filled
-                     label="Telefon"></q-input>
-          </q-item>
-          <q-item>
-            <q-input v-model="clubEmail" type="email" class="full-width" filled label="email"></q-input>
-          </q-item>
-          <q-item>
-            <q-input v-model="clubAddress" type="address" class="full-width" filled label="Adres"></q-input>
-          </q-item>
-          <q-item>
-            <q-input v-model="clubURL" type="url" class="full-width" filled label="Strona internetowa"></q-input>
-          </q-item>
+            <q-input v-model="clubName" dense class="full-width" input-class="text-positive" label-color="positive" filled label="Nazwa"></q-input>
+            <q-input v-model="clubFullName" dense class="full-width" input-class="text-positive" label-color="positive" filled label="Pełna nazwa do dokumentów"></q-input>
+            <q-input v-if="clubID === 1" v-model="clubLicenseNumber" dense class="full-width" input-class="text-positive" label-color="positive" filled label="Numer licencji Klubowej"></q-input>
+            <q-input v-model="clubPhoneNumber" dense type="tel" class="full-width" input-class="text-positive" label-color="positive" mask="### ### ###" filled
+              label="Telefon"></q-input>
+            <q-input v-model="clubEmail" dense type="email" class="full-width" input-class="text-positive" label-color="positive" filled label="email"></q-input>
+            <q-input v-model="clubAddress" dense type="address" class="full-width" input-class="text-positive" label-color="positive" filled label="Adres"></q-input>
+            <q-input v-model="clubURL" dense type="url" class="full-width" input-class="text-positive" label-color="positive" filled label="Strona internetowa"></q-input>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat icon="cancel" color="primary" v-close-popup/>
-          <q-btn icon="save" color="primary" v-close-popup @click="updateClub()"/>
+          <q-btn label="anuluj" color="secondary" v-close-popup />
+          <q-btn label="zapisz" color="primary" v-close-popup @click="updateClub()" />
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog :position="'top'" v-model="success">
+    <q-dialog position="top" v-model="success">
       <q-card>
         <q-card-section>
-          <div v-if="message!=null" class="text-h6">{{ message }}</div>
+          <div v-if="message != null" class="text-h6">{{ message }}</div>
         </q-card-section>
 
       </q-card>
@@ -147,7 +106,7 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup/>
+          <q-btn flat label="OK" color="primary" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -287,6 +246,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

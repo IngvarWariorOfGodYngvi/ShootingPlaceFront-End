@@ -3,9 +3,11 @@
           @mousemove="draw"
           @mousedown="setPosition"
           @mouseenter="setPosition"
-          v-touch-pan="draw"
+          @touchstart="draw"
+          @touchmove="setPosition"
           @resize="resize"
-          id="canvas"></canvas>
+          id="canvas"
+          ></canvas>
 </template>
 
 <script>

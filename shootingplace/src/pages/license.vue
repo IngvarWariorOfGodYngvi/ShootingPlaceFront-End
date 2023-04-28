@@ -20,7 +20,7 @@
                       group="list">
       <AllLicensePayment></AllLicensePayment>
     </q-expansion-item>
-    <Canva style="width: 50vw;height: 50%;max-width: 50vw;max-height: 50vh;"></Canva>
+    <!-- <Canva v-touch-pan.prevent class="fex-center" style="width: 100%;height:100%;"></Canva> -->
   </q-page>
 </template>
 
@@ -47,11 +47,11 @@ export default {
     AllLicensePayment: lazyLoadComponent({
       componentFactory: () => import('components/license/AllLicensePayment.vue'),
       loading: SkeletonBox
-    }),
-    Canva: lazyLoadComponent({
-      componentFactory: () => import('components/signature/canvas.vue'),
-      loading: SkeletonBox
     })
+    // Canva: lazyLoadComponent({
+    //   componentFactory: () => import('components/signature/canvas.vue'),
+    //   loading: SkeletonBox
+    // })
   },
   data () {
     return {

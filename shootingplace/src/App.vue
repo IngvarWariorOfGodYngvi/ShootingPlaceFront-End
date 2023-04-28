@@ -51,7 +51,13 @@ export default {
         window.localStorage.setItem('mailingList', JSON.stringify([]))
       }
       if (window.localStorage.getItem('drawer') == null) {
-        window.localStorage.setItem('drawer', 'true')
+        window.localStorage.setItem('drawer', this.mobile ? 'false' : 'true')
+      }
+      if (window.localStorage.getItem('arbiter') == null) {
+        window.localStorage.setItem('arbiter', '')
+      }
+      if (window.localStorage.getItem('arbiter').length < 4) {
+        window.localStorage.setItem('arbiter', '000')
       }
     }
   },
@@ -59,10 +65,10 @@ export default {
   mobile: !isWindows,
   main: JSON.parse(window.localStorage.getItem('main')), // dev //
   // prod: '192.168.1.30:8080/strzelnica/#/', // test //
-  prod: location.hostname + ':8081/#/', // dev //
-  host: location.hostname + ':8080/' // test + prod + dev //
-  // prod: '192.168.100.2:8080/strzelnica/#/', // prod //
-  // host: location.hostname + ':8080/shootingplace-1.0/' // test + prod + dev //
+  // prod: location.hostname + ':8081/#/', // dev //
+  // host: location.hostname + ':8080/' // test + prod + dev //
+  prod: '192.168.100.2:8080/strzelnica/#/', // prod //
+  host: location.hostname + ':8080/shootingplace-1.0/' // test + prod + dev //
 
 }
 

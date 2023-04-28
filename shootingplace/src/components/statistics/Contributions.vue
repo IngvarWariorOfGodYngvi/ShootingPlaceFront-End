@@ -8,9 +8,9 @@
             <template v-slot:append>
               <q-icon name="event" color="positive" class="cursor-pointer">
                 <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                  <q-date no-unset @input="getSum()" v-model="firstDate">
+                  <q-date no-unset @input="getSum()" v-model="firstDate" mask="YYYY-MM-DD" class="bg-dark text-positive">
                     <div class="row items-center justify-end">
-                      <q-btn v-close-popup label="Zamknij" color="primary" flat />
+                      <q-btn v-close-popup label="Zamknij" color="primary"/>
                     </div>
                   </q-date>
                 </q-popup-proxy>
@@ -23,9 +23,9 @@
             <template v-slot:append>
               <q-icon name="event" color="positive" class="cursor-pointer">
                 <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                  <q-date @input="getSum()" v-model="secondDate">
+                  <q-date @input="getSum()" v-model="secondDate" mask="YYYY-MM-DD" class="bg-dark text-positive">
                     <div class="row items-center justify-end">
-                      <q-btn v-close-popup label="Zamknij" color="primary" flat />
+                      <q-btn v-close-popup label="Zamknij" color="primary"/>
                     </div>
                   </q-date>
                 </q-popup-proxy>

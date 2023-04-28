@@ -6,13 +6,13 @@
         </q-item>
       </div>
       <q-expansion-item label="Lista osób spoza klubu" dense class="text-left text-h6 text-bold bg-grey-3 q-mb-md" group="list">
-        <OtherList></OtherList>
+        <OtherList class="bg-dark text-positive text-body2"></OtherList>
       </q-expansion-item>
       <q-expansion-item label="Lista znanych klubów" dense class="text-left text-h6 text-bold bg-grey-3 q-mb-md" group="list">
-        <Clubs></Clubs>
+        <Clubs class="bg-dark text-positive text-body2"></Clubs>
       </q-expansion-item>
       <q-expansion-item label="Lista Konkurencji" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
-        <Competitions></Competitions>
+        <Competitions class="bg-dark text-positive text-body2"></Competitions>
       </q-expansion-item>
       <p></p>
     <div v-if="!access">

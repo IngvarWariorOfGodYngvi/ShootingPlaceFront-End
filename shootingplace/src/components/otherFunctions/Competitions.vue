@@ -1,84 +1,94 @@
 <template>
   <div>
-    <div class="text-body2 bg-white">
-      <q-card-section>
-        <div class="q-pa-md text-center col full-width no-outline text-h5 text-bold" tabindex="0">Lista Konkurencji
-        </div>
-        <q-scroll-area dense class="full-width q-pa-none" style="height: 400px;">
-          <div v-for="(comp,uuid) in competitions" :key="uuid">
-            <div v-if="comp.name!=='BRAK'" class="col">
-              <div class="row">
-                <q-field dense class="col-5" label="Konkurencja" standout="bg-accent text-black" stack-label clickable>
-                  <div class="self-center col full-width no-outline text-left text-black" tabindex="1">{{ comp.name }}
-                  </div>
-                </q-field>
-                <q-field dense class="col-4" label="Kolejność na listach" standout="bg-accent text-black" stack-label
-                         clickable>
-                  <div class="self-center col full-width no-outline text-center text-black" tabindex="1">
-                    {{ comp.ordering }}
-                  </div>
-                </q-field>
-                <q-btn dense class="col-1" @click="competition=comp;competitionInfo=true"  icon="edit">
-                  <q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">
-                    {{ comp.name }}
-                  </q-tooltip>
-                </q-btn>
-              </div>
+    <q-card class="bg-dark text-positive">
+      <div class="q-pa-md text-center full-width no-outline text-h5 text-bold">Lista Konkurencji
+      </div>
+      <div class="row col">
+        <div class="q-pr-md">lp</div>
+        <div class="col">Nazwa Konkurencji</div>
+        <div class="col text-center">kolejność na listach</div>
+        <div class="col text-center">Ilość próbnych</div>
+        <div class="col-1 text-center"></div>
+      </div>
+      <q-scroll-area dense class="full-width q-pa-none" style="height: 400px;">
+        <div v-for="(comp, index) in competitions" :key="index">
+          <div v-if="comp.name !== 'BRAK'" class="col">
+            <div class="row">
+              <div class="self-center q-pr-md">{{ index + 1 }}</div>
+              <div class="col self-center text-left text-positive">{{ comp.name }}</div>
+              <div class="col self-center text-center text-positive">{{ comp.ordering }}</div>
+              <div class="col self-center text-center text-positive">{{ comp.numberOfShots }}</div>
+              <q-btn dense class="col-1" color="primary" @click="competition = comp; competitionInfo = true" icon="edit">
+                <q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">
+                  {{ comp.name }}
+                </q-tooltip>
+              </q-btn>
             </div>
-            <p></p>
           </div>
-        </q-scroll-area>
-      </q-card-section>
-    </div>
+          <p></p>
+        </div>
+      </q-scroll-area>
+    </q-card>
     <q-dialog v-model="competitionInfo">
       <q-card>
         <q-card-section class="text-bold">
-          <div class="text-h6">{{competition.name}}</div>
-          <div>ID: {{competition.uuid}}</div>
-          <div>Dyscyplina: {{competition.discipline}}</div>
-          <div>Ilość Strzałów: {{competition.numberOfShots}}</div>
-          <div>Rodzaj: {{competition.type}}</div>
-          <div class="row">Metoda Liczenia: <div v-if="competition.countingMethod === 'NORMAL'">: Normalnie</div><div v-else>{{competition.countingMethod}}</div></div>
-          <div>Numer Kolejności na Listach: {{competition.ordering}}</div>
-          <div>Ilość Strzałów próbnych: {{competition.practiceShots}}</div>
-          <div>Kaliber: {{competition.caliberUUID}}</div>
+          <div class="text-h6">{{ competition.name }}</div>
+          <div>ID: {{ competition.uuid }}</div>
+          <div>Dyscyplina: {{ competition.discipline }}</div>
+          <div>Ilość Strzałów: {{ competition.numberOfShots }}</div>
+          <div>Rodzaj: {{ competition.type }}</div>
+          <div class="row">Metoda Liczenia: <div v-if="competition.countingMethod === 'NORMAL'">: Normalnie</div>
+            <div v-else>{{ competition.countingMethod }}</div>
+          </div>
+          <div>Numer Kolejności na Listach: {{ competition.ordering }}</div>
+          <div>Ilość Strzałów próbnych: {{ competition.practiceShots }}</div>
+          <div>Kaliber: {{ competition.caliberUUID }}</div>
           <q-field class="col-2 cursor-pointer" standout="bg-accent text-black" label="ZMIEŃ NUMER KOLEJNOŚCI NA LISTACH">
-            <q-popup-edit @keypress.enter="compID=competition.uuid;updateCompetition()">
-              <q-input v-model="orderNumber" input-class="text-center" dense autofocus stack-label label="zmień na inny numer" onkeypress="return (event.charCode > 47 && event.charCode < 58)" @keypress.enter="compID=competition.uuid;updateCompetition()"/>
+            <q-popup-edit @keypress.enter="compID = competition.uuid; updateCompetition()">
+              <q-input v-model="orderNumber" input-class="text-center" dense autofocus stack-label
+                label="zmień na inny numer" onkeypress="return (event.charCode > 47 && event.charCode < 58)"
+                @keypress.enter="compID = competition.uuid; updateCompetition()" />
               <div class="q-pa-xs">
                 <q-btn align="left" color="primary" label="Anuluj" v-close-popup></q-btn>
-                <q-btn align="right" color="primary" label="Zmień" v-close-popup @click="compID=competition.uuid;updateCompetition()"></q-btn>
+                <q-btn align="right" color="primary" label="Zmień" v-close-popup
+                  @click="compID = competition.uuid; updateCompetition()"></q-btn>
               </div>
             </q-popup-edit>
           </q-field>
           <q-field class="col-2 cursor-pointer" standout="bg-accent text-black" label="ZMIEŃ ILOŚĆ STRZAŁÓW PRÓBNYCH">
-            <q-popup-edit @keypress.enter="compID=competition.uuid;updateCompetition()">
-              <q-input v-model="practiceShots" input-class="text-center" dense autofocus stack-label label="zmień na inny numer" onkeydown="return (event.charCode > 47 && event.charCode < 58)" @keypress.enter="compID=competition.uuid;updateCompetition()"/>
+            <q-popup-edit @keypress.enter="compID = competition.uuid; updateCompetition()">
+              <q-input v-model="practiceShots" input-class="text-center" dense autofocus stack-label
+                label="zmień na inny numer" onkeydown="return (event.charCode > 47 && event.charCode < 58)"
+                @keypress.enter="compID = competition.uuid; updateCompetition()" />
               <div class="q-pa-xs">
                 <q-btn align="left" color="primary" label="Anuluj" v-close-popup></q-btn>
-                <q-btn align="right" color="primary" label="Zmień" v-close-popup @click="compID=competition.uuid;updateCompetition()"></q-btn>
+                <q-btn align="right" color="primary" label="Zmień" v-close-popup
+                  @click="compID = competition.uuid; updateCompetition()"></q-btn>
               </div>
             </q-popup-edit>
           </q-field>
           <q-field class="col-2 cursor-pointer" standout="bg-accent text-black" label="ZMIEŃ KALIBER">
-            <q-popup-edit @keypress.enter="compID=competition.uuid;updateCompetition()">
-              <q-input v-model="caliberUUID" input-class="text-center" dense autofocus stack-label label="zmień na inny numer" onkeypress="return (event.charCode > 47 && event.charCode < 58)" @keypress.enter="compID=competition.uuid;updateCompetition()"/>
+            <q-popup-edit @keypress.enter="compID = competition.uuid; updateCompetition()">
+              <q-input v-model="caliberUUID" input-class="text-center" dense autofocus stack-label
+                label="zmień na inny numer" onkeypress="return (event.charCode > 47 && event.charCode < 58)"
+                @keypress.enter="compID = competition.uuid; updateCompetition()" />
               <div class="q-pa-xs">
                 <q-btn align="left" color="primary" label="Anuluj" v-close-popup></q-btn>
-                <q-btn align="right" color="primary" label="Zmień" v-close-popup @click="compID=competition.uuid;updateCompetition()"></q-btn>
+                <q-btn align="right" color="primary" label="Zmień" v-close-popup
+                  @click="compID = competition.uuid; updateCompetition()"></q-btn>
               </div>
             </q-popup-edit>
           </q-field>
         </q-card-section>
         <q-card-actions align="right">
-          <q-btn flat label="zamknij" color="primary" v-close-popup/>
+          <q-btn flat label="zamknij" color="primary" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
     <q-dialog :position="'top'" v-model="success">
       <q-card>
         <q-card-section>
-          <div v-if="message!=null" class="text-h6">{{ message }}</div>
+          <div v-if="message != null" class="text-h6">{{ message }}</div>
         </q-card-section>
 
       </q-card>
@@ -90,7 +100,7 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup/>
+          <q-btn flat label="OK" color="primary" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -180,6 +190,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

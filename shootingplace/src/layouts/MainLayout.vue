@@ -9,12 +9,14 @@
           :icon="icon"
           aria-label="Menu"
           :label="title"
-          @click="setDrawer()"
+          @click="setDrawer(!leftDrawerOpen)"
           @mousemove="leftDrawerOpen?icon='arrow_left':icon='arrow_right'"
           @mouseleave="icon='menu'"
         />
         <q-toggle v-model="backgroundDark" :val="true" :value="true" color="dark" keep-color
                   @input="changeColor()"></q-toggle>
+<!--        <q-item>{{arbiter}}</q-item>-->
+<!--        <q-btn @click="reset()" label="reset" color="secondary"></q-btn>-->
         <!-- <q-toolbar-title>
            <div class="row">
              <div class="col" id="title">{{$keycloak.keycloak.clientId}} </div>
@@ -108,6 +110,7 @@
       v-model="leftDrawerOpen"
       bordered
       class="bg-secondary"
+      @hide="setDrawer(false)"
     >
       <div class="bg-secondary full-height">
         <q-list>
@@ -186,6 +189,8 @@ export default {
   data () {
     return {
       title: '',
+      zero: 1,
+      arbiter: window.localStorage.getItem('arbiter'),
       mobile: !isWindows,
       main: App.main,
       backgroundDark: JSON.parse(window.localStorage.getItem('BackgroundDark')),
@@ -289,11 +294,14 @@ export default {
         this.timer = 0
       }, 500)
     },
-    setDrawer () {
-      const b = String(!this.leftDrawerOpen)
-      console.log(b)
+    reset () {
+      window.localStorage.setItem('arbiter', '000')
+      this.arbiter = '000'
+    },
+    setDrawer (condition) {
+      const b = String(condition)
       window.localStorage.setItem('drawer', b)
-      this.leftDrawerOpen = !this.leftDrawerOpen
+      this.leftDrawerOpen = JSON.parse(window.localStorage.getItem('drawer'))
     },
     getHighStarts () {
       if (this.starts.length < 1) {
@@ -351,8 +359,8 @@ export default {
       if (this.backgroundDark) {
         window.localStorage.setItem('BackgroundDark', 'true')
         colors.setBrand('dark-separator', '$grey-6')
-        colors.setBrand('primary', '#374550')
-        colors.setBrand('secondary', '#871421')
+        colors.setBrand('secondary', '#374550')
+        colors.setBrand('primary', '#871421')
         colors.setBrand('dark', '#1D1D1D')
         colors.setBrand('positive', '#FFFFFF')
         colors.setBrand('accent', '#A0A0A0')
