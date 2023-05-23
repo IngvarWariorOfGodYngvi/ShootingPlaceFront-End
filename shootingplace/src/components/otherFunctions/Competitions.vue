@@ -30,7 +30,7 @@
       </q-scroll-area>
     </q-card>
     <q-dialog v-model="competitionInfo">
-      <q-card>
+      <q-card class="bg-dark text-positive">
         <q-card-section class="text-bold">
           <div class="text-h6">{{ competition.name }}</div>
           <div>ID: {{ competition.uuid }}</div>
@@ -43,10 +43,10 @@
           <div>Numer Kolejności na Listach: {{ competition.ordering }}</div>
           <div>Ilość Strzałów próbnych: {{ competition.practiceShots }}</div>
           <div>Kaliber: {{ competition.caliberUUID }}</div>
-          <q-field class="col-2 cursor-pointer" standout="bg-accent text-black" label="ZMIEŃ NUMER KOLEJNOŚCI NA LISTACH">
-            <q-popup-edit @keypress.enter="compID = competition.uuid; updateCompetition()">
-              <q-input v-model="orderNumber" input-class="text-center" dense autofocus stack-label
-                label="zmień na inny numer" onkeypress="return (event.charCode > 47 && event.charCode < 58)"
+          <q-field color="positive" dense class="col-2 cursor-pointer" filled label-color="positive" standout="bg-accent text-black" label="ZMIEŃ NUMER KOLEJNOŚCI NA LISTACH">
+            <q-popup-edit @keypress.enter="compID = competition.uuid; updateCompetition()" content-class="bg-dark text-positive">
+              <q-input dense  v-model="orderNumber" input-class="text-center text-positive" autofocus stack-label
+                label="zmień na inny numer" label-color="positive" onkeypress="return (event.charCode > 47 && event.charCode < 58)"
                 @keypress.enter="compID = competition.uuid; updateCompetition()" />
               <div class="q-pa-xs">
                 <q-btn align="left" color="primary" label="Anuluj" v-close-popup></q-btn>
@@ -55,10 +55,10 @@
               </div>
             </q-popup-edit>
           </q-field>
-          <q-field class="col-2 cursor-pointer" standout="bg-accent text-black" label="ZMIEŃ ILOŚĆ STRZAŁÓW PRÓBNYCH">
-            <q-popup-edit @keypress.enter="compID = competition.uuid; updateCompetition()">
-              <q-input v-model="practiceShots" input-class="text-center" dense autofocus stack-label
-                label="zmień na inny numer" onkeydown="return (event.charCode > 47 && event.charCode < 58)"
+          <q-field dense class="col-2 cursor-pointer" filled label-color="positive" standout="bg-accent text-black" label="ZMIEŃ ILOŚĆ STRZAŁÓW PRÓBNYCH">
+            <q-popup-edit @keypress.enter="compID = competition.uuid; updateCompetition()" content-class="bg-dark text-positive">
+              <q-input dense v-model="practiceShots" input-class="text-center text-positive" autofocus stack-label
+                label="zmień ilość strzałów" label-color="positive" onkeydown="return (event.charCode > 47 && event.charCode < 58)"
                 @keypress.enter="compID = competition.uuid; updateCompetition()" />
               <div class="q-pa-xs">
                 <q-btn align="left" color="primary" label="Anuluj" v-close-popup></q-btn>
@@ -67,10 +67,10 @@
               </div>
             </q-popup-edit>
           </q-field>
-          <q-field class="col-2 cursor-pointer" standout="bg-accent text-black" label="ZMIEŃ KALIBER">
-            <q-popup-edit @keypress.enter="compID = competition.uuid; updateCompetition()">
-              <q-input v-model="caliberUUID" input-class="text-center" dense autofocus stack-label
-                label="zmień na inny numer" onkeypress="return (event.charCode > 47 && event.charCode < 58)"
+          <q-field dense class="col-2 cursor-pointer" filled label-color="positive" standout="bg-accent text-black" label="ZMIEŃ KALIBER">
+            <q-popup-edit @keypress.enter="compID = competition.uuid; updateCompetition()" content-class="bg-dark text-positive">
+              <q-input dense v-model="caliberUUID" input-class="text-center text-positive" autofocus stack-label
+                label="zmień na inny numer" label-color="positive" onkeypress="return (event.charCode > 47 && event.charCode < 58)"
                 @keypress.enter="compID = competition.uuid; updateCompetition()" />
               <div class="q-pa-xs">
                 <q-btn align="left" color="primary" label="Anuluj" v-close-popup></q-btn>
@@ -81,11 +81,11 @@
           </q-field>
         </q-card-section>
         <q-card-actions align="right">
-          <q-btn flat label="zamknij" color="primary" v-close-popup />
+          <q-btn label="zamknij" color="primary" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog :position="'top'" v-model="success">
+    <q-dialog position="top" v-model="success">
       <q-card>
         <q-card-section>
           <div v-if="message != null" class="text-h6">{{ message }}</div>
@@ -93,15 +93,11 @@
 
       </q-card>
     </q-dialog>
-    <q-dialog v-model="failure">
+    <q-dialog position="top" v-model="failure">
       <q-card>
         <q-card-section>
-          <div class="text-h6">{{ message }}</div>
+          <div v-if="message != null" class="text-h6">{{ message }}</div>
         </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup />
-        </q-card-actions>
       </q-card>
     </q-dialog>
   </div>

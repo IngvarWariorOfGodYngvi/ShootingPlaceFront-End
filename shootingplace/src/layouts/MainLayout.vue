@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+    <q-header elevated reveal>
       <q-toolbar class="full-width row">
         <q-btn
           flat
@@ -14,7 +14,9 @@
           @mouseleave="icon='menu'"
         />
         <q-toggle v-model="backgroundDark" :val="true" :value="true" color="dark" keep-color
-                  @input="changeColor()"></q-toggle>
+                  @input="changeColor()" class="fun"></q-toggle>
+                  <div class="text-center text-h5 text-bold">{{siteNameChange()}}</div>
+          <q-icon v-if="mobile" class="fun" name="wifi" :color="networkStatusvar?'green':'red'"></q-icon>
 <!--        <q-item>{{arbiter}}</q-item>-->
 <!--        <q-btn @click="reset()" label="reset" color="secondary"></q-btn>-->
         <!-- <q-toolbar-title>
@@ -41,7 +43,8 @@
          </div>
        </q-menu>
          </div> -->
-        <div v-if="main" class="full-width row reverse">
+         <div v-if="main" class="row reverse col">
+          <q-icon class="fun" name="wifi" :color="networkStatusvar?'green':'red'"></q-icon>
           <q-avatar text-color="white" color="secondary" size="3.5em" rounded
                     style="border: solid 1px white; border-radius: 50%" class="reverse"
                     icon="scoreboard">
@@ -114,7 +117,7 @@
     >
       <div class="bg-secondary full-height">
         <q-list>
-          <q-item @click="showloading()" class="flex flex-center q-pa-md bg-primary text-white xyz1" clickable tag="a"
+          <q-item @click="showloading();changeTitle ('STRONA GŁÓWNA')" class="flex flex-center q-pa-md bg-primary text-white xyz1" clickable tag="a"
                   target="_self" :href="hrefTarget" width="max">
             <div class="text-h6 text-bold text-center">
               <div>PROGRAM</div>
@@ -169,7 +172,9 @@ import membersQuantities from 'components/MembersQuantities.vue'
 import WorkTimeList from 'components/WorkTimeList.vue'
 import App from 'src/App.vue'
 import { isWindows } from 'mobile-device-detect'
-
+import { reactive } from 'vue'
+import { useNetwork } from '@vueuse/core'
+// import { VueIdentifyNetwork } from 'vue-identify-network'
 export default {
   name: 'MainLayout',
   visible2: false,
@@ -184,11 +189,17 @@ export default {
     } else {
       this.changeColor()
     }
+    if (window.localStorage.getItem('SiteName') == null) {
+      window.localStorage.setItem('SiteName', 'Strona Główna')
+    }
     this.getActualYearMemberCounts()
+    this.networkStatus()
+    this.stata()
   },
   data () {
     return {
       title: '',
+      siteName: 'Strona Główna',
       zero: 1,
       arbiter: window.localStorage.getItem('arbiter'),
       mobile: !isWindows,
@@ -209,6 +220,7 @@ export default {
       quantities: [],
       hrefTarget: 'http://' + App.prod,
       local: App.host,
+      shootingPlace: App.shootingPlace,
       essentialLinks: [
         {
           title: 'Lista Klubowiczów',
@@ -250,7 +262,7 @@ export default {
           title: 'Zbrojownia',
           icon: 'storage',
           link: 'http://' + App.prod + 'armory',
-          visible: App.main
+          visible: true
         },
         {
           title: 'Statystyki',
@@ -283,6 +295,7 @@ export default {
           visible: true
         }
       ],
+      networkStatusvar: null,
       programName: 'Program'
     }
   },
@@ -293,6 +306,38 @@ export default {
         this.$q.loading.hide()
         this.timer = 0
       }, 500)
+    },
+    stata () {
+      const network = reactive(useNetwork())
+
+      return network.type
+    },
+    networkStatus () {
+      setInterval(() => {
+        fetch('http://' + this.local + '/conf/ping', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }).then(response => {
+          if (response.status === 200) {
+            response.text().then(
+              () => {
+                this.networkStatusvar = true
+              })
+          } else {
+            this.networkStatusvar = false
+          }
+        }).catch(() => {
+          this.networkStatusvar = false
+        })
+      }, 5000)
+    },
+    siteNameChange () {
+      return window.localStorage.getItem('SiteName')
+    },
+    changeTitle (title) {
+      window.localStorage.setItem('SiteName', title)
     },
     reset () {
       window.localStorage.setItem('arbiter', '000')
@@ -359,16 +404,24 @@ export default {
       if (this.backgroundDark) {
         window.localStorage.setItem('BackgroundDark', 'true')
         colors.setBrand('dark-separator', '$grey-6')
-        colors.setBrand('secondary', '#374550')
-        colors.setBrand('primary', '#871421')
+        this.shootingPlace === 'prod' ? colors.setBrand('primary', '#871421') : this.shootingPlace === 'rcs' ? colors.setBrand('primary', '#008000') : colors.setBrand('primary', '#008000')// Dziesiątka
+        this.shootingPlace === 'prod' ? colors.setBrand('secondary', '#374550') : this.shootingPlace === 'rcs' ? colors.setBrand('secondary', '#A00000') : colors.setBrand('secondary', '#A00000')// Dziesiątka
+        // colors.setBrand('primary', '#871421') // DZIESIĄTKA
+        // colors.setBrand('primary', '#008000') // Panaszew
+        // colors.setBrand('secondary', '#374550') // Dziesiątka
+        // colors.setBrand('secondary', '#A00000') // Panaszew
         colors.setBrand('dark', '#1D1D1D')
         colors.setBrand('positive', '#FFFFFF')
         colors.setBrand('accent', '#A0A0A0')
       } else {
         window.localStorage.setItem('BackgroundDark', 'false')
         colors.setBrand('dark-separator', '$grey-2')
-        colors.setBrand('primary', '#871421')
-        colors.setBrand('secondary', '#374550')
+        this.shootingPlace === 'prod' ? colors.setBrand('primary', '#871421') : this.shootingPlace === 'rcs' ? colors.setBrand('primary', '#008000') : colors.setBrand('primary', '#008000')// Dziesiątka
+        this.shootingPlace === 'prod' ? colors.setBrand('secondary', '#374550') : this.shootingPlace === 'rcs' ? colors.setBrand('secondary', '#A00000') : colors.setBrand('secondary', '#A00000')// Dziesiątka
+        // colors.setBrand('primary', '#871421') // DZIESIĄTKA
+        // colors.setBrand('primary', '#008000') // Panaszew
+        // colors.setBrand('secondary', '#374550') // Dziesiątka
+        // colors.setBrand('secondary', '#A00000') // Panaszew
         colors.setBrand('dark', '#FFFFFF')
         colors.setBrand('positive', '#000000')
         colors.setBrand('accent', '#f3f3f3')

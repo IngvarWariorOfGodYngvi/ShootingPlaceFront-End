@@ -4,15 +4,14 @@
       <div class="row">
         <div class="q-pa-md text-left col full-width no-outline text-h5 text-bold text-positive">Ilość osób {{ list.length }}
         </div>
-        <div v-if="licenseList.length>0" class="q-pa-md text-right">
-          <q-btn @click="prolongLicenseAlert=true" label="Przedłuż wybrane Licencje">
+        <div class="q-pa-md text-right">
+          <q-btn v-if="!mobile" dense color="primary" @click="prolongLicenseAlert=true" label="Przedłuż wybrane Licencje">
             ({{ licenseList.length }})
           </q-btn>
         </div>
       </div>
-      <q-virtual-scroll :items="list" virtual-scroll-slice-size="100" style="height: 50vh">
-        <template v-slot="{ item, index }">
-          <div :key="index" class="row">
+      <q-scroll-area style="height: 50vh">
+          <div v-for="(item, index) in list" :key="index" class="row">
             <div class="self-center">{{ index + 1 }}.</div>
             <q-checkbox dense v-if="item.license.paid" v-model="licenseList" value="" :val="item.uuid" left-label>
             </q-checkbox>
@@ -57,18 +56,14 @@
                    @click="memberName = item.firstName + item.secondName;memberUUID = item.uuid;paymentLicenseAlert = true">
               opłać licencję
             </q-btn>
-            <q-btn dense color="primary" v-if="item.license.paid" class="col-2"
-                   @click="memberName = item.firstName + item.secondName ;licensePistolPermission = item.license.pistolPermission; licenseRiflePermission = item.license.riflePermission; licenseShotgunPermission = item.license.shotgunPermission;memberUUID = item.uuid; prolongLicenseAlert = true">
-              przedłuż licencję
-            </q-btn>
+            <q-btn dense color="primary" v-if="item.license.paid" disable class="col-2" label="opłacona"/>
           </div>
-        </template>
-      </q-virtual-scroll>
+      </q-scroll-area>
     </q-card>
     <q-dialog v-model="memberDial" style="min-width: 80vw">
       <q-card style="min-width: 80vw" class="bg-dark text-positive">
         <q-card-section class="flex-center">
-          <Member :member-number-legitimation="legitimationNumber"></Member>
+          <Member :member-number-legitimation="legitimationNumber" @hook:destroyed="getMembersWithLicenseNotValid()"></Member>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -76,7 +71,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog :position="'top'" v-model="failure">
+    <q-dialog position="top" v-model="failure">
       <q-card>
         <q-card-section>
           <div v-if="message!=null" class="text-h6">{{ message }}</div>
@@ -85,7 +80,7 @@
 
       </q-card>
     </q-dialog>
-    <q-dialog :position="'top'" v-model="success">
+    <q-dialog position="top" v-model="success">
       <q-card>
         <q-card-section>
           <div v-if="message!=null" class="text-h6">{{ message }}</div>
@@ -96,7 +91,7 @@
     <q-dialog v-model="prolongLicenseAlert">
       <q-card class="bg-dark text-positive">
         <q-card-section>
-          <div class="text-h6">Czy przedłużyć licencje</div>
+          <div class="text-h6">Czy przedłużyć licencje?</div>
         </q-card-section>
 
         <q-card-actions align="right">

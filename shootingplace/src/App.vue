@@ -4,39 +4,6 @@
   </div>
 </template>
 <script>
-// import keycloak from '@dsb-norge/vue-keycloak-js'
-// import Vue from 'vue'
-// import router from './router'
-// import store from './store'
-// Vue.config.productionTip = false
-// Vue.use(keycloak, {
-//   init: {
-//     onLoad: 'login-required'
-//   },
-//   config: {
-//     url: 'http://localhost:8180/auth',
-//     clientId: 'Klub Strzelecki Dziesiątka LOK Łódź',
-//     realm: 'ShootingPlace'
-//   }
-// })
-// new Vue({
-//   router,
-//   render: h => h(App)
-// }).$mount('#app')
-
-// const config = {
-//   url: 'http://localhost:8180/auth', realm: 'ShootingPlace', clientId: 'Klub Strzelecki Dziesiątka LOK Łódź', onLoad: 'login-required'
-// }
-
-// Vue.use(keycloak, {
-//   config: config,
-//   onReady: () => {
-//     new Vue({
-//       router,
-//       render: h => h(App)
-//     }).$mount('App')
-//   }
-// })
 import { isWindows } from 'mobile-device-detect'
 export default {
   created () {
@@ -44,6 +11,10 @@ export default {
   },
   methods: {
     createMain () {
+      this.getEnv()
+      if (window.localStorage.getItem('shootingPlace') == null) {
+        window.localStorage.setItem('shootingPlace', this.getEnv())
+      }
       if (window.localStorage.getItem('main') == null) {
         window.localStorage.setItem('main', 'false')
       }
@@ -59,16 +30,34 @@ export default {
       if (window.localStorage.getItem('arbiter').length < 4) {
         window.localStorage.setItem('arbiter', '000')
       }
+    },
+    getEnv () {
+      fetch('http://' + location.hostname + ':8080/' + '/conf/env', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          response.text().then(response => {
+            window.localStorage.setItem('shootingPlace', response)
+          })
+        }
+      })
     }
   },
   name: 'App',
+  // shootingPlace: 'Dziesiątka',
+  shootingPlace: window.localStorage.getItem('shootingPlace'),
   mobile: !isWindows,
   main: JSON.parse(window.localStorage.getItem('main')), // dev //
   // prod: '192.168.1.30:8080/strzelnica/#/', // test //
-  // prod: location.hostname + ':8081/#/', // dev //
-  // host: location.hostname + ':8080/' // test + prod + dev //
-  prod: '192.168.100.2:8080/strzelnica/#/', // prod //
-  host: location.hostname + ':8080/shootingplace-1.0/' // test + prod + dev //
+  prod: location.hostname + ':8081/#/', // dev //
+  host: location.hostname + ':8080/' // test + prod + dev //
+  // prod: '192.168.1.170:8080/strzelnica/#/', // prod //
+  // host: location.hostname + ':8080/shootingplace-1.0/' // test + prod + dev //
+  // prod: '192.168.1.160:8080/strzelnica/#/', // prod //
+  // host: location.hostname + ':8080/shootingplace-1.0/' // test + prod + dev //
 
 }
 

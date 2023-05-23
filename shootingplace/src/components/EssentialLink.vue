@@ -53,6 +53,7 @@ export default {
   },
   methods: {
     refresh () {
+      window.localStorage.setItem('SiteName', this.title)
       if (window.location.href === this.link) {
         window.location.reload()
       }

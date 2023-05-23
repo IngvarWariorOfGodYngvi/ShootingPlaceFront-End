@@ -7,12 +7,13 @@
     </q-btn>
     <q-dialog v-model="dialog" @keypress.enter="dialog=false;getContributionPDF()">
       <q-card class="bg-dark text-positive">
-        <q-card-section class="row items-center">
-          <span class="text-h6">Czy na pewno chcesz pobrać potwierdzenie składki?</span>
+        <q-card-section class="col items-center">
+          <div class="text-h6">Czy na pewno chcesz pobrać potwierdzenie składki?</div>
+          <q-checkbox val="" v-model="a5rotate" label="rozmiar A5"></q-checkbox>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn text-color="white" label="anuluj" color="primary" v-close-popup />
+          <q-btn text-color="white" label="anuluj" color="secondary" v-close-popup />
           <q-btn text-color="white" label="Pobierz" color="primary" v-close-popup @click="getContributionPDF()" />
         </q-card-actions>
       </q-card>
@@ -35,6 +36,7 @@ export default {
   name: 'LastContributionPDF.vue',
   data () {
     return {
+      a5rotate: true,
       dialog: false,
       download: false,
       local: App.host
@@ -58,7 +60,7 @@ export default {
   methods: {
     getContributionPDF () {
       axios({
-        url: 'http://' + this.local + '/files/downloadContribution/' + this.uuid + '?contributionUUID=null',
+        url: 'http://' + this.local + '/files/downloadContribution/' + this.uuid + '?contributionUUID=null&a5rotate=' + this.a5rotate,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {

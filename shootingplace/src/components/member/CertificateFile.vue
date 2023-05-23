@@ -1,6 +1,6 @@
 <template>
   <div class="full-width">
-    <q-btn class="full-width" @click="dialog=true" color="secondary">Pobierz Zaświadczenie o przynależności
+    <q-btn class="full-width" :disable="disable" @click="dialog=true" color="secondary">Pobierz Zaświadczenie o przynależności
     </q-btn>
     <q-dialog v-model="dialog">
       <q-card style="width: 400px;" class="bg-dark text-positive">
@@ -13,13 +13,12 @@
                     label="Wybierz rodzaj zaświadczenia" :options="certificateChoices" v-model="certificateChoice">
           </q-select>
         </q-card-section>
-        <q-card-section class="row items-center">
+        <q-card-section class="row items-center" v-if="shootingPlace==='prod'">
           <q-select v-if="certificateChoice!==certificateChoices[0]&&certificateChoice!==null" class="full-width" v-model="city" filled color="positive" input-class="text-positive"
                     use-input hide-selected fill-input :options="cities" label-color="positive" popup-content-class="bg-dark text-positive"
                     label="wybierz miasto"></q-select>
           <div v-if="certificateChoice!=null" class="q-pa-md row full-width">
             <q-checkbox v-if="certificateChoice!==certificateChoices[0&&certificateChoice!==null]" dense value="" v-model="toggleEnlargement" label="rozszerzenie" class="col"></q-checkbox>
-<!--            <q-btn color="primary" class="items-center col" :disable="disable&&certificateChoice===certificateChoices[0]" :label="certificateChoice" @click="certificateDownload = true"></q-btn>-->
           </div>
         </q-card-section>
 
@@ -31,7 +30,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="certificateDownload" persistent
+    <q-dialog v-model="certificateDownload"
               @keypress.enter="getDownloadCertificateOfClubMembership();certificateDownload=false">
       <q-card class="bg-dark text-positive">
         <q-card-section class="col items-center">
@@ -49,7 +48,7 @@
     <q-dialog position="top" v-model="download">
       <q-card>
         <q-card-section>
-          <div class="text-h6">Pobrano Zaświadczenia</div>
+          <div class="text-h6">Pobrano Zaświadczenie</div>
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -66,8 +65,9 @@ export default {
     return {
       download: false,
       dialog: false,
+      shootingPlace: App.shootingPlace,
       certificateDownload: false,
-      certificateChoices: [{ label: 'ZAŚWIADCZENIE ZWYKŁE', disable: false }, { label: 'BROŃ SPORTOWA DO CELÓW SPORTOWYCH', disable: false }, { label: 'BROŃ SPORTOWA DO CELÓW KOLEKCJONERSKICH', disable: false }, { label: 'BROŃ CIĘCIWOWA W POSTACI KUSZ', disable: false }],
+      certificateChoices: App.shootingPlace === 'prod' ? [{ label: 'ZAŚWIADCZENIE ZWYKŁE', disable: false }, { label: 'BROŃ SPORTOWA DO CELÓW SPORTOWYCH', disable: false }, { label: 'BROŃ SPORTOWA DO CELÓW KOLEKCJONERSKICH', disable: false }, { label: 'BROŃ CIĘCIWOWA W POSTACI KUSZ', disable: false }] : [{ label: 'ZAŚWIADCZENIE ZWYKŁE', disable: false }, { label: 'ZAŚWIADCZENIE DO WPA', disable: false }],
       certificateChoice: null,
       city: 'Łódź',
       cities: ['Białystok', 'Bydgoszcz', 'Gdańsk', 'Gorzów Wielkopolski', 'Katowice', 'Kielce', 'Kraków', 'Lublin', 'Łódź', 'Olsztyn', 'Opole', 'Poznań', 'Rzeszów', 'Szczecin', 'Warszawa', 'Wrocław'],

@@ -86,9 +86,6 @@ import App from 'src/App'
 
 export default {
   name: 'Files.vue',
-  created () {
-    this.getAllFiles(this.pageNumber)
-  },
   data () {
     return {
       access: false,
@@ -123,6 +120,7 @@ export default {
         if (response.status === 200) {
           response.text().then(
             response => {
+              this.getAllFiles(this.pageNumber)
               this.accessMessage = response
               this.access = true
             }

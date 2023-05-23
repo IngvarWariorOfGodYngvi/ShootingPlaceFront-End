@@ -41,16 +41,16 @@
         </div>
       </q-card-section>
       <q-card-section class="col">
-        <div v-if="quantitySumErased.length <1" class="q-pa-md self-center col full-width no-outline text-bold text-center text-h6">^ Brak wyników skreślonych - Wybierz daty ^</div>
+        <div v-if="quantitySumErased.length <1" class="q-pa-md self-center col full-width no-outline text-bold text-center text-h6">Brak wyników skreślonych - Wybierz daty</div>
         <div v-if="quantitySumErased.length >0" class="q-pa-md self-center col full-width no-outline text-bold text-center text-h6">ilość skreślonych : {{quantitySumErased.length}}</div>
-        <q-virtual-scroll v-if="quantitySumErased.length >0" :items="quantitySumErased" type="table" dense class="row full-width" style="height: 50vh;">
+        <q-virtual-scroll v-if="quantitySumErased.length >0" :items="quantitySumErased" type="table" dense class="row full-width bg-dark text-positive" style="height: 50vh;">
           <template v-slot:before>
             <thead class="thead-sticky text-left">
-            <tr>
-              <th class="text-left"><div>{{quantitySumErased.length}} Nazwisko i Imię</div></th>
+            <tr class="bg-primary text-white">
+              <th class="text-left">{{quantitySumErased.length}} Nazwisko i Imię</th>
               <th class="text-left" style="width:10%;">Powód</th>
-              <th class="text-left" style="width:10%;"><div>Numer</div><div>Legitymacji</div></th>
-              <th class="text-left" style="width:30%;"><div>Informacje</div><div>Dodatkowe</div></th>
+              <th class="text-left" style="width:10%;">Numer<br/>Legitymacji</th>
+              <th class="text-left" style="width:30%;">Informacje<br/>Dodatkowe</th>
             </tr>
             </thead>
           </template>
@@ -61,8 +61,8 @@
               <td class="text-left xyz"><b>{{index+1}} </b> {{item.secondName}} {{item.firstName}}</td>
               <td class="text-left"><div>{{item.erasedEntity.date}}</div><div>{{item.erasedEntity.erasedType}}</div></td>
               <td class="text-left">nr leg. {{item.legitimationNumber}}</td>
-              <td v-if="item.erasedEntity.additionalDescription==null" class="text-left"><div>Brak dodatkowych informacji</div></td>
-              <td v-if="item.erasedEntity.additionalDescription!=null" class="bg-warning self-center text-center"><div>{{item.erasedEntity.additionalDescription}}</div></td>
+              <td v-if="item.erasedEntity.additionalDescription==null" class="text-left">Brak dodatkowych informacj</td>
+              <td v-if="item.erasedEntity.additionalDescription!=null" class="bg-warning self-center text-center text-black">{{item.erasedEntity.additionalDescription}}</td>
             </tr>
           </template>
         </q-virtual-scroll>
@@ -82,7 +82,8 @@
   </q-dialog>
 </div>
 </template>
-
+<style src="src/style/style.scss" lang="scss">
+</style>
 <script>
 import App from 'src/App'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'

@@ -9,7 +9,7 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn text-color="white" label="anuluj" color="primary" v-close-popup />
+          <q-btn text-color="white" label="anuluj" color="secondary" v-close-popup />
           <q-btn text-color="white" label="Pobierz" color="primary" v-close-popup @click="getCSVFile()" />
         </q-card-actions>
       </q-card>

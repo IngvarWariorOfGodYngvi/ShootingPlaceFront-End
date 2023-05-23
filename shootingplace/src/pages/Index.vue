@@ -6,7 +6,8 @@
     <div class="col flex flex-center full-width q-pa-xl">
 <!--      <Canva style="width: 50vw;height: 50%;max-width: 50vw;max-height: 50vh;"></Canva>-->
 <!--      <VueSignaturePad class="fit" style="width: 100px;height: 100px"></VueSignaturePad>-->
-    <img v-if="!mobile" draggable="false" class="fun" alt="logo" src="~assets/logo.jpg">
+    <img v-if="!mobile && shootingPlace === 'prod'" draggable="false" class="fun col" style="border-radius: 50%" alt="logo" src="~assets/logo.jpg">
+    <img v-if="!mobile && shootingPlace === 'rcs'" draggable="false" class="fun col" style="border-radius: 50%" alt="logo" src="~assets/logo-panaszew.jpg">
     </div>
     </div>
   </q-page>
@@ -22,6 +23,7 @@ export default {
   name: 'PageIndex',
   data () {
     return {
+      shootingPlace: App.shootingPlace,
       mobile: !isWindows,
       app: 'http://' + App.prod
     }
@@ -32,11 +34,6 @@ export default {
       loading: SkeletonBox
     })
   },
-  // computed: {
-  //   backgroundImageInlineStyle () {
-  //     return `background-image: url("./assets/${this.news.img}");`;
-  //   }
-  // },
   methods: {
     showloading () {
       this.$q.loading.show({ message: 'Dzieje się coś ważnego... Poczekaj' })

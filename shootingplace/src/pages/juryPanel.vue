@@ -1,5 +1,5 @@
 <template>
-  <q-page>
+  <q-page class="text-positive">
     <q-btn label="tryb prezentacji" dense unelevated :text-color="presentationMode ? 'dark' : 'white'"
       :color="presentationMode ? '' : 'primary'" v-if="main && !mobile && !presentationMode"
       @click="presentationMode = !presentationMode"></q-btn>
@@ -12,7 +12,7 @@
         </q-form>
       </div>
       <div v-else>
-        <div v-for="(comp, uuid) in tournaments.competitionsList" :key="uuid">
+        <div v-for="(comp, index) in tournaments.competitionsList" :key="index">
           <SingleCompetitionJuryPanel :uuid="comp.uuid" :size="comp.scoreListSize"></SingleCompetitionJuryPanel>
         </div>
       </div>
@@ -75,7 +75,7 @@ export default {
         })
     },
     setColor () {
-      this.color = JSON.parse(window.localStorage.getItem('BackgroundDark')) ? 'white' : 'primary'
+      this.color = JSON.parse(window.localStorage.getItem('BackgroundDark')) ? 'positive' : 'primary'
     },
     presentationUUID () {
       let index = 0
@@ -105,7 +105,6 @@ export default {
         method: 'GET'
       }).then(response => {
         response.text().then(response => {
-          console.log(response)
           this.arbiter = response
           window.localStorage.setItem('arbiter', response)
         })

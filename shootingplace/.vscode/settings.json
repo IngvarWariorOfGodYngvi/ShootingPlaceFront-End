@@ -6,8 +6,13 @@
   "vetur.experimental.templateInterpolationService": true,
   "vetur.validation.interpolation": false,
   "volar.inlayHints.eventArgumentInInlineHandlers": false,
+  "vue.inlayHints.optionsWrapper": false,
   "workbench.colorCustomizations": {
 
   },
-  "files.autoSave": "onWindowChange"
+  "files.autoSave": "onWindowChange",
+  "window.autoDetectColorScheme": false,
+  "workbench.colorTheme": "Default Dark Modern",
+  "workbench.preferredLightColorTheme": "Default Dark Modern",
+  "vue.codeActions.enabled": false
 }

@@ -5,15 +5,14 @@
         <div class="q-pa-md text-left col full-width no-outline text-h5 text-bold">Ilość osób
           {{ list.length }}
         </div>
-        <div v-if="payPZSSList.length>0" class="q-pa-md text-right">
-          <q-btn @click="paymentLicenseAlertPZSS=true" label="Oznacz wybrane jako opłacone w pzss">
+        <div class="q-pa-md text-right">
+          <q-btn v-if="!mobile" dense color="primary" @click="paymentLicenseAlertPZSS=true" label="Oznacz wybrane jako opłacone w pzss">
             ({{ payPZSSList.length }})
           </q-btn>
         </div>
       </div>
-      <q-virtual-scroll :items="list" virtual-scroll-slice-size="100" style="height: 50vh;">
-        <template v-slot="{ item, index }">
-          <div :key="index" class="row">
+      <q-scroll-area style="height: 50vh;">
+          <div v-for="(item,index) in list" :key="index" class="row">
             <q-checkbox dense v-model="payPZSSList" :val="item.paymentUuid" left-label>{{ index + 1 }}.</q-checkbox>
             <div class="col" @dblclick="legitimationNumber = item.legitimationNumber;memberDial=true">
               <q-tooltip content-class="text-subtitle2" anchor="top middle">kliknij dwa razy aby wyświetlić podgląd
@@ -48,13 +47,12 @@
               <div class="row text-positive" tabindex="1">{{item.new?'Nowa':'Przedłużenie'}}</div>
             </q-field>
           </div>
-        </template>
-      </q-virtual-scroll>
+      </q-scroll-area>
     </q-card>
     <q-dialog v-model="memberDial" style="min-width: 80vw">
       <q-card style="min-width: 80vw" class="bg-dark text-positive">
         <q-card-section class="flex-center">
-          <Member :member-number-legitimation="legitimationNumber"></Member>
+          <Member :member-number-legitimation="legitimationNumber" @hook:destroyed="getAllLicencePayment()"></Member>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -82,7 +80,7 @@
     <q-dialog v-model="paymentLicenseAlertPZSS">
       <q-card class="bg-dark text-positive">
         <q-card-section>
-          <div class="text-h6">Czy opłacić licencje</div>
+          <div class="text-h6">Czy opłacić licencje?</div>
         </q-card-section>
 
         <q-card-actions align="right">

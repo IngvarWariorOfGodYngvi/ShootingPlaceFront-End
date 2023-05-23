@@ -56,8 +56,8 @@ module.exports = function (/* ctx */) {
       // transpileDependencies: [],
 
       // rtl: false, // https://quasar.dev/options/rtl-support
-      // preloadChunks: true,
-      // showProgress: false,
+      preloadChunks: true,
+      showProgress: true,
       // gzip: true,
       // analyze: true,
 
@@ -87,7 +87,12 @@ module.exports = function (/* ctx */) {
     framework: {
       iconSet: 'material-icons', // Quasar icon set
       lang: 'pl', // Quasar language pack
-      config: {},
+      config: {
+        capacitor: {
+          backButtonExit: ['/index'],
+          backButton: true
+        }
+      },
 
       // Possible values for "importStrategy":
       // * 'auto' - (DEFAULT) Auto-import needed Quasar components & directives
@@ -120,7 +125,7 @@ module.exports = function (/* ctx */) {
         description: 'CRM',
         display: 'standalone',
         orientation: 'portrait',
-        background_color: '#ffffff',
+        background_color: '#000000',
         theme_color: '#027be3',
         icons: [{
           src: 'icons/icon-128x128.png',

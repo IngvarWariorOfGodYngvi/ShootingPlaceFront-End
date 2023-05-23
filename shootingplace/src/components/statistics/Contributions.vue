@@ -46,28 +46,35 @@
         </div>
       </q-card-section>
       <q-card-section class="col">
-        <div v-if="quantitySumRearrangeTable.length >0" class="q-pa-md self-center col full-width no-outline text-bold text-center text-h6">Ilość Składek : {{quantitySumRearrangeTable.length}}</div>
-        <q-virtual-scroll v-if="quantitySumRearrangeTable.length >0" :items="quantitySumRearrangeTable" type="table" dense class="q-pa-none" style="height: 40vh;">
+        <div v-if="quantitySumRearrangeTable.length >0" class="q-pa-md col text-bold text-center text-h6">Ilość Składek : {{quantitySumRearrangeTable.length}}</div>
+        <q-virtual-scroll v-if="quantitySumRearrangeTable.length >0"
+           :items="quantitySumRearrangeTable"
+           :virtual-scroll-item-size="48"
+                        :virtual-scroll-sticky-size-start="48"
+                        :virtual-scroll-sticky-size-end="32"
+            type="table"
+             dense
+              class="row full-width q-pa-none bg-dark"
+               style="height: 40vh;">
           <template v-slot:before>
             <thead class="thead-sticky text-left">
-            <tr>
-              <th class="text-left"><div>{{quantitySumRearrangeTable.length}} Nazwisko i Imię</div></th>
-              <th class="text-left" style="width: 20%"><div>Numer</div><div>Legitymacji</div></th>
-              <th class="text-left" style="width: 20%"><div>Numer</div><div>Licencji</div></th>
-              <th class="text-left" style="width: 20%">Status</th>
+            <tr class="bg-primary text-white">
+              <th class="text-left">{{quantitySumRearrangeTable.length}} Nazwisko i Imię</th>
+              <th class="text-left" style="width: 20%">Numer<br/>Legitymacji</th>
+              <th class="text-left" style="width: 20%">Numer<br/>Licencji</th>
+              <th class="text-center" style="width: 20%">Status</th>
             </tr>
             </thead>
           </template>
           <template v-slot="{ item, index }">
-            <tr :key="index" class="rounded" style="cursor:pointer" @dblclick="legitimationNumber = item.legitimationNumber; memberDial=true">
+            <tr :key="index" class="rounded text-positive" style="cursor:pointer" @dblclick="legitimationNumber = item.legitimationNumber; memberDial=true">
               <q-tooltip content-class="text-subtitle2" anchor="top middle">kliknij dwa razy aby wyświetlić podgląd
               </q-tooltip>
               <td class="xyz"><b>{{index+1}}</b> {{item.secondName}} {{item.firstName}}</td>
               <td>nr. leg {{item.legitimationNumber}}</td>
               <td v-if="item.license.number != null" class="text-left">{{item.license.number}}</td>
-              <td v-if="item.license.number == null" class="text-left text-grey-8"><div>Brak Licencji</div></td>
-              <td v-if="item.active" class="bg-green-3 text-left"><div>Aktywny</div></td>
-              <td v-if="!item.active" class="bg-warning text-left"><div>Nieaktywny</div></td>
+              <td v-if="item.license.number == null" class="text-left text-grey-8">Brak Licencji</td>
+              <td class="text-center text-black" :class="item.active?'bg-green-3':'bg-red'">{{item.active?'Aktywny':'Nieaktywny'}}</td>
             </tr>
           </template>
         </q-virtual-scroll>
@@ -75,20 +82,21 @@
     </div>
   </div>
   <q-dialog v-model="memberDial" style="min-width: 80vw">
-    <q-card style="min-width: 80vw">
+    <q-card style="min-width: 80vw" class="bg-dark">
       <q-card-section class="flex-center">
         <Member :member-number-legitimation="legitimationNumber"></Member>
       </q-card-section>
 
       <q-card-actions align="right">
-        <q-btn label="zamknij" color="black" v-close-popup/>
+        <q-btn label="zamknij" color="primary" v-close-popup/>
       </q-card-actions>
     </q-card>
   </q-dialog>
 </div>
 
 </template>
-
+<style src="src/style/style.scss" lang="scss">
+</style>
 <script>
 import App from 'src/App'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'

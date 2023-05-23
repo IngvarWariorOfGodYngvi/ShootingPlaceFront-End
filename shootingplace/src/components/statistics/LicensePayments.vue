@@ -47,19 +47,19 @@
         </div>
       </q-card-section>
       <q-card-section class="col">
-        <div v-if="quantitySumLicenseRearrangeTable.length <1" class="q-pa-md self-center col full-width no-outline text-bold text-center text-h6">^ Brak wyników opłaconych licencji - Wybierz daty ^</div>
-        <div v-if="quantitySumLicenseRearrangeTable.length >0" class="q-pa-md self-center col full-width no-outline text-bold text-center text-h6">Ilość Licencji : {{quantitySumLicenseRearrangeTable.length}}</div>
-        <q-virtual-scroll v-if="quantitySumLicenseRearrangeTable.length >0" :items="quantitySumLicenseRearrangeTable" type="table" dense class="row full-width" style="height: 50vh;">
+        <div v-if="quantitySumLicenseRearrangeTable.length <1" class="q-pa-md self-center no-outline text-bold text-center text-h6">Brak wyników opłaconych licencji - Wybierz daty</div>
+        <div v-if="quantitySumLicenseRearrangeTable.length >0" class="q-pa-md self-center no-outline text-bold text-center text-h6">Ilość Opłat : {{quantitySumLicenseRearrangeTable.length}}</div>
+        <q-virtual-scroll v-if="quantitySumLicenseRearrangeTable.length >0" :items="quantitySumLicenseRearrangeTable" type="table" dense class="row full-width bg-dark text-positive" style="height: 50vh;">
           <template v-slot:before>
             <thead class="thead-sticky text-left">
-            <tr>
-              <th class="text-left"><div>{{quantitySumLicenseRearrangeTable.length}}Nazwisko i Imię</div></th>
-              <th class="text-left" style="width: 10%;"><div>Numer</div><div>Legitymacji</div></th>
+            <tr class="bg-primary text-white">
+              <th class="text-left">{{quantitySumLicenseRearrangeTable.length}}Nazwisko i Imię</th>
+              <th class="text-left" style="width: 10%;">Numer<br/>Legitymacji</th>
               <th class="text-left" style="width: 10%;">Grupa</th>
               <th class="text-left" style="width: 10%;">Status</th>
               <th class="text-left" style="width: 15%;">Data</th>
-              <th class="text-left" style="width: 15%;"><div>Nowa /</div><div>Przedłużenie</div></th>
-              <th class="text-left" style="width: 15%;"><div>Opłacone w</div><div>PZSS</div></th>
+              <th class="text-left" style="width: 15%;">Nowa /<br/>Przedłużenie</th>
+              <th class="text-left" style="width: 15%;">Opłacone w<br/>PZSS</th>
             </tr>
             </thead>
           </template>
@@ -70,15 +70,12 @@
               <td v-if="!item.payInPZSSPortal" class="text-left xyz"><b>{{index+1}}</b><q-checkbox color="primary" dense v-model="licenseArray" :val="item.licenseUUID" :label="item.secondName + ' ' + item.firstName "></q-checkbox></td>
               <td v-else class="text-left xyz"><b>{{index+1}}</b> {{item.secondName}} {{item.firstName}} </td>
               <td class="text-left">nr leg. {{item.legitimationNumber}}</td>
-              <td v-if="item.adult" class="text-left"><div>Ogólna</div></td>
-              <td v-if="!item.adult" class="text-left"><div>Młodzieżowa</div></td>
-              <td v-if="item.active" class="bg-green-3 text-left"><div>Aktywny</div></td>
-              <td v-if="!item.active" class="bg-warning text-left"><div>Nieaktywny</div></td>
+              <td class="text-left"><div>{{item.adult? 'Ogólna' : 'Młodzieżowa'}}</div></td>
+              <td class="text-center text-black" :class="item.active?'bg-green-3':'bg-red'">{{item.active?'Aktywny':'Nieaktywny'}}</td>
               <td class="text-left">{{item.date}}</td>
-              <td v-if="item.new" class="bg-warning">Nowa</td>
-              <td v-if="!item.new" >Przedłużenie</td>
-              <td v-if="item.payInPZSSPortal" class="bg-green-3">Opłacone</td>
-              <td v-if="!item.payInPZSSPortal" class="bg-red-3">Nieopłacone</td>
+              <td :class="item.new?'bg-warning text-black':''">{{item.new? 'Nowa': 'Przedłużenie'}}</td>
+              <td v-if="item.payInPZSSPortal" class="bg-green-3 text-center text-black">Opłacone</td>
+              <td v-if="!item.payInPZSSPortal" class="bg-red text-cente text-blackr">Nieopłacone</td>
             </tr>
           </template>
         </q-virtual-scroll>
@@ -127,7 +124,8 @@
   </q-dialog>
 </div>
 </template>
-
+<style src="src/style/style.scss" lang="scss">
+</style>
 <script>
 import App from 'src/App.vue'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'

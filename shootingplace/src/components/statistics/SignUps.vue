@@ -41,31 +41,29 @@
         </div>
       </q-card-section>
       <q-card-section class="col">
-        <div v-if="quantitySumJoinDateRearrangeTable.length <1" class="q-pa-md self-center col full-width no-outline text-bold text-center text-h6">^ Brak wyników zapisów - Wybierz daty ^</div>
+        <div v-if="quantitySumJoinDateRearrangeTable.length <1" class="q-pa-md self-center col full-width no-outline text-bold text-center text-h6">Brak wyników zapisów - Wybierz daty</div>
         <div v-if="quantitySumJoinDateRearrangeTable.length >0" class="q-pa-md self-center col full-width no-outline text-bold text-center text-h6">Ilość Zapisów : {{quantitySumJoinDateRearrangeTable.length}}</div>
-        <q-virtual-scroll v-if="quantitySumJoinDateRearrangeTable.length >0" :items="quantitySumJoinDateRearrangeTable" type="table" dense class="row full-width" style="height: 50vh;">
+        <q-virtual-scroll v-if="quantitySumJoinDateRearrangeTable.length >0" :items="quantitySumJoinDateRearrangeTable" type="table" dense class="row full-width q-pa-none bg-dark" style="height: 50vh;">
           <template v-slot:before>
             <thead class="thead-sticky text-left">
-            <tr>
-              <th class="text-left"><div>{{quantitySumJoinDateRearrangeTable.length}} Nazwisko i Imię</div></th>
-              <th class="text-left" style="width: 15%"><div>Numer</div><div>Legitymacji</div></th>
-              <th class="text-left" style="width: 15%"><div>Data dołączenia do</div><div>Klubu</div></th>
+            <tr class="bg-primary text-white">
+              <th class="text-left">{{quantitySumJoinDateRearrangeTable.length}} Nazwisko i Imię</th>
+              <th class="text-left" style="width: 15%">Numer<br/>Legitymacji</th>
+              <th class="text-left" style="width: 15%">Data dołączenia do<br/>Klubu</th>
               <th class="text-left" style="width: 15%">Grupa</th>
               <th class="text-left" style="width: 15%">Status</th>
             </tr>
             </thead>
           </template>
           <template v-slot="{ item, index }">
-            <tr :key="index" class="rounded" style="cursor:pointer" @dblclick="legitimationNumber = item.legitimationNumber; memberDial=true">
+            <tr :key="index" class="rounded text-positive" style="cursor:pointer" @dblclick="legitimationNumber = item.legitimationNumber; memberDial=true">
               <q-tooltip content-class="text-subtitle2" anchor="top middle">kliknij dwa razy aby wyświetlić podgląd
               </q-tooltip>
               <td class="text-left xyz"><b>{{index+1}}</b> {{item.secondName}} {{item.firstName}}</td>
               <td class="text-left">nr leg. {{item.legitimationNumber}}</td>
               <td class="text-left">{{item.joinDate}}</td>
-              <td v-if="item.adult" class="text-left"><div>Ogólna</div></td>
-              <td v-if="!item.adult" class="text-left"><div>Młodzieżowa</div></td>
-              <td v-if="item.active" class="bg-green-3 text-left"><div>Aktywny</div></td>
-              <td v-if="!item.active" class="bg-warning text-left"><div>Nieaktywny</div></td>
+              <td class="text-left"><div>{{item.adult? 'Ogólna' : 'Młodzieżowa'}}</div></td>
+              <td class="text-center text-black" :class="item.active?'bg-green-3':'bg-red'">{{item.active?'Aktywny':'Nieaktywny'}}</td>
             </tr>
           </template>
         </q-virtual-scroll>
@@ -73,7 +71,7 @@
     </div>
   </div>
   <q-dialog v-model="memberDial" style="min-width: 80vw">
-    <q-card class="bg-dark text-positive" style="min-width: 80vw">
+    <q-card class="bg-dark" style="min-width: 80vw">
       <q-card-section class="flex-center">
         <Member :member-number-legitimation="legitimationNumber"></Member>
       </q-card-section>
@@ -85,7 +83,8 @@
   </q-dialog>
 </div>
 </template>
-
+<style src="src/style/style.scss" lang="scss">
+</style>
 <script>
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox'

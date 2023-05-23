@@ -41,21 +41,16 @@
         </q-card-section>
         <q-card-section class="col">
           <div v-if="quantityAmmo.length <1"
-               class="q-pa-md self-center col full-width no-outline text-bold text-center text-h6">^ Brak wyników -
-            Wybierz daty ^
+               class="q-pa-md self-center col full-width no-outline text-bold text-center text-h6">Brak wyników -
+            Wybierz daty
           </div>
           <q-virtual-scroll v-if="quantityAmmo.length >0" :items="quantityAmmo" type="table" dense
-                            class="row full-width" style="height: 50vh;">
+                            class="row full-width bg-dark text-positive" style="height: 50vh;">
             <template v-slot:before>
               <thead class="thead-sticky text-left">
-              <tr>
-                <th class="text-left" style="width: 25%">
-                  <div>{{ quantityAmmo.length }} Nazwisko i Imię</div>
-                </th>
-                <th class="text-left" style="width: 15%">
-                  <div>Numer</div>
-                  <div>Legitymacji</div>
-                </th>
+              <tr class="bg-primary text-white">
+                <th class="text-left" style="width: 25%">{{ quantityAmmo.length }} Nazwisko i Imię</th>
+                <th class="text-left" style="width: 15%">Numer<br/>Legitymacji</th>
                 <th class="text-left" style="width: 10%">5,6mm</th>
                 <th class="text-left" style="width: 10%">9x19mm</th>
                 <th class="text-left" style="width: 10%">12/76</th>
@@ -123,7 +118,8 @@
     </q-dialog>
   </div>
 </template>
-
+<style src="src/style/style.scss" lang="scss">
+</style>
 <script>
 import App from 'src/App'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'

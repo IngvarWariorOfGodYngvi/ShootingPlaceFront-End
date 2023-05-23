@@ -2,20 +2,23 @@
   <div class="bg-dark">
     <div class="q-pa-md text-bold text-center text-h6 text-positive">TWORZENIE SUPER-UŻYTKOWNIKA</div>
     <q-card class="row bg-dark">
-      <q-card-section class="col-6 bg-grey-3">
+      <q-card-section :class="backgroundDark?'col-6 bg-dark':'col-6 bg-grey-3'">
         <q-form>
           <q-item>
-            <q-input v-model="userFirstName" class="full-width" dense label="Imię"
+            <q-input v-model="userFirstName" input-class="text-positive" label-color="positive" class="full-width" dense label="Imię"
                      onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32"
                      filled/>
           </q-item>
           <q-item>
-            <q-input v-model="userSecondName" class="full-width" dense label="Nazwisko"
+            <q-input v-model="userSecondName" input-class="text-positive" label-color="positive" class="full-width" dense label="Nazwisko"
                      onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32"
                      filled/>
           </q-item>
           <q-item>
-            <q-select class="full-width" filled v-model="userSubTypeSelect" use-input :options="userSubType" dense
+            <q-select class="full-width" v-model="userSubTypeSelect" dense options-dense :dark="darkSet()" filled fill-input
+              label-color="positive" color="positive" input-class="text-positive"
+              popup-content-class="bg-dark text-positive" options-selected-class="bg-dark text-positive"
+              :options-dark="darkSet()" :options="userSubType"
                       label="Wybierz Rodzaj">
               <template v-slot:no-option>
                 <q-item>
@@ -27,19 +30,19 @@
             </q-select>
           </q-item>
           <q-item>
-            <q-input v-model="userCode" @paste.prevent @copy.prevent class="full-width" dense mask="####"
+            <q-input v-model="userCode" input-class="text-positive" label-color="positive" @paste.prevent @copy.prevent class="full-width" dense mask="####"
                      label="Kod PIN" type="password" filled/>
           </q-item>
           <q-item>
-            <q-input v-model="userCodeConfirm" @paste.prevent @copy.prevent class="full-width" dense mask="####"
+            <q-input v-model="userCodeConfirm" input-class="text-positive" label-color="positive" @paste.prevent @copy.prevent class="full-width" dense mask="####"
                      label="Powtórz kod PIN" type="password" filled/>
           </q-item>
           <q-item>
-            <q-input v-model="memberUUID" class="full-width" dense
+            <q-input v-model="memberUUID" input-class="text-positive" label-color="positive" class="full-width" dense
                      label="Identyfikator Klubowicza" filled/>
           </q-item>
           <q-item>
-            <q-btn @click="acceptCodeUser = true" label="Dodaj" color="secondary"/>
+            <q-btn @click="acceptCodeUser = true" label="Dodaj" type="submit" color="secondary"/>
           </q-item>
         </q-form>
       </q-card-section>
@@ -184,6 +187,7 @@ export default {
       uuid: '',
       actions: [],
       barCode: null,
+      backgroundDark: JSON.parse(window.localStorage.getItem('BackgroundDark')),
       acceptCodeUser: false,
       acceptCodeUser1: false,
       master: false,
@@ -214,6 +218,9 @@ export default {
         .then(response => {
           this.superUsers = response
         })
+    },
+    darkSet () {
+      return JSON.parse(window.localStorage.getItem('BackgroundDark'))
     },
     createSuperUser () {
       if (this.userCode !== this.userCodeConfirm && this.superUsers.length > 0) {
@@ -285,7 +292,6 @@ export default {
           subType: userSubType,
           isMaster: this.master
         }
-        console.log('coś2')
         console.log(this.accept)
         if (this.accept) {
           fetch('http://' + this.local + '/barCode/', {

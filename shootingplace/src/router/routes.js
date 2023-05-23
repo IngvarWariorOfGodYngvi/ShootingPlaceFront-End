@@ -111,6 +111,11 @@ if (App.main) {
           component: () => import(/* webpackChunkName: "Lista Klubowiczów" */'pages/membersList.vue')
         },
         {
+          path: '/ammolist',
+          name: 'amunicja',
+          component: () => import(/* webpackChunkName: "Lista Amunicyjna" */'pages/ammolist.vue')
+        },
+        {
           path: '/license',
           name: 'licencje',
           component: () => import(/* webpackChunkName: "Licencje" */'pages/license.vue')
@@ -119,6 +124,11 @@ if (App.main) {
           path: '/statistics',
           name: 'statystyki',
           component: () => import(/* webpackChunkName: "Statystyki" */'pages/statistics.vue')
+        },
+        {
+          path: '/armory',
+          name: 'zbrojownia',
+          component: () => import(/* webpackChunkName: "Zbrojownia" */'pages/armory.vue')
         },
         {
           path: '/juryPanel',

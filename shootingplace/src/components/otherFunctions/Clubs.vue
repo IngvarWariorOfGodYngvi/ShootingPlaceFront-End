@@ -44,7 +44,7 @@
           <div>adres : {{ clubInfoModel.address }}</div>
         </q-card-section>
         <q-card-actions align="right">
-          <q-btn flat label="zamknij" color="primary" v-close-popup />
+          <q-btn label="zamknij" color="primary" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -99,15 +99,11 @@
 
       </q-card>
     </q-dialog>
-    <q-dialog v-model="failure">
+    <q-dialog position="top" v-model="failure">
       <q-card>
         <q-card-section>
-          <div class="text-h6">{{ message }}</div>
+          <div v-if="message != null" class="text-h6">{{ message }}</div>
         </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup />
-        </q-card-actions>
       </q-card>
     </q-dialog>
   </div>

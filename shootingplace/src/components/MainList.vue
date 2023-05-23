@@ -1,6 +1,6 @@
 <template>
     <div :class="mobile?'q-pa-md full-width':'q-pa-md col-6'" :style="mobile?'opacity: 75%':''">
-      <div @click="showloading();changeTitleInMainLayout('Lista Klubowiczów')" class="q-pa-xs">
+      <div @click="showloading();changeTitle ('Lista Klubowiczów')" class="q-pa-xs">
         <q-item class="q-pa-none xyz2" clickable tag="a" target="_self" :href="app + 'member'" width="max">
             <div class="row text-grey-7 text-left">
               <q-icon class="q-pa-md text-h5" name="person" />
@@ -8,7 +8,7 @@
             </div>
         </q-item>
       </div>
-      <div @click="showloading();changeTitleInMainLayout('Licencje')" class="q-pa-xs">
+      <div @click="showloading();changeTitle ('Licencje')" class="q-pa-xs">
         <q-item class="q-pa-none xyz2" clickable tag="a" target="_self" :href="app + 'license'" width="max">
             <div class="row text-grey-7 text-left">
               <q-icon class="q-pa-md text-h5" name="person" />
@@ -16,7 +16,7 @@
             </div>
         </q-item>
       </div>
-      <div v-if="main" @click="showloading();changeTitleInMainLayout('Dodaj Nowego Klubowicza')" class="q-pa-xs">
+      <div v-if="main" @click="showloading();changeTitle ('Dodaj Nowego Klubowicza')" class="q-pa-xs">
         <q-item class="q-pa-none xyz2" clickable tag="a" target="_self" :href="app + 'member/adding'" width="max">
             <div class="row text-grey-7 text-left">
               <q-icon class="q-pa-md text-h5" name="person_add" />
@@ -24,7 +24,7 @@
             </div>
         </q-item>
       </div>
-      <div @click="showloading();changeTitleInMainLayout('Lista Amunicyjna')" class="q-pa-xs fun">
+      <div @click="showloading();changeTitle ('Lista Amunicyjna')" class="q-pa-xs fun">
         <q-item v-if="color!=='primary'" class="q-pa-none xyz2 bg-secondary" clickable tag="a" target="_self" :href="app + 'ammolist'" width="max">
           <div class="row text-white full-width">
               <q-icon class="q-pa-md text-h5" name="list_alt" />
@@ -38,7 +38,7 @@
           </div>
         </q-item>
       </div>
-      <div v-if="main" @click="showloading();changeTitleInMainLayout('Zawody')" class="q-pa-xs">
+      <div v-if="main" @click="showloading();changeTitle ('Zawody')" class="q-pa-xs">
         <q-item v-if="tournamentCheck" class="q-pa-none xyz2 bg-secondary" clickable tag="a" target="_self" :href="app + 'competition'" width="max">
           <div class="row text-white full-width">
               <q-icon class="q-pa-md text-h5" name="book" />
@@ -52,7 +52,7 @@
           </div>
         </q-item>
       </div>
-<!--      <div v-if="main" @click="showloading();changeTitleInMainLayout('Lista Osób z Uprawnieniami')" class="q-pa-xs">-->
+<!--      <div v-if="main" @click="showloading()" class="q-pa-xs">-->
 <!--        <q-item class="q-pa-none xyz2" clickable tag="a" target="_self" :href="app + 'memberwithpermission'" width="max">-->
 <!--            <div class="row text-grey-7 text-left">-->
 <!--              <q-icon class="q-pa-md text-h5" name="book" />-->
@@ -60,7 +60,7 @@
 <!--            </div>-->
 <!--        </q-item>-->
 <!--      </div>-->
-      <div v-if="main" @click="showloading();changeTitleInMainLayout('Zbrojownia')" class="q-pa-xs">
+      <div @click="showloading();changeTitle ('Zbrojownia')" class="q-pa-xs">
         <q-item class="q-pa-none xyz2" clickable tag="a" target="_self" :href="app + 'armory'" width="max">
             <div class="row text-grey-7 text-left">
               <q-icon class="q-pa-md text-h5" name="storage" />
@@ -68,7 +68,7 @@
             </div>
         </q-item>
       </div>
-      <div @click="showloading();changeTitleInMainLayout('Statystyki')" class="q-pa-xs">
+      <div @click="showloading();changeTitle ('Statystyki')" class="q-pa-xs">
         <q-item class="q-pa-none xyz2" clickable tag="a" target="_self" :href="app + 'statistics'" width="max">
             <div class="row text-grey-7 text-left">
               <q-icon class="q-pa-md text-h5" name="bar_chart"/>
@@ -76,7 +76,7 @@
             </div>
         </q-item>
       </div>
-      <div v-if="main" @click="showloading();changeTitleInMainLayout('Pozostałe Funkcje')" class="q-pa-xs">
+      <div v-if="main" @click="showloading();changeTitle ('Pozostałe Funkcje')" class="q-pa-xs">
         <q-item class="q-pa-none xyz2" clickable tag="a" target="_self" :href="app + 'otherFunctions'" width="max">
             <div class="row text-grey-7 text-left">
               <q-icon class="q-pa-md text-h5" name="menu"/>
@@ -84,7 +84,7 @@
             </div>
         </q-item>
       </div>
-      <div v-if="main" @click="showloading();changeTitleInMainLayout('Ustawienia')" class="q-pa-xs">
+      <div v-if="main" @click="showloading();changeTitle ('Ustawienia')" class="q-pa-xs">
         <q-item class="q-pa-none xyz2" clickable tag="a" target="_self" :href="app + 'settings'" width="max">
             <div class="row text-grey-7 text-left">
               <q-icon class="q-pa-md text-h5" name="settings"/>
@@ -92,7 +92,7 @@
             </div>
         </q-item>
       </div>
-      <div @click="showloading();changeTitleInMainLayout('Panel Sędziego')" class="q-pa-xs">
+      <div @click="showloading();changeTitle ('Panel Sędziego')" class="q-pa-xs">
         <q-item class="q-pa-none xyz2" clickable tag="a" target="_self" :href="app + 'juryPanel'" width="max">
             <div class="row text-grey-7 text-left">
               <q-icon class="q-pa-md text-h5" name="done"/>
@@ -140,6 +140,9 @@ export default {
         this.$q.loading.hide()
         this.timer = 0
       }, 500)
+    },
+    changeTitle (title) {
+      window.localStorage.setItem('SiteName', title)
     },
     checkAnyOpenAmmoList () {
       fetch('http://' + this.local + '/ammoEvidence/checkAnyOpenEvidence', {

@@ -1,369 +1,402 @@
 <template>
   <q-page v-if="!isMobile()" padding class="bg-dark text-positive">
-    <div>
-        <q-item>
-          <div class="text-center col full-width no-outline text-h4 text-bold text-positive" tabindex="0">Dodaj Nowego Klubowicza</div>
-        </q-item>
-    </div>
     <div class="bg-dark">
-    <q-stepper
-      header-nav
-      v-model="step"
-      ref="stepper"
-      active-color="secondary"
-      class="bg-dark"
-      animated
-    >
-      <q-step
-        :name="1"
-        title="Podstawowe dane"
-        caption="Wymagane"
-        icon="settings"
-        class="bg-dark"
-        :done="step > 1"
-      >
-      <q-card class="row bg-dark text-positive">
-      <q-card-section class="col-6 bg-dark-separator">
-      <div class="full-width">
-      <q-item><q-input class="full-width" @input="memberFirstNameC = memberFirstName.length===0? '':memberFirstNameC = memberFirstName.length<3 ? 'red-2':'green-2'" dense :bg-color="memberFirstNameC" label-color="positive" v-model="memberFirstName" label="Imię *" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode === 32" filled/></q-item>
-      <q-item><q-input class="full-width" @input="memberSecondNameC = memberSecondName.length===0? '':memberSecondNameC = memberSecondName.length<3 ? 'red-2':'green-2'" dense :bg-color="memberSecondNameC" label-color="positive" v-model="memberSecondName" label="Nazwisko *" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode === 45" filled/></q-item>
-      <q-item><q-input class="full-width" @input="memberIDCardC = memberIDCard.length===0? '' : checkIDCard(memberIDCard)" dense :bg-color="memberIDCardC" v-model="memberIDCard" :suffix="memberIDCardS" label-color="positive" label="Numer Dokumentu *" filled/></q-item>
-      <q-item><q-input class="full-width" @input="memberPeselC = memberPesel.length===0? '' : checkPESEL(memberPesel)" dense :bg-color="memberPeselC" v-model="memberPesel" :suffix="memberPeselS" label-color="positive" placeholder="tylko cyfry" label="Pesel *" mask="###########" filled /></q-item>
-      <q-item><q-input class="full-width" @input="memberPhoneC = memberPhone.length===0? '' : memberPhone.length<11? 'red-2' : 'green-2' " dense :bg-color="memberPhoneC" type="tel" v-model="memberPhone" label-color="positive" placeholder="tylko cyfry" prefix="+48 " label="Numer telefonu *" mask="### ### ###" filled onkeypress="return (event.charCode > 47 && event.charCode < 58)"/></q-item>
-      <q-item><q-input class="full-width" @input="memberEmailC = memberEmail.length===0? '' : checkEmail(memberEmail)" :bg-color="memberEmailC" dense filled type="email" v-model="memberEmail" label-color="positive" :suffix="memberEmailS" label="e-mail *"/></q-item>
-      <q-item><q-input class="full-width" dense filled color="green" v-model="memberLegitimation" input-class="text-positive" label-color="positive" label="Numer Legitymacji" onkeypress="return (event.charCode > 47 && event.charCode < 58)"/></q-item>
-      <q-item><q-input class="full-width" dense filled color="green" v-model="memberJoinDate" input-class="text-positive" label-color="positive" mask="####-##-##" label="Data dołączenia do Klubu" hint="użyj kalendarza">
-                          <template v-slot:append>
-                            <q-icon name="event" class="cursor-pointer">
-                              <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                                <q-date v-model="memberJoinDate">
-                                  <div class="row items-center justify-end">
-                                    <q-btn v-close-popup label="Zamknij" color="primary" flat />
-                                  </div>
-                                </q-date>
-                              </q-popup-proxy>
-                            </q-icon>
-                          </template>
-                        </q-input></q-item>
-      <div class="row">
-        <div class="col-6">
-        <q-radio  v-model="memberAdult" :val="true" label="Grupa Ogólna" color="secondary" />
-        </div>
-        <div class="col-6">
-        <q-radio v-model="memberAdult" :val="false" label="Grupa Młodzieżowa" color="secondary" />
-        </div>
-      </div>
-      </div>
-      </q-card-section>
-      <q-card-section class="col">
-        <div class="fit col">
-        <div class="fit">
-          <q-item><q-input class="full-width" dense filled color="primary" label-color="positive" input-class="text-positive" v-model="memberPostOfficeCity" label="Miasto *" /></q-item>
-          <q-item><q-input class="full-width" dense filled color="primary" label-color="positive" input-class="text-positive" v-model="memberZipCode" placeholder="00-000" label="Kod Pocztowy *" mask="##-###" /></q-item>
-          <q-item><q-input class="full-width" dense filled color="primary" label-color="positive" input-class="text-positive" v-model="memberStreet" label="Ulica *" /></q-item>
-          <q-item><q-input class="full-width" dense filled color="primary" label-color="positive" input-class="text-positive" v-model="memberStreetNumber" label="Numer Ulicy *" /></q-item>
-          <q-item><q-input class="full-width" dense filled color="primary" label-color="positive" input-class="text-positive" v-model="memberFlatNumber" label="Numer Mieszkania"/></q-item>
-          <q-item v-if="
-          memberFirstName.length>=3
-          &&memberSecondName.length>=3
-          &&memberIDCard.length>=3
-          &&memberPesel.length===11
-          &&memberPhone.length===11
-          &&memberEmail.length>=3
-          &&memberPostOfficeCity!=null
-          &&memberZipCode!=null
-          &&memberStreet!=null
-          &&memberStreetNumber!=null"
-           class="reverse"><q-btn class="full-width text-bold" :loading="loading[0]" style="font-weight: bold; font-size: medium; letter-spacing: 1em;" color="primary" @click="acceptCode=true">dodaj do klubu</q-btn></q-item>
-          <q-item v-else class="reverse"><q-btn class="full-width text-bold" style="font-weight: bold; letter-spacing: 1em; font-size: medium;" color="secondary" disable>dodaj do klubu</q-btn><q-tooltip content-class="bg-red text-subtitle2" anchor="top middle" >Uzupełnij dane z gwiazdką</q-tooltip></q-item>
-          <q-checkbox v-if="isPresent" v-model="returningToClub" color="primary" label="Przywróć do klubu"></q-checkbox>
-        </div>
-        </div>
-    </q-card-section>
-      </q-card>
-      </q-step>
+      <q-stepper header-nav v-model="step" ref="stepper" active-color="secondary" class="bg-dark" animated>
+        <q-step :name="1" title="Podstawowe dane" caption="Wymagane" icon="settings"
+          :done="step > 1">
+          <q-card class="row bg-dark text-positive">
+            <q-card-section class="col-6">
+              <div class="full-width">
+                <q-item><q-input class="full-width"
+                    @input="memberFirstNameC = memberFirstName.length === 0 ? '' : memberFirstNameC = memberFirstName.length < 3 ? 'red-2' : 'green-2'"
+                    dense :bg-color="memberFirstNameC" label-color="positive" v-model="memberFirstName" label="Imię *"
+                    onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode === 32"
+                    filled /></q-item>
+                <q-item><q-input class="full-width"
+                    @input="memberSecondNameC = memberSecondName.length === 0 ? '' : memberSecondNameC = memberSecondName.length < 3 ? 'red-2' : 'green-2'"
+                    dense :bg-color="memberSecondNameC" label-color="positive" v-model="memberSecondName"
+                    label="Nazwisko *"
+                    onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode === 45"
+                    filled /></q-item>
+                <q-item><q-input class="full-width"
+                    @input="memberIDCardC = memberIDCard.length === 0 ? '' : checkIDCard(memberIDCard)" dense
+                    :bg-color="memberIDCardC" v-model="memberIDCard" :suffix="memberIDCardS" label-color="positive"
+                    label="Numer Dokumentu *" filled /></q-item>
+                <q-item><q-input class="full-width"
+                    @input="memberPeselC = memberPesel.length === 0 ? '' : checkPESEL(memberPesel)" dense
+                    :bg-color="memberPeselC" v-model="memberPesel" :suffix="memberPeselS" label-color="positive"
+                    placeholder="tylko cyfry" label="Pesel *" mask="###########" filled /></q-item>
+                <q-item><q-input class="full-width"
+                    @input="memberPhoneC = memberPhone.length === 0 ? '' : memberPhone.length < 11 ? 'red-2' : 'green-2'" dense
+                    :bg-color="memberPhoneC" type="tel" v-model="memberPhone" label-color="positive"
+                    placeholder="tylko cyfry" prefix="+48 " label="Numer telefonu *" mask="### ### ###" filled
+                    onkeypress="return (event.charCode > 47 && event.charCode < 58)" /></q-item>
+                <q-item><q-input class="full-width"
+                    @input="memberEmailC = memberEmail.length === 0 ? '' : checkEmail(memberEmail)" :bg-color="memberEmailC"
+                    dense filled type="email" v-model="memberEmail" label-color="positive" :suffix="memberEmailS"
+                    label="e-mail *" /></q-item>
+                <q-item><q-input class="full-width" dense filled color="green" v-model="memberLegitimation"
+                    input-class="text-positive" label-color="positive" label="Numer Legitymacji"
+                    onkeypress="return (event.charCode > 47 && event.charCode < 58)" /></q-item>
+                <q-item><q-input class="full-width" dense filled color="green" v-model="memberJoinDate"
+                    input-class="text-positive" label-color="positive" mask="####-##-##" label="Data dołączenia do Klubu"
+                    hint="użyj kalendarza">
+                    <template v-slot:append>
+                      <q-icon name="event" class="cursor-pointer" color="positive">
+                        <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                          <q-date v-model="memberJoinDate" mask="YYYY-MM-DD" class="bg-dark text-positive">
+                            <div class="row items-center justify-end">
+                              <q-btn v-close-popup label="Zamknij" color="primary" flat />
+                            </div>
+                          </q-date>
+                        </q-popup-proxy>
+                      </q-icon>
+                    </template>
+                  </q-input></q-item>
+                <div class="row">
+                  <div class="col-6">
+                    <q-radio v-model="memberAdult" :val="true" label="Grupa Ogólna" color="secondary" />
+                  </div>
+                  <div class="col-6">
+                    <q-radio v-model="memberAdult" :val="false" label="Grupa Młodzieżowa" color="secondary" />
+                  </div>
+                </div>
+              </div>
+            </q-card-section>
+            <q-card-section class="col">
+              <div class="fit col">
+                <div class="fit">
+                  <q-item><q-input class="full-width" dense filled color="primary" label-color="positive"
+                      input-class="text-positive" v-model="memberPostOfficeCity" label="Miasto *" /></q-item>
+                  <q-item><q-input class="full-width" dense filled color="primary" label-color="positive"
+                      input-class="text-positive" v-model="memberZipCode" placeholder="00-000" label="Kod Pocztowy *"
+                      mask="##-###" /></q-item>
+                  <q-item><q-input class="full-width" dense filled color="primary" label-color="positive"
+                      input-class="text-positive" v-model="memberStreet" label="Ulica *" /></q-item>
+                  <q-item><q-input class="full-width" dense filled color="primary" label-color="positive"
+                      input-class="text-positive" v-model="memberStreetNumber" label="Numer Ulicy *" /></q-item>
+                  <q-item><q-input class="full-width" dense filled color="primary" label-color="positive"
+                      input-class="text-positive" v-model="memberFlatNumber" label="Numer Mieszkania" /></q-item>
+                  <q-item v-if="memberFirstName.length >= 3
+                    && memberSecondName.length >= 3
+                    && memberIDCard.length >= 3
+                    && memberPesel.length === 11
+                    && memberPhone.length === 11
+                    && memberEmail.length >= 3
+                    && memberPostOfficeCity != null
+                    && memberZipCode != null
+                    && memberStreet != null
+                    && memberStreetNumber != null" class="reverse"><q-btn class="full-width text-bold" :loading="loading[0]"
+                      style="font-weight: bold; font-size: medium; letter-spacing: 1em;" color="primary"
+                      @click="acceptCode = true">dodaj do klubu</q-btn></q-item>
+                  <q-item v-else class="reverse"><q-btn class="full-width text-bold"
+                      style="font-weight: bold; letter-spacing: 1em; font-size: medium;" color="secondary" disable>dodaj
+                      do klubu</q-btn><q-tooltip content-class="bg-red text-subtitle2" anchor="top middle">Uzupełnij dane
+                      z gwiazdką</q-tooltip></q-item>
+                  <q-checkbox v-if="isPresent" v-model="returningToClub" color="primary"
+                    label="Przywróć do klubu"></q-checkbox>
+                </div>
+              </div>
+            </q-card-section>
+          </q-card>
+        </q-step>
 
-      <q-step v-if="memberAdultConfirm && (uuid!=null&&uuid!=='' && !uuid.includes('Uwaga!'))"
-        :name="2"
-        title="Patent"
-        caption="opcjonalnie"
-        icon="assignment"
-        :done="step > 2"
-      >
-      <q-card class="row">
-      <q-card-section class="col-6 bg-grey-2">
-      <div>
-      <q-item><q-input class="full-width" dense v-model="patentNumber" mask="#####/AAA/##/####" label="Numer Patentu" filled/></q-item>
-      <q-item><q-input class="full-width" dense filled v-model="patentDate" mask="####-##-##" :rules="['date']" label="Data Wydania Patentu">
-                        <template v-slot:append>
-                          <q-icon name="event" class="cursor-pointer">
-                            <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                              <q-date v-model="patentDate">
-                                <div class="row items-center justify-end">
-                                  <q-btn v-close-popup label="Zamknij" color="primary" flat />
-                                </div>
-                              </q-date>
-                            </q-popup-proxy>
-                          </q-icon>
-                        </template>
-                      </q-input></q-item>
-      <q-item><q-checkbox v-model="patentPistolPermission" label="Pistolet"/></q-item>
-      <q-item><q-checkbox v-model="patentRiflePermission" label="Karabin"/></q-item>
-      <q-item><q-checkbox v-model="patentShotgunPermission" label="Strzelba"/></q-item>
-      <q-item><q-btn label="Dodaj" color="secondary" @click="showloading();addPatent(uuid, patentNumber, patentPistolPermission, patentRiflePermission, patentShotgunPermission,patentDate)"/></q-item>
-      </div>
-      </q-card-section>
-      <q-card-section class="col-6">
-      <div>
-        <q-item>
-          <q-field class="full-width" dense standout label="Numer Patentu" stack-label>
-            <template v-slot:control>
-              <div class="self-center full-width no-outline" tabindex="1">{{patentNumber}}</div>
-            </template>
-          </q-field>
-        </q-item>
-        <q-item>
-          <q-field class="full-width" dense standout label="Data Nadania" stack-label>
-            <template v-slot:control>
-              <div class="self-center full-width no-outline" tabindex="1">{{patentDate}}</div>
-            </template>
-          </q-field>
-        </q-item>
-        <q-item>
-          <div class="col">
-              <q-field class="col" standout label="Dyscypliny" dense stack-label>
-                <template v-slot:control>
-                  <q-field v-if="patentPistolPermission" class="col" dense standout>
+        <q-step v-if="memberAdultConfirm && (uuid != null && uuid !== '' && !uuid.includes('Uwaga!'))" :name="2" title="Patent"
+          caption="opcjonalnie" icon="assignment" :done="step > 2">
+          <q-card class="row bg-dark">
+            <q-card-section class="col-6">
+              <div>
+                <div class="row full-width">
+                <q-input dense v-model="patentNumber" label-color="positive" input-class="text-positive" mask="#######"
+                    label="Numer Patentu" class="col" filled />
+                    <div class="col-1 self-center text-possitive">/PAT/</div>
+                <q-input dense v-model="patentNumber1" label-color="positive" input-class="text-positive" mask="##/####"
+                    label="miesiąc i rok" class="col" filled />
+                  </div>
+                <q-input class="full-width" dense filled v-model="patentDate" label-color="positive" input-class="text-positive" mask="####-##-##"
+                    label="Data Wydania Patentu">
+                    <template v-slot:append>
+                      <q-icon name="event" class="cursor-pointer" color="positive">
+                        <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                          <q-date v-model="patentDate" mask="YYYY-MM-DD" class="bg-dark text-positive">
+                            <div class="row items-center justify-end">
+                              <q-btn v-close-popup label="Zamknij" color="primary" flat />
+                            </div>
+                          </q-date>
+                        </q-popup-proxy>
+                      </q-icon>
+                    </template>
+                  </q-input>
+                <q-item><q-checkbox v-model="patentPistolPermission" keep-color class="self-center" label="Pistolet" dense /></q-item>
+                <q-item><q-checkbox v-model="patentRiflePermission" keep-color class="self-center" label="Karabin" dense /></q-item>
+                <q-item><q-checkbox v-model="patentShotgunPermission" keep-color class="self-center" label="Strzelba" dense /></q-item>
+                <q-item><q-btn label="Dodaj" color="secondary"
+                    @click="showloading(); addPatent(uuid, (patentNumber + '/PAT/' + patentNumber1), patentPistolPermission, patentRiflePermission, patentShotgunPermission, patentDate)" /></q-item>
+              </div>
+            </q-card-section>
+            <q-card-section class="col-6">
+              <div>
+                <q-item>
+                  <q-field class="full-width" dense standout label-color="positive" label="Numer Patentu" stack-label>
                     <template v-slot:control>
-                      <div class="self-center full-width no-outline" tabindex="0">Pistolet</div>
+                      <div class="self-center full-width text-positive" >{{patentNumber}}/PAT/{{ patentNumber1 }}</div>
                     </template>
                   </q-field>
-                  <q-field v-if="patentRiflePermission" class="col" dense standout>
+                </q-item>
+                <q-item>
+                  <q-field class="full-width" dense standout label-color="positive" label="Data Nadania" stack-label>
                     <template v-slot:control>
-                      <div class="self-center full-width no-outline" tabindex="0">Karabin</div>
+                      <div class="self-center full-width text-positive" >{{patentDate}}</div>
                     </template>
                   </q-field>
-                  <q-field v-if="patentShotgunPermission" class="col" dense standout>
-                    <template v-slot:control>
-                      <div class="self-center full-width no-outline" tabindex="0">Strzelba</div>
-                    </template>
-                  </q-field>
-                </template>
-              </q-field>
-            </div>
-        </q-item>
-      </div>
-      </q-card-section>
-      </q-card>
-      </q-step>
-
-      <q-step v-if="(!memberAdultConfirm || (memberAdultConfirm && patentNumberConfirm)) && (uuid!=null&&uuid!=='' && !uuid.includes('Uwaga!'))"
-        :name="3"
-        title="Licencja Zawodnicza"
-        caption="opcjonalnie"
-        icon="assignment"
-        :done="step > 3"
-      >
-      <q-card class="row" v-if="(memberAdultConfirm&&patentNumber!=null)||!memberAdultConfirm">
-      <q-card-section class="bg-grey-2 col-6">
-      <div>
-      <q-item><q-input class="full-width" dense v-model="licenseNumber" placeholder="tylko cyfry" label="Numer Licencji" filled/></q-item>
-      <q-item><q-input class="full-width" dense filled v-model="licenseDate" mask="####-12-31" :rules="['date']" label="Ważna do" hint="użyj kalendarza">
-                      <template v-slot:append>
-                        <q-icon name="event" class="cursor-pointer">
-                          <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                            <q-date v-model="licenseDate">
-                              <div class="row items-center justify-end">
-                                <q-btn v-close-popup label="Zamknij" color="primary" flat />
-                              </div>
-                            </q-date>
-                          </q-popup-proxy>
-                        </q-icon>
+                </q-item>
+                <q-item>
+                    <q-field standout label="Dyscypliny" label-color="positive" dense stack-label class="full-width">
+                      <template v-slot:control>
+                        <div class="row full-width">
+                          <q-item v-if=" patentPistolPermission " dense class="self-center col text-positive" >Pistolet</q-item>
+                          <q-item v-if=" patentRiflePermission " dense class="self-center col text-positive" >Karabin</q-item>
+                          <q-item v-if=" patentShotgunPermission " dense class="self-center col text-positive" >Strzelba</q-item>
+                        </div>
                       </template>
-                    </q-input></q-item>
-      <q-item v-if="patentPistolPermission||!memberAdultConfirm"><q-checkbox v-model="licensePistolPermission"  label="Pistolet"/></q-item>
-      <q-item v-if="patentRiflePermission||!memberAdultConfirm"><q-checkbox  v-model="licenseRiflePermission"  label="Karabin"/></q-item>
-      <q-item v-if="patentShotgunPermission||!memberAdultConfirm"><q-checkbox v-model="licenseShotgunPermission"  label="Strzelba"/></q-item>
-      <q-item><q-btn label="Dodaj" color="secondary" @click="showloading();addLicense(uuid, licenseNumber, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission, licenseDate)"/></q-item>
-      </div>
-      </q-card-section>
-      <q-card-section class="col-6">
-      <div>
-            <q-item>
-              <q-field class="full-width" dense standout label="Numer Licencji" stack-label>
-                <template v-slot:control>
-                  <div class="self-center full-width no-outline" tabindex="1">{{licenseNumber}}</div>
-                </template>
-              </q-field>
-            </q-item>
-            <q-item>
-              <q-field class="full-width" dense standout label="Data Ważności" stack-label>
-                <template v-slot:control>
-                  <div class="self-center full-width no-outline" tabindex="1">{{licenseDate}}</div>
-                </template>
-              </q-field>
-            </q-item>
-            <q-item>
-              <q-field class="col" standout label="Dyscypliny" dense stack-label>
-                <template v-slot:control>
-                  <q-field v-if="(licensePistolPermission&&patentPistolPermission)||(!memberAdult&&licensePistolPermission)" class="col" dense standout>
-                    <template v-slot:control>
-                      <div class="self-center full-width no-outline" tabindex="0">Pistolet</div>
-                    </template>
-                  </q-field>
-                  <q-field v-if="(licenseRiflePermission&&patentRiflePermission)||(!memberAdult&&licenseRiflePermission)" class="col" dense standout>
-                    <template v-slot:control>
-                      <div class="self-center full-width no-outline" tabindex="0">Karabin</div>
-                    </template>
-                  </q-field>
-                  <q-field v-if="(licenseShotgunPermission&&patentShotgunPermission)||(!memberAdult&&licenseShotgunPermission)" class="col" dense standout>
-                    <template v-slot:control>
-                      <div class="self-center full-width no-outline" tabindex="0">Strzelba</div>
-                    </template>
-                  </q-field>
-                </template>
-              </q-field>
-            </q-item>
-      </div>
-      </q-card-section>
-      </q-card>
-      </q-step>
-      <q-step v-if="memberAdultConfirm && (uuid!=null&&uuid!=='' && !uuid.includes('Uwaga!'))"
-        :name="4"
-        title="Uprawnienia"
-        caption="opcjonalnie"
-        icon="assignment"
-        :done="step > 4"
-      >
-      <q-card class="row">
-        <q-card-section class="col-4 bg-grey-2">
-          <div>
-            <q-item dense><q-item-label>Jeśli posiada pozwolenie na broń - wpisz numer</q-item-label></q-item>
-            <q-item><q-input @keypress.enter="showloading();changeWeaponPermission(uuid, weaponPermissionNumber)" dense class="full-width" v-model="weaponPermissionNumber" label="Numer" filled/></q-item>
-            <q-item dense><q-btn label="Dodaj" color="secondary" @click="showloading();changeWeaponPermission(uuid, weaponPermissionNumber)"/></q-item>
-          </div>
-          <div>
-            <q-item dense><q-item-label>Jeśli posiada uprawnienia prowadzącego - wpisz numer</q-item-label></q-item>
-            <q-item><q-input @keypress.enter="showloading();updateMemberPermissions(uuid, permissionsShootingLeaderNumber)" dense class="full-width" v-model="permissionsShootingLeaderNumber" label="Numer" filled/></q-item>
-            <q-item dense><q-btn label="Dodaj" color="secondary" @click="showloading();updateMemberPermissions(uuid, permissionsShootingLeaderNumber)"/></q-item>
-          </div>
-          <div>
-            <q-item dense><q-item-label>Jeśli posiada uprawnienia instruktora - wpisz numer</q-item-label></q-item>
-            <q-item><q-input @keypress.enter="showloading();updateMemberPermissions(uuid, permissionsInstructorNumber)" dense class="full-width" v-model="permissionsInstructorNumber" label="Numer" filled/></q-item>
-            <q-item dense><q-btn label="Dodaj" color="secondary" @click="showloading();updateMemberPermissions(uuid, permissionsInstructorNumber)"/></q-item>
-          </div>
-        </q-card-section>
-        <q-card-section class="col-4">
-        <div class="col">
-          <q-item><q-item-label>Jeśli posiada Licencję Sędziego - uzupełnij dane</q-item-label></q-item>
-          <q-item><q-input class="full-width" dense v-model="permissionsArbiterNumber" filled label="Numer uprawnień" /></q-item>
-          <q-item><q-input class="full-width" dense filled v-model="permissionsArbiterPermissionValidThru" mask="####-12-31" :rules="['date']" label="Ważne do" hint="użyj kalendarza">
-                              <template v-slot:append>
-                                <q-icon name="event" class="cursor-pointer">
-                                  <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                                    <q-date v-model="permissionsArbiterPermissionValidThru">
-                                      <div class="row items-center justify-end">
-                                        <q-btn v-close-popup label="Zamknij" color="primary" flat />
-                                      </div>
-                                    </q-date>
-                                  </q-popup-proxy>
-                                </q-icon>
-                              </template>
-                            </q-input></q-item>
-          <q-item dense><q-radio dense v-model="ordinal" :val="1" label="Klasa 3" color="secondary" /></q-item>
-          <q-item dense><q-radio dense v-model="ordinal" :val="2" label="Klasa 2" color="secondary" /></q-item>
-          <q-item dense><q-radio dense v-model="ordinal" :val="3" label="Klasa 1" color="secondary" /></q-item>
-          <q-item dense><q-radio dense v-model="ordinal" :val="4" label="Klasa Państwowa" color="secondary" /></q-item>
-          <q-item dense><q-radio dense v-model="ordinal" :val="5" label="Klasa Międzynarodowa" color="secondary" /></q-item>
-          <q-item dense><q-btn label="Dodaj" color="secondary" @click="showloading();updateMemberPermissions(uuid, permissionsArbiterNumber,permissionsArbiterPermissionValidThru, ordinal)"/></q-item>
-        </div>
-      </q-card-section>
-      </q-card>
-      </q-step>
+                    </q-field>
+                </q-item>
+              </div>
+            </q-card-section>
+          </q-card>
+        </q-step>
 
-      <template v-slot:navigation  >
-        <q-stepper-navigation class="flex bg-dark">
-          <q-item clickable v-if="(step<5&&(uuid!=null&&uuid!==''))" @click="alertResponse=null"><q-btn v-if="step<5" @click="$refs.stepper.next()" color="primary" :label="step === 4 ? 'Zakończ' : 'Przejdź Dalej'" /></q-item>
-          <q-item><q-btn v-if="step > 1" flat color="primary" @click="$refs.stepper.previous()" label="Wróć" /></q-item>
-          <q-item><q-btn v-if="step > 1" @click="redirect()" color="primary" label="Zakończ" /></q-item>
-          <q-item><q-btn v-if="uuid!=null&&uuid!==''" type="a" href="https://portal.pzss.org.pl/CLub/Player" target="_blank" label="Przejdź do portalu PZSS" color="primary" @click="pzssPortal=true"/></q-item>
-          <q-item><q-btn v-if="uuid!=null&&uuid!==''" label="potwierdź zapis do portalu pzss" color="primary" @click="pzssPortal=true"/></q-item>
-          <q-item><PersonalCardPDF v-if="uuid!=null&&uuid!==''" :uuid="uuid" :name="memberE!=null?(memberE.firstName + ' ' + memberE.secondName):''"/></q-item>
-          <q-item><LastContributionPDF v-if="uuid!=null&&uuid!==''" :uuid="uuid" :name="memberE!=null?(memberE.firstName + ' ' + memberE.secondName):''"/></q-item>
-          <q-item><DeklaracjaLOK v-if="uuid!=null&&uuid!==''" :uuid="uuid" :name="memberE!=null?(memberE.firstName + ' ' + memberE.secondName):''"/></q-item>
-          <q-item><CSVFile v-if="uuid!=null&&uuid!==''" :uuid="uuid" :name="memberE!=null?(memberE.firstName + ' ' + memberE.secondName):''"/></q-item>
-          <q-item v-if="uuid!==''"><q-item-label>Identyfikator : {{uuid}}</q-item-label></q-item>
-          <q-item v-if="alertResponse!=null" class="bg-red-3"><q-item-label>Ostrzeżenie : {{alertResponse}}</q-item-label></q-item>
-        </q-stepper-navigation>
-      </template>
-    </q-stepper>
-  </div>
-<q-dialog :position="'top'" v-model="success">
+        <q-step
+          v-if=" (!memberAdultConfirm || (memberAdultConfirm && patentNumberConfirm)) && (uuid != null && uuid !== '' && !uuid.includes('Uwaga!')) "
+          :name=" 3 " title="Licencja Zawodnicza" caption="opcjonalnie" icon="assignment" :done=" step > 3 ">
+          <!-- <q-card class="row" v-if=" (memberAdultConfirm && patentNumber != null) || !memberAdultConfirm "> -->
+          <q-card class="row bg-dark">
+            <q-card-section class="col-6">
+              <div>
+                <q-item><q-input class="full-width" label-color="positive" input-class="text-positive" dense v-model=" licenseNumber " placeholder="tylko cyfry" mask="########"
+                    label="Numer Licencji" filled /></q-item>
+                <q-item><q-input class="full-width" label-color="positive" input-class="text-positive" dense filled v-model=" licenseDate " mask="####-12-31"
+                    label="Ważna do" hint="użyj kalendarza">
+                    <template v-slot:append>
+                      <q-icon name="event" class="cursor-pointer" color="positive">
+                        <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                          <q-date v-model=" licenseDate " mask="YYYY-MM-DD" class="bg-dark text-positive">
+                            <div class="row items-center justify-end">
+                              <q-btn v-close-popup label="Zamknij" color="primary" flat />
+                            </div>
+                          </q-date>
+                        </q-popup-proxy>
+                      </q-icon>
+                    </template>
+                  </q-input></q-item>
+                <q-item v-if=" patentPistolPermission || !memberAdultConfirm "><q-checkbox v-model=" licensePistolPermission "
+                    label="Pistolet" /></q-item>
+                <q-item v-if=" patentRiflePermission || !memberAdultConfirm "><q-checkbox v-model=" licenseRiflePermission "
+                    label="Karabin" /></q-item>
+                <q-item v-if=" patentShotgunPermission || !memberAdultConfirm "><q-checkbox v-model=" licenseShotgunPermission "
+                    label="Strzelba" /></q-item>
+                <q-item><q-btn label="Dodaj" color="secondary"
+                    @click=" showloading(); addLicense(uuid, licenseNumber, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission, licenseDate) " /></q-item>
+              </div>
+            </q-card-section>
+            <q-card-section class="col-6">
+              <div>
+                <q-item>
+                  <q-field class="full-width" dense standout label-color="positive" label="Numer Licencji" stack-label>
+                    <template v-slot:control>
+                      <div class="self-center full-width text-positive" >{{licenseNumber}}</div>
+                    </template>
+                  </q-field>
+                </q-item>
+                <q-item>
+                  <q-field class="full-width" dense standout label-color="positive" label="Data Ważności" stack-label>
+                    <template v-slot:control>
+                      <div class="self-center full-width text-positive" >{{licenseDate}}</div>
+                    </template>
+                  </q-field>
+                </q-item>
+                <q-item>
+                  <q-field standout label="Dyscypliny" label-color="positive" dense stack-label class="full-width">
+                      <template v-slot:control>
+                        <div class="row full-width">
+                          <q-item v-if=" (licensePistolPermission && patentPistolPermission) || (!memberAdult && licensePistolPermission) " dense class="self-center col text-positive" >Pistolet</q-item>
+                          <q-item v-if=" (licenseRiflePermission && patentRiflePermission) || (!memberAdult && licenseRiflePermission) " dense class="self-center col text-positive" >Karabin</q-item>
+                          <q-item v-if=" (licenseShotgunPermission && patentShotgunPermission) || (!memberAdult && licenseShotgunPermission) " dense class="self-center col text-positive" >Strzelba</q-item>
+                        </div>
+                      </template>
+                    </q-field>
+                </q-item>
+              </div>
+            </q-card-section>
+          </q-card>
+        </q-step>
+        <q-step v-if=" memberAdultConfirm && (uuid != null && uuid !== '' && !uuid.includes('Uwaga!')) " :name=" 4 "
+          title="Uprawnienia" caption="opcjonalnie" icon="assignment" :done=" step > 4 ">
+          <q-card class="row bg-dark">
+            <q-card-section class="col-4">
+              <div>
+                <q-item dense><q-item-label>Jeśli posiada pozwolenie na broń - wpisz numer</q-item-label></q-item>
+                <q-item><q-input @keypress.enter=" showloading(); changeWeaponPermission(uuid, weaponPermissionNumber) "
+                    dense class="full-width" v-model=" weaponPermissionNumber " input-class="positive" label-color="positive" label="Numer" filled /></q-item>
+                <q-item dense><q-btn label="Dodaj" color="secondary"
+                    @click=" showloading(); changeWeaponPermission(uuid, weaponPermissionNumber) " /></q-item>
+              </div>
+              <div>
+                <q-item dense><q-item-label>Jeśli posiada uprawnienia prowadzącego - wpisz numer</q-item-label></q-item>
+                <q-item><q-input
+                    @keypress.enter=" showloading(); updateMemberPermissions(uuid, permissionsShootingLeaderNumber) " dense
+                    class="full-width" v-model=" permissionsShootingLeaderNumber " input-class="positive" label-color="positive" label="Numer" filled /></q-item>
+                <q-item dense><q-btn label="Dodaj" color="secondary"
+                    @click=" showloading(); updateMemberPermissions(uuid, permissionsShootingLeaderNumber) " /></q-item>
+              </div>
+              <div>
+                <q-item dense><q-item-label>Jeśli posiada uprawnienia instruktora - wpisz numer</q-item-label></q-item>
+                <q-item><q-input
+                    @keypress.enter=" showloading(); updateMemberPermissions(uuid, permissionsInstructorNumber) " dense
+                    class="full-width" v-model=" permissionsInstructorNumber " input-class="positive" label-color="positive" label="Numer" filled /></q-item>
+                <q-item dense><q-btn label="Dodaj" color="secondary"
+                    @click=" showloading(); updateMemberPermissions(uuid, permissionsInstructorNumber) " /></q-item>
+              </div>
+            </q-card-section>
+            <q-card-section class="col-4">
+              <div class="col">
+                <q-item><q-item-label>Jeśli posiada Licencję Sędziego Statycznego PZSS - uzupełnij dane</q-item-label></q-item>
+                <q-item><q-input class="full-width" dense v-model=" permissionsArbiterNumber " filled
+                    label="Numer uprawnień" input-class="positive" label-color="positive"/></q-item>
+                <q-item><q-input class="full-width" dense filled v-model=" permissionsArbiterPermissionValidThru "
+                    mask="####-12-31" label="Ważne do" input-class="positive" label-color="positive" hint="użyj kalendarza">
+                    <template v-slot:append>
+                      <q-icon name="event" class="cursor-pointer" color="positive">
+                        <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                          <q-date v-model=" permissionsArbiterPermissionValidThru " mask="YYYY-MM-DD" class="bg-dark text-positive">
+                            <div class="row items-center justify-end">
+                              <q-btn v-close-popup label="Zamknij" color="primary" flat />
+                            </div>
+                          </q-date>
+                        </q-popup-proxy>
+                      </q-icon>
+                    </template>
+                  </q-input></q-item>
+                <q-item dense><q-radio dense v-model=" ordinal " :val=" 1 " label="Klasa 3" color="secondary" /></q-item>
+                <q-item dense><q-radio dense v-model=" ordinal " :val=" 2 " label="Klasa 2" color="secondary" /></q-item>
+                <q-item dense><q-radio dense v-model=" ordinal " :val=" 3 " label="Klasa 1" color="secondary" /></q-item>
+                <q-item dense><q-radio dense v-model=" ordinal " :val=" 4 " label="Klasa Państwowa"
+                    color="secondary" /></q-item>
+                <q-item dense><q-radio dense v-model=" ordinal " :val=" 5 " label="Klasa Międzynarodowa"
+                    color="secondary" /></q-item>
+                <q-item dense><q-btn label="Dodaj" color="secondary"
+                    @click=" showloading(); updateMemberPermissions(uuid, permissionsArbiterNumber, permissionsArbiterPermissionValidThru, ordinal) " /></q-item>
+              </div>
+            </q-card-section>
+          </q-card>
+        </q-step>
+
+        <template v-slot:navigation>
+          <q-stepper-navigation class="flex bg-dark">
+            <q-item clickable v-if=" (step < 5 && (uuid != null && uuid !== '')) " @click=" alertResponse = null "><q-btn v-if=" step < 5 "
+                @click=" $refs.stepper.next() " color="primary"
+                :label=" step === 4 ? 'Zakończ' : 'Przejdź Dalej' " /></q-item>
+            <q-item><q-btn v-if=" step > 1 " flat color="primary" @click=" $refs.stepper.previous() " label="Wróć" /></q-item>
+            <q-item><q-btn v-if=" step > 1 " @click=" redirect() " color="primary" label="Zakończ" /></q-item>
+            <q-item><q-btn v-if=" uuid != null && uuid !== '' " type="a" href="https://portal.pzss.org.pl/CLub/Player"
+                target="_blank" label="Przejdź do portalu PZSS" color="primary" @click=" pzssPortal = true "><q-avatar>
+              <img src="~assets/logo-PZSS.png">
+            </q-avatar></q-btn></q-item>
+            <q-item><q-btn v-if=" uuid != null && uuid !== '' " label="potwierdź zapis do portalu pzss" color="primary"
+                @click=" pzssPortal = true " /></q-item>
+            <q-item>
+              <PersonalCardPDF v-if=" uuid != null && uuid !== '' " :uuid=" uuid "
+                :name=" memberE != null ? (memberE.firstName + ' ' + memberE.secondName) : '' " />
+            </q-item>
+            <q-item>
+              <LastContributionPDF v-if=" uuid != null && uuid !== '' " :uuid=" uuid "
+                :name=" memberE != null ? (memberE.firstName + ' ' + memberE.secondName) : '' " />
+            </q-item>
+            <q-item v-if="shootingPlace === 'prod'">
+              <DeklaracjaLOK v-if=" uuid != null && uuid !== '' " :uuid=" uuid "
+                :name=" memberE != null ? (memberE.firstName + ' ' + memberE.secondName) : '' " />
+            </q-item>
+            <q-item>
+              <CSVFile v-if=" uuid != null && uuid !== '' " :uuid=" uuid "
+                :name=" memberE != null ? (memberE.firstName + ' ' + memberE.secondName) : '' " />
+            </q-item>
+            <q-item v-if=" uuid !== '' "><q-item-label>Identyfikator : {{uuid}}</q-item-label></q-item>
+            <q-item v-if=" alertResponse != null " class="bg-red-3"><q-item-label>Ostrzeżenie :
+                {{alertResponse}}</q-item-label></q-item>
+          </q-stepper-navigation>
+        </template>
+      </q-stepper>
+    </div>
+    <q-dialog :position=" 'top' " v-model=" success ">
       <q-card>
         <q-card-section>
           <div class="text-h6 text-center">{{message}}</div>
         </q-card-section>
       </q-card>
-</q-dialog>
-<q-dialog :position="'top'" v-model="failure">
+    </q-dialog>
+    <q-dialog :position=" 'top' " v-model=" failure ">
       <q-card>
         <q-card-section>
           <div class="text-h6 text-center">{{message}}</div>
         </q-card-section>
       </q-card>
-</q-dialog>
-<q-dialog v-model="pzssPortal" persistent @keypress.enter="changePzss (uuid);pzssPortal=false">
+    </q-dialog>
+    <q-dialog v-model=" pzssPortal " persistent @keypress.enter=" changePzss(uuid); pzssPortal = false ">
       <q-card class="bg-dark text-positive">
         <q-card-section class="row items-center">
-          <q-avatar icon="add" color="primary"/>
           <span class="q-ml-sm">Czy Klubowicz został dodany do portalu?</span>
         </q-card-section>
 
         <q-card-actions align="right">
           <q-btn text-color="white" label="nie" color="primary" v-close-popup />
-          <q-btn text-color="white" label="tak" color="primary" v-close-popup @click="changePzss (uuid)"/>
+          <q-btn text-color="white" label="tak" color="primary" v-close-popup @click=" changePzss(uuid) " />
         </q-card-actions>
       </q-card>
-</q-dialog>
-<q-dialog v-model="acceptCode" persistent @keypress.enter="addMember(memberLegitimation, memberFirstName,
-      memberSecondName,
-      memberIDCard,
-      memberPesel,
-      memberPhone,
-      memberEmail,
-      memberAdult,
-      memberPostOfficeCity,
-      memberZipCode,
-      memberStreet,
-      memberStreetNumber,
-      memberFlatNumber,
-      returningToClub);
-      acceptCode=false">
+    </q-dialog>
+    <q-dialog v-model=" acceptCode " persistent @keypress.enter="
+      addMember(memberLegitimation, memberFirstName,
+        memberSecondName,
+        memberIDCard,
+        memberPesel,
+        memberPhone,
+        memberEmail,
+        memberAdult,
+        memberPostOfficeCity,
+        memberZipCode,
+        memberStreet,
+        memberStreetNumber,
+        memberFlatNumber,
+        returningToClub);
+      acceptCode = false
+    ">
       <q-card class="bg-red-5 text-center">
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
-          <div><q-input autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input></div>
+          <div><q-input autofocus type="password" v-model=" code " filled color="Yellow" class="bg-yellow text-bold"
+              mask="####"></q-input></div>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
-          <q-btn id="3" label="Dodaj" color="black" v-close-popup @click="addMember(memberLegitimation,
-          memberFirstName,
-          memberSecondName,
-          memberIDCard,
-          memberPesel,
-          memberPhone,
-          memberEmail,
-          memberAdult,
-          memberPostOfficeCity,
-          memberZipCode,
-          memberStreet,
-          memberStreetNumber,
-          memberFlatNumber,
-          returningToClub)" />
+          <q-btn label="anuluj" color="black" v-close-popup @click=" code = null " />
+          <q-btn id="3" label="Dodaj" color="black" v-close-popup @click="
+            addMember(memberLegitimation,
+              memberFirstName,
+              memberSecondName,
+              memberIDCard,
+              memberPesel,
+              memberPhone,
+              memberEmail,
+              memberAdult,
+              memberPostOfficeCity,
+              memberZipCode,
+              memberStreet,
+              memberStreetNumber,
+              memberFlatNumber,
+              returningToClub)
+          " />
         </q-card-actions>
       </q-card>
-</q-dialog>
+    </q-dialog>
   </q-page>
   <q-page v-else class="text-positive text-center q-pa-md">
     Nie można wyświetlić zawartości
@@ -417,6 +450,7 @@ export default {
   },
   data () {
     return {
+      backgroundDark: this.darkSet(),
       returningToClub: false,
       peselValue: false,
       pzss: false,
@@ -435,6 +469,7 @@ export default {
       validThru: '',
       member: null,
       patentNumber: null,
+      patentNumber1: null,
       patentNumberConfirm: false,
       patentDate: '',
       patentPistolPermission: false,
@@ -480,12 +515,16 @@ export default {
       isPresent: false,
       isIDCard: false,
       isEmail: false,
+      shootingPlace: App.shootingPlace,
       local: App.host
     }
   },
   methods: {
     redirect () {
       window.location.href = 'http://localhost:8080/strzelnica/#/member'
+    },
+    darkSet () {
+      return JSON.parse(window.localStorage.getItem('BackgroundDark'))
     },
     showloading () {
       this.$q.loading.show({ message: 'Dzieje się coś ważnego... Poczekaj' })
@@ -591,6 +630,9 @@ export default {
       })
     },
     addPatent (uuid, patentNumber, patentPistolPermission, patentRiflePermission, patentShotgunPermission, patentDate) {
+      if (patentNumber.includes('null')) {
+        patentNumber = null
+      }
       const data = {
         patentNumber: patentNumber,
         pistolPermission: patentPistolPermission,
@@ -695,10 +737,9 @@ export default {
         if (response.status === 200) {
           response.text().then(
             response => {
+              this.showloading()
               this.success = true
               this.message = response
-              this.getMembersNames()
-              this.showloading()
               this.getMember(uuid)
               this.autoClose()
             }

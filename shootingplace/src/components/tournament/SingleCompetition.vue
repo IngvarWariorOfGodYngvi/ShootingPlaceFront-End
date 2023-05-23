@@ -83,7 +83,7 @@
                     <q-btn color="primary" label="Anuluj" v-close-popup
                            @click="outerTen='';alfa='';charlie='';delta=''"></q-btn>
                     <q-btn color="primary" label="Zapisz" v-close-popup
-                           @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
+                           @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures,series)"></q-btn>
                   </div>
                 </q-popup-edit>
                 <div class="self-center full-width col no-outline text-center text-positive">
@@ -93,7 +93,7 @@
             </div>
             <div v-if="competition.disciplines!=null && competition.countingMethod === 'COMSTOCK'" class="box col-1 ">
               <q-field dense v-if="competition.disciplines.includes('Pistolet')" class="row"
-                       standout="bg-accent" label="p" stack-label>
+                       standout="bg-accent" label="P" label-color="positive" stack-label>
                 <q-popup-edit v-model="outerTen" value="">
                   <q-input v-if="alfa === '' && charlie === '' && delta === ''" @focus="scoreUUID = item.uuid"
                            input-class="text-center text-positive" v-model="outerTen"
@@ -116,7 +116,7 @@
                     <q-btn color="primary" label="Anuluj" v-close-popup
                            @click="outerTen='';alfa='';charlie='';delta=''"></q-btn>
                     <q-btn color="primary" label="Zapisz" v-close-popup
-                           @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
+                           @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures,series)"></q-btn>
                   </div>
                 </q-popup-edit>
                 <div class="self-center full-width col no-outline text-center text-positive text-caption"
@@ -124,7 +124,7 @@
                 </div>
               </q-field>
               <q-field dense v-if="competition.disciplines.includes('Karabin')" class="row"
-                       standout="bg-accent" label="k" stack-label>
+                       standout="bg-accent" label="K" label-color="positive" stack-label>
                 <q-popup-edit v-model="outerTen" value="">
                   <q-input v-if="alfa === '' && charlie === '' && delta === ''" @focus="scoreUUID = item.uuid"
                            input-class="text-center text-positive" v-model="outerTen"
@@ -147,7 +147,7 @@
                     <q-btn color="primary" label="Anuluj" v-close-popup
                            @click="outerTen='';alfa='';charlie='';delta=''"></q-btn>
                     <q-btn color="primary" label="Zapisz" v-close-popup
-                           @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
+                           @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures,series)"></q-btn>
                   </div>
                 </q-popup-edit>
                 <div class="self-center full-width col no-outline text-center text-positive text-caption"
@@ -155,7 +155,7 @@
                 </div>
               </q-field>
               <q-field dense v-if="competition.disciplines.includes('Strzelba')" class="row"
-                       standout="bg-accent" label="s" stack-label>
+                       standout="bg-accent" label="S" label-color="positive" stack-label>
                 <q-popup-edit v-model="outerTen" value="">
                   <q-input v-if="alfa === '' && charlie === '' && delta === ''" @focus="scoreUUID = item.uuid"
                            input-class="text-center text-positive" v-model="outerTen"
@@ -178,7 +178,7 @@
                     <q-btn color="primary" label="Anuluj" v-close-popup
                            @click="outerTen='';alfa='';charlie='';delta=''"></q-btn>
                     <q-btn color="primary" label="Zapisz" v-close-popup
-                           @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
+                           @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures,series)"></q-btn>
                   </div>
                 </q-popup-edit>
                 <div class="self-center full-width col no-outline text-center text-positive text-caption"
@@ -198,7 +198,7 @@
                   <div class="q-pa-xs">
                     <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
                     <q-btn color="primary" label="Zapisz" v-close-popup
-                           @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
+                           @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures,series)"></q-btn>
                   </div>
                 </q-popup-edit>
                 <div class="self-center full-width col no-outline text-center text-positive text-caption"
@@ -218,7 +218,7 @@
                   <div class="q-pa-xs row full-width">
                     <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
                     <q-btn color="primary" label="Zapisz" v-close-popup
-                           @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
+                           @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures,series)"></q-btn>
                   </div>
                 </q-popup-edit>
                 <div class="self-center full-width col no-outline text-center text-positive text-caption"
@@ -251,7 +251,7 @@
                   <div class="q-pa-xs">
                     <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
                     <q-btn color="primary" label="Zapisz" v-close-popup
-                           @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
+                           @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures,series)"></q-btn>
                   </div>
                 </q-popup-edit>
                 <div class="self-center full-width col no-outline text-center text-positive text-caption"
@@ -270,7 +270,7 @@
                   <div class="q-pa-xs">
                     <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
                     <q-btn color="primary" label="Zapisz" v-close-popup
-                           @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures)"></q-btn>
+                           @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures,series)"></q-btn>
                   </div>
                 </q-popup-edit>
                 <div class="self-center full-width col no-outline text-center text-positive text-caption"
@@ -296,13 +296,13 @@
                 </q-popup-edit>
                 <q-popup-edit v-else value="">
                   <q-input @focus="scoreUUID = item.uuid" input-class="text-center" v-model="scoreLabel"
-                           @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
+                           @keypress.enter="scoreUUID = item.uuid; forceOnEnter(scoreUUID)" dense autofocus
                            stack-label label="Wynik"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58) || event.charCode > 44 || event.charCode < 46"/>
                   <div class="q-pa-xs">
                     <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
                     <q-btn color="primary" label="Zapisz" v-close-popup
-                           @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures,series)"></q-btn>
+                           @click="scoreUUID = item.uuid; forceSetScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures,series)"></q-btn>
                   </div>
                 </q-popup-edit>
                 <div v-if="item.dnf||item.dsq||item.pk"
@@ -599,6 +599,9 @@ export default {
     onEnter (scoreUUID) {
       this.setScore(scoreUUID, this.scoreLabel, this.innerTen, this.outerTen, this.alfa, this.charlie, this.delta, this.procedures, this.series)
     },
+    forceOnEnter (scoreUUID) {
+      this.forceSetScore(scoreUUID, this.scoreLabel)
+    },
     getListCalibers () {
       fetch('http://' + this.local + '/armory/calibers', {
         method: 'GET'
@@ -710,27 +713,9 @@ export default {
         }
       })
     },
-    forceSetScore (scoreUUID, score, innerTen, outerTen, alfa, charlie, delta, procedures) {
-      if (innerTen === null) {
-        innerTen = '-1'
-      }
-      if (outerTen === null) {
-        outerTen = '-1'
-      }
-      if (alfa === '') {
-        alfa = '-1'
-      }
-      if (charlie === '') {
-        charlie = '-1'
-      }
-      if (delta === '') {
-        delta = '-1'
-      }
+    forceSetScore (scoreUUID, score) {
       if (score === null) {
         score = '-1'
-      }
-      if (procedures === null) {
-        procedures = '-1'
       }
       fetch('http://' + this.local + '/competition/score/forceSetScore?scoreUUID=' + scoreUUID + '&score=' + parseFloat(score.replace(/,/gi, '.')), {
         method: 'PUT',

@@ -1,11 +1,6 @@
 <template>
   <q-page padding class="bg-dark">
     <div>
-      <q-item>
-        <div class="text-center col full-width no-outline text-h4 text-bold text-positive">USTAWIENIA</div>
-      </q-item>
-    </div>
-    <div>
       <SuperUser></SuperUser>
       <Users></Users>
           <div class="q-pa-md text-bold text-center text-h6 text-positive">TWORZENIE KLUBU MACIERZYSTEGO</div>
@@ -38,7 +33,7 @@
                 <q-btn @click="createMotherClub ()" label="Dodaj" color="secondary"/>
               </q-item>
             </q-card-section>
-            <q-card-section class="col-6 bg-dark">
+            <!-- <q-card-section class="col-6 bg-dark">
               <q-item id="club" v-if="clubMessage!=null">
                 <div class="full-width text-bold text-center text-positive">{{ clubMessage }}</div>
               </q-item>
@@ -108,7 +103,7 @@
                   <q-btn label="Dodaj" color="secondary"/>
                 </q-item>
               </div>
-            </q-card-section>
+            </q-card-section> -->
           </q-card>
     </div>
   </q-page>

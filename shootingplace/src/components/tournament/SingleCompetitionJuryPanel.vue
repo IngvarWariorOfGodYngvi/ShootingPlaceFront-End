@@ -42,7 +42,7 @@
           <div class="row text-body2 full-width" :class="index%2===0?'bg-grey text-black':'text-positive'">
             <!-- name & club -->
             <div class="col"
-                 @dblclick="scoreUUID = item.uuid; player = item;innerTen=item.innerTen;outerTen=item.outerTen;setScorePlayer=true;series=setSeriesValues (item.series);item.member!=null?
+                 @dblclick="scoreUUID = item.uuid; player = item;scoreLabel=item.score;innerTen=item.innerTen;outerTen=item.outerTen;procedures=item.procedures;setScorePlayer=true;series=setSeriesValues (item.series);item.member!=null?
                  (temp=item.member) : (temp=item.otherPersonEntity);
                  startNumber=item.metricNumber;competitionTemp = competition;">
               <q-field dense standout="bg-accent text-positive" class="text-positive text-caption" stack-label>
@@ -112,30 +112,34 @@
           <div>
             <div class="text-h5 text-positive text-bold text-center">{{ competitionTemp.name }}</div>
           </div>
-          <div v-if="competitionTemp.disciplines==null && competitionTemp.countingMethod === 'COMSTOCK'"
+          <div v-if="competitionTemp.countingMethod === 'COMSTOCK'"
                class="row full-width">
             <q-input v-if="alfa === '' && charlie === '' && delta === ''" type="number"
                      input-class="text-center text-positive text-h6" v-model="outerTen" class="col-3"
                      @keypress.enter=" onEnter(scoreUUID)"
+                     @focus="outerTen = null"
                      stack-label label="trafienia" label-color="positive"
                      onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
             <q-input
               @keypress.enter=" onEnter(scoreUUID)" type="number"
+              @focus="alfa = null"
               input-class="text-center text-positive text-h6" v-model="alfa" class="col-3" stack-label label="Alfa"
               label-color="positive"
               onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
             <q-input
               @keypress.enter=" onEnter(scoreUUID)" type="number"
+              @focus="charlie = null"
               input-class="text-center text-positive text-h6" v-model="charlie" class="col-3" stack-label
               label="Charlie" label-color="positive"
               onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
             <q-input
               @keypress.enter=" onEnter(scoreUUID)" type="number"
+              @focus="delta = null"
               input-class="text-center text-positive text-h6" v-model="delta" class="col-3" stack-label label="Delta"
               label-color="positive"
               onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
           </div>
-          <div v-if="competitionTemp.disciplines!=null && competitionTemp.countingMethod === 'COMSTOCK'"
+          <!-- <div v-if="competitionTemp.disciplines!=null && competitionTemp.countingMethod === 'COMSTOCK'"
                class="row full-width">
             <div v-if="competitionTemp.disciplines.includes('Pistolet')" class="row">
               <q-input v-if="alfa === '' && charlie === '' && delta === ''"
@@ -203,17 +207,19 @@
                 label-color="positive"
                 onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
             </div>
-          </div>
+          </div> -->
           <div v-if="competitionTemp.countingMethod === 'COMSTOCK'">
             <q-input input-class="text-center text-positive text-h6" v-model="innerTen" type="number"
                      @keypress.enter=" onEnter(scoreUUID)"
+                     @focus="innerTen = null"
                      stack-label label="czas" label-color="positive"
                      onkeypress="return (event.charCode > 47 && event.charCode < 58) || event.charCode > 44 || event.charCode < 46"/>
           </div>
           <!-- procedures -->
           <div v-if="competitionTemp.countingMethod === 'COMSTOCK'">
-            <q-input input-class="text-center text-positive text-h4" v-model="procedures" type="number"
+            <q-input input-class="text-center text-positive text-h6" v-model="procedures" type="number"
                      @keypress.enter="onEnter(scoreUUID)"
+                     @focus="procedures = null"
                      stack-label label="procedury + 3 sek" label-color="positive"
                      onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
           </div>
@@ -458,7 +464,6 @@ export default {
       })
     },
     checkInput (item) {
-      console.log(item)
       if (item.length > 1 && item.startsWith('0')) {
         item = item.replace('0', '')
       }

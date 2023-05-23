@@ -117,7 +117,7 @@
             <div v-if="!item.new" class="row full-width">
               <div class="col-5"
                    @dblclick="main&&!mobile?(paymentUUID=item.uuid,editLicensePaymentDate = item.date,editLicensePaymentYear = item.validForYear,editLicensePayment=true):''">
-                <q-field dense label="Opłacona dnia : " standout="bg-accent text-positive" color="positive"
+                <q-field dense label="Opłacona dnia" standout="bg-accent text-positive" color="positive"
                          label-color="positive" stack-label>
                   <div class="self-center col full-width no-outline text-left">
                     {{ convertDate(item.date) }}
@@ -127,7 +127,7 @@
               <div class="col-4"
                    @dblclick="main&&!mobile?(paymentUUID=item.uuid,editLicensePaymentDate = item.date,editLicensePaymentYear = item.validForYear,editLicensePayment=true):''">
                 <q-field dense standout="bg-accent text-positive" color="positive" label-color="positive"
-                         label="Na rok : " stack-label>
+                         label="Na rok" stack-label>
                   <div class="self-center col full-width no-outline text-left">
                     {{ item.validForYear }}
                   </div>
@@ -137,7 +137,7 @@
                    @dblclick="main&&!mobile?(paymentUUID=item.uuid,togglePaymentAlert = true):''">
                 <q-field dense :class="item.payInPZSSPortal?'':'bg-red'"
                          :standout="item.payInPZSSPortal?'bg-accent':'bg-red-4'" color="positive" label-color="positive"
-                         label="PZSS : "
+                         label="PZSS"
                          stack-label>
                   <div class="full-width text-center">
                     <q-icon :name="item.payInPZSSPortal?'done':'cancel'"></q-icon>
@@ -156,18 +156,18 @@
           <div class="text-h6">Uwaga! Wprowadzając zmiany bądź pewny tego co robisz</div>
           <div class="row bg-dark">
             <div class="q-pa-md col-6">
-              <q-input filled color="positive" input-class="text-positive" onkeypress="return (event.charCode > 47 && event.charCode < 58)" label-color="positive" stack-label v-model="editLicenseNumber"
+              <q-input dense filled color="positive" input-class="text-positive" onkeypress="return (event.charCode > 47 && event.charCode < 58)" label-color="positive" stack-label v-model="editLicenseNumber"
                        label="Numer Licencji"></q-input>
             </div>
             <div class="q-pa-md col-6">
-              <q-input filled color="positive" input-class="text-positive" label-color="positive" stack-label v-model="editLicenseDate" mask="####-12-31"
+              <q-input dense filled color="positive" input-class="text-positive" label-color="positive" stack-label v-model="editLicenseDate" mask="####-12-31"
                        label="Ważność licencji">
                 <template v-slot:append>
                   <q-icon name="event" class="cursor-pointer" color="positive">
                     <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                      <q-date v-model="editLicenseDate" mask="YYYY-MM-DD">
+                      <q-date v-model="editLicenseDate" mask="YYYY-MM-DD" class="bg-dark text-positive">
                         <div class="row items-center justify-end">
-                          <q-btn v-close-popup label="Zamknij" color="primary" flat/>
+                          <q-btn v-close-popup label="Zamknij" color="primary" />
                         </div>
                       </q-date>
                     </q-popup-proxy>
@@ -181,7 +181,7 @@
               </div>
           </div>
           <div class="q-pa-md row full-width">
-            <q-btn class="full-width" label="wprowadź zmiany" color="primary" v-close-popup
+            <q-btn dense class="full-width" label="wprowadź zmiany" color="primary" v-close-popup
                    @click="editLicenseCode=true"/>
           </div>
         </q-card-section>
@@ -271,7 +271,7 @@
         <h4 class="text-bold text-center">Klubowicz nie ma zaliczonej wymaganej ilości startów </h4>
         <h4 class="text-bold text-center">Upewnij się, że klubowicz może udokumentować swoje starty</h4>
         <q-card-actions align="right">
-          <q-btn flat text-color="positive" label="zamknij" color="primary" v-close-popup
+          <q-btn text-color="positive" label="zamknij" color="primary" v-close-popup
                  @click="prolongLicenseConfirm=true"/>
         </q-card-actions>
       </q-card>
@@ -280,7 +280,7 @@
               @keypress.enter="licensePayment=false;licensePaymentCode=true">
       <q-card class="bg-dark text-positive">
         <q-card-section class="row items-center">
-          <span class="q-ml-sm text-h4">Czy licencja została opłacona?</span>
+          <span class="q-ml-sm">Czy licencja została opłacona?</span>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -312,42 +312,37 @@
         <q-card-section>
           <div class="text-h5 text-bold text-center">Edytuj Opłatę za Licencję</div>
           <div class="text-h6 text-center">Uwaga! Wprowadzając zmiany bądź pewny tego co robisz</div>
-          <div class="row bg-grey-3">
-            <div class="q-pa-md col-6">
-              <q-input v-model="editLicensePaymentDate" filled standout="bg-accent text-black" stack-label
-                       mask="####-##-##" label="Data Opłacenia Licencji">
+          <div class="row bg-dark">
+              <q-input dense class="col-6" color="positive" input-class="text-positive" label-color="positive" filled v-model="editLicensePaymentDate" mask="####-##-##" label="Data Opłacenia Licencji">
                 <template v-slot:append>
-                  <q-icon name="event" class="cursor-pointer">
+                  <q-icon name="event" class="cursor-pointer text-positive">
                     <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                      <q-date v-model="editLicensePaymentDate">
+                      <q-date v-model="editLicensePaymentDate" mask="YYYY-MM-DD" class="bg-dark text-positive">
                         <div class="row items-center justify-end">
-                          <q-btn v-close-popup label="Zamknij" color="primary" flat/>
+                          <q-btn v-close-popup label="Zamknij" color="primary"/>
                         </div>
                       </q-date>
                     </q-popup-proxy>
                   </q-icon>
                 </template>
               </q-input>
-            </div>
-            <div class="q-pa-md col-6">
-              <q-input class="col-6" v-model="editLicensePaymentYear" filled standout="bg-accent text-black" stack-label
+              <q-input dense class="col-6" v-model="editLicensePaymentYear" color="positive" input-class="text-positive" label-color="positive" filled standout="bg-accent text-black"
                        mask="####" label="Opłacona na Rok"></q-input>
             </div>
-          </div>
-          <div class="row full-width bg-red-3">
-            <div class="col q-pa-md bg-grey-3">
-              <q-btn class="full-width" label="wprowadź zmiany" color="primary" v-close-popup
+          <div class="row full-width">
+            <div class="col q-pa-md">
+              <q-btn dense class="full-width" label="wprowadź zmiany" color="primary" v-close-popup
                      @click="editLicensePaymentCode=true"/>
             </div>
-            <div class="col q-pa-md bg-red-3">
-              <q-btn class="full-width" label="Usuń wpłatę" color="red" v-close-popup
+            <div class="col q-pa-md">
+              <q-btn dense class="full-width" label="Usuń wpłatę" color="red" v-close-popup
                      @click="deleteLicensePaymentCode=true"/>
             </div>
           </div>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat icon="close" color="primary" v-close-popup/>
+          <q-btn label="zamknij" color="primary" v-close-popup/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -357,8 +352,8 @@
           <span class="q-ml-sm text-h6 text-justify text-center">Czy Licencja Klubowicza została opłacona w portalu PZSS?</span>
         </q-card-section>
 
-        <q-card-actions align="right">
-          <q-btn text-color="positive" flat label="nie" color="primary" v-close-popup/>
+        <q-card-actions align="center">
+          <q-btn text-color="positive" label="nie" color="secondary" v-close-popup/>
           <q-btn text-color="positive" label="tak" color="primary" v-close-popup
                  @click="toggleHistoryPaymentCode = true"/>
         </q-card-actions>

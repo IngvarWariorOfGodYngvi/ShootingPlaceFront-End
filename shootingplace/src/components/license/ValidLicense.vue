@@ -4,15 +4,14 @@
       <div class="row">
         <div class="q-pa-md text-left col full-width no-outline text-h5 text-bold text-positive">Ilość osób {{ list.length }}
         </div>
-        <div v-if="licenseList.length>0" class="q-pa-md text-right">
-          <q-btn @click="memberName='WSZYSCY - którzy mają zaznaczone opłacono w PZSS'; prolongLicenseAlertAll=true"
+        <div class="q-pa-md text-right">
+          <q-btn v-if="!mobile" dense color="primary" @click="memberName='WSZYSCY - którzy mają zaznaczone opłacono w PZSS'; prolongLicenseAlertAll=true"
                  label="przedłuż zaznaczone">({{ licenseList.length }})
           </q-btn>
         </div>
       </div>
-      <q-virtual-scroll :items="list" virtual-scroll-slice-size="100" style="height: 50vh">
-        <template v-slot="{ item, index }">
-          <div :key="index" class="row">
+      <q-scroll-area style="height: 50vh">
+          <div v-for="(item, index) in list" :key="index" class="row">
             <q-checkbox dense v-if="item.license.paid" v-model="licenseList" value="" :val="item.uuid" left-label>
               {{ index + 1 }}.
             </q-checkbox>
@@ -59,19 +58,16 @@
                    @click="memberName = item.firstName + item.secondName;memberUUID = item.uuid;paymentLicenseAlert = true">
               opłać licencję
             </q-btn>
-            <q-btn dense color="primary" v-if="item.license.paid" class="fit"
-                   @click="memberName = item.firstName + item.secondName ;licensePistolPermission = item.license.pistolPermission; licenseRiflePermission = item.license.riflePermission; licenseShotgunPermission = item.license.shotgunPermission;memberUUID = item.uuid; prolongLicenseAlert = true">
-              przedłuż licencję
-            </q-btn>
+            <div v-if="item.license.paid" class="col-2"></div>
+            <q-btn dense color="primary" v-if="item.license.paid" disable label="opłacona" class="fit"/>
             </div>
           </div>
-        </template>
-      </q-virtual-scroll>
+      </q-scroll-area>
     </q-card>
     <q-dialog v-model="memberDial" style="min-width: 80vw">
       <q-card style="min-width: 80vw" class="bg-dark text-positive">
         <q-card-section class="flex-center">
-          <Member :member-number-legitimation="legitimationNumber"></Member>
+          <Member :member-number-legitimation="legitimationNumber" @hook:destroyed="getMembersWithLicense()"></Member>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -108,20 +104,20 @@
       <q-card class="bg-red-5 text-center">
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
-          <q-input @keypress.enter="prolongLicenseList();pinWindow=false" autofocus type="password" v-model="pinCode"
+          <q-input @keypress.enter="prolongLicenseList(pinCode);pinWindow=false" autofocus type="password" v-model="pinCode"
                    filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input>
         </q-card-section>
 
         <q-card-actions align="right">
           <q-btn label="anuluj" color="black" v-close-popup @click="pinCode=null"/>
-          <q-btn label="Przedłuż" color="black" v-close-popup @click="prolongLicenseList();pinCode=null"/>
+          <q-btn label="Przedłuż" color="black" v-close-popup @click="prolongLicenseList(pinCode);pinCode=null"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
     <q-dialog v-model="paymentLicenseAlert">
       <q-card  class="bg-dark text-positive">
         <q-card-section>
-          <div class="text-h6">Czy opłacić licencję {{ memberName }}</div>
+          <div class="text-h6">Czy opłacić licencję {{ memberName }}?</div>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -135,13 +131,13 @@
       <q-card class="bg-red-5 text-center">
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
-          <q-input @keypress.enter="addLicenseHistoryPayment (memberUUID);pinPaymentLicense=false" autofocus type="password"
+          <q-input @keypress.enter="addLicenseHistoryPayment (memberUUID, pinCode);pinPaymentLicense=false" autofocus type="password"
                    v-model="pinCode" filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input>
         </q-card-section>
 
         <q-card-actions align="right">
           <q-btn label="anuluj" color="black" v-close-popup @click="pinCode=null"/>
-          <q-btn label="Przedłuż" color="black" v-close-popup @click="addLicenseHistoryPayment (memberUUID); pinCode=null"/>
+          <q-btn label="Przedłuż" color="black" v-close-popup @click="addLicenseHistoryPayment (memberUUID, pinCode); pinCode=null"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -263,8 +259,8 @@ export default {
         }
       })
     },
-    prolongLicenseList () {
-      fetch('http://' + this.local + '/license/prolongAll?licenseList=' + this.licenseList + '&pinCode=' + this.pinCode, {
+    prolongLicenseList (pinCode) {
+      fetch('http://' + this.local + '/license/prolongAll?licenseList=' + this.licenseList + '&pinCode=' + pinCode, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -294,8 +290,8 @@ export default {
         }
       })
     },
-    addLicenseHistoryPayment (uuid) {
-      fetch('http://' + this.local + '/license/history/' + uuid, {
+    addLicenseHistoryPayment (uuid, pinCode) {
+      fetch('http://' + this.local + '/license/history/' + uuid + '?pinCode=' + pinCode, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
