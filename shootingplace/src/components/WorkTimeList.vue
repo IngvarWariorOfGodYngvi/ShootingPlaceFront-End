@@ -1,11 +1,9 @@
 <template>
   <div class="q-pa-sm text-white bg-secondary">
     <div class="bg-secondary">
-      <q-form>
       <q-input v-model="number" class="text-white" type="password" dense label-color="white"
         label="Czas pracy - zeskanuj swoją kartę tutaj" input-class="text-white" filled
         @keypress.enter="goToWork(number)"></q-input>
-      </q-form>
       <div v-for="(item, index) in usersInWork" :key="index" class="full-width" style="height: auto">
         <q-item dense style="padding:0 0 0 5%;font-size:small;font-weight: 500;">
           {{ item }}

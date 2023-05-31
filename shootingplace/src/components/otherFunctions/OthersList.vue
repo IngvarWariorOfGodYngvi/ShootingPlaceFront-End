@@ -4,22 +4,22 @@
       <div class="q-pa-md text-center col full-width no-outline text-h5 text-bold">Lista osób spoza klubu</div>
       <div class="row col">
         <div class="q-pr-md">lp</div>
-        <div class="col">Nazwisko i Imię</div>
+        <div class="col row"><div class="col">Nazwisko i imię</div><div style="align-self: end" class="q-pr-xl">ID</div></div>
         <div class="col">Klub</div>
         <div class="col">Telefon</div>
         <div class="col">e-mail</div>
       </div>
       <q-scroll-area class="full-width q-pa-none" style="height: 400px;">
-        <div v-for="(others, index) in others" :key="index" class="row text-positive">
+        <div v-for="(item, index) in others" :key="index" class="row text-positive">
           <div class="self-center q-pr-md">{{ index + 1 }}</div>
-          <div class="self-center col text-left">{{ others.secondName }} {{ others.firstName }}</div>
-          <div class="self-center col text-left">{{ others.club.name }}</div>
-          <div class="self-center col-2 text-left">{{ others.phoneNumber }}</div>
-          <div class="self-center col-2 text-left">{{ others.email }}</div>
-          <q-btn dense class="col-1" color="primary" @click="othersID = others.id; alertDial = true" icon="delete"><q-tooltip
+          <div class="self-center col row text-left"><div class="col">{{ item.secondName }} {{ item.firstName }}</div><div style="align-self: end;" class="q-pr-md">ID: {{ item.id }}  </div></div>
+          <div class="self-center col text-left">{{ item.club.name }}</div>
+          <div class="self-center col-2 text-left">{{ item.phoneNumber }}</div>
+          <div class="self-center col-2 text-left">{{ item.email }}</div>
+          <q-btn dense class="col-1" color="primary" @click="otherID = item.id; alertDial = true" icon="delete"><q-tooltip
               anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">Usuń</q-tooltip></q-btn>
           <q-btn dense class="col-1" color="secondary"
-            @click="othersID = others.id; otherPersonFirstName = others.firstName; otherPersonSecondName = others.secondName; otherPersonPhoneNumber = others.phoneNumber; otherPersonEmail = others.email; clubNamePerson = others.club.name; getAllClubsToTournament(); editOtherPerson = true"
+            @click="otherID = item.id; setOtherPersonParam (item);getAllClubsToTournament(); editOtherPerson = true"
             icon="edit"><q-tooltip anchor="top middle" :offset="[35, 35]"
               content-class="text-body1 bg-secondary">Edytuj</q-tooltip></q-btn>
         </div>
@@ -55,11 +55,11 @@
     <q-dialog v-model="editOtherPerson">
       <q-card class="bg-dark text-positive">
         <q-card-section>
-          <q-input v-model="otherPersonFirstName" class="full-width" label-color="positive" input-class="text-positive"
+          <q-input v-model="otherPersonFirstName" dense class="full-width" label-color="positive" input-class="text-positive"
             filled label="Imię"></q-input>
-          <q-input v-model="otherPersonSecondName" class="full-width" label-color="positive" input-class="text-positive"
+          <q-input v-model="otherPersonSecondName" dense class="full-width" label-color="positive" input-class="text-positive"
             filled label="Nazwisko"></q-input>
-          <q-item><q-checkbox left-label color="primary" false-value="" true-value="BRAK" v-model="clubNamePerson"
+          <q-item dense><q-checkbox left-label color="primary" false-value="" true-value="BRAK" v-model="clubNamePerson"
               :val="'BRAK'" label="Brak Klubu"></q-checkbox>
             <q-select v-if="clubNamePerson !== 'BRAK'" dense options-dense popup-content-class="bg-dark text-positive"
               options-selected-class="bg-dark text-positive" input-class="text-positive" color="positive"
@@ -75,15 +75,24 @@
               </template>
             </q-select>
           </q-item>
-          <q-input v-model="otherPersonPhoneNumber" type="tel" label-color="positive" input-class="text-positive"
+          <q-input v-model="otherPersonPhoneNumber" dense type="tel" label-color="positive" input-class="text-positive"
             class="full-width" mask="### ### ###" filled label="Telefon"></q-input>
-          <q-input v-model="otherPersonEmail" type="email" label-color="positive" input-class="text-positive"
-            class="full-width" filled label="email"></q-input>
+          <q-input v-model="otherPersonEmail" dense type="email" label-color="positive" input-class="text-positive"
+            class="full-width" filled label="Email"></q-input>
+          <q-input v-model="otherPersonWeaponPermissionNUmber" dense label-color="positive" input-class="text-positive"
+            class="full-width" filled label="Numer pozwolenia na Broń"></q-input>
+          <div >
+            <q-input filled v-model="otherPersonPostOfficeCity" label="Miasto" dense input-class="text-positive" label-color="positive"/>
+            <q-input filled v-model="otherPersonZipCode" label="Kod Pocztowy" mask="##-###" dense input-class="text-positive" label-color="positive"/>
+            <q-input filled v-model="otherPersonStreet" label="Ulica" dense input-class="text-positive" label-color="positive"/>
+            <q-input filled v-model="otherPersonStreetNumber" label="Numer Ulicy" dense input-class="text-positive" label-color="positive"/>
+            <q-input filled v-model="otherPersonFlatNumber" label="Mieszkania" dense input-class="text-positive" label-color="positive"/>
+          </div>
         </q-card-section>
         <q-card-actions align="right">
           <q-btn label="anuluj" color="secondary" v-close-popup />
           <q-btn label="zapisz" color="primary" v-close-popup
-            @click="updateOtherPerson(othersID, otherPersonFirstName, otherPersonSecondName, otherPersonPhoneNumber, otherPersonEmail)" />
+            @click="updateOtherPerson(otherID)" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -92,7 +101,6 @@
 
 <script>
 import App from 'src/App'
-
 export default {
   name: 'OthersList.vue',
   created () {
@@ -104,11 +112,17 @@ export default {
       others: [],
       clubNames: [],
       filterOptions: [],
-      othersID: null,
+      otherID: null,
       alertDial: false,
       success: false,
       failure: false,
       message: null,
+      otherPersonWeaponPermissionNUmber: null,
+      otherPersonPostOfficeCity: null,
+      otherPersonZipCode: null,
+      otherPersonStreet: null,
+      otherPersonStreetNumber: null,
+      otherPersonFlatNumber: null,
       editOtherPerson: false,
       otherPersonFirstName: '',
       otherPersonSecondName: '',
@@ -135,8 +149,22 @@ export default {
           this.clubNames = response
         })
     },
+    setOtherPersonParam (otherPerson) {
+      this.otherPersonFirstName = otherPerson.firstName
+      this.otherPersonSecondName = otherPerson.secondName
+      this.otherPersonPhoneNumber = otherPerson.phoneNumber
+      this.otherPersonEmail = otherPerson.email
+      this.otherPersonWeaponPermissionNUmber = otherPerson.weaponPermissionNumber
+      if (otherPerson.address != null) {
+        this.otherPersonPostOfficeCity = otherPerson.address.postOfficeCity
+        this.otherPersonZipCode = otherPerson.address.zipCode
+        this.otherPersonStreet = otherPerson.address.street
+        this.otherPersonStreetNumber = otherPerson.address.streetNumber
+        this.otherPersonFlatNumber = otherPerson.address.flatNumber
+      }
+    },
     deactivateOther () {
-      fetch('http://' + this.local + '/other/?id=' + this.othersID, {
+      fetch('http://' + this.local + '/other/?id=' + this.otherID, {
         method: 'POST'
       }).then(response => {
         if (response.status === 200) {
@@ -144,7 +172,7 @@ export default {
             response => {
               this.message = response
               this.success = true
-              this.othersID = null
+              this.otherID = null
               this.getOther()
               this.autoClose()
             })
@@ -158,12 +186,20 @@ export default {
         }
       })
     },
-    updateOtherPerson (id, first, second, phone, mail) {
+    updateOtherPerson (id) {
       const data = {
-        firstName: first,
-        secondName: second,
-        phoneNumber: phone,
-        email: mail
+        firstName: this.otherPersonFirstName,
+        secondName: this.otherPersonSecondName,
+        phoneNumber: this.otherPersonPhoneNumber,
+        email: this.otherPersonEmail,
+        weaponPermissionNumber: this.otherPersonWeaponPermissionNUmber,
+        address: {
+          zipCode: this.otherPersonZipCode,
+          postOfficeCity: this.otherPersonPostOfficeCity,
+          street: this.otherPersonStreet,
+          streetNumber: this.otherPersonStreetNumber,
+          flatNumber: this.otherPersonFlatNumber
+        }
       }
       fetch('http://' + this.local + '/other/?id=' + id + '&clubName=' + this.clubNamePerson, {
         method: 'PUT',

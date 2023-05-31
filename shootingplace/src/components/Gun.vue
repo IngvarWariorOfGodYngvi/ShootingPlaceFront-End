@@ -93,7 +93,7 @@
           <q-input dense label-color="positive" input-class="text-positive" filled v-model="gunModelName"
             label="nazwa i marka"></q-input>
           <q-select dense label-color="positive" filled v-model="gunCaliber" options-selected-class="text-positive"
-            input-class="text-positive" use-input hide-selected fill-input :options="options" options-dense
+            input-class="text-positive" use-input hide-selected fill-input :options="calibers" options-dense
             popup-content-class="bg-dark text-positive" @filter="filter" label="kaliber">
             <template v-slot:no-option>
               <q-item>
@@ -166,6 +166,8 @@ import { isWindows } from 'mobile-device-detect'
 export default {
   created () {
     this.getGun(this.uuid)
+    this.getGunTypes()
+    this.getListCalibersSelect()
   },
   props: {
     uuid: {
@@ -204,6 +206,8 @@ export default {
       gunBasisForPurchaseOrAssignment: null,
       options: [],
       editGun: false,
+      calibers: [],
+      gunTypes: [],
       code: null,
       message: '',
       failure: false,
@@ -226,6 +230,22 @@ export default {
       }).then(response => response.json())
         .then(response => {
           this.gun = response
+        })
+    },
+    getListCalibersSelect () {
+      fetch('http://' + this.local + '/armory/calibersList', {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.calibers = response
+        })
+    },
+    getGunTypes () {
+      fetch('http://' + this.local + '/armory/gunType', {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.gunTypes = response
         })
     },
     onRejected () {
@@ -364,13 +384,13 @@ export default {
       if (val === '') {
         update(() => {
           const needle = val.toLowerCase()
-          this.options = this.filters.filter(v => v.toLowerCase().indexOf(needle) > -1)
+          this.options = this.calibers.filter(v => v.toLowerCase().indexOf(needle) > -1)
         })
         return
       }
       update(() => {
         const needle = val.toLowerCase()
-        this.options = this.filters.filter(v => v.toLowerCase().indexOf(needle) > -1)
+        this.options = this.calibers.filter(v => v.toLowerCase().indexOf(needle) > -1)
       })
     },
     filterGunTypes (val, update) {

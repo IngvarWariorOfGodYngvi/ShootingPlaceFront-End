@@ -1,13 +1,14 @@
 <template>
   <div>
-    <q-card class="bg-dark text-positive">
+    <q-card class="bg-dark text-positive" >
       <div class="q-pa-md text-center full-width no-outline text-h5 text-bold">Lista Konkurencji
       </div>
       <div class="row col">
         <div class="q-pr-md">lp</div>
         <div class="col">Nazwa Konkurencji</div>
         <div class="col text-center">kolejność na listach</div>
-        <div class="col text-center">Ilość próbnych</div>
+        <div class="col-2 text-center">Ilość strzałów</div>
+        <div class="col-2 text-center">Ilość strzałów próbnych</div>
         <div class="col-1 text-center"></div>
       </div>
       <q-scroll-area dense class="full-width q-pa-none" style="height: 400px;">
@@ -17,8 +18,9 @@
               <div class="self-center q-pr-md">{{ index + 1 }}</div>
               <div class="col self-center text-left text-positive">{{ comp.name }}</div>
               <div class="col self-center text-center text-positive">{{ comp.ordering }}</div>
-              <div class="col self-center text-center text-positive">{{ comp.numberOfShots }}</div>
-              <q-btn dense class="col-1" color="primary" @click="competition = comp; competitionInfo = true" icon="edit">
+              <div class="col-2 self-center text-center text-positive">{{ comp.numberOfShots }}</div>
+              <div class="col-2 self-center text-center text-positive">{{ comp.practiceShots }}</div>
+              <q-btn dense class="col-1" color="primary" @click="competition = comp;compID = competition.uuid; competitionInfo = true" icon="edit">
                 <q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">
                   {{ comp.name }}
                 </q-tooltip>
@@ -29,7 +31,7 @@
         </div>
       </q-scroll-area>
     </q-card>
-    <q-dialog v-model="competitionInfo">
+    <q-dialog v-model="competitionInfo" @hide="getCompetitions()">
       <q-card class="bg-dark text-positive">
         <q-card-section class="text-bold">
           <div class="text-h6">{{ competition.name }}</div>
@@ -37,51 +39,37 @@
           <div>Dyscyplina: {{ competition.discipline }}</div>
           <div>Ilość Strzałów: {{ competition.numberOfShots }}</div>
           <div>Rodzaj: {{ competition.type }}</div>
-          <div class="row">Metoda Liczenia: <div v-if="competition.countingMethod === 'NORMAL'">: Normalnie</div>
-            <div v-else>{{ competition.countingMethod }}</div>
-          </div>
+          <div>Metoda Liczenia: {{ competition.countingMethod === 'NORMAL'?'Normalnie' : ' COMSTOCK' }}</div>
           <div>Numer Kolejności na Listach: {{ competition.ordering }}</div>
           <div>Ilość Strzałów próbnych: {{ competition.practiceShots }}</div>
           <div>Kaliber: {{ competition.caliberUUID }}</div>
-          <q-field color="positive" dense class="col-2 cursor-pointer" filled label-color="positive" standout="bg-accent text-black" label="ZMIEŃ NUMER KOLEJNOŚCI NA LISTACH">
-            <q-popup-edit @keypress.enter="compID = competition.uuid; updateCompetition()" content-class="bg-dark text-positive">
-              <q-input dense  v-model="orderNumber" input-class="text-center text-positive" autofocus stack-label
-                label="zmień na inny numer" label-color="positive" onkeypress="return (event.charCode > 47 && event.charCode < 58)"
-                @keypress.enter="compID = competition.uuid; updateCompetition()" />
-              <div class="q-pa-xs">
-                <q-btn align="left" color="primary" label="Anuluj" v-close-popup></q-btn>
-                <q-btn align="right" color="primary" label="Zmień" v-close-popup
-                  @click="compID = competition.uuid; updateCompetition()"></q-btn>
-              </div>
-            </q-popup-edit>
-          </q-field>
-          <q-field dense class="col-2 cursor-pointer" filled label-color="positive" standout="bg-accent text-black" label="ZMIEŃ ILOŚĆ STRZAŁÓW PRÓBNYCH">
-            <q-popup-edit @keypress.enter="compID = competition.uuid; updateCompetition()" content-class="bg-dark text-positive">
-              <q-input dense v-model="practiceShots" input-class="text-center text-positive" autofocus stack-label
-                label="zmień ilość strzałów" label-color="positive" onkeydown="return (event.charCode > 47 && event.charCode < 58)"
-                @keypress.enter="compID = competition.uuid; updateCompetition()" />
-              <div class="q-pa-xs">
-                <q-btn align="left" color="primary" label="Anuluj" v-close-popup></q-btn>
-                <q-btn align="right" color="primary" label="Zmień" v-close-popup
-                  @click="compID = competition.uuid; updateCompetition()"></q-btn>
-              </div>
-            </q-popup-edit>
-          </q-field>
-          <q-field dense class="col-2 cursor-pointer" filled label-color="positive" standout="bg-accent text-black" label="ZMIEŃ KALIBER">
-            <q-popup-edit @keypress.enter="compID = competition.uuid; updateCompetition()" content-class="bg-dark text-positive">
-              <q-input dense v-model="caliberUUID" input-class="text-center text-positive" autofocus stack-label
-                label="zmień na inny numer" label-color="positive" onkeypress="return (event.charCode > 47 && event.charCode < 58)"
-                @keypress.enter="compID = competition.uuid; updateCompetition()" />
-              <div class="q-pa-xs">
-                <q-btn align="left" color="primary" label="Anuluj" v-close-popup></q-btn>
-                <q-btn align="right" color="primary" label="Zmień" v-close-popup
-                  @click="compID = competition.uuid; updateCompetition()"></q-btn>
-              </div>
-            </q-popup-edit>
-          </q-field>
+          <q-input dense input-class="text-positive" label-color="positive" v-model="orderNumber" label="kolejność na listach" onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
+          <q-input dense input-class="text-positive" label-color="positive" v-model="numberOfShots" label="ilość strzałów ocenianych" onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
+          <q-input dense input-class="text-positive" label-color="positive" v-model="practiceShots" label="ilość strzałów próbnych" onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
+          <q-input dense input-class="text-positive" label-color="positive" v-model="caliberUUID" label="identyfikator kalibru"/>
+          <q-input dense input-class="text-positive" label-color="positive" v-model="name" label="nazwa"/>
+          <div>Metoda Liczenia : Normalnie<q-toggle v-model="method" keep-color color="primary"  false-value="NORMAL" true-value="COMSTOCK" ></q-toggle>COMSTOCK</div>
         </q-card-section>
         <q-card-actions align="right">
-          <q-btn label="zamknij" color="primary" v-close-popup />
+          <q-btn label="zapisz" color="primary" @click="acceptDialog = true" v-close-popup />
+          <q-btn label="zamknij" color="secondary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model=" acceptDialog " persistent>
+      <q-card class="bg-red-5 text-center">
+        <q-card-section class="flex-center">
+          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
+          <q-input
+            @keypress.enter=" updateCompetition(); acceptDialog = false "
+            autofocus type="password" v-model=" code " filled color="Yellow" class="bg-yellow text-bold"
+            mask="####"></q-input>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn label="anuluj" color="black" v-close-popup @click=" code = null " />
+          <q-btn label="Przedłuż" color="black" v-close-popup
+            @click=" updateCompetition(); code = null " />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -115,11 +103,16 @@ export default {
     return {
       competitions: [],
       competition: [],
+      acceptDialog: false,
       compID: null,
       orderNumber: null,
+      numberOfShots: null,
       practiceShots: null,
       caliberUUID: null,
+      name: null,
+      method: null,
       competitionInfo: false,
+      code: null,
       success: false,
       failure: false,
       message: null,
@@ -139,9 +132,12 @@ export default {
       const data = {
         ordering: this.orderNumber,
         practiceShots: this.practiceShots,
-        caliberUUID: this.caliberUUID
+        caliberUUID: this.caliberUUID,
+        name: this.name,
+        countingMethod: this.method,
+        numberOfShots: this.numberOfShots
       }
-      fetch('http://' + this.local + '/competition/update?uuid=' + this.compID, {
+      fetch('http://' + this.local + '/competition/update?uuid=' + this.compID + '&pinCode=' + this.code, {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {
@@ -151,15 +147,7 @@ export default {
         if (response.status === 200) {
           response.text().then(
             response => {
-              if (this.orderNumber !== null) {
-                this.competition.ordering = this.orderNumber
-              }
-              if (this.practiceShots !== null) {
-                this.competition.practiceShots = this.practiceShots
-              }
-              if (this.caliberUUID !== null) {
-                this.competition.caliberUUID = this.caliberUUID
-              }
+              this.getCompetitions()
               this.message = response
               this.success = true
               this.autoClose()
@@ -177,6 +165,13 @@ export default {
     },
     autoClose () {
       setTimeout(() => {
+        this.code = null
+        this.orderNumber = null
+        this.practiceShots = null
+        this.numberOfShots = null
+        this.caliberUUID = null
+        this.name = null
+        this.method = null
         this.success = false
         this.failure = false
         this.message = null

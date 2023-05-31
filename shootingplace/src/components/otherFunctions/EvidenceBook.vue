@@ -1,7 +1,6 @@
 <template>
-  <div class="row">
-      <q-card-section class="col-3">
-        <q-item class="col">
+  <div class="col">
+      <q-card-section>
           <q-input class="full-width" color="positive" input-class="text-positive" label-color="positive" dense filled
             v-model="firstDate" mask="####-##-##" label="Data początkowa">
             <template v-slot:append>
@@ -17,8 +16,6 @@
               </q-icon>
             </template>
           </q-input>
-        </q-item>
-        <q-item class="col">
           <q-input class="full-width" color="positive" input-class="text-positive" label-color="positive" dense filled
             v-model="secondDate" mask="####-##-##" label="Data końcowa">
             <template v-slot:append>
@@ -34,21 +31,21 @@
               </q-icon>
             </template>
           </q-input>
-        </q-item>
         <div class="q-pa-md">
-          <q-btn color="primary" @click="getRecordsFromBook(firstDate, secondDate)"
-            label="Wyszukaj"></q-btn>
-          <p></p>
+          <q-btn class="q-mr-md" color="primary" @click="getRecordsFromBook(firstDate, secondDate)"
+            label="Wyszukaj"/>
+          <q-btn color="primary" label="pobierz listę" @click="getJudgingReport(firstDate, secondDate)"/>
         </div>
       </q-card-section>
-      <q-card-section class="col">
+      <q-card-section >
         <div class="row text-bold">
           <div class="q-pr-xs">lp</div>
           <div class="col-2">Nazwisko i Imię</div>
-          <div class="col-2">Data</div>
-          <div class="col-4">Adres / Numer pozwolenia</div>
+          <div class="col-2">Data i godzina przyjścia</div>
+          <div class="col-3">Adres / Numer pozwolenia</div>
+          <div class="col-1 text-left">zgoda na przetwarzanie danych</div>
           <div class="col-1 text-left">zapoznanie się z regulaminem strzelnicy</div>
-          <div class="col-2 text-center">podpis</div>
+          <div class="col text-center">podpis</div>
         </div>
         <q-virtual-scroll :items="evidenceBookList" visible class="q-pa-none full-width"
           style="height: 40vh">
@@ -56,10 +53,12 @@
             <div class="row text-positive">
               <div class="q-pr-xs">{{ index + 1 }}</div>
               <div class="col-2">{{ item.secondName }} {{ item.firstName }}</div>
-              <div class="col-2">{{ item.date.replace('T',' ') }}</div>
-              <div class="col-4">{{ item.weaponPermission != null ? item.weaponPermission : item.address }}</div>
-              <div class="col-1 text-left">{{ item.statementOnReadingTheShootingPlaceRegulations ? 'tak' : 'nie' }}</div>
-              <div class="col-2">{{ item.imageUUID }} tutaj będzie podpis w formie obrazka</div>
+              <div class="col-2"><div>{{ convertDateTime(item.date).substring(0,10) }}<div>{{ convertDateTime(item.date).substring(10,19) }}</div></div></div>
+              <div class="col-3">{{ item.weaponPermission != null ? item.weaponPermission : item.address }}</div>
+              <div class="col-1 text-center">{{ item.dataProcessingAgreement ? 'tak' : 'nie' }}</div>
+              <div class="col-1 text-center">{{ item.statementOnReadingTheShootingPlaceRegulations ? 'tak' : 'nie' }}</div>
+              <div class="col bg-white"><q-img contain height="8vh" spinner-color="white" class="flex-center"
+              :src="(`http://${local}/files/getFile?uuid=${item.imageUUID}`)" /></div>
             </div>
           </template>
         </q-virtual-scroll>
@@ -69,6 +68,7 @@
 
 <script>
 import App from 'src/App'
+import axios from 'axios'
 
 export default {
   name: 'EvidenceBook.vue',
@@ -92,20 +92,26 @@ export default {
           this.evidenceBookList = response
         })
     },
-    convertDate (date) {
-      const current = new Date(date)
-      let month = current.getMonth() + 1
-      let day = current.getDate()
-      if (day < 10) {
-        day = '0' + day
+    getJudgingReport (firstDate, secondDate) {
+      if (firstDate != null && secondDate != null) {
+        axios({
+          url: 'http://' + this.local + '/files/downloadEvidenceBook?firstDate=' + firstDate + '&secondDate=' + secondDate,
+          method: 'GET',
+          responseType: 'blob'
+        }).then(response => {
+          const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+          const fileLink = document.createElement('a')
+          fileLink.href = fileURL
+          fileLink.setAttribute('download', 'Książka pobytu na strzelnicy od ' + firstDate + ' do ' + secondDate + '.pdf')
+          document.body.appendChild(fileLink)
+          fileLink.click()
+          this.listDownload = true
+          this.autoClose()
+        })
       }
-      if (month < 10) {
-        month = '0' + (month)
-      }
-      return day + '-' + (month) + '-' + current.getFullYear()
     },
-    getSumXLSXFile (firstDate, secondDate) {
-
+    convertDateTime (dateTime) {
+      return dateTime.replace('T', ' ').substring(0, 19)
     },
     showloading () {
       this.$q.loading.show({ message: 'Dzieje się coś ważnego... Poczekaj' })

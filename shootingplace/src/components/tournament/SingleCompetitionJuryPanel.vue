@@ -42,9 +42,12 @@
           <div class="row text-body2 full-width" :class="index%2===0?'bg-grey text-black':'text-positive'">
             <!-- name & club -->
             <div class="col"
-                 @dblclick="scoreUUID = item.uuid; player = item;scoreLabel=item.score;innerTen=item.innerTen;outerTen=item.outerTen;procedures=item.procedures;setScorePlayer=true;series=setSeriesValues (item.series);item.member!=null?
-                 (temp=item.member) : (temp=item.otherPersonEntity);
-                 startNumber=item.metricNumber;competitionTemp = competition;">
+                 @click="mobile?(scoreUUID = item.uuid, player = item,scoreLabel=item.score,innerTen=item.innerTen,outerTen=item.outerTen,procedures=item.procedures,setScorePlayer=true,series=setSeriesValues (item.series),item.member!=null?
+                 (temp=item.member) : (temp=item.otherPersonEntity),
+                 startNumber=item.metricNumber,competitionTemp = competition) : ' '"
+                 @dblclick="!mobile?(scoreUUID = item.uuid, player = item,scoreLabel=item.score,innerTen=item.innerTen,outerTen=item.outerTen,procedures=item.procedures,setScorePlayer=true,series=setSeriesValues (item.series),item.member!=null?
+                 (temp=item.member) : (temp=item.otherPersonEntity),
+                 startNumber=item.metricNumber,competitionTemp = competition) : ' '">
               <q-field dense standout="bg-accent text-positive" class="text-positive text-caption" stack-label>
                 <div class="col-3 self-center no-outline text-left" :class="index%2===0?'text-black':'text-positive'">
                   <div>
@@ -251,7 +254,7 @@
                   <div class="col">
                     <div class="full-width">|{{ series[index] }}|</div>
                     <div class="full-width">
-                      <div :class="tableLength(series[index])>10?'text-h4 text-red':''">Ilość strzałów:
+                      <div :class="tableLength(series[index])>(competitionTemp.numberOfShots>10?10:competitionTemp.numberOfShots)?'text-h4 text-red':''">Ilość strzałów:
                         {{ tableLength(series[index]) }}
                       </div>
                       <div>10/: {{ outerTenSeries }} 10X: {{ innerTenSeries }} suma: {{ series[index].length > 0? sum(series[index]): '0'}}</div>
@@ -364,6 +367,14 @@
     </q-dialog>
     <q-dialog position="top" v-model="success">
       <q-card>
+        <q-card-section>
+          <div v-if="message!=null" class="text-h6">{{ message }}</div>
+        </q-card-section>
+
+      </q-card>
+    </q-dialog>
+    <q-dialog position="top" v-model="failure">
+      <q-card class="bg-warning">
         <q-card-section>
           <div v-if="message!=null" class="text-h6">{{ message }}</div>
         </q-card-section>

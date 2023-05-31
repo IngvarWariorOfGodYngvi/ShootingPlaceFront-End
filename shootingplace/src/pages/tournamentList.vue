@@ -264,11 +264,11 @@
                       <q-item class="rounded" dense style="padding: 0; margin: 0;" v-bind="option.itemProps"
                         v-on="option.itemEvents">
                         <q-item-section style="padding: 0.5em; margin: 0;"
-                          :class="option.opt.active ? 'bg-warning rounded text-black' : ''"
+                          :class="option.opt.active ? '' : 'bg-warning rounded text-black'"
                           @click="otherName = '0 0'; memberName = option.opt.secondName + ' ' + option.opt.firstName + ' ' + option.opt.legitimationNumber">
                           <div>{{ option.opt.secondName }} {{ option.opt.firstName }}
                             {{ option.opt.legitimationNumber }} {{ option.opt.adult ? 'Ogólna' : 'Młodzież' }} {{
-                              option.opt.active ? '- BRAK SKŁADEK' : '' }}
+                              option.opt.active ? '' : '- BRAK SKŁADEK' }}
                           </div>
                         </q-item-section>
                       </q-item>
@@ -499,7 +499,7 @@
                 kreatora
               </q-item-label>
             </q-item>
-            <div class="row bg-grey-2">
+            <div class="col bg-grey-2">
               <q-checkbox v-model="dynamic" @input="choice12 = 'COMSTOCK'" label="konkurencja dynamiczna"></q-checkbox>
               <div v-if="!dynamic">
                 <q-radio class="col" color="orange"
@@ -523,9 +523,6 @@
                   @input="choice2 = ''; choice3 = ''; choice4 = ''; choice5 = ''; choice6 = ''; choice7 = ''; choice8 = ''; choice9 = ''; meters = false; choice = '' "
                   v-model="dynamicChoice" :val="'Strzelba'" label="Strzelba"></q-checkbox>
               </div>
-              <q-input v-if="!dynamic" @focus="choice10 = []"
-                onkeypress="return (event.charCode > 44 && event.charCode < 58)" class="full-width col center justify"
-                filled style="width: 100px" v-model="choice10" stack-label label="Ilość strzałów pistolet"></q-input>
               <div v-if="dynamic" class="row">
                 <q-input v-if="dynamicChoice.includes('Pistolet')"
                   onkeypress="return (event.charCode > 44 && event.charCode < 58)" class="full-width col center justify"
@@ -540,6 +537,9 @@
                 {{ dynamicChoice2 }}
                 {{ dynamicChoice3 }}
               </div>
+              <q-input v-if="!dynamic" @focus="choice10 = []"
+                onkeypress="return (event.charCode > 44 && event.charCode < 58)" class="full-width col center justify"
+                filled style="width: 100px" v-model="choice10" stack-label label="Ilość strzałów z próbnymi"></q-input>
             </div>
             <div class="row bg-grey-3">
               <q-item class="items-center">Metoda Liczenia :</q-item>
@@ -816,8 +816,8 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="failure" position="top" @keypress.enter="failure = false">
-      <q-card>
+    <q-dialog v-model="failure" position="top">
+      <q-card class="bg-warning">
         <q-card-section>
           <div class="text-h6">{{ message }}</div>
         </q-card-section>
@@ -869,16 +869,16 @@
     <q-dialog v-model="competitionsInfo">
       <q-card class="bg-dark text-positive">
         <q-card-section>
-          <div v-for="(item, id) in options2" :key="id">
+          <div v-for="(item, uuid) in options2" :key="uuid">
             <div>
-              <q-checkbox v-model="listOfCompetitions" :val="item" :label="item"></q-checkbox>
+              <q-checkbox v-model="listOfCompetitions" :val="uuid" :label="item"></q-checkbox>
             </div>
           </div>
           <div class="row q-pa-md">
             <q-btn class="col full-width" color="red" label="Usuń z listy"
               @click="removeMemberFromCompetition(); finder = null"></q-btn>
             <q-btn class="col full-width" color="secondary" label="Dodaj do listy"
-              @click="addMemberToCompetition(memberName); (finder = null)"></q-btn>
+              @click="addMemberToCompetition(); (finder = null)"></q-btn>
           </div>
         </q-card-section>
         <q-card-actions align="right">
@@ -892,8 +892,8 @@
           <div class="q-ml-sm text-h6 text-center text-bold">POBIERZ METRYKI STARTOWE ZAWODNIKA</div>
           <div class="q-ml-sm text-h6 text-center text-bold">{{ name }}</div>
           <ol class="col">
-            <li class="row" v-for="info in infoScore" :key="info">
-              <q-checkbox color="secondary" class="col" v-model="compList" :val="info" :label="info" />
+            <li class="row" v-for="(item,index) in infoScore" :key="index">
+              <q-checkbox color="secondary" class="col" v-model="compList" :val="item" :label="index" />
             </li>
           </ol>
           <div>
@@ -903,10 +903,10 @@
             <q-btn @click="getMemberMetrics(compList); compList = []" class="col q-pa-xs" color="secondary">
               wydrukuj wybrane metryki zawodnika
             </q-btn>
-            <q-item></q-item>
-            <q-btn @click="getMemberMetrics(infoScore); compList = []" class="col q-pa-xs" color="primary">wydrukuj
+            <!-- <q-item></q-item>
+            <q-btn @click="getMemberMetrics(infoScoreToCompInfo()); compList = []" class="col q-pa-xs" color="primary">wydrukuj
               wszystkie metryki zawodnika
-            </q-btn>
+            </q-btn> -->
           </div>
         </q-card-section>
 
@@ -1129,6 +1129,7 @@ export default {
     this.getListTournaments()
     this.getCompetitions()
     this.getClosedTournaments(this.pageNumber)
+    this.getOther()
     this.getListCalibers()
     this.getAllClubsToTournament()
   },
@@ -1136,12 +1137,22 @@ export default {
     getListTournaments () {
       this.getMembersNames()
       this.getMembersNamesWithPermissions()
-      fetch('http://' + this.local + '/tournament/list', {
+      fetch('http://' + this.local + '/tournament/openTournament', {
         method: 'GET'
-      }).then(response => response.json())
-        .then(response => {
-          this.tournaments = response
-        })
+      }).then(response => {
+        if (response.status === 200) {
+          response.json().then(response => {
+            this.tournaments = response
+          })
+        } if (response.status === 418) {
+          this.tournaments = null
+          window.localStorage.setItem('arbiter', '000')
+        }
+      })
+    },
+    infoScoreToCompInfo () {
+      const arr = this.infoScore
+      return arr
     },
     getCompetitions () {
       fetch('http://' + this.local + '/competition/', {
@@ -1239,15 +1250,9 @@ export default {
           method: 'GET'
         }).then(response => response.json())
           .then(response => {
-            if (response.length > 0) {
-              this.infoScore = response
-              this.otherID = otherNameID
-              this.metricsInfo = true
-            } else {
-              this.message = response
-              this.failure = true
-              this.autoClose()
-            }
+            this.infoScore = response
+            this.otherID = otherNameID
+            this.metricsInfo = true
           })
       }
     },
@@ -1441,11 +1446,11 @@ export default {
       }
     },
     async addMemberToCompetition () {
-      const { memberName, otherName, listOfCompetitions, tournamentUUID, local } = this
+      const { memberName, otherName, listOfCompetitions, local } = this
       const memberUUID = memberName.split(' ').pop()
       const otherUUID = otherName.split(' ').pop()
-      const competitionNames = listOfCompetitions.map(name => name.replaceAll(',', '.'))
-      const url = `http://${local}/competitionMembersList/addMember?tournamentUUID=${tournamentUUID}&competitionNameList=${competitionNames}&legitimationNumber=${memberUUID}&otherPerson=${otherUUID}`
+      const competitionUUIDList = listOfCompetitions.map(name => name.replaceAll(',', '.'))
+      const url = `http://${local}/competitionMembersList/addMember?competitionUUIDList=${competitionUUIDList}&legitimationNumber=${memberUUID}&otherPerson=${otherUUID}`
 
       try {
         const response = await fetch(url, {
@@ -1477,7 +1482,7 @@ export default {
       for (let i = 0; i < this.listOfCompetitions.length; i++) {
         list.push(this.listOfCompetitions[i].replaceAll(',', '.'))
       }
-      fetch('http://' + this.local + '/competitionMembersList/removeMember?tournamentUUID=' + this.tournamentUUID + '&competitionNameList=' + list + '&legitimationNumber=' + memberNameUUID + '&otherPerson=' + otherNameID, {
+      fetch('http://' + this.local + '/competitionMembersList/removeMember?competitionNameList=' + list + '&legitimationNumber=' + memberNameUUID + '&otherPerson=' + otherNameID, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -1951,6 +1956,12 @@ export default {
       })
     },
     getMemberMetrics (info) {
+      if (info.length < 1) {
+        this.message = 'lista jest pusta - dodaj coś'
+        this.failure = true
+        this.autoClose()
+        return
+      }
       axios({
         url: 'http://' + this.local + '/files/downloadMetric/' + this.tournamentUUID + '?otherID=' + this.otherID + '&memberUUID=' + this.memberUUID + '&competitions=' + info + '&startNumber=' + this.startNumber + '&a5rotate=' + this.a5rotate,
         method: 'GET',

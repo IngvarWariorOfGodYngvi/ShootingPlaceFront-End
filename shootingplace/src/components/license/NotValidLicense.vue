@@ -48,11 +48,11 @@
                 <div class="row" >{{ convertDate(item.license.validThru) }}</div>
               </div>
             </q-field>
-            <q-btn dense color="grey-5" v-if="!item.license.paid && !item.active" class="col-2"
+            <q-btn dense color="grey-8" v-if="!item.license.paid && !item.active" class="col-2"
                    label="opłać licencję">
               <q-tooltip content-class="bg-red text-subtitle2" anchor="top middle">UREGULUJ SKŁADKI</q-tooltip>
             </q-btn>
-            <q-btn dense color="grey-8" v-if="!item.license.paid && item.active" class="col-2"
+            <q-btn dense color="secondary" v-if="!item.license.paid && item.active" class="col-2"
                    @click="memberName = item.firstName + item.secondName;memberUUID = item.uuid;paymentLicenseAlert = true">
               opłać licencję
             </q-btn>

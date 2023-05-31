@@ -1,6 +1,9 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated reveal>
+    <q-header elevated>
+      <q-page-sticky v-if="mobile" position="top-right" :offset="[5, -50]" style="z-index: 100">
+           <q-icon class="fun" name="wifi" :color="networkStatusvar?'green':'red'"></q-icon>
+           </q-page-sticky>
       <q-toolbar class="full-width row">
         <q-btn
           flat
@@ -16,7 +19,6 @@
         <q-toggle v-model="backgroundDark" :val="true" :value="true" color="dark" keep-color
                   @input="changeColor()" class="fun"></q-toggle>
                   <div class="text-center text-h5 text-bold">{{siteNameChange()}}</div>
-          <q-icon v-if="mobile" class="fun" name="wifi" :color="networkStatusvar?'green':'red'"></q-icon>
 <!--        <q-item>{{arbiter}}</q-item>-->
 <!--        <q-btn @click="reset()" label="reset" color="secondary"></q-btn>-->
         <!-- <q-toolbar-title>
@@ -134,7 +136,7 @@
             />
           </div>
         </q-list>
-        <members-quantities class="bg-secondary">
+        <members-quantities v-if="(main || !main) && main != null" class="bg-secondary">
         </members-quantities>
         <WorkTimeList v-if="!mobile&&main" style="margin: auto;height:auto">
         </WorkTimeList>
@@ -195,6 +197,7 @@ export default {
     this.getActualYearMemberCounts()
     this.networkStatus()
     this.stata()
+    this.getEnv()
   },
   data () {
     return {
@@ -223,16 +226,22 @@ export default {
       shootingPlace: App.shootingPlace,
       essentialLinks: [
         {
+          title: 'Rejestr Pobytu na Strzelnicy',
+          icon: 'person',
+          link: 'http://' + App.prod + 'evidenceBook',
+          visible: true
+        },
+        {
           title: 'Lista Klubowiczów',
           icon: 'person',
           link: 'http://' + App.prod + 'member',
-          visible: true
+          visible: (App.main || !App.main) && App.main != null
         },
         {
           title: 'Licencje',
           icon: 'person',
           link: 'http://' + App.prod + 'license',
-          visible: true
+          visible: App.main
         },
         {
           title: 'Dodaj Nowego Klubowicza',
@@ -244,7 +253,7 @@ export default {
           title: 'Lista Amunicyjna',
           icon: 'list_alt',
           link: 'http://' + App.prod + 'ammolist',
-          visible: true
+          visible: (App.main || !App.main) && App.main != null
         },
         {
           title: 'Zawody',
@@ -262,13 +271,13 @@ export default {
           title: 'Zbrojownia',
           icon: 'storage',
           link: 'http://' + App.prod + 'armory',
-          visible: true
+          visible: (App.main || !App.main) && App.main != null
         },
         {
           title: 'Statystyki',
           icon: 'bar_chart',
           link: 'http://' + App.prod + 'statistics',
-          visible: true
+          visible: App.main
         },
         {
           title: 'Pozostałe Funkcje',
@@ -292,7 +301,7 @@ export default {
           title: 'Panel Sędziego',
           icon: 'done',
           link: 'http://' + App.prod + 'juryPanel',
-          visible: true
+          visible: (App.main || !App.main) && App.main != null
         }
       ],
       networkStatusvar: null,
@@ -311,6 +320,17 @@ export default {
       const network = reactive(useNetwork())
 
       return network.type
+    },
+    getEnv () {
+      fetch(`http://${this.local}/conf/env`, {
+        method: 'GET'
+      }).then(response => {
+        if (response.status === 200) {
+          response.text().then(response => {
+            window.localStorage.setItem('shootingPlace', response)
+          })
+        }
+      })
     },
     networkStatus () {
       setInterval(() => {
@@ -331,7 +351,7 @@ export default {
         }).catch(() => {
           this.networkStatusvar = false
         })
-      }, 5000)
+      }, 10000)
     },
     siteNameChange () {
       return window.localStorage.getItem('SiteName')

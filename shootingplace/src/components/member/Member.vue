@@ -531,7 +531,7 @@
                 popup-content-class="bg-dark text-positive" v-model=" clubChoice " filled fill-input
                 label="wybierz Klub"></q-select>
               <q-btn v-if=" clubChoice !== '' && clubChoiceToggle " color="primary" label="zmień klub macierzysty"
-                @click=" changeClub(member.uuid, clubChoice) "></q-btn>
+                @click=" changeClub(member.uuid, clubChoice) "/>
             </div>
           </q-expansion-item>
           <q-expansion-item dense label="Przypisane dokumenty" class="text-center"
@@ -746,7 +746,7 @@
                 self="bottom middle" :offset=" [12, 12] ">BRAK SKŁADEK
               </q-tooltip>
               <ApplicationForFirearmsLicense :uuid=" member.uuid " :name=" (member.secondName + ' ' + member.firstName) "
-                :disable=" false " />
+                :disable=" member.club.id !== 1  " />
             </div>
           </q-item-section>
         </q-card-section>
@@ -859,9 +859,8 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model=" pzssPortal ">
-      <q-card>
+      <q-card class="bg-dark text-positive">
         <q-card-section class="row items-center">
-          <q-avatar icon="add" color="primary" />
           <span class="q-ml-sm">Czy Klubowicz został dodany do portalu?</span>
         </q-card-section>
 
@@ -2241,9 +2240,10 @@ export default {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
-          for (let i = 0; i < response.length; i++) {
-            this.clubs.push(response[i])
-          }
+          this.clubs = response
+          // for (let i = 0; i < response.length; i++) {
+          //   this.clubs.push(response[i])
+          // }
         })
     },
     getFile (uuid, name) {

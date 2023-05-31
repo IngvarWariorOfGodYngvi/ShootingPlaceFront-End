@@ -11,6 +11,11 @@ if (App.main) {
           component: () => import(/* webpackChunkName: "Index" */'pages/Index.vue')
         },
         {
+          path: '/evidenceBook',
+          name: 'Książka',
+          component: () => import('src/pages/EvidenceBookPage.vue')
+        },
+        {
           path: '/member/adding',
           name: 'dodawanie Klubowicza',
           component: () => import(/* webpackChunkName: "Dodawanie Klubowicza" */'pages/addMember.vue')
@@ -26,16 +31,8 @@ if (App.main) {
           component: () => import(/* webpackChunkName: "Zawody" */'pages/tournamentList.vue')
         },
         {
-          path: '/memberwithpermission',
-          component: () => import(/* webpackChunkName: "Uprawnienia " */'pages/memberWithPermission.vue')
-        },
-        {
           path: '/member',
           component: () => import(/* webpackChunkName: "Lista Klubowiczów" */'pages/membersList.vue')
-        },
-        {
-          path: '/signature',
-          component: () => import(/* webpackChunkName: "podpis" */'pages/SignaturePage.vue')
         },
         {
           path: '/license',
@@ -92,7 +89,7 @@ if (App.main) {
       component: () => import('pages/Error404.vue')
     }
   ]
-} else {
+} else if (App.main === false) {
   routes = [
     {
       path: '/',
@@ -103,8 +100,9 @@ if (App.main) {
           component: () => import(/* webpackChunkName: "Index" */'pages/Index.vue')
         },
         {
-          path: '/signature',
-          component: () => import(/* webpackChunkName: "podpis" */'pages/SignaturePage.vue')
+          path: '/evidenceBook',
+          name: 'Książka',
+          component: () => import('src/pages/EvidenceBookPage.vue')
         },
         {
           path: '/member',
@@ -116,16 +114,6 @@ if (App.main) {
           component: () => import(/* webpackChunkName: "Lista Amunicyjna" */'pages/ammolist.vue')
         },
         {
-          path: '/license',
-          name: 'licencje',
-          component: () => import(/* webpackChunkName: "Licencje" */'pages/license.vue')
-        },
-        {
-          path: '/statistics',
-          name: 'statystyki',
-          component: () => import(/* webpackChunkName: "Statystyki" */'pages/statistics.vue')
-        },
-        {
           path: '/armory',
           name: 'zbrojownia',
           component: () => import(/* webpackChunkName: "Zbrojownia" */'pages/armory.vue')
@@ -134,10 +122,31 @@ if (App.main) {
           path: '/juryPanel',
           name: 'panel sędziego',
           component: () => import(/* webpackChunkName: "Panel Sędziego" */'pages/juryPanel.vue')
+        }
+      ]
+    },
+
+    // Always leave this as last one,
+    // but you can also remove it
+    {
+      path: '*',
+      component: () => import('pages/Error404.vue')
+    }
+  ]
+} else {
+  routes = [
+    {
+      path: '/',
+      component: () => import(/* webpackChunkName: "layoutGłówny" */'layouts/MainLayout.vue'),
+      children: [
+        {
+          path: '',
+          component: () => import(/* webpackChunkName: "Index" */'pages/Index.vue')
         },
         {
-          path: '/test',
-          component: () => import(/* webpackChunkName: "Galeria" */'pages/test.vue')
+          path: '/evidenceBook',
+          name: 'Książka',
+          component: () => import('src/pages/EvidenceBookPage.vue')
         }
       ]
     },

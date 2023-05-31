@@ -62,7 +62,7 @@
               <q-field dense class="row text-positive" label-color="positive" color="positive"
                        standout="bg-accent text-positive" label="trafienia" stack-label>
                 <q-popup-edit v-model="outerTen" value="" content-class="bg-dark text-positive">
-                  <q-input v-if="alfa === '' && charlie === '' && delta === ''" @focus="scoreUUID = item.uuid"
+                  <q-input v-if="alfa === 0 && charlie === 0 && delta === 0" @focus="scoreUUID = item.uuid"
                            input-class="text-center text-positive" v-model="outerTen"
                            @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
                            stack-label label="trafienia" label-color="positive"

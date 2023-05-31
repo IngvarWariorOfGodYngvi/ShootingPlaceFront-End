@@ -38,8 +38,12 @@
                      label="Powtórz kod PIN" type="password" filled/>
           </q-item>
           <q-item>
-            <q-input v-model="memberUUID" input-class="text-positive" label-color="positive" class="full-width" dense
+            <q-input v-model="memberUUID" @input="otherID = ''" input-class="text-positive" label-color="positive" class="full-width" dense
                      label="Identyfikator Klubowicza" filled/>
+          </q-item>
+          <q-item>
+            <q-input v-model="otherID" @input="memberUUID = ''" input-class="text-positive" label-color="positive" class="full-width" dense onkeypress="return (event.charCode > 47 && event.charCode < 58)"
+                     label="Identyfikator Osoby spoza klubu" filled/>
           </q-item>
           <q-item>
             <q-btn @click="acceptCodeUser = true" label="Dodaj" type="submit" color="secondary"/>
@@ -53,7 +57,7 @@
             <li v-for="(superUser,id) in superUsers" :key="id" class="col text-bold">
               <div class="row full-width flex-center bg-grey-3 q-ma-sm">
                 <div class="col full-width text-black" style="cursor: pointer;"
-                     @dblclick="inputBarCode=true">{{ superUser.firstName }}
+                     @dblclick="inputBarCode=true,userSubTypeBarCodeSelect = user.subType;">{{ superUser.firstName }}
                   {{ superUser.secondName }}
                 </div>
                 <q-btn color="primary" class="col full-width"
@@ -90,7 +94,7 @@
             <q-input color="positive" label-color="positive" input-class="text-positive text-h6" class="full-width" filled v-model="barCode" type="password" label="zeskanuj kartę tutaj"
                      @input="getMasterCardCheck(barCode)"></q-input>
           </q-item>
-          <q-item>
+          <!-- <q-item>
               <q-select
                 class="full-width text-positive q-pb-md"
                 color="positive"
@@ -110,7 +114,7 @@
                 </q-item>
               </template>
             </q-select>
-          </q-item>
+          </q-item> -->
           <q-checkbox style="display: none" v-model="master" dense disable></q-checkbox>
           <q-checkbox v-if="master===true" style="display: flex; font-size: 10px;" v-model="master" dense disable
                       label="potwierdzone przez Admina"></q-checkbox>
@@ -197,6 +201,7 @@ export default {
       userSubTypeSelect: null,
       userSecondName: null,
       memberUUID: '',
+      otherID: '',
       userCode: null,
       userCodeConfirm: null,
       userSubType: ['Pracownik', 'Zarząd', 'Komisja Rewizyjna', 'Gość', 'Pracownik/Zarząd', 'Prezes/Zarząd'],
@@ -227,7 +232,7 @@ export default {
         this.message = 'Coś poszło nie tak'
         this.failure = true
       } else {
-        fetch('http://' + this.local + '/users/createSuperUser?firstName=' + this.userFirstName + '&secondName=' + this.userSecondName + '&subType=' + this.userSubTypeSelect + '&pinCode=' + this.userCode + '&superPinCode=' + this.code + '&memberUUID=' + this.memberUUID, {
+        fetch(`http://${this.local}/users/createSuperUser?firstName=${this.userFirstName}&secondName=${this.userSecondName}&subType=${this.userSubTypeSelect}&pinCode=${this.userCode}&superPinCode=${this.code}&memberUUID=${this.memberUUID}&otherID=${this.otherID}`, {
           method: 'POST'
         }).then(response => {
           if (response.status === 201) {

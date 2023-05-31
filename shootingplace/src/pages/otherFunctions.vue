@@ -24,7 +24,7 @@
         <q-card-section>
           <div class="q-pa-md text-center col full-width no-outline text-h5 text-bold">Dodatkowe Funkcje</div>
           <div class="row">
-            <q-select class="full-width text-h6" dense options-dense :dark="darkSet()" filled fill-input
+            <q-select class="full-width" dense options-dense :dark="darkSet()" filled fill-input
               label-color="positive" color="positive" input-class="text-positive"
               popup-content-class="bg-dark text-positive" options-selected-class="bg-dark text-positive"
               :options-dark="darkSet()" v-model="choose" :options="chooseSelect"

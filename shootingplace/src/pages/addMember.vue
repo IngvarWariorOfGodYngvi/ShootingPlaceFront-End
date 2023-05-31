@@ -293,11 +293,11 @@
 
         <template v-slot:navigation>
           <q-stepper-navigation class="flex bg-dark">
-            <q-item clickable v-if=" (step < 5 && (uuid != null && uuid !== '')) " @click=" alertResponse = null "><q-btn v-if=" step < 5 "
-                @click=" $refs.stepper.next() " color="primary"
+            <q-item clickable v-if=" (step < 5 && (uuid != null && uuid !== '')) " @click=" alertResponse = null ">
+              <q-btn @click=" step < 4? $refs.stepper.next(): redirect()" color="primary"
                 :label=" step === 4 ? 'Zakończ' : 'Przejdź Dalej' " /></q-item>
             <q-item><q-btn v-if=" step > 1 " flat color="primary" @click=" $refs.stepper.previous() " label="Wróć" /></q-item>
-            <q-item><q-btn v-if=" step > 1 " @click=" redirect() " color="primary" label="Zakończ" /></q-item>
+            <!-- <q-item><q-btn v-if=" step > 1 " @click=" redirect() " color="primary" label="Zakończ" /></q-item> -->
             <q-item><q-btn v-if=" uuid != null && uuid !== '' " type="a" href="https://portal.pzss.org.pl/CLub/Player"
                 target="_blank" label="Przejdź do portalu PZSS" color="primary" @click=" pzssPortal = true "><q-avatar>
               <img src="~assets/logo-PZSS.png">
@@ -508,7 +508,7 @@ export default {
       memberFlatNumber: null,
       memberE: null,
       active: true,
-      uuid: '',
+      uuid: '1111',
       ordinal: '',
       dateVar: /\//gi,
       pzssPortal: false,
@@ -516,12 +516,13 @@ export default {
       isIDCard: false,
       isEmail: false,
       shootingPlace: App.shootingPlace,
+      prod: App.prod,
       local: App.host
     }
   },
   methods: {
     redirect () {
-      window.location.href = 'http://localhost:8080/strzelnica/#/member'
+      window.location.href = `http://${this.prod}/member`
     },
     darkSet () {
       return JSON.parse(window.localStorage.getItem('BackgroundDark'))

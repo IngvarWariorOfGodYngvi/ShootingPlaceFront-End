@@ -38,8 +38,12 @@
                      label="Powtórz kod PIN" type="password" filled/>
           </q-item>
           <q-item>
-            <q-input v-model="memberUUID" input-class="text-positive" label-color="positive" class="full-width" dense
+            <q-input v-model="memberUUID" @input="otherID = ''" input-class="text-positive" label-color="positive" class="full-width" dense
                      label="Identyfikator Klubowicza" filled/>
+          </q-item>
+          <q-item>
+            <q-input v-model="otherID" @input="memberUUID = ''" input-class="text-positive" label-color="positive" class="full-width" dense onkeypress="return (event.charCode > 47 && event.charCode < 58)"
+                     label="Identyfikator Osoby spoza klubu" filled/>
           </q-item>
           <q-item>
             <q-btn @click="acceptCodeUser = true" label="Dodaj" color="secondary"/>
@@ -64,22 +68,32 @@
       </q-card-section>
     </q-card>
     <q-dialog v-model="inputBarCode">
-      <q-card class="text-center bg-dark">
+      <q-card class="text-center bg-dark" style="min-width: 30vw">
         <q-card-section>
-          <q-item class="flex-center text-h6 text-bold text-positive">Przypisywanie Karty</q-item>
-          <q-item>
-            <q-input color="positive" label-color="positive" input-class="text-positive text-h6" class="full-width" filled v-model="barCode" type="password" label="zeskanuj kartę tutaj"
-                     @input="getMasterCardCheck(barCode)"></q-input>
-          </q-item>
-          <q-item>
-            <q-select class="full-width text-positive q-pb-md"
-                      color="positive"
-                      input-class="text-white" label-color="positive" popup-content-class="bg-dark text-positive"
+          <q-item class="flex-center text-h6 text-bold text-positive">Edytuj</q-item>
+        <div>
+          <q-item-label class="text-positive text-body1">Przypisz numer karty</q-item-label>
+          <q-input v-model="barCode" dense label-color="positive" input-class="text-positive" type="password" label="nadaj kartę tutaj"
+          @input="getMasterCardCheck(barCode)"/>
+          <q-btn color="primary" class="q-ma-md" @click="acceptCodeUser1=true" label="zatwierdź numer karty"></q-btn>
+        </div>
+            <q-input v-model="userFirstName1" input-class="text-positive" label-color="positive" dense label="Imię"
+                     onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32"
+                     />
+            <q-input v-model="userSecondName1" input-class="text-positive" label-color="positive" dense label="Nazwisko"
+                     onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32"
+                     />
+            <q-input v-model="memberUUID1" @input="otherID=''" dense label-color="positive" input-class="text-positive" label="przypisz identyfikator Klubowicza"/>
+            <q-input v-model="otherID1" @input="memberUUID" dense label-color="positive" input-class="text-positive" label="przypisz identyfikator Osoby spoza Klubu"/>
+            <q-input v-model="userCode1" type="password" dense label-color="positive" input-class="text-positive" label="nadaj nowy PIN" mask="####"/>
+            <q-input v-model="userCodeConfirm1" type="password" dense label-color="positive" input-class="text-positive" label="powtórz nowy PIN" mask="####"/>
+            <q-select class="text-positive"
+                      input-class="text-positive" label-color="positive" popup-content-class="bg-dark text-positive"
                       emit-value
                       map-options
                       options-dense
-                      v-model="userSubTypeBarCodeSelect"
-                      filled dense use-input hide-selected fill-input
+                      v-model="userSubTypeSelect1"
+                      dense use-input hide-selected fill-input
                       :options="userSubType"
                       label="Wybierz Rodzaj">
               <template v-slot:no-option>
@@ -90,14 +104,14 @@
                 </q-item>
               </template>
             </q-select>
-          </q-item>
-          <q-checkbox style="display: none" v-model="master" dense disable></q-checkbox>
+          <q-checkbox style="display: none" v-model="master" dense disable/>
           <q-checkbox v-if="master===true" style="display: flex; font-size: 10px;" v-model="master" dense disable
-                      label="potwierdzone przez Admina"></q-checkbox>
-          <p></p>
-          <q-btn text-color="white" color="secondary" v-close-popup @click="barCode=null; uuid = null;master=false">Anuluj</q-btn>
-          <q-btn text-color="white" color="primary" v-close-popup @click="acceptCodeUser1=true">zatwierdź</q-btn>
-        </q-card-section>
+                      label="potwierdzone przez Admina"/>
+          </q-card-section>
+          <q-card-actions align="right">
+            <q-btn text-color="white" color="secondary" label="anuluj" v-close-popup @click="barCode=null; uuid = null;master=false;memberUUID1='';otherID1='';userFirstName1=null;userSecondName1=null;userCode1=null;userCodeConfirm1=null"/>
+            <q-btn text-color="white" color="primary" label="zapisz" v-close-popup @click="acceptCodeUser2=true;"/>
+          </q-card-actions>
       </q-card>
     </q-dialog>
     <q-dialog v-model="acceptCodeUser1" persistent
@@ -132,6 +146,23 @@
           <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
           <q-btn id="3" label="Dodaj" color="black" v-close-popup
                  @click="createUser ();acceptCodeUser=false;code=null"/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="acceptCodeUser2" persistent @keypress.enter="editUser();acceptCodeUser2=false;code=null">
+      <q-card class="bg-red-5 text-center">
+        <q-card-section class="flex-center">
+          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
+          <div>
+            <q-input autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold"
+                     mask="####"></q-input>
+          </div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
+          <q-btn id="3" label="Dodaj" color="black" v-close-popup
+                 @click="editUser();acceptCodeUser2=false;code=null"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -171,7 +202,7 @@
         </q-card-section>
       </q-card>
     </q-dialog>
-    <q-dialog :position="'top'" v-model="success" @keypress.enter="success=false">
+    <q-dialog position="top" v-model="success">
       <q-card>
         <q-card-section>
           <div v-if="message!=null" class="text-h6">{{ message }}</div>
@@ -179,10 +210,10 @@
 
       </q-card>
     </q-dialog>
-    <q-dialog v-model="failure" :position="'top'" @keypress.enter="failure=false">
+    <q-dialog position="top" v-model="failure">
       <q-card>
         <q-card-section>
-          <div class="text-h6">{{ message }}</div>
+          <div v-if="message!=null" class="text-h6">{{ message }}</div>
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -199,15 +230,24 @@ export default {
       setSuperUserDialogConfirm: false,
       backgroundDark: JSON.parse(window.localStorage.getItem('BackgroundDark')),
       userFirstName: null,
+      userFirstName1: null,
       userSecondName: null,
+      userSecondName1: null,
       userCode: null,
       userCodeConfirm: null,
+      userCode1: null,
+      userCodeConfirm1: null,
       userSubTypeSelect: null,
+      userSubTypeSelect1: null,
       acceptCodeUser: false,
       acceptCodeUser1: false,
+      acceptCodeUser2: false,
       userSubType: ['Pracownik', 'Zarząd', 'Komisja Rewizyjna', 'Gość', 'Pracownik/Zarząd', 'Prezes/Zarząd'],
       users: [],
       memberUUID: '',
+      memberUUID1: '',
+      otherID: '',
+      otherID1: '',
       uuid: '',
       userSubTypeBarCodeSelect: null,
       inputBarCode: false,
@@ -251,7 +291,7 @@ export default {
         this.message = 'Coś poszło nie tak'
         this.failure = true
       } else {
-        fetch('http://' + this.local + '/users/createUser?firstName=' + this.userFirstName + '&secondName=' + this.userSecondName + '&subType=' + this.userSubTypeSelect + '&pinCode=' + this.userCode + '&superPinCode=' + this.code + '&memberUUID=' + this.memberUUID, {
+        fetch(`http://${this.local}/users/createUser?firstName=${this.userFirstName}&secondName=${this.userSecondName}&subType=${this.userSubTypeSelect}&pinCode=${this.userCode}&superPinCode=${this.code}&memberUUID=${this.memberUUID}&otherID=${this.otherID}`, {
           method: 'POST'
         }).then(response => {
           if (response.status === 201) {
@@ -259,6 +299,40 @@ export default {
               response => {
                 this.message = response
                 this.success = true
+                this.getAllUsers()
+              }
+            )
+          } else {
+            response.text().then(
+              response => {
+                this.message = response
+                this.failure = true
+              }
+            )
+          }
+          this.autoClose()
+        })
+      }
+    },
+    editUser () {
+      if (this.userCode1 !== this.userCodeConfirm1) {
+        this.message = 'Coś poszło nie tak'
+        this.failure = true
+      } else {
+        fetch(`http://${this.local}/users/editUser?firstName=${this.userFirstName1}&secondName=${this.userSecondName1}&subType=${this.userSubTypeSelect1}&pinCode=${this.userCode1}&superPinCode=${this.code}&memberUUID=${this.memberUUID1}&otherID=${this.otherID1}&userUUID=${this.uuid}`, {
+          method: 'POST'
+        }).then(response => {
+          if (response.status === 200) {
+            response.text().then(
+              response => {
+                this.message = response
+                this.success = true
+                this.memberUUID1 = ''
+                this.otherID1 = ''
+                this.userFirstName1 = null
+                this.userSecondName1 = null
+                this.userCode1 = null
+                this.userCodeConfirm1 = null
                 this.getAllUsers()
               }
             )
@@ -321,8 +395,6 @@ export default {
           subType: userSubType,
           isMaster: this.master
         }
-        console.log('coś2')
-        console.log(this.accept)
         if (this.accept) {
           fetch('http://' + this.local + '/barCode/', {
             method: 'POST',

@@ -415,20 +415,6 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <!-- <q-dialog v-model="acceptCode" persistent @keypress.enter=" removeGun(); acceptCode = false">
-      <q-card class="bg-red-5 text-center">
-        <q-card-section class="flex-center">
-          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
-          <div><q-input autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold"
-              mask="####"></q-input></div>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn label="anuluj" color="black" v-close-popup @click=" code = null" />
-          <q-btn label="usuń" color="black" v-close-popup @click=" removeGun(); code = null" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog> -->
     <q-dialog v-model="acceptCodeCaliber" persistent
       @keypress.enter=" changeCaliberQuantity(caliberUUID, quantity, code); acceptCodeCaliber = false, code = null">
       <q-card class="bg-red-5 text-center">
@@ -622,52 +608,6 @@ export default {
         }
       })
     },
-    // addGunToRepair (gunUUID) {
-    //   fetch('http://' + this.local + '/armory/addGunToRepair?gunUUID=' + gunUUID, {
-    //     method: 'PUT',
-    //     headers: {
-    //       'Content-Type': 'application/json'
-    //     }
-    //   }).then(response => {
-    //     if (response.status === 200) {
-    //       response.text().then(response => {
-    //         this.getAllGuns()
-    //         this.getGun(gunUUID)
-    //         this.message = response
-    //         this.success = true
-    //         this.autoClose()
-    //       })
-    //     } else {
-    //       response.text().then(response => {
-    //         this.message = response
-    //         this.failure = true
-    //         this.autoClose()
-    //       })
-    //     }
-    //   })
-    // },
-    // returnToStore (gunUUID) {
-    //   const list = [gunUUID]
-    //   fetch('http://' + this.local + '/armory/returnToStore?gunsUUID=' + list, {
-    //     method: 'PATCH'
-    //   }).then(response => {
-    //     if (response.status === 200) {
-    //       response.text().then(response => {
-    //         this.getAllGuns()
-    //         this.getGun(gunUUID)
-    //         this.message = response
-    //         this.success = true
-    //         this.autoClose()
-    //       })
-    //     } else {
-    //       response.text().then(response => {
-    //         this.message = response
-    //         this.failure = true
-    //         this.autoClose()
-    //       })
-    //     }
-    //   })
-    // },
     addGun () {
       if (this.gunNumberOfMagazines === '') {
         this.gunNumberOfMagazines = 'BRAK'
