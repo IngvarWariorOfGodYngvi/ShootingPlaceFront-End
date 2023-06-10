@@ -508,7 +508,7 @@ export default {
       memberFlatNumber: null,
       memberE: null,
       active: true,
-      uuid: '1111',
+      uuid: '',
       ordinal: '',
       dateVar: /\//gi,
       pzssPortal: false,
@@ -522,7 +522,7 @@ export default {
   },
   methods: {
     redirect () {
-      window.location.href = `http://${this.prod}/member`
+      window.location.href = 'http://192.168.1.101:8080/strzelnica/#/member'
     },
     darkSet () {
       return JSON.parse(window.localStorage.getItem('BackgroundDark'))

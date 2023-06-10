@@ -155,12 +155,19 @@ export default {
       this.otherPersonPhoneNumber = otherPerson.phoneNumber
       this.otherPersonEmail = otherPerson.email
       this.otherPersonWeaponPermissionNUmber = otherPerson.weaponPermissionNumber
+      this.clubNamePerson = otherPerson.club.name
       if (otherPerson.address != null) {
         this.otherPersonPostOfficeCity = otherPerson.address.postOfficeCity
         this.otherPersonZipCode = otherPerson.address.zipCode
         this.otherPersonStreet = otherPerson.address.street
         this.otherPersonStreetNumber = otherPerson.address.streetNumber
         this.otherPersonFlatNumber = otherPerson.address.flatNumber
+      } else {
+        this.otherPersonPostOfficeCity = null
+        this.otherPersonZipCode = null
+        this.otherPersonStreet = null
+        this.otherPersonStreetNumber = null
+        this.otherPersonFlatNumber = null
       }
     },
     deactivateOther () {

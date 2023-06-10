@@ -105,7 +105,7 @@
                 </div>
                 <div class="col-3"
                      @dblclick="main&&!mobile?(paymentUUID = item.uuid,togglePaymentAlert = true):''">
-                  <q-field dense v-if="item.payInPZSSPortal" standout="bg-accent text-black" label="PZSS : "
+                  <q-field dense standout="bg-accent text-black" label="PZSS : "
                            stack-label>
                     <div class="self-center col full-width no-outline text-left text-black">
                       {{ item.payInPZSSPortal ? 'Tak' : 'Nie' }}

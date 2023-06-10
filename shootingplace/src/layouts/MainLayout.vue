@@ -47,6 +47,9 @@
          </div> -->
          <div v-if="main" class="row reverse col">
           <q-icon class="fun" name="wifi" :color="networkStatusvar?'green':'red'"></q-icon>
+          <q-btn-dropdown icon="calendar_month" rounded color="secondary" style="border: 1px solid white">
+            <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&bgcolor=%23374550&ctz=Europe%2FBrussels&showTitle=0&showNav=1&showDate=1&src=OTcwNXUwMTRuZXNicW05NGdiMWdkc3JvOGdAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ&src=MDRnOXVrazAwcjQzaHEwNHQ1cTcyaHRhaDRAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ&src=YzNqMG50a2kzN2dsZGpzMjlsOGYzYzN0NDBAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ&color=%234285F4&color=%23AD1457&color=%23A79B8E" style="width:40vw;height:50vh;" class="bg-secondary text-positive" frameborder="2" scrolling="no"/>
+          </q-btn-dropdown>
           <q-avatar text-color="white" color="secondary" size="3.5em" rounded
                     style="border: solid 1px white; border-radius: 50%" class="reverse"
                     icon="scoreboard">

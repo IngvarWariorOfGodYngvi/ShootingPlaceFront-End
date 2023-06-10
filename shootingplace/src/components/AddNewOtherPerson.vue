@@ -5,12 +5,13 @@
       <q-card class="bg-dark text-positive">
         <q-card-section>
           <div class="text-h6">Dodawanie nowej osoby spoza klubu</div>
-          <q-input class="full-width" color="positive" input-class="text-positive" label-color="positive"
+          <q-input dense input-class="text-positive" label-color="positive"
             onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode === 32"
             v-model="otherFirstName" label="Imię *" />
-          <q-input class="full-width" color="positive" input-class="text-positive" label-color="positive"
+          <q-input dense input-class="text-positive" label-color="positive"
             onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode === 45"
             v-model="otherSecondName" label="Nazwisko *" />
+            <div class="self-center full-width">poniżej można zostawić puste</div>
           <div class="row"><q-checkbox left-label color="primary" false-value="" true-value="BRAK" v-model="clubName" :val="'BRAK'"
               label="Brak Klubu"></q-checkbox>
             <q-select stack-label dense options-dense popup-content-class="bg-dark text-positive" class="col" input-class="text-positive" label-color="positive" v-if="clubName !== 'BRAK'" @new-value="createValue" hide-selected use-chips
@@ -25,32 +26,37 @@
               </template>
             </q-select>
           </div>
-          <q-input dense class="full-width" color="positive" input-class="text-positive" label-color="positive" mask="### ### ###" filled v-model="otherPhoneNumber" label="Numer telefonu" />
-          <q-input dense class="full-width" color="positive" input-class="text-positive" label-color="positive" filled v-model="otherEmail" label="e-mail" />
-          <q-field color="positive" label-color="positive" class="full-width" standout="bg-accent text-positive" stack-label >
-            <div class="self-center full-width col no-outline" >Uprawnienia Sędziowskie - można zostawić
-              puste
-            </div>
-          </q-field>
+          <q-input dense input-class="text-positive" label-color="positive" mask="### ### ###" filled v-model="otherPhoneNumber" label="Numer telefonu" />
+          <q-input dense input-class="text-positive" label-color="positive" filled v-model="otherEmail" label="e-mail" />
+          <div>
+            <q-input filled v-model="otherPostOfficeCity" label="Miasto" dense input-class="text-positive" label-color="positive"/>
+            <q-input filled v-model="otherZipCode" label="Kod Pocztowy" mask="##-###" dense input-class="text-positive" label-color="positive"/>
+            <q-input filled v-model="otherStreet" label="Ulica" dense input-class="text-positive" label-color="positive"/>
+            <q-input filled v-model="otherStreetNumber" @input="nonMemberStreetNumber.length===0?nonMemberStreetNumber=null:''" label="Numer Ulicy" dense input-class="text-positive" label-color="positive"/>
+            <q-input filled v-model="otherFlatNumber" @input="nonMemberFlatNumber.length===0?nonMemberFlatNumber=null:''" label="Mieszkania" dense input-class="text-positive" label-color="positive"/>
+          </div>
+          <div>
+            <q-input filled v-model="nonMemberWeaponPermissionNumber" @input="nonMemberWeaponPermissionNumber.length===0?nonMemberWeaponPermissionNumber=null:''" label="Numer pozwolenia na Broń" dense input-class="text-positive" label-color="positive"/>
+          </div>
           <div class="row">
-            <q-item>
-              <q-radio v-model="ordinal" :val="1" label="Klasa 3" color="secondary" />
+            <q-item dense>
+              <q-radio dense v-model="ordinal" :val="1" label="Klasa 3" color="secondary" />
             </q-item>
-            <q-item>
-              <q-radio v-model="ordinal" :val="2" label="Klasa 2" color="secondary" />
+            <q-item dense>
+              <q-radio dense v-model="ordinal" :val="2" label="Klasa 2" color="secondary" />
             </q-item>
-            <q-item>
-              <q-radio v-model="ordinal" :val="3" label="Klasa 1" color="secondary" />
+            <q-item dense>
+              <q-radio dense v-model="ordinal" :val="3" label="Klasa 1" color="secondary" />
             </q-item>
-            <q-item>
-              <q-radio v-model="ordinal" :val="4" label="Klasa Państwowa" color="secondary" />
+            <q-item dense>
+              <q-radio dense v-model="ordinal" :val="4" label="Klasa Państwowa" color="secondary" />
             </q-item>
-            <q-item>
-              <q-radio v-model="ordinal" :val="5" label="Klasa Międzynarodowa" color="secondary" />
+            <q-item dense>
+              <q-radio dense v-model="ordinal" :val="5" label="Klasa Międzynarodowa" color="secondary" />
             </q-item>
           </div>
-          <q-input dense class="full-width" color="positive" input-class="text-positive" label-color="positive" v-model="permissionsOtherArbiterNumber" label="Numer uprawnień" />
-          <q-input dense class="full-width" color="positive" input-class="text-positive" label-color="positive" filled v-model="permissionsOtherArbiterPermissionValidThru" mask="####/12/31"
+          <q-input dense class="full-width" input-class="text-positive" label-color="positive" v-model="permissionsOtherArbiterNumber" label="Numer uprawnień" />
+          <q-input dense class="full-width" input-class="text-positive" label-color="positive" filled v-model="permissionsOtherArbiterPermissionValidThru" mask="####/12/31"
             label="Ważne do:">
             <template v-slot:append>
               <q-icon name="event" class="cursor-pointer text-positive">
@@ -105,6 +111,12 @@ export default {
       otherEmail: '',
       clubName: '',
       ordinal: '',
+      nonMemberZipCode: null,
+      nonMemberPostOfficeCity: null,
+      nonMemberStreet: null,
+      nonMemberStreetNumber: null,
+      nonMemberFlatNumber: null,
+      nonMemberWeaponPermissionNumber: null,
       permissionsOtherArbiterNumber: '',
       permissionsOtherArbiterPermissionValidThru: '',
       addNewOtherPerson: false,
@@ -128,7 +140,15 @@ export default {
         firstName: firstName,
         secondName: secondName,
         phoneNumber: phoneNumber,
-        email: email
+        email: email,
+        weaponPermissionNumber: this.nonMemberWeaponPermissionNumber,
+        address: {
+          zipCode: this.nonMemberZipCode,
+          postOfficeCity: this.nonMemberPostOfficeCity,
+          street: this.nonMemberStreet,
+          streetNumber: this.nonMemberStreetNumber,
+          flatNumber: this.nonMemberFlatNumbenr
+        }
       }
       fetch('http://' + this.local + '/other?club=' + clubName + '&arbiterClass=' + ordinal + '&arbiterNumber=' + permissionsOtherArbiterNumber + '&arbiterPermissionValidThru=' + permissionsOtherArbiterPermissionValidThru.replace(/\//gi, '-'), {
         method: 'POST',

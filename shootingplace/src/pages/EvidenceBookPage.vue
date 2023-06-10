@@ -43,7 +43,7 @@
           <q-checkbox v-model="rememberMe" @input="nonMemberClubName=null;nonMemberPhoneNumber=null" class="text-positive">Zapamiętaj Mnie - twoje dane będą przechowywane w celach rejestracji pobytu na strzelnicy i startu w zawodach klubowych</q-checkbox>
           <div v-if="rememberMe" class="row">
           <div class="col">
-            <q-select v-model="nonMemberClubName" style="border: 1px solid green" filled label="Wybierz Klub - Opcjonalnie" @popup-hide="getAllClubsToTournament()" dense options-dense popup-content-class="bg-dark text-positive" class="col" input-class="text-positive" label-color="positive" @new-value="createValue" hide-selected use-chips
+            <q-select v-model="nonMemberClubName" style="border: 1px solid green" filled label="Wybierz Klub" @popup-hide="getAllClubsToTournament()" dense options-dense popup-content-class="bg-dark text-positive" class="col" input-class="text-positive" label-color="positive" @new-value="createValue" hide-selected use-chips
             use-input fill-input input-debounce="0" :options="filterOptions"
             @filter="filterFna">
           <template v-slot:no-option>
@@ -196,6 +196,9 @@ export default {
       this.nonMemberPhoneNumber = null
       this.statementOnReadingTheShootingPlaceRegulations = false
       this.nonMember = false
+      this.rememberMe = false
+      this.address = false
+      this.permission = false
     },
     getOtherbyPhone (phone) {
       fetch(`http://${this.local}/other/getOhterByPhone/${phone}`, {
@@ -313,11 +316,9 @@ export default {
           postOfficeCity: this.nonMemberPostOfficeCity,
           street: this.nonMemberStreet,
           streetNumber: this.nonMemberStreetNumber,
-          flatNumber: this.nonMemberFlatNumber
+          flatNumber: this.nonMemberFlatNumbenr
         }
       }
-      console.log(this.nonMemberZipCode)
-      console.log(other.address.zipCode)
       const { data } = this.$refs.signaturePad.saveSignature()
       const { isEmpty } = this.$refs.signaturePad.saveSignature()
       const dat = {
