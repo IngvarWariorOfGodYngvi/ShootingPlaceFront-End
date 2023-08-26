@@ -1,0 +1,309 @@
+<template>
+  <div style="min-width: 60%;" v-if="open1">
+      <div class="bg-dark text-positive" >
+        <div class="row">
+          <q-select label="Wybierz osobę z Klubu" popup-content-class="bg-dark text-positive"
+            :option-value="opt => opt !== '' ? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber).toString() : ''"
+            :option-label="opt => opt !== '' ? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber).toString() : ''"
+            emit-value map-options options-dense color="positive" input-class="text-positive" label-color="positive"
+            v-model="memberName" fill-input filled dense use-input hide-selected input-debounce="0" :options="options"
+            @input="otherName = '0 0'"  @filter="filterFn" class="col">
+            <template v-slot:option="option">
+              <q-item class="rounded bg-dark text-positive" dense style="padding: 0; margin: 0;" v-bind="option.itemProps"
+                v-on="option.itemEvents">
+                <q-item-section dense style="padding: 0.5em; margin: 0;"
+                  :class="option.opt.active ? '' : 'bg-warning rounded'"
+                  @click="otherName = '0 0'; memberName = option.opt.secondName + ' ' + option.opt.firstName + ' ' + option.opt.legitimationNumber">
+                  <div>{{ option.opt.secondName }} {{ option.opt.firstName }}
+                    {{ option.opt.legitimationNumber }} {{ option.opt.adult ? 'Ogólna' : 'Młodzież' }} {{
+                      option.opt.active ? '' : ' - BRAK SKŁADEK' }}
+                  </div>
+                </q-item-section>
+              </q-item>
+            </template>
+            <template v-slot:no-option>
+              <q-item>
+                <q-item-section class="text-grey">
+                  Brak wyników
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
+          <q-select @popup-show="getOther()" @popup-hide="getOther()" options-dense class="col" dense filled
+            v-model="otherName" use-input hide-selected fill-input input-debounce="0" color="positive"
+            input-class="text-positive" label-color="positive" popup-content-class="bg-dark text-positive"
+            :options="options1" @input="memberName = '0 0'" @filter="filterOther" label="Dodaj osobę spoza klubu">
+            <template v-slot:no-option>
+              <div class="bg-dark text-center text-bold text-positive">
+                <div class="q-pa-md bg-dark text-center text-bold text-positive">Brak wyników - możesz dodać nową
+                  osobę
+                </div>
+                <AddNewOtherPerson></AddNewOtherPerson>
+              </div>
+            </template>
+          </q-select>
+        </div>
+          <q-item dense v-for="(item, uuid) in calibers" :key="uuid" :val="item.uuid" style="">
+            <div class="text-positive text-center col" style="display: flex;justify-content: center;align-content: center;flex-direction: column;">{{ item.name }}</div>
+            <q-input v-model="item.counter" class="col" color="positive" label-color="positive" @focus="item.counter.startsWith('0')?item.counter='':item.counter=item.counter"
+          input-class="text-positive" dense filled :label="'max: ' + item.quantity" @input="item.counter===''?item.counter='0':item.counter=item.counter;onInput(item,item.counter)"
+          onkeypress="return (event.charCode > 44 && event.charCode < 58)" type="number" :max="item.quantity"></q-input>
+          <div class="col text-center" style="display: flex;justify-content: center;align-content: center;flex-direction: column;"> * {{ viewCurrency(item.unitPrice) }} = {{ viewCurrency(item.counter * item.unitPrice) }} </div>
+          <div class="col text-center" style="display: flex;justify-content: center;align-content: center;flex-direction: column;"> * {{ viewCurrency(item.unitPriceForNotMember) }} = {{ viewCurrency(item.counter * item.unitPriceForNotMember) }}</div>
+          </q-item>
+        <q-item dense>
+          <div class="col"></div>
+          <q-input class="col-3" v-model="discount" type="number" min="-23" max="100" dense filled label="rabat w %" onkeypress="return (event.charCode > 47 && event.charCode < 58)" label-color="positive" input-class="text-positive" suffix="%"></q-input>
+          <div class="col-3 text-center"><div>dla klubowicza: <div class="text-bold">{{ viewCurrency(sum(memberCostSum)) }}</div></div><div>po rabacie: <div class="text-bold text-primary">{{ viewCurrency(sum(memberCostSum) - (sum(memberCostSum)/100)*discount) }}</div></div></div>
+          <div class="col-3 text-center"><div>pozostali: <div class="text-bold">{{ viewCurrency(sum(notMemberCostSum)) }}</div></div><div>po rabacie: <div class="text-bold text-primary">{{ viewCurrency(sum(notMemberCostSum) - (sum(notMemberCostSum)/100)*discount) }}</div></div></div>
+        </q-item>
+        <div class="col">
+          <q-card-actions class="row" align="right">
+            <q-item>
+              <q-btn class="full-width col" color="primary" icon="close" @click="memberName = ''; otherName = ''"
+                v-close-popup></q-btn>
+            </q-item>
+            <q-item>
+              <q-btn class="full-width col" color="primary" :loading="loading[0]" icon="done"
+                :disable="dis || memberName === '' || otherName === ''"
+                @click="dis = true; simulateProgress(0)"
+                ></q-btn>
+            </q-item>
+          </q-card-actions>
+        </div>
+      </div>
+    <q-dialog position="top" v-model="success">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">{{ message }}</div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+    <q-dialog position="top" v-model="failure">
+      <q-card class="bg-warning">
+        <q-card-section>
+          <div class="text-h6">{{ message }}</div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+  </div>
+</template>
+<script>
+import { ref } from 'vue'
+import App from 'src/App.vue'
+import lazyLoadComponent from 'src/utils/lazyLoadComponent'
+import SkeletonBox from 'src/utils/SkeletonBox.vue'
+export default {
+  props: {
+    open: {
+      type: Boolean,
+      required: true,
+      default: false
+    }
+  },
+  components: {
+    AddNewOtherPerson: lazyLoadComponent({
+      componentFactory: () => import('components/AddNewOtherPerson.vue'),
+      loading: SkeletonBox
+    })
+  },
+  created () {
+    this.getListCalibers()
+    this.getMembersNames()
+    this.getOther()
+  },
+  setup () {
+    const loading = ref([
+      false
+    ])
+    const progress = ref(false)
+
+    function simulateProgress (number) {
+      loading.value[number] = true
+      this.addMemberAndAmmoToCaliber(this.mapCalibers(this.calibers))
+      setTimeout(() => {
+        loading.value[number] = false
+      }, 0)
+    }
+    function simulateProgressGun (number, evidenceUUID, barcode) {
+      loading.value[number] = true
+      this.addGunToList(evidenceUUID, barcode)
+      setTimeout(() => {
+        loading.value[number] = false
+      }, 0)
+    }
+    return {
+      loading,
+      progress,
+      simulateProgress,
+      simulateProgressGun
+    }
+  },
+  data () {
+    return {
+      dis: false,
+      memberName: '',
+      otherName: '',
+      open1: open,
+      calibers: [],
+      options: [],
+      options1: [],
+      filters: [],
+      filtersOther: [],
+      counter: '',
+      discount: 0,
+      memberCostSum: [],
+      notMemberCostSum: [],
+      map: null,
+      message: null,
+      success: false,
+      failure: false,
+      local: App.host
+    }
+  },
+  methods: {
+    sum (arr) {
+      const sum = arr.reduce(function (a, b) {
+        return a + b
+      }, 0)
+      return sum
+    },
+    getMembersNames () {
+      fetch('http://' + this.local + '/member/getAllNames', {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.filters = response
+        })
+    },
+    getOther () {
+      fetch('http://' + this.local + '/other/', {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.filtersOther = response
+        })
+    },
+    getListCalibers () {
+      fetch(`http://${this.local}/armory/calibers`, {
+        method: 'GET'
+      }).then((response) => {
+        response.json().then((response) => {
+          let temp = []
+          this.calibers = []
+          if (response.length > 0) {
+            temp = response.slice(0, response.length)
+            for (let i = 0; i < temp.length; i++) {
+              this.calibers.push({ uuid: temp[i].uuid, counter: '0', unitPrice: temp[i].unitPrice, unitPriceForNotMember: temp[i].unitPriceForNotMember, name: temp[i].name, quantity: temp[i].quantity })
+            }
+          }
+        })
+      })
+    },
+    onInput (item, counter) {
+      const fe = this.calibers.find(function e (element) {
+        return element.uuid === item.uuid
+      })
+      fe.counter = counter
+      const fi = this.calibers.findIndex(function e (element) {
+        return element.uuid === item.uuid
+      })
+      if (fe.counter >= 0) {
+        this.memberCostSum[fi] = fe.unitPrice * fe.counter
+        this.notMemberCostSum[fi] = fe.unitPriceForNotMember * fe.counter
+      }
+      this.calibers[fi] = fe
+      this.counter = ''
+    },
+    viewCurrency (money) {
+      if (money === undefined) { money = '0' }
+      const formatterPL = new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' })
+      const cash = formatterPL.format(money)
+      return cash
+    },
+    mapCalibers (calibersObject) {
+      const map = new Map()
+      for (let i = 0; i < calibersObject.length; i++) {
+        if (calibersObject[i].counter !== '0') {
+          map.set(calibersObject[i].uuid, Number(calibersObject[i].counter))
+        }
+      }
+      return map
+    },
+    addMemberAndAmmoToCaliber (map) {
+      const memberNameWord = this.memberName.split(' ')
+      const legNumber = memberNameWord.length
+      const memberNameUUID = memberNameWord[legNumber - 1]
+      const otherNameWord = this.otherName.split(' ')
+      const idNumber = otherNameWord.length
+      const otherNameID = otherNameWord[idNumber - 1]
+      fetch(`http://${this.local}/ammoEvidence/listOfAmmo?legitimationNumber=${memberNameUUID}&otherID=${otherNameID}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(Object.fromEntries(map))
+      }).then(response => {
+        if (response.status === 200) {
+          response.text().then(response => {
+            this.message = response
+            this.success = true
+            this.dis = false
+            this.getListCalibers()
+            this.memberCostSum = []
+            this.notMemberCostSum = []
+            this.autoClose()
+          })
+        } else {
+          response.text().then(response => {
+            this.message = response
+            this.failure = true
+            this.dis = false
+            this.autoClose()
+          })
+        }
+      }).catch(() => {
+        this.message = 'coś jest nie tak'
+        this.failure = true
+        this.dis = false
+        this.autoClose()
+      })
+    },
+    filterFn (val, update) {
+      if (val === '') {
+        update(() => {
+          const needle = val.toLowerCase()
+          this.options = this.filters.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
+        })
+        return
+      }
+      update(() => {
+        const needle = val.toLowerCase()
+        this.options = this.filters.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
+      })
+    },
+    filterOther (val, update) {
+      if (val === '') {
+        update(() => {
+          const needle = val.toLowerCase()
+          this.options1 = this.filtersOther.filter(v => v.toLowerCase().indexOf(needle) > -1)
+        })
+        return
+      }
+
+      update(() => {
+        const needle = val.toLowerCase()
+        this.options1 = this.filtersOther.filter(v => v.toLowerCase().indexOf(needle) > -1)
+      })
+    },
+    autoClose () {
+      setTimeout(() => {
+        this.success = false
+        this.failure = false
+        this.message = null
+        document.getElementById('1').close()
+      }, 2000)
+    }
+  }
+}
+</script>

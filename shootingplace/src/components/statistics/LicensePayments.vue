@@ -53,7 +53,7 @@
           <template v-slot:before>
             <thead class="thead-sticky text-left">
             <tr class="bg-primary text-white">
-              <th class="text-left">{{quantitySumLicenseRearrangeTable.length}}Nazwisko i Imię</th>
+              <th class="text-left">{{quantitySumLicenseRearrangeTable.length}} Nazwisko i Imię</th>
               <th class="text-left" style="width: 10%;">Numer<br/>Legitymacji</th>
               <th class="text-left" style="width: 10%;">Grupa</th>
               <th class="text-left" style="width: 10%;">Status</th>

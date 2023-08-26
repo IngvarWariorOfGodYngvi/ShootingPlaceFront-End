@@ -7,25 +7,24 @@
     </q-item>
     <div class="row">
       <q-field dense class="col" standout="bg-accent text-positive" stack-label>
-        <div class="col-2 self-center text-left text-positive">lp amunicja</div>
-        <div class="col-2 self-center text-left text-positive">Zawodnik</div>
-        <div class="col-2 self-center text-left text-positive">Klub</div>
+        <div class="col-1 self-center text-left text-positive">amunicja</div>
+        <div class="col-4 self-center text-left text-positive">Zawodnik</div>
+        <div class="col-3 self-center text-left text-positive">Klub</div>
         <div class="col self-center text-center text-positive">Wynik</div>
       </q-field>
     </div>
     <div v-for="(item, index) in competition.scoreList" :key="index" class="full-width q-pa-none">
           <div class="row text-body2 full-width">
             <!-- button -->
-            <div class="col self-center">{{ index + 1 }}.</div>
-            <div class="col-1 row">
-                <q-btn dense glossy class="full-width" :icon="item.ammunition === false && item.gun === false? 'book' : item.ammunition === true && item.gun === false?'done book':item.ammunition === false && item.gun === true?'book done':item.ammunition === true && item.gun === true?'done':'book'"
-                       @click="scoreUUID = item.uuid;temp=item.member!=null?item.member:item.otherPersonEntity.secondName;item.member!=null?(memberLeg = item.member.legitimationNumber,otherID = 0):(otherID = item.otherPersonEntity.id,memberLeg = 0); getListCalibers();caliberUUID = competition.caliberUUID;ammoQuantity = competition.practiceShots + competition.numberOfShots;addAmmo=true">
-                  <q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">{{ item.ammunition === false && item.gun === false?'Wydaj broń lub amunicję':item.ammunition === true && item.gun === false?'Amunicja wydana':item.ammunition === false && item.gun === true?'Broń wydana':'Broń i Amunicja Wydane' }}
-                  </q-tooltip>
-                </q-btn>
-            </div>
+            <div class="row col-1">
+              <q-btn dense glossy class="full-width" :icon="item.ammunition === false && item.gun === false? 'book' : item.ammunition === true && item.gun === false?'done book':item.ammunition === false && item.gun === true?'book done':item.ammunition === true && item.gun === true?'done':'book'"
+              @click="scoreUUID = item.uuid;temp=item.member!=null?item.member:item.otherPersonEntity.secondName;item.member!=null?(memberLeg = item.member.legitimationNumber,otherID = 0):(otherID = item.otherPersonEntity.id,memberLeg = 0); getListCalibers();caliberUUID = competition.caliberUUID;ammoQuantity = competition.practiceShots + competition.numberOfShots;addAmmo=true">
+              <q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">{{ item.ammunition === false && item.gun === false?'Wydaj broń lub amunicję':item.ammunition === true && item.gun === false?'Amunicja wydana':item.ammunition === false && item.gun === true?'Broń wydana':'Broń i Amunicja Wydane' }}
+              </q-tooltip>
+            </q-btn>
+          </div>
             <!-- name & club -->
-            <div class="col-5"
+            <div class="col-7"
                  @dblclick="memberExist=true;item.member!=null?
                  (memberUUID=item.member.uuid,otherID = 0,temp=item.member,memberLeg = item.member.legitimationNumber)
                  :
@@ -35,12 +34,13 @@
                 <q-tooltip v-if="item.member!=null &&!item.member.active" content-class="bg-red text-subtitle2"
                            anchor="top middle">UREGULUJ SKŁADKI
                 </q-tooltip>
-                <div class="q-pa-xs row full-width text-caption">
-                  <div class="col no-outline text-positive">
+                <div class="self-center row full-width text-caption">
+                  <div class="text-positive">{{ index + 1 }}.</div>
+                  <div class="col text-positive">
                     {{ item.member != null ? temp = item.member.secondName : temp = item.otherPersonEntity.secondName }}
                     {{ item.member != null ? temp = item.member.firstName : temp = item.otherPersonEntity.firstName }}
                   </div>
-                  <div class="col-5 no-outline text-positive"
+                  <div class="self-center col-5 no-outline text-positive"
                   >
                     {{ item.member != null ? temp = item.member.club.name : temp = item.otherPersonEntity.club.name }}
                   </div>
@@ -240,7 +240,7 @@
                 </div>
               </q-field>
             </div>
-            <div v-if="competition.countingMethod === 'NORMAL'" class="box col-2 ">
+            <div v-if="competition.countingMethod === 'NORMAL'" class="box col-1 ">
               <q-field dense standout="bg-accent" class="row" color="positive" label-color="positive"
                        label="10 zwykłe" stack-label>
                 <q-popup-edit v-model="outerTen" value="" content-class="bg-dark text-positive">
@@ -259,7 +259,7 @@
                 </div>
               </q-field>
             </div>
-            <div v-if="competition.countingMethod === 'NORMAL'" class="box col-2 ">
+            <div v-if="competition.countingMethod === 'NORMAL'" class="box col-1">
               <q-field dense standout="bg-accent" class="row" color="positive" label-color="positive"
                        label="10 wewnętrzne" stack-label>
                 <q-popup-edit value="" content-class="bg-dark">
@@ -419,13 +419,13 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model="metricsInfo">
-      <q-card class="bg-dark text-positive">
+      <q-card @hook:destroyed="infoScore = []; infoScore1 = []" class="bg-dark text-positive">
         <q-card-section class="col">
           <div class="q-ml-sm text-h6 text-center text-bold">POBIERZ METRYKI STARTOWE ZAWODNIKA</div>
           <div class="q-ml-sm text-h6 text-center text-bold">{{ name }}</div>
           <ol class="col">
-            <li class="row" v-for="info in infoScore" :key="info">
-              <q-checkbox color="secondary" class="col" v-model="compList" :val="info" :label="info"/>
+            <li class="row" v-for="(item,index) in infoScore" :key="index">
+              <q-checkbox color="secondary" class="col" v-model="compList" :val="infoScore1[index]" :label="item"/>
             </li>
           </ol>
           <div>
@@ -436,11 +436,11 @@
               wyświetl profil
             </q-btn>
             <q-item></q-item>
-            <q-btn dense @click="getMemberMetrics(compList);info=[];compList=[]" class="col q-pa-xs" color="secondary">
+            <q-btn dense @click="getMemberMetrics(compList);compList=[]" class="col q-pa-xs" color="secondary">
               wydrukuj wybrane metryki
             </q-btn>
             <q-item></q-item>
-            <q-btn dense @click="getMemberMetrics(infoScore);info=[];compList=[]" class="col q-pa-xs" color="primary">
+            <q-btn dense @click="getMemberMetrics(infoScore1);compList=[]" class="col q-pa-xs" color="primary">
               wydrukuj
               wszystkie metryki
             </q-btn>
@@ -448,7 +448,7 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn @click="compName='';compList=[]" label="zamknij" color="primary" v-close-popup/>
+          <q-btn @click="compName='';infoScore = []; infoScore1 = [];compList=[]" label="zamknij" color="primary" v-close-popup/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -523,6 +523,7 @@ export default {
       toggleDSQDNF: false,
       calibers: [],
       infoScore: [],
+      infoScore1: [],
       caliberUUID: null,
       scoreUUID: null,
       singleScore: null,
@@ -622,7 +623,10 @@ export default {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
-          this.infoScore = response
+          for (let i = 0; i < response.length; i++) {
+            this.infoScore.push(response[i].substring(0, response[i].indexOf(';')))
+            this.infoScore1.push(response[i].substring(response[i].indexOf(';') + 1, response[i].length))
+          }
         })
     },
     addMemberAndAmmoToCaliber () {
@@ -889,6 +893,12 @@ export default {
       })
     },
     getMemberMetrics (info) {
+      if (info.length < 1) {
+        this.message = 'lista jest pusta - dodaj coś'
+        this.failure = true
+        this.autoClose()
+        return
+      }
       axios({
         url: 'http://' + this.local + '/files/downloadMetric/' + this.competition.attachedToTournament + '?otherID=' + this.otherID + '&memberUUID=' + this.memberUUID + '&competitions=' + info + '&startNumber=' + this.startNumber + '&a5rotate=' + this.a5rotate,
         method: 'GET',

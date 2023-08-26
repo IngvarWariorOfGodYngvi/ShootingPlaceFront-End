@@ -11,6 +11,7 @@
         </div>
       </div>
       <q-scroll-area style="height: 50vh">
+        <div v-if="!visible">
           <div v-for="(item, index) in list" :key="index" class="row">
             <div class="self-center">{{ index + 1 }}.</div>
             <q-checkbox dense v-if="item.license.paid" v-model="licenseList" value="" :val="item.uuid" left-label>
@@ -58,6 +59,11 @@
             </q-btn>
             <q-btn dense color="primary" v-if="item.license.paid" disable class="col-2" label="opłacona"/>
           </div>
+          </div>
+          <q-inner-loading
+              :showing="visible"
+              label="Przetwarzanie..."
+              color="primary"/>
       </q-scroll-area>
     </q-card>
     <q-dialog v-model="memberDial" style="min-width: 80vw">
@@ -155,6 +161,7 @@ export default {
     return {
       mobile: !isWindows,
       main: App.main,
+      visible: true,
       list: [],
       licenseList: [],
       memberName: '',
@@ -185,6 +192,9 @@ export default {
       }).then(response => response.json())
         .then(response => {
           this.list = response
+          setTimeout(() => {
+            this.visible = false
+          }, 1500)
         })
     },
     convertDate (date) {

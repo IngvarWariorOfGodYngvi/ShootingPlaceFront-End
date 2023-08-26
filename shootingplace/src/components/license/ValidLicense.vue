@@ -11,6 +11,7 @@
         </div>
       </div>
       <q-scroll-area style="height: 50vh">
+        <div v-show="!visible">
           <div v-for="(item, index) in list" :key="index" class="row">
             <q-checkbox dense v-if="item.license.paid" v-model="licenseList" value="" :val="item.uuid" left-label>
               {{ index + 1 }}.
@@ -21,7 +22,7 @@
               </q-tooltip>
               <q-field dense class="col" label="Nazwisko i Imię" color="positive" label-color="positive" standout="bg-accent text-positive" stack-label>
                 <div @dblclick="legitimationNumber = item.legitimationNumber;memberDial=true">
-                  <div class="self-center col full-width no-outline row text-positive" tabindex="1">{{ item.secondName }}
+                  <div class="self-center col full-width no-outline row text-positive" >{{ item.secondName }}
                     {{ item.firstName }}
                   </div>
                 </div>
@@ -30,21 +31,21 @@
             <q-field dense :class="item.active?'col-1':'col-1 bg-red-4'" label="Status" color="positive" :label-color="item.active?'positive':'black'" standout="bg-accent text-positive"
                      stack-label>
               <div>
-                <div :class="item.active?'row text-positive':'row text-black'" tabindex="1">{{item.active?'Aktywny':'Nieaktywny'}}</div>
+                <div :class="item.active?'row text-positive':'row text-black'" >{{item.active?'Aktywny':'Nieaktywny'}}</div>
               </div>
             </q-field>
             <q-field dense class="col-1" label="Numer Licencji" color="positive" label-color="positive" standout="bg-accent text-positive" stack-label>
-              <div class="self-center col full-width no-outline row text-positive" tabindex="1">
+              <div class="self-center col full-width no-outline row text-positive" >
                 {{ item.license.number }}
               </div>
             </q-field>
             <q-field dense class="col-2" label="Grupa" color="positive" label-color="positive" standout="bg-accent text-positive" stack-label>
-              <div class="self-center col full-width no-outline row text-positive" tabindex="1">{{item.adult?'Grupa Ogólna':'Grupa Młodzieżowa'}}
+              <div class="self-center col full-width no-outline row text-positive" >{{item.adult?'Grupa Ogólna':'Grupa Młodzieżowa'}}
               </div>
             </q-field>
             <q-field dense class="col-2" label="Ważność licencji" color="positive" label-color="positive" standout="bg-accent text-positive" stack-label>
               <div>
-                <div class="self-center col full-width no-outline row text-positive" tabindex="1">
+                <div class="self-center col full-width no-outline row text-positive" >
                   {{ convertDate(item.license.validThru) }}
                 </div>
               </div>
@@ -62,6 +63,11 @@
             <q-btn dense color="primary" v-if="item.license.paid" disable label="opłacona" class="fit"/>
             </div>
           </div>
+        </div>
+            <q-inner-loading
+              :showing="visible"
+              label="Przetwarzanie..."
+              color="primary"/>
       </q-scroll-area>
     </q-card>
     <q-dialog v-model="memberDial" style="min-width: 80vw">
@@ -165,13 +171,16 @@
 import App from 'src/App.vue'
 import Member from 'components/member/Member.vue'
 import { isWindows } from 'mobile-device-detect'
-
+import Vue from 'vue'
+import SmoothScrollbar from 'vue-smooth-scrollbar'
+Vue.use(SmoothScrollbar)
 export default {
   name: 'ValidLicense',
   data () {
     return {
       mobile: !isWindows,
       main: App.main,
+      visible: true,
       list: [],
       licenseList: [],
       memberName: '',
@@ -209,6 +218,9 @@ export default {
       }).then(response => response.json())
         .then(response => {
           this.list = response
+          setTimeout(() => {
+            this.visible = false
+          }, 2000)
         })
     },
     convertDate (date) {

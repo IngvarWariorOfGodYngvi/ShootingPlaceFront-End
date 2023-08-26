@@ -132,17 +132,17 @@
               <div class="col text-center"></div>
             </q-item>
           </div>
-          <div class="row" v-for="(      caliber, id      ) in       calibers      " :key="id">
+          <div class="row" v-for="(      item, id      ) in       calibers      " :key="id">
             <q-field dense color="positive" class="col-6 text-bold" standout="bg-accent text-black" stack-label>
-              <div @dblclick=" caliberUUID = caliber.uuid; caliberInfo = true" class="row col">
-                <div class="self-center col-6">{{ caliber.name }}</div>
-                <div class="self-center col-6">{{ caliber.quantity }}</div>
+              <div @dblclick=" caliberUUID = item.uuid;temp=item; caliberInfo = true" class="row col">
+                <div class="self-center col-6">{{ item.name }}</div>
+                <div class="self-center col-6">{{ item.quantity }}</div>
               </div>
             </q-field>
             <q-btn color="primary" dense @click=" caliberUUID = caliber.uuid; addCaliberDialog = true"
-              class="col">aktualizuj stan {{ caliber.name }}</q-btn>
+              class="col">aktualizuj stan {{ item.name }}</q-btn>
             <q-btn color="secondary" dense
-              @click=" caliberUUID = caliber.uuid; caliberHistory = true; getCaliberHistory()" class="col">historia
+              @click=" caliberUUID = item.uuid; caliberHistory = true; getCaliberHistory()" class="col">historia
               dodawania</q-btn>
           </div>
         </q-card-section>
@@ -431,16 +431,56 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <q-dialog v-model="acceptCodePrice" persistent
+      @keypress.enter=" changeCaliberUnitPrice(caliberUUID, unitPrice, code); acceptCodePrice = false, code = null">
+      <q-card class="bg-red-5 text-center">
+        <q-card-section class="flex-center">
+          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
+          <div><q-input autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold"
+              mask="####"></q-input></div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn label="anuluj" color="black" v-close-popup @click=" code = null" />
+          <q-btn label="usuń" color="black" v-close-popup
+            @click=" changeCaliberUnitPrice(caliberUUID, unitPrice, code); code = null" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="acceptCodePriceForNotMember" persistent
+      @keypress.enter=" changeCaliberUnitPriceForNotMember(caliberUUID, unitPriceForNotMember, code); acceptCodePriceForNotMember = false, code = null">
+      <q-card class="bg-red-5 text-center">
+        <q-card-section class="flex-center">
+          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
+          <div><q-input autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold"
+              mask="####"></q-input></div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn label="anuluj" color="black" v-close-popup @click=" code = null" />
+          <q-btn label="usuń" color="black" v-close-popup
+            @click=" changeCaliberUnitPriceForNotMember(caliberUUID, unitPriceForNotMember, code); code = null" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
     <q-dialog v-model="caliberInfo" @keypress.enter=" caliberInfo = false">
       <q-card class="bg-dark text-positive">
         <q-card-section>
           <div class="text-h6">Caliber ID <q-btn @click=" copyClipboard()" borderless icon-right="content_copy">
               <div itemtype="text" id="copybtn">{{ caliberUUID }}</div>
             </q-btn></div>
-          <div class="text-h6 full-width row">Popraw ilość na stanie<q-input v-model="quantity" dense
+          <div class="text-h6 full-width row">Popraw ilość na stanie</div> <q-input v-model="quantity" dense
               input-class="text-positive" label="wprowadź ilość" label-color="positive"
               mask="###########"></q-input><q-btn color="primary" dense label="zapisz"
-              @click="acceptCodeCaliber = true"></q-btn></div>
+              @click="acceptCodeCaliber = true"></q-btn>
+          <div class="text-h6 full-width row">Wprowadź cenę dla klubowicza (aktualnie: {{ viewCurrency(temp.unitPrice) }}) </div><q-input v-model="unitPrice" dense
+              input-class="text-positive" label="tylko cyfry" label-color="positive"
+              onkeypress="return (event.charCode > 44 && event.charCode < 58)"></q-input><q-btn color="primary" dense label="zapisz"
+              @click="acceptCodePrice = true"></q-btn>
+          <div class="text-h6 full-width row">Wprowadź cenę dla pozostałych (aktualnie: {{ viewCurrency(temp.unitPriceForNotMember) }})</div><q-input v-model="unitPriceForNotMember" dense
+              input-class="text-positive" label="tylko cyfry" label-color="positive"
+              onkeypress="return (event.charCode > 44 && event.charCode < 58)"></q-input><q-btn color="primary" dense label="zapisz"
+              @click="acceptCodePriceForNotMember = true"></q-btn>
         </q-card-section>
 
       </q-card>
@@ -468,6 +508,7 @@ export default {
   data () {
     return {
       caliberInfo: false,
+      temp: {},
       mobile: !isWindows,
       gunImage: false,
       backgroundDark: JSON.parse(window.localStorage.getItem('BackgroundDark')),
@@ -481,6 +522,8 @@ export default {
       quantity: null,
       // acceptCode: false,
       acceptCodeCaliber: false,
+      acceptCodePrice: false,
+      acceptCodePriceForNotMember: false,
       gunUUID: null,
       code: null,
       message: null,
@@ -497,6 +540,8 @@ export default {
       firstDateHistory: null,
       secondDateHistory: this.createTodayDate(),
       caliberName: null,
+      unitPrice: null,
+      unitPriceForNotMember: null,
       ammoQuantity: null,
       ammoDate: null,
       ammoDescription: null,
@@ -551,6 +596,12 @@ export default {
         this.timer = 0
       }, 1000)
     },
+    viewCurrency (money) {
+      if (money === undefined) { money = '0' }
+      const formatterPL = new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' })
+      const cash = formatterPL.format(money)
+      return cash
+    },
     onRejected () {
       this.failure = true
       this.message = 'Nie można dodać, sprawdź rozmiar pliku i jego typ'
@@ -583,6 +634,52 @@ export default {
         response.json().then(response => {
           this.quantitySum = response
         })
+      })
+    },
+    changeCaliberUnitPrice (caliberUUID, price, pinCode) {
+      fetch(`http://${this.local}/armory/changeCaliberUnitPrice?caliberUUID=${caliberUUID}&price=${price}&pinCode=${pinCode}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          response.text().then(response => {
+            this.getListCalibers()
+            this.message = response
+            this.success = true
+            this.autoClose()
+          })
+        } else {
+          response.text().then(response => {
+            this.message = response
+            this.failure = true
+            this.autoClose()
+          })
+        }
+      })
+    },
+    changeCaliberUnitPriceForNotMember (caliberUUID, price, pinCode) {
+      fetch(`http://${this.local}/armory/changeCaliberUnitPriceForNotMember?caliberUUID=${caliberUUID}&price=${price}&pinCode=${pinCode}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          response.text().then(response => {
+            this.getListCalibers()
+            this.message = response
+            this.success = true
+            this.autoClose()
+          })
+        } else {
+          response.text().then(response => {
+            this.message = response
+            this.failure = true
+            this.autoClose()
+          })
+        }
       })
     },
     changeCaliberQuantity (caliberUUID, quantity, pinCode) {
@@ -991,6 +1088,7 @@ export default {
         this.addCaliber = false
         this.message = null
         this.barcode = null
+        this.code = null
       }, 2000)
     }
   },

@@ -327,14 +327,14 @@
         </template>
       </q-stepper>
     </div>
-    <q-dialog :position=" 'top' " v-model=" success ">
+    <q-dialog position="top" v-model=" success ">
       <q-card>
         <q-card-section>
           <div class="text-h6 text-center">{{message}}</div>
         </q-card-section>
       </q-card>
     </q-dialog>
-    <q-dialog :position=" 'top' " v-model=" failure ">
+    <q-dialog position="top" v-model=" failure ">
       <q-card>
         <q-card-section>
           <div class="text-h6 text-center">{{message}}</div>
@@ -343,32 +343,17 @@
     </q-dialog>
     <q-dialog v-model=" pzssPortal " persistent @keypress.enter=" changePzss(uuid); pzssPortal = false ">
       <q-card class="bg-dark text-positive">
-        <q-card-section class="row items-center">
+        <q-card-section class="row text-center text-h6">
           <span class="q-ml-sm">Czy Klubowicz został dodany do portalu?</span>
         </q-card-section>
 
-        <q-card-actions align="right">
+        <q-card-actions align="center">
           <q-btn text-color="white" label="nie" color="primary" v-close-popup />
           <q-btn text-color="white" label="tak" color="primary" v-close-popup @click=" changePzss(uuid) " />
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model=" acceptCode " persistent @keypress.enter="
-      addMember(memberLegitimation, memberFirstName,
-        memberSecondName,
-        memberIDCard,
-        memberPesel,
-        memberPhone,
-        memberEmail,
-        memberAdult,
-        memberPostOfficeCity,
-        memberZipCode,
-        memberStreet,
-        memberStreetNumber,
-        memberFlatNumber,
-        returningToClub);
-      acceptCode = false
-    ">
+    <q-dialog v-model=" acceptCode " persistent @keypress.enter="simulateProgress(0);acceptCode = false">
       <q-card class="bg-red-5 text-center">
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
@@ -378,22 +363,7 @@
 
         <q-card-actions align="right">
           <q-btn label="anuluj" color="black" v-close-popup @click=" code = null " />
-          <q-btn id="3" label="Dodaj" color="black" v-close-popup @click="
-            addMember(memberLegitimation,
-              memberFirstName,
-              memberSecondName,
-              memberIDCard,
-              memberPesel,
-              memberPhone,
-              memberEmail,
-              memberAdult,
-              memberPostOfficeCity,
-              memberZipCode,
-              memberStreet,
-              memberStreetNumber,
-              memberFlatNumber,
-              returningToClub)
-          " />
+          <q-btn id="3" label="Dodaj" color="black" v-close-popup @click="simulateProgress(0)" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -436,10 +406,23 @@ export default {
 
     function simulateProgress (number) {
       loading.value[number] = true
-      this.addMemberAndAmmoToCaliber()
+      this.addMember(this.memberLegitimation,
+        this.memberFirstName,
+        this.memberSecondName,
+        this.memberIDCard,
+        this.memberPesel,
+        this.memberPhone,
+        this.memberEmail,
+        this.memberAdult,
+        this.memberPostOfficeCity,
+        this.memberZipCode,
+        this.memberStreet,
+        this.memberStreetNumber,
+        this.memberFlatNumber,
+        this.returningToClub)
       setTimeout(() => {
         loading.value[number] = false
-      }, 0)
+      }, 1500)
     }
 
     return {

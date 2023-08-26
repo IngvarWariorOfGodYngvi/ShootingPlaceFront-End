@@ -25,6 +25,7 @@
     "signature_pad": "^3.0.0-beta.4",
     "vue-mobile-detection": "^2.0.1",
     "vue-signature-pad": "^3.0.2",
+    "vue-smooth-scrollbar": "^1.0.3",
     "vue2-touch-events": "^3.2.2",
     "vuejs-logger": "^1.5.5",
     "vuex": "^3.6.2"

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-card class="text-body2 bg-dark">
+    <q-card class="text-body2 bg-dark" >
       <div class="row">
         <div class="q-pa-md text-left col full-width no-outline text-h5 text-bold">Ilość osób
           {{ list.length }}
@@ -12,6 +12,7 @@
         </div>
       </div>
       <q-scroll-area style="height: 50vh;">
+        <div v-if="!visible">
           <div v-for="(item,index) in list" :key="index" class="row">
             <q-checkbox dense v-model="payPZSSList" :val="item.paymentUuid" left-label>{{ index + 1 }}.</q-checkbox>
             <div class="col" @dblclick="legitimationNumber = item.legitimationNumber;memberDial=true">
@@ -47,6 +48,11 @@
               <div class="row text-positive" tabindex="1">{{item.new?'Nowa':'Przedłużenie'}}</div>
             </q-field>
           </div>
+        </div>
+        <q-inner-loading
+              :showing="visible"
+              label="Przetwarzanie..."
+              color="primary"/>
       </q-scroll-area>
     </q-card>
     <q-dialog v-model="memberDial" style="min-width: 80vw">
@@ -118,6 +124,7 @@ export default {
     return {
       mobile: !isWindows,
       main: App.main,
+      visible: true,
       list: [],
       payPZSSList: [],
       memberName: '',
@@ -147,7 +154,10 @@ export default {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
-          this.list = response
+          setTimeout(() => {
+            this.list = response
+            this.visible = false
+          }, 1500)
         })
     },
     convertDate (date) {

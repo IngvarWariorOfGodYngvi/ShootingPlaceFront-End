@@ -196,6 +196,12 @@ item.club.name
             </td>
             <td style="width:5%;"
               :class="item.image != null ? 'bg-green-3 text-center text-black' : 'text-center text-black'">
+              <q-tooltip v-if="item.image != null" :delay="750" @hide="url = ''"
+                         @before-show="getUrl (item.image)" anchor="top middle" self="center middle"
+                         transition-show="scale"
+                         transition-hide="scale" content-style="width: auto; height: auto">
+                <img v-if="item.image != null" :src="url" spinner-color="white" style="height: 100%; width: 100%"/>
+              </q-tooltip>
               <q-icon :name="item.image != null ? 'done' : 'cancel'" :color="item.image != null ? '' : 'primary'"
                 size="1rem" />
             </td>
@@ -289,12 +295,13 @@ item.club.name
 import App from 'src/App.vue'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox.vue'
+import axios from 'axios'
 import { isWindows } from 'mobile-device-detect'
-
 export default {
   data () {
     return {
       mailing: true,
+      url: '',
       mailingList: JSON.parse(window.localStorage.getItem('mailingList')),
       mobile: !isWindows,
       temp: null,
@@ -333,6 +340,16 @@ export default {
   methods: {
     log (item) {
       console.log(item)
+    },
+    getUrl (uuid) {
+      axios({
+        url: 'http://' + this.local + '/files/getFile?uuid=' + uuid,
+        method: 'GET',
+        responseType: 'blob'
+      }).then(response => {
+        this.url = window.URL.createObjectURL(new Blob([response.data]))
+        return window.URL.createObjectURL(new Blob([response.data]))
+      })
     },
     showloading () {
       this.$q.loading.show({ message: 'Dzieje się coś ważnego... Poczekaj' })

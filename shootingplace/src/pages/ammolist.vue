@@ -1,22 +1,24 @@
-<!-- eslint-disable quotes -->
 <template>
   <q-page padding>
     <div :class="!mobile ? 'row' : 'col'">
       <q-card class="col bg-dark text-positive">
         <div class="row">
           <div class="col row">
-            <q-btn :class="mobile ? 'col-6' : 'col-4'" label="Dodaj osobę do listy" color="primary"
+            <q-btn v-if="AddGroupAmmoExp" :class="mobile ? 'col-6' : 'col-4'" label="Dodaj Amunicję" color="primary" @click="open=!open"></q-btn>
+            <q-btn v-if="AddSingleAmmoExp" :class="mobile ? 'col-6' : 'col-4'" label="Dodaj osobę do listy" color="primary"
               @click="getOther(); addAmmo = true">
-              <q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">Dodaj osobę do
-                listy
-              </q-tooltip>
             </q-btn>
-            <q-btn :class="mobile ? 'col-6' : 'col-4'" label="Dodaj broń do listy" color="primary"
+            <q-btn v-if="GunListExp" :class="mobile ? 'col-6' : 'col-4'" label="Dodaj broń do listy" color="primary"
               @click="getOther(); addGun = true">
-              <q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">Dodaj broń do
-                listy
-              </q-tooltip>
             </q-btn>
+            <q-btn-dropdown v-if="AddShootingPacketExp" :class="mobile ? 'col-6' : 'col-4'" label="pakiety" color="primary" content-class="bg-dark">
+              <div>
+                <q-item>
+                  <q-btn label="wydaj pakiet" @click="packet=true" color="primary" class="full-width"></q-btn>
+                </q-item>
+                <q-item v-if="main"><q-btn @click="createNewPacket=true" label="konfiguruj nowy pakiet"  color="primary" class="full-width"></q-btn></q-item>
+              </div>
+            </q-btn-dropdown>
           </div>
           <div v-if="ammoList != null && ammoList.forceOpen" class="col-9">
             <div class=" q-pa-md bg-red-3 text-center text-black text-bold">UWAGA! LISTA OTWARTA PONOWNIE. NA KONIEC
@@ -98,7 +100,7 @@
           </div>
         </div>
       </q-card>
-      <q-card class="col-4 bg-dark">
+      <q-card v-if="GunListExp" class="col-4 bg-dark">
         <div>
           <q-item>
             <q-item-label class="text-h5 text-bold text-positive">
@@ -270,6 +272,9 @@
         </div>
       </div>
     </q-dialog>
+    <q-dialog v-model="packet">
+      <AddShootingPacket @hook:destroyed="getAmmoData()"></AddShootingPacket>
+    </q-dialog>
     <q-dialog v-model="addGun">
       <div class="bg-dark text-positive">
         <div class="row">
@@ -364,13 +369,6 @@
         </q-card-section>
       </q-card>
     </q-dialog>
-    <q-dialog position="top" v-model="failure">
-      <q-card class="bg-warning">
-        <q-card-section>
-          <div class="text-h6">{{ message }}</div>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
     <q-dialog v-model="confirmation"
       @keypress.enter="showloading(); closeEvidence(); getAmmoData(); getClosedEvidence(pageNumber); confirmation = false">
       <q-card class="bg-dark text-positive">
@@ -426,6 +424,13 @@
         </q-card-section>
       </q-card>
     </q-dialog>
+    <q-dialog position="top" v-model="failure">
+      <q-card class="bg-warning">
+        <q-card-section>
+          <div class="text-h6">{{ message }}</div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
     <q-dialog v-model="memberDial" style="min-width: 80vw">
       <q-card style="min-width: 80vw" class="bg-dark">
         <q-card-section class="flex-center">
@@ -436,6 +441,12 @@
           <q-btn text-color="white" label="zamknij" color="primary" v-close-popup @click="code = null" />
         </q-card-actions>
       </q-card>
+    </q-dialog>
+    <q-dialog v-model="createNewPacket" style="min-width: 80vw">
+      <AddNewShootingPacket></AddNewShootingPacket>
+    </q-dialog>
+    <q-dialog v-model="open" id="1">
+      <AddAmmunition :open="open" @hook:destroyed="getAmmoData()"></AddAmmunition>
     </q-dialog>
   </q-page>
 </template>
@@ -494,13 +505,32 @@ export default {
     Gun: lazyLoadComponent({
       componentFactory: () => import('components/Gun.vue'),
       loading: SkeletonBox
+    }),
+    AddAmmunition: lazyLoadComponent({
+      componentFactory: () => import('components/ammoList/AddAmmunition.vue'),
+      loading: SkeletonBox
+    }),
+    AddNewShootingPacket: lazyLoadComponent({
+      componentFactory: () => import('components/ammoList/AddNewShootingPacket.vue'),
+      loading: SkeletonBox
+    }),
+    AddShootingPacket: lazyLoadComponent({
+      componentFactory: () => import('components/ammoList/AddShootingPacket.vue'),
+      loading: SkeletonBox
     })
   },
   data () {
     return {
       pageNumber: 0,
       mobile: !isWindows,
+      open: false,
+      packet: false,
+      AddShootingPacketExp: JSON.parse(window.localStorage.getItem('AddShootingPacket')),
+      AddGroupAmmoExp: JSON.parse(window.localStorage.getItem('AddGroupAmmo')),
+      AddSingleAmmoExp: JSON.parse(window.localStorage.getItem('AddSingleAmmo')),
+      GunListExp: JSON.parse(window.localStorage.getItem('GunList')),
       memberDial: false,
+      createNewPacket: false,
       legitimationNumber: null,
       uuid: '',
       gunsInUsed: [],
@@ -517,8 +547,8 @@ export default {
       },
       ammoListClose: [],
       date: '',
-      message: null,
       gunImage: false,
+      message: null,
       success: false,
       failure: false,
       openList: false,
@@ -532,6 +562,7 @@ export default {
       filters: [],
       filtersOther: [],
       calibers: [],
+      packets: [],
       caliberUUID: null,
       memberName: '',
       addNewOtherPerson: false,
@@ -548,6 +579,7 @@ export default {
     this.getClosedEvidence(0)
     this.getListCalibers()
     this.getMembersNames()
+    this.getOther()
   },
   methods: {
     showloading () {
@@ -590,12 +622,14 @@ export default {
         })
     },
     getGunInAmmoEvidenceList () {
-      fetch('http://' + this.local + '/armory/getGunInAmmoEvidenceList', {
-        method: 'GET'
-      }).then(response => response.json())
-        .then(response => {
-          this.gunsInUsed = response
-        })
+      if (this.GunListExp) {
+        fetch('http://' + this.local + '/armory/getGunInAmmoEvidenceList', {
+          method: 'GET'
+        }).then(response => response.json())
+          .then(response => {
+            this.gunsInUsed = response
+          })
+      }
     },
     getClosedEvidence (pageNumber) {
       fetch('http://' + this.local + '/ammoEvidence/closedEvidences?page=' + pageNumber + '&size=50', {

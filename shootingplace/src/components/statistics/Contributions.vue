@@ -61,20 +61,19 @@
             <tr class="bg-primary text-white">
               <th class="text-left">{{quantitySumRearrangeTable.length}} Nazwisko i Imię</th>
               <th class="text-left" style="width: 20%">Numer<br/>Legitymacji</th>
-              <th class="text-left" style="width: 20%">Numer<br/>Licencji</th>
+              <th class="text-left" style="width: 20%">Data</th>
               <th class="text-center" style="width: 20%">Status</th>
             </tr>
             </thead>
           </template>
           <template v-slot="{ item, index }">
-            <tr :key="index" class="rounded text-positive" style="cursor:pointer" @dblclick="legitimationNumber = item.legitimationNumber; memberDial=true">
+            <tr :key="index" class="rounded text-positive" style="cursor:pointer" @dblclick="legitimationNumber = item.member.legitimation_number; memberDial=true">
               <q-tooltip content-class="text-subtitle2" anchor="top middle">kliknij dwa razy aby wyświetlić podgląd
               </q-tooltip>
-              <td class="xyz"><b>{{index+1}}</b> {{item.secondName}} {{item.firstName}}</td>
-              <td>nr. leg {{item.legitimationNumber}}</td>
-              <td v-if="item.license.number != null" class="text-left">{{item.license.number}}</td>
-              <td v-if="item.license.number == null" class="text-left text-grey-8">Brak Licencji</td>
-              <td class="text-center text-black" :class="item.active?'bg-green-3':'bg-red'">{{item.active?'Aktywny':'Nieaktywny'}}</td>
+              <td class="xyz"><b>{{index+1}}</b> {{item.member.second_name}} {{item.member.first_name}}</td>
+              <td>nr. leg {{item.member.legitimation_number}}</td>
+              <td class="text-left">{{item.contribution.paymentDay}}</td>
+              <td class="text-center text-black" :class="item.member.active?'bg-green-3':'bg-red'">{{item.member.active?'Aktywny':'Nieaktywny'}}</td>
             </tr>
           </template>
         </q-virtual-scroll>

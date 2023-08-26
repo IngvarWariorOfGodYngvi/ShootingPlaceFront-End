@@ -56,12 +56,12 @@
             </thead>
           </template>
           <template v-slot="{ item, index }">
-            <tr :key="index" class="rounded text-positive" style="cursor:pointer" @dblclick="legitimationNumber = item.legitimationNumber; memberDial=true">
+            <tr :key="index" class="rounded text-positive" style="cursor:pointer" @dblclick="legitimationNumber = item.legitimation_number; memberDial=true">
               <q-tooltip content-class="text-subtitle2" anchor="top middle">kliknij dwa razy aby wyświetlić podgląd
               </q-tooltip>
-              <td class="text-left xyz"><b>{{index+1}}</b> {{item.secondName}} {{item.firstName}}</td>
-              <td class="text-left">nr leg. {{item.legitimationNumber}}</td>
-              <td class="text-left">{{item.joinDate}}</td>
+              <td class="text-left xyz"><b>{{index+1}}</b> {{item.second_name}} {{item.first_name}}</td>
+              <td class="text-left">nr leg. {{item.legitimation_number}}</td>
+              <td class="text-left">{{convertDate(item.join_date)}}</td>
               <td class="text-left"><div>{{item.adult? 'Ogólna' : 'Młodzieżowa'}}</div></td>
               <td class="text-center text-black" :class="item.active?'bg-green-3':'bg-red'">{{item.active?'Aktywny':'Nieaktywny'}}</td>
             </tr>
@@ -153,6 +153,18 @@ export default {
         this.listDownload = true
         this.autoClose()
       })
+    },
+    convertDate (date) {
+      const current = new Date(date)
+      let month = current.getMonth() + 1
+      let day = current.getDate()
+      if (day < 10) {
+        day = '0' + day
+      }
+      if (month < 10) {
+        month = '0' + (month)
+      }
+      return day + '-' + (month) + '-' + current.getFullYear()
     }
   }
 }

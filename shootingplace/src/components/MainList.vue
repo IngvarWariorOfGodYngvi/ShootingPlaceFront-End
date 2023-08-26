@@ -32,7 +32,7 @@
             </div>
         </q-item>
       </div>
-      <div v-if="(main||!main)&&main!=null" @click="showloading();changeTitle ('Lista Amunicyjna')" class="q-pa-xs fun">
+      <div v-if="main!=null && (main||!main)" @click="showloading();changeTitle ('Lista Amunicyjna')" class="q-pa-xs fun">
         <q-item v-if="color!=='primary'" class="q-pa-none xyz2 bg-secondary" clickable tag="a" target="_self" :href="app + 'ammolist'" width="max">
           <div class="row text-white full-width">
               <q-icon class="q-pa-md text-h5" name="list_alt" />

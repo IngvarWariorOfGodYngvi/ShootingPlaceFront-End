@@ -1,5 +1,5 @@
 <template>
-  <div class="full-width">
+  <div class="full-width rounded">
     <q-btn class="full-width" @click="dialog=true" color="secondary">Pobierz Plik .csv
     </q-btn>
     <q-dialog v-model="dialog" @keypress.enter="dialog=false;getCSVFile()">

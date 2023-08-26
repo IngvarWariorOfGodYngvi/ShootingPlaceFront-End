@@ -12,12 +12,24 @@
                     label="Dodaj plik" accept=".jpg, image/*" @rejected="onRejected" field-name="file"
                     @added="file_selected"/>
       </div>
+      <div class="row reverse"><q-btn dense style="size: 2em;" @click="showloading();pageNumber=selectedPage-1;getAllFiles(pageNumber)" label="wybierz"/><q-input v-model="selectedPage" type="number" min="1" :max="pagesMaxNumber"  dense label="idź do:" stack-label/></div>
+      <div class="self-center text-bold text-center bg-grey-5 text-h6">STRONA {{ pageNumber + 1 }} z {{ pagesMaxNumber }}</div>
       <div class="row full-width bg-grey-5">
         <div class="self-center text-center col-1">
           <q-btn icon="arrow_left" :disable="pageNumber===0" @click="showloading();pageNumber=pageNumber-1;getAllFiles(pageNumber)"
                  class="full-width text-black" color="white"></q-btn>
         </div>
-        <div class="self-center text-bold text-center col-10">STRONA {{ pageNumber + 1 }}</div>
+        <div class="self-center text-bold text-center row col-3">
+          <q-btn class="text-black col" color="white" @click="pageNumber=0,showloading(),getAllFiles(0)" label="1"/>
+          <q-btn class="text-black col" color="white" @click="pageNumber=4,showloading(),getAllFiles(4)" label="5"/>
+          <q-btn class="text-black col" color="white" @click="pageNumber=14,showloading(),getAllFiles(14)" label="15"/>
+        </div>
+        <div class="self-center text-bold text-center col"><q-btn class="text-black full-width" color="white" @click="pageNumber=Math.ceil(pagesMaxNumber/2)-1,showloading(),getAllFiles(Math.ceil(pagesMaxNumber/2))" :label="Math.ceil(pagesMaxNumber/2)"/></div>
+        <div class="self-center text-bold text-center row col-3">
+          <q-btn class="text-black col" color="white" @click="pageNumber=pagesMaxNumber-16,showloading(),getAllFiles(pagesMaxNumber-16)" :label="pagesMaxNumber-15"/>
+          <q-btn class="text-black col" color="white" @click="pageNumber=pagesMaxNumber-6,showloading(),getAllFiles(pagesMaxNumber-6)" :label="pagesMaxNumber-5"/>
+          <q-btn class="text-black col" color="white" @click="pageNumber=pagesMaxNumber-1,showloading(),getAllFiles(pagesMaxNumber-1)" :label="pagesMaxNumber"/>
+        </div>
         <div class="self-center text-center col-1">
           <q-btn icon="arrow_right"
                  @click="showloading();pageNumber=files.length===50?pageNumber+1:pageNumber;getAllFiles(pageNumber)"
@@ -86,16 +98,21 @@ import App from 'src/App'
 
 export default {
   name: 'Files.vue',
+  created () {
+    this.countPages()
+  },
   data () {
     return {
       access: false,
       accessCode: '',
       files: [],
       pageNumber: 0,
+      selectedPage: 1,
       url: '',
       fileName: '',
       accessMessage: '',
       selected_file: '',
+      pagesMaxNumber: 0,
       message: null,
       failure: false,
       success: false,
@@ -109,6 +126,14 @@ export default {
         this.$q.loading.hide()
         this.timer = 0
       }, 1000)
+    },
+    countPages () {
+      fetch('http://' + this.local + '/files/countPages', {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.pagesMaxNumber = response
+        })
     },
     getAccess (accessCode) {
       fetch('http://' + this.local + '/users/getAccess?pinCode=' + accessCode, {

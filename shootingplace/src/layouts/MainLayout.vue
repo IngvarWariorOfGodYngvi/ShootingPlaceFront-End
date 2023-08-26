@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="lHh Lpr lFf" :class="[funRotate?'fun2':'', this.funRotateCLicks > 8 ? 'fun': '']" >
     <q-header elevated>
       <q-page-sticky v-if="mobile" position="top-right" :offset="[5, -50]" style="z-index: 100">
            <q-icon class="fun" name="wifi" :color="networkStatusvar?'green':'red'"></q-icon>
@@ -19,37 +19,12 @@
         <q-toggle v-model="backgroundDark" :val="true" :value="true" color="dark" keep-color
                   @input="changeColor()" class="fun"></q-toggle>
                   <div class="text-center text-h5 text-bold">{{siteNameChange()}}</div>
-<!--        <q-item>{{arbiter}}</q-item>-->
-<!--        <q-btn @click="reset()" label="reset" color="secondary"></q-btn>-->
-        <!-- <q-toolbar-title>
-           <div class="row">
-             <div class="col" id="title">{{$keycloak.keycloak.clientId}} </div>
-             <div class="row reverse text-caption full-width">
-               <a v-if="distance<1200000" class="text-caption text-red text-bold" style="padding-left: 10px; margin: 0px;cursor: pointer;" color="red" @click="clear()"> Odśwież sesję</a>
-               <div id="timer"></div>
-             </div>
-           </div>
-         </q-toolbar-title> -->
-
-        <!-- <div><q-avatar v-ripple color="secondary" text-color="white" icon="perm_identity" />
-         <q-menu>
-         <div class="col q-pa-md">
-             <q-btn
-               color="primary"
-               label="Wyloguj"
-               push
-               size="s"
-               v-close-popup
-               @click="logout()"
-             />
-         </div>
-       </q-menu>
-         </div> -->
          <div v-if="main" class="row reverse col">
-          <q-icon class="fun" name="wifi" :color="networkStatusvar?'green':'red'"></q-icon>
-          <q-btn-dropdown icon="calendar_month" rounded color="secondary" style="border: 1px solid white">
+          <q-icon class="fun" name="wifi" :color="networkStatusvar?'green':'red'" @click="funRotateCLicksIncrease()"></q-icon>
+          <q-btn-dropdown v-if="shootingPlace === 'prod'" icon="calendar_month" rounded color="secondary" style="border: 1px solid white">
             <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&bgcolor=%23374550&ctz=Europe%2FBrussels&showTitle=0&showNav=1&showDate=1&src=OTcwNXUwMTRuZXNicW05NGdiMWdkc3JvOGdAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ&src=MDRnOXVrazAwcjQzaHEwNHQ1cTcyaHRhaDRAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ&src=YzNqMG50a2kzN2dsZGpzMjlsOGYzYzN0NDBAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ&color=%234285F4&color=%23AD1457&color=%23A79B8E" style="width:40vw;height:50vh;" class="bg-secondary text-positive" frameborder="2" scrolling="no"/>
           </q-btn-dropdown>
+          <div v-if="topTenTabExp">
           <q-avatar text-color="white" color="secondary" size="3.5em" rounded
                     style="border: solid 1px white; border-radius: 50%" class="reverse"
                     icon="scoreboard">
@@ -112,6 +87,7 @@
             </q-tooltip>
           </q-avatar>
         </div>
+      </div>
       </q-toolbar>
     </q-header>
     <q-drawer
@@ -188,6 +164,9 @@ export default {
     membersQuantities,
     WorkTimeList
   },
+  beforeMount () {
+    this.getEnv()
+  },
   created () {
     if (window.localStorage.getItem('BackgroundDark') == null) {
       window.localStorage.setItem('BackgroundDark', 'false')
@@ -197,10 +176,8 @@ export default {
     if (window.localStorage.getItem('SiteName') == null) {
       window.localStorage.setItem('SiteName', 'Strona Główna')
     }
-    this.getActualYearMemberCounts()
     this.networkStatus()
     this.stata()
-    this.getEnv()
   },
   data () {
     return {
@@ -211,14 +188,16 @@ export default {
       mobile: !isWindows,
       main: App.main,
       backgroundDark: JSON.parse(window.localStorage.getItem('BackgroundDark')),
+      topTenTabExp: JSON.parse(window.localStorage.getItem('TopTenTab')),
       icon: 'menu',
       leftDrawerOpen: JSON.parse(window.localStorage.getItem('drawer')),
       distance: 1200000,
       number: null,
-      members: null,
       barcode: null,
       color: 'primary',
       tournamentCheck: false,
+      funRotateCLicks: 0,
+      funRotate: false,
       starts: [],
       competitors: [],
       contributors: [],
@@ -292,7 +271,7 @@ export default {
           title: 'Ustawienia',
           icon: 'settings',
           link: 'http://' + App.prod + 'settings',
-          visible: App.main
+          visible: true
         },
         {
           title: 'Pliki',
@@ -319,21 +298,30 @@ export default {
         this.timer = 0
       }, 500)
     },
+    getEnv () {
+      import('src/App.vue').then(App => {
+        fetch(`http://${App.default.host}/conf/env`, {
+          method: 'GET'
+        }).then(response => {
+          if (response.status === 200) {
+            response.text().then(response => {
+              window.localStorage.setItem('shootingPlace', response)
+            })
+          }
+        })
+      })
+    },
     stata () {
       const network = reactive(useNetwork())
 
       return network.type
     },
-    getEnv () {
-      fetch(`http://${this.local}/conf/env`, {
-        method: 'GET'
-      }).then(response => {
-        if (response.status === 200) {
-          response.text().then(response => {
-            window.localStorage.setItem('shootingPlace', response)
-          })
-        }
-      })
+    funRotateCLicksIncrease () {
+      this.funRotateCLicks++
+      console.log(this.funRotateCLicks)
+      if (this.funRotateCLicks % 4 === 0) {
+        this.funRotate = !this.funRotate
+      }
     },
     networkStatus () {
       setInterval(() => {
@@ -449,17 +437,6 @@ export default {
         colors.setBrand('positive', '#000000')
         colors.setBrand('accent', '#f3f3f3')
       }
-    },
-    getActualYearMemberCounts () {
-      fetch('http://' + this.local + '/statistics/actualYearMemberCounts', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => response.json())
-        .then(response => {
-          this.members = response
-        })
     }
   }
 }

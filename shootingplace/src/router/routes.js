@@ -58,10 +58,6 @@ if (App.main) {
           component: () => import(/* webpackChunkName: "Pozostałe funkcje" */'pages/otherFunctions.vue')
         },
         {
-          path: '/settings',
-          component: () => import(/* webpackChunkName: "Ustawienia" */'pages/settings.vue')
-        },
-        {
           path: '/files',
           component: () => import(/* webpackChunkName: "Pliki" */'pages/file.vue')
         },
@@ -78,6 +74,10 @@ if (App.main) {
         {
           path: '/test',
           component: () => import(/* webpackChunkName: "Galeria" */'pages/test.vue')
+        },
+        {
+          path: '/settings',
+          component: () => import(/* webpackChunkName: "Ustawienia" */'pages/settings.vue')
         }
       ]
     },
@@ -122,6 +122,10 @@ if (App.main) {
           path: '/juryPanel',
           name: 'panel sędziego',
           component: () => import(/* webpackChunkName: "Panel Sędziego" */'pages/juryPanel.vue')
+        },
+        {
+          path: '/settings',
+          component: () => import(/* webpackChunkName: "Ustawienia" */'pages/settings.vue')
         }
       ]
     },

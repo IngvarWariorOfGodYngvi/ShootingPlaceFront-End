@@ -38,14 +38,14 @@
       </q-item-section>
       <q-btn
         v-if="((shootingPatent.patentNumber!=null&&license.number==null&&license.paid)||(!adult&&license.number==null))&&main&&!mobile"
-        class="full-width" color="primary" label="WYDAJ LICENCJĘ" @click="
+        class="full-width round" color="primary" label="WYDAJ LICENCJĘ" @click="
                 patentPistolPermission1=shootingPatent.pistolPermission;
                 patentRiflePermission1=shootingPatent.riflePermission;
                 patentShotgunPermission1=shootingPatent.shotgunPermission;
                 memberAdultConfirm=adult;
                 licenseConfirm=true">
       </q-btn>
-      <q-btn class="full-width" color="primary" v-if="license.number!=null&&(
+      <q-btn class="full-width round" color="primary" v-if="license.number!=null&&(
                 (!license.pistolPermission&&shootingPatent.pistolPermission)
                 ||(!license.riflePermission&&shootingPatent.riflePermission)
                 ||(!license.shotgunPermission&&shootingPatent.shotgunPermission))&&clubID===1&&main&&!mobile"
@@ -60,19 +60,19 @@
                 updateLicenseConfirm=true"></q-btn>
       <div
         v-if="(license.number!=null&&(license.pistolPermission||license.riflePermission||license.shotgunPermission))&&clubID===1&&license.paid===true&&main&&!mobile">
-        <q-btn class="full-width" v-if="license.canProlong&&license.paid===true"
+        <q-btn class="full-width round" v-if="license.canProlong&&license.paid===true"
                label="przedłuż licencję" color="primary" @click="
                 licensePistolPermission1=license.pistolPermission;
                 licenseRiflePermission1=license.riflePermission;
                 licenseShotgunPermission1=license.shotgunPermission;
                 prolongLicenseConfirm=true"></q-btn>
-        <q-btn class="full-width" v-else label="przedłuż licencję" color="primary" @click="
+        <q-btn class="full-width round" v-else label="przedłuż licencję" color="primary" @click="
                 licensePistolPermission1=license.pistolPermission;
                 licenseRiflePermission1=license.riflePermission;
                 licenseShotgunPermission1=license.shotgunPermission;
                 noDomesticStarts=true"></q-btn>
       </div>
-      <q-btn v-if="(((license.paid===false&&clubID===1)))&&main&&!mobile&&active" class="full-width"
+      <q-btn v-if="(((license.paid===false&&clubID===1)))&&main&&!mobile&&active" class="full-width round"
              label="opłać licencję" color="secondary" text-color="white" @click="licensePayment=true"></q-btn>
       <q-expansion-item dense default-opened class="bg-dark text-center text-positive"
                         v-if="licensePaymentHistory.length>0" label="Daty Opłacenia Licencji">
@@ -107,8 +107,8 @@
                      @dblclick="main&&!mobile?(paymentUUID = item.uuid,togglePaymentAlert = true):''">
                   <q-field dense standout="bg-accent text-black" label="PZSS : "
                            stack-label>
-                    <div class="self-center col full-width no-outline text-left text-black">
-                      {{ item.payInPZSSPortal ? 'Tak' : 'Nie' }}
+                    <div class="full-width text-center text-black">
+                      <q-icon :name="item.payInPZSSPortal?'done':'cancel'"></q-icon>
                     </div>
                   </q-field>
                 </div>
@@ -550,6 +550,7 @@ export default {
       return day + '-' + (month) + '-' + current.getFullYear()
     },
     async getLicense (licenseUUID) {
+      this.visible = true
       await fetch('http://' + this.local + '/license/getLicense?licenseUUID=' + licenseUUID, {
         method: 'GET'
       }).then(response => {

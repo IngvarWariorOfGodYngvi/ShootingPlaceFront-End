@@ -1,10 +1,11 @@
 <template>
   <q-page padding class="bg-dark">
     <div>
-      <SuperUser></SuperUser>
-      <Users></Users>
-          <div class="q-pa-md text-bold text-center text-h6 text-positive">TWORZENIE KLUBU MACIERZYSTEGO</div>
-          <q-card class="row">
+      <Experimental class="col"></Experimental>
+      <SuperUser v-if="main"></SuperUser>
+      <Users v-if="main"></Users>
+      <div v-if="main" class="q-pa-md text-bold text-center text-h6 text-positive">TWORZENIE KLUBU MACIERZYSTEGO</div>
+      <q-card v-if="main" class="row">
             <q-card-section class="col-6 bg-grey-2">
               <q-item>
                 <q-input v-model="clubName" class="full-width" filled label="Nazwa"></q-input>
@@ -115,6 +116,7 @@
 import App from 'src/App.vue'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox'
+import { isWindows } from 'mobile-device-detect'
 export default {
   components: {
     Users: lazyLoadComponent({
@@ -124,10 +126,15 @@ export default {
     SuperUser: lazyLoadComponent({
       componentFactory: () => import('components/settings/SuperUser.vue'),
       loading: SkeletonBox
+    }),
+    Experimental: lazyLoadComponent({
+      componentFactory: () => import('components/settings/Experimental.vue'),
+      loading: SkeletonBox
     })
   },
   data () {
     return {
+      mobile: !isWindows,
       cities: ['Białystok', 'Bydgoszcz', 'Gdańsk', 'Gorzów Wielkopolski', 'Katowice', 'Kielce', 'Kraków', 'Lublin', 'Łódź', 'Olsztyn', 'Opole', 'Poznań', 'Rzeszów', 'Szczecin', 'Warszawa', 'Wrocław', 'BRAK WYNIKÓW'],
       ulAl: ['ul. ', 'al. '],
       ul_al: '',
@@ -150,7 +157,8 @@ export default {
       clubAddress: null,
       clubURL: null,
       clubs: [],
-      local: App.host
+      local: App.host,
+      main: App.main
     }
   },
   methods: {

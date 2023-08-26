@@ -97,6 +97,10 @@
   background-color 10s ease
 }
 
+.fun2 {
+  transform: rotate(180deg);
+}
+
 .fun:hover {
   border-radius: -50%;
   border-style: dashed;

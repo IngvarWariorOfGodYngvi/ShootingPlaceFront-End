@@ -1,14 +1,20 @@
 <template>
   <div class="q-pa-sm text-white bg-secondary">
     <div class="bg-secondary">
-      <q-input v-model="number" class="text-white" type="password" dense label-color="white"
+      <div>
+        <q-inner-loading
+                :showing="visible"
+                label="Przetwarzanie..."
+                color="primary"/>
+        <q-input v-model="number" class="text-white" :disable="dis" type="password" dense label-color="white"
         label="Czas pracy - zeskanuj swoją kartę tutaj" input-class="text-white" filled
-        @keypress.enter="goToWork(number)"></q-input>
-      <div v-for="(item, index) in usersInWork" :key="index" class="full-width" style="height: auto">
-        <q-item dense style="padding:0 0 0 5%;font-size:small;font-weight: 500;">
-          {{ item }}
-        </q-item>
+        @keypress.enter="dis=true;goToWork(number)"/>
+        <div v-for="(item, index) in usersInWork" :key="index" class="full-width" style="height: auto">
+          <q-item dense style="padding:0 0 0 5%;font-size:small;font-weight: 500;">
+            {{ item }}
+          </q-item>
       </div>
+    </div>
     </div>
     <div>
       <q-dialog position="top" v-model="failure">
@@ -46,30 +52,49 @@ export default {
       usersInWork: [],
       success: false,
       failure: false,
+      dis: false,
+      visible: false,
       message: '',
       local: App.host
     }
   },
   methods: {
     goToWork (number) {
+      this.visible = true
       fetch('http://' + this.local + '/work/?number=' + number, {
         method: 'POST'
       }).then(response => {
         if (response.status === 200) {
           response.text().then(response => {
-            this.getAllUsersInWork()
-            this.message = response
-            this.success = true
-            this.autoClose()
+            setTimeout(() => {
+              this.visible = false
+              this.getAllUsersInWork()
+              this.message = response
+              this.success = true
+              this.dis = false
+              this.autoClose()
+            }, 1500)
           })
         }
         if (response.status === 400) {
           response.text().then(response => {
-            this.message = response
-            this.failure = true
-            this.autoClose()
+            setTimeout(() => {
+              this.visible = false
+              this.message = response
+              this.failure = true
+              this.dis = false
+              this.autoClose()
+            }, 1500)
           })
         }
+      }).catch(() => {
+        setTimeout(() => {
+          this.visible = false
+          this.message = 'błąd'
+          this.failure = true
+          this.dis = false
+          this.autoClose()
+        }, 1500)
       })
     },
     getAllUsersInWork () {
