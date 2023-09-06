@@ -1,5 +1,5 @@
 <template>
-  <div class="full-width">
+  <div class="full-width rounded">
     <q-btn class="full-width" :disable="disable" @click="dialog=true" color="secondary">Pobierz wniosek o pozwolenie na broń
     </q-btn>
     <q-dialog v-model="dialog">

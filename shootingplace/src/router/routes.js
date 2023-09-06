@@ -44,10 +44,6 @@ if (App.main) {
           component: () => import(/* webpackChunkName: "Koniec Licencji" */'pages/licenseEnd.vue')
         },
         {
-          path: '/patentWilling',
-          component: () => import(/* webpackChunkName: "Patentowicze" */'pages/patentWilling.vue')
-        },
-        {
           path: '/statistics',
           name: 'statystyki',
           component: () => import(/* webpackChunkName: "Statystyki" */'pages/statistics.vue')
@@ -70,10 +66,6 @@ if (App.main) {
           path: '/juryPanel',
           name: 'panel sędziego',
           component: () => import(/* webpackChunkName: "Panel Sędziego" */'pages/juryPanel.vue')
-        },
-        {
-          path: '/test',
-          component: () => import(/* webpackChunkName: "Galeria" */'pages/test.vue')
         },
         {
           path: '/settings',

@@ -21,7 +21,7 @@
       <SingleCompetitionJuryPanelPresentationModeComponent :uuid="uuid">
       </SingleCompetitionJuryPanelPresentationModeComponent>
     </div>
-    <q-dialog position="top" v-model=" failure ">
+    <q-dialog position="standard" v-model=" failure ">
       <q-card class="bg-warning">
         <q-card-section>
           <div v-if=" message != null " class="text-h6">{{ message }}</div>

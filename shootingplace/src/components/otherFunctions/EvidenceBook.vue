@@ -78,7 +78,6 @@ export default {
       secondDate: this.createTodayDate(),
       evidenceBookList: [],
       success: false,
-      failure: false,
       message: null,
       local: App.host
     }
@@ -142,7 +141,6 @@ export default {
     autoClose () {
       setTimeout(() => {
         this.success = false
-        this.failure = false
         this.message = null
       }, 2000)
     }

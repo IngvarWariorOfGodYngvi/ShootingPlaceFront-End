@@ -6,7 +6,7 @@
                 :showing="visible"
                 label="Przetwarzanie..."
                 color="primary"/>
-        <q-input v-model="number" class="text-white" :disable="dis" type="password" dense label-color="white"
+        <q-input id="workTime" v-model="number" class="text-white" :disable="dis" type="password" dense label-color="white"
         label="Czas pracy - zeskanuj swoją kartę tutaj" input-class="text-white" filled
         @keypress.enter="dis=true;goToWork(number)"/>
         <div v-for="(item, index) in usersInWork" :key="index" class="full-width" style="height: auto">
@@ -17,8 +17,8 @@
     </div>
     </div>
     <div>
-      <q-dialog position="top" v-model="failure">
-        <q-card>
+      <q-dialog position="standard" v-model="failure">
+        <q-card class="bg-warning">
           <q-card-section>
             <div v-if="message != null" class="text-h6">{{ message }}</div>
           </q-card-section>
@@ -61,7 +61,7 @@ export default {
   methods: {
     goToWork (number) {
       this.visible = true
-      fetch('http://' + this.local + '/work/?number=' + number, {
+      fetch(`http://${this.local}/work/?number=${number}`, {
         method: 'POST'
       }).then(response => {
         if (response.status === 200) {
@@ -98,7 +98,7 @@ export default {
       })
     },
     getAllUsersInWork () {
-      fetch('http://' + this.local + '/work/', {
+      fetch(`http://${this.local}/work/`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -111,6 +111,7 @@ export default {
         this.success = false
         this.message = null
         this.number = ''
+        document.getElementById('workTime').focus()
       }, 2000)
     }
   }

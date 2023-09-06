@@ -17,7 +17,7 @@
           @mouseleave="icon='menu'"
         />
         <q-toggle v-model="backgroundDark" :val="true" :value="true" color="dark" keep-color
-                  @input="changeColor()" class="fun"></q-toggle>
+                  @input="changeColor()" class="fun"><q-tooltip content-class="bg-secondary text-body2">{{backgroundDark?'Wyłącz': 'Włącz' }} ciemny motyw</q-tooltip></q-toggle>
                   <div class="text-center text-h5 text-bold">{{siteNameChange()}}</div>
          <div v-if="main" class="row reverse col">
           <q-icon class="fun" name="wifi" :color="networkStatusvar?'green':'red'" @click="funRotateCLicksIncrease()"></q-icon>

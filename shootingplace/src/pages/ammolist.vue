@@ -1,5 +1,17 @@
 <template>
-  <q-page padding>
+  <q-page>
+    <div class="full-width row reverse">
+      <q-btn v-if="!mobile"
+          dense
+          color="primary"
+          class="q-pa-none q-ma-none brand"
+          :icon="icon"
+          @click="toggleShowClosedList=!toggleShowClosedList;toggleShowClosedList?getClosedEvidence(pageNumber):''"
+          @mousemove="!toggleShowClosedList?icon='arrow_left':icon='arrow_right'"
+          @mouseleave="icon='menu'"
+        >
+        <q-tooltip content-class="bg-secondary text-h6" content-style="opacity: 93%;">{{toggleShowClosedList?'Ukryj':'Pokaż'}} zamknięte listy</q-tooltip></q-btn>
+    </div>
     <div :class="!mobile ? 'row' : 'col'">
       <q-card class="col bg-dark text-positive">
         <div class="row">
@@ -133,7 +145,8 @@
           </div>
         </div>
       </q-card>
-      <q-card v-if="!mobile" class="col-2 bg-dark">
+      <div v-if="!mobile">
+      <q-card v-if="toggleShowClosedList" class="col-2 bg-dark">
         <div>
           <q-item>
             <q-item-label class="text-h5 text-bold text-positive">
@@ -145,8 +158,8 @@
               :disable="pageNumber === 0" class="col-2" text-color="positive" color="primary"></q-btn>
             <div class="self-center text-bold text-center text-white col">STRONA {{ pageNumber + 1 }}</div>
             <q-btn icon="arrow_right"
-              @click="pageNumber = ammoListClose.length === 50 ? pageNumber + 1 : pageNumber; getClosedEvidence(pageNumber)"
-              :disabled="ammoListClose.length !== 50" class="col-2" text-color="positive" color="primary"></q-btn>
+              @click="pageNumber = ammoListClose.length === 25 ? pageNumber + 1 : pageNumber; getClosedEvidence(pageNumber)"
+              :disabled="ammoListClose.length !== 25" class="col-2" text-color="positive" color="primary"></q-btn>
           </div>
           <div v-for="(item, index) in ammoListClose" :key="index">
             <q-btn class="full-width q-mb-xs" dense text-color="white" color="primary"
@@ -155,10 +168,12 @@
                 <q-item-label>{{ item.number + ' ' }}</q-item-label>
                 <q-item-label class="text-white" caption>{{ convertDate(item.date) }}</q-item-label>
               </div>
+              <q-tooltip content-class="bg-secondary text-body2">Sprawdź Listę</q-tooltip>
             </q-btn>
           </div>
         </div>
       </q-card>
+    </div>
     </div>
     <q-dialog position="top" v-model="ammunitionListAlert">
       <q-card>
@@ -424,7 +439,7 @@
         </q-card-section>
       </q-card>
     </q-dialog>
-    <q-dialog position="top" v-model="failure">
+    <q-dialog position="standard" v-model="failure">
       <q-card class="bg-warning">
         <q-card-section>
           <div class="text-h6">{{ message }}</div>
@@ -446,11 +461,23 @@
       <AddNewShootingPacket></AddNewShootingPacket>
     </q-dialog>
     <q-dialog v-model="open" id="1">
-      <AddAmmunition :open="open" @hook:destroyed="getAmmoData()"></AddAmmunition>
+      <AddAmmunition v-on:addMemberAndAmmoToCaliber="getAmmoData()" :open="open"></AddAmmunition>
     </q-dialog>
   </q-page>
 </template>
-<style src="../style/style.scss" lang="scss"></style>
+<style src="src\style\style.scss" lang="scss">
+#container {
+   position: relative;
+}
+
+#background {
+   position: absolute;
+   padding: 50%;
+   margin: 50%;
+   z-index: -1;
+   overflow: hidden;
+}
+</style>
 <script>
 import { ref } from 'vue'
 import { isWindows } from 'mobile-device-detect'
@@ -523,6 +550,7 @@ export default {
     return {
       pageNumber: 0,
       mobile: !isWindows,
+      toggleShowClosedList: false,
       open: false,
       packet: false,
       AddShootingPacketExp: JSON.parse(window.localStorage.getItem('AddShootingPacket')),
@@ -533,6 +561,7 @@ export default {
       createNewPacket: false,
       legitimationNumber: null,
       uuid: '',
+      icon: 'menu',
       gunsInUsed: [],
       personalAmmoFromListInfo: false,
       personalAmmoFromList: [],
@@ -576,7 +605,6 @@ export default {
   },
   created () {
     this.getAmmoData()
-    this.getClosedEvidence(0)
     this.getListCalibers()
     this.getMembersNames()
     this.getOther()
@@ -632,7 +660,7 @@ export default {
       }
     },
     getClosedEvidence (pageNumber) {
-      fetch('http://' + this.local + '/ammoEvidence/closedEvidences?page=' + pageNumber + '&size=50', {
+      fetch('http://' + this.local + '/ammoEvidence/closedEvidences?page=' + pageNumber + '&size=25', {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {

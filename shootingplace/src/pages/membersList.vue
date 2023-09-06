@@ -35,13 +35,14 @@
           :option-label="opt => opt !== '' ? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber).toString() : ''"
           emit-value map-options options-dense options-selected-class="bg-negative text-positive" v-model="memberName"
           bg-color="primary" filled dense use-input hide-selected fill-input :options="options" @filter="filter"
-          @input="allMember = false">
+          @input="allMember = false" @focus="getMembersNames()">
           <template v-slot:option="option">
             <q-item class="rounded" dense style="padding: 0; margin: 0;" v-bind="option['itemProps']"
               v-on="option.itemEvents">
               <q-item-section style="padding: 0.5em; margin: 0;" :class="option.opt.active ? '' : 'bg-warning rounded'"
                 @click="allMember = false;memberName = option.opt.secondName + ' ' + option.opt.firstName + ' ' + option.opt.legitimationNumber; temp = option.opt.legitimationNumber">
-                <div>
+                <div class="container">
+                  <div class="background text-caption text-right">{{ !option.opt.declarationLOK && shootingPlace==='prod'?'Brak Podpisanej Deklaracji LOK':'' }}</div>
                   {{ option.opt.secondName }} {{ option.opt.firstName }}
                   {{ option.opt.legitimationNumber }} {{ option.opt.adult ? 'Ogólna' : 'Młodzież' }} {{ option.opt.active
                     ? '' : ' - BRAK SKŁADEK' }}
@@ -145,30 +146,33 @@
         <template v-slot:before>
           <thead class="thead-sticky text-left">
             <tr class="bg-primary text-white">
-              <th class="text-left" @click="sort = 'name'; sortF(sort)">
+              <th class="text-left" @click="sortF('name')">
                 {{ memberDTOArgRearrangeTable.length }}
                 <q-icon size="2em" :name="sortName ? 'arrow_drop_up' : 'arrow_drop_down'" />
                 Imię i nazwisko
               </th>
-              <th class="text-left" @click="sort = 'date'; sortF(sort)">
+              <th class="text-left" @click="sortF('date')">
                 <q-icon size="2em" :name="sortDate ? 'arrow_drop_up' : 'arrow_drop_down'" />
                 Data zapisu
               </th>
-              <th v-if="!erase" class="text-left">
+              <th v-if="!erase" class="text-left" @click="sortF('PZSS')">
+                <q-icon size="2em" :name="sortPZSS ? 'arrow_drop_up' : 'arrow_drop_down'" />
                 Wpis do portalu PZSS
               </th>
-              <th v-if="!erase" class="text-center">
+              <th v-if="!erase" class="text-center" @click="sortF('image')">
+                <q-icon size="2em" :name="sortImage ? 'arrow_drop_up' : 'arrow_drop_down'" />
                 Zdjęcie
               </th>
-              <th class="text-left" @click="sort = 'numberLeg'; sortF(sort)">
+              <th class="text-left" @click="sortF('numberLeg')">
                 <q-icon size="2em" :name="sortLegitimation ? 'arrow_drop_up' : 'arrow_drop_down'" />
                 Numer Legitymacji
               </th>
-              <th class="text-center" @click="sort = 'numberLicense'; sortF(sort)">
+              <th class="text-center" @click="sortF('numberLicense')">
                 <q-icon size="2em" :name="sortLicense ? 'arrow_drop_up' : 'arrow_drop_down'" />
                 Licencja
               </th>
-              <th v-if="!erase" class="text-center">
+              <th v-if="!erase" class="text-center" @click="sortF('active')">
+                <q-icon size="2em" :name="sortActive ? 'arrow_drop_up' : 'arrow_drop_down'" />
                 Status
               </th>
               <th v-else class="text-center">
@@ -181,11 +185,8 @@
           <tr v-if="!item.erased" :key="index" class="rounded bg-dark text-positive" style="cursor:pointer"
             @click.ctrl="pushOrRemoveEmailToList(item.legitimationNumber)"
             @click.exact="showloading(), allMember = false; memberName = Object(item.secondName + ' ' + item.firstName + ' ' + item.legitimationNumber); temp = item.legitimationNumber;">
-            <td style="width:25%;" :class="item.club.id === 1 ? 'xyz' : 'xyz bg-secondary text-white'">
-              <b>{{ index + 1 + ' ' }}</b>{{
-  item.club.id === 1 ? item.secondName + ' ' + item.firstName : item.secondName + ' ' + item.firstName + ' ' +
-item.club.name
-}}
+            <td style="width:25%;" :class="item.club.id === 1 && !item.declarationLOK? 'xyz bg-warning' : item.club.id === 1 && item.declarationLOK ? 'xyz' : 'xyz bg-secondary text-white'">
+              <b>{{ index + 1 + ' ' }}</b>{{ item.club.id === 1 ? item.secondName + ' ' + item.firstName : item.secondName + ' ' + item.firstName + ' ' + item.club.name }} {{ !item.declarationLOK? ' - Brak Deklaracji LOK' : ''}}
             </td>
             <td style="width:10%;" class="text-center">
               {{ convertDate(item.joinDate) }}
@@ -289,7 +290,19 @@ item.club.name
     </q-dialog>
   </q-page>
 </template>
-<style src="../style/style.scss" lang="scss"></style>
+<style src="../style/style.scss" lang="scss">
+#container {
+   position: relative;
+}
+
+#background {
+   position: absolute;
+   padding: 50%;
+   margin: 50%;
+   z-index: -1;
+   overflow: hidden;
+}
+</style>
 
 <script>
 import App from 'src/App.vue'
@@ -310,6 +323,9 @@ export default {
       sortLegitimation: false,
       sortName: false,
       sortDate: false,
+      sortPZSS: false,
+      sortActive: false,
+      sortImage: false,
       filters: [],
       options: [],
       active: null,
@@ -322,12 +338,12 @@ export default {
       memberDTOArg: [],
       memberDTOArgRearrangeTable: [],
       quantities: [],
+      shootingPlace: App.shootingPlace,
       allMember: true,
       local: App.host
     }
   },
   created () {
-    this.getMembersNames()
     this.getMembersQuantity()
     this.getAllMemberDTO()
   },
@@ -549,6 +565,39 @@ export default {
           this.memberDTOArg.sort((a, b) => new Date(a.joinDate) - new Date(b.joinDate))
           this.memberDTOArgRearrangeTable.sort((a, b) => new Date(a.joinDate) - new Date(b.joinDate))
           this.sortDate = !this.sortDate
+        }
+      }
+      if (type === 'PZSS') {
+        if (!this.sortPZSS) {
+          this.memberDTOArg.sort((a, b) => b.pzss - a.pzss)
+          this.memberDTOArgRearrangeTable.sort((a, b) => b.pzss - a.pzss)
+          this.sortPZSS = !this.sortPZSS
+        } else {
+          this.memberDTOArg.sort((a, b) => a.pzss - b.pzss)
+          this.memberDTOArgRearrangeTable.sort((a, b) => a.pzss - b.pzss)
+          this.sortPZSS = !this.sortPZSS
+        }
+      }
+      if (type === 'active') {
+        if (!this.sortActive) {
+          this.memberDTOArg.sort((a, b) => b.active - a.active)
+          this.memberDTOArgRearrangeTable.sort((a, b) => b.active - a.active)
+          this.sortActive = !this.sortActive
+        } else {
+          this.memberDTOArg.sort((a, b) => a.active - b.active)
+          this.memberDTOArgRearrangeTable.sort((a, b) => a.active - b.active)
+          this.sortActive = !this.sortActive
+        }
+      }
+      if (type === 'image') {
+        if (!this.sortImage) {
+          this.memberDTOArg.sort((a, b) => String(b.image).length - String(a.image).length)
+          this.memberDTOArgRearrangeTable.sort((a, b) => String(b.image).length - String(a.image).length)
+          this.sortImage = !this.sortImage
+        } else {
+          this.memberDTOArg.sort((a, b) => String(a.image).length - String(b.image).length)
+          this.memberDTOArgRearrangeTable.sort((a, b) => String(a.image).length - String(b.image).length)
+          this.sortImage = !this.sortImage
         }
       }
     },

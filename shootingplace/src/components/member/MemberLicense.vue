@@ -239,7 +239,7 @@
     </q-dialog>
     <q-dialog v-model="licenseConfirm">
       <div>
-        <q-card>
+        <q-card class="bg-dark text-positive">
           <q-item class="flex-center text-bold full-width text-h5">Dodaj licencję</q-item>
           <q-card-section class="col items-center">
             <q-item>
@@ -375,8 +375,8 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog position="top" v-model="failure">
-      <q-card class="bg-dark text-positive">
+    <q-dialog position="standard" v-model="failure">
+      <q-card class="bg-warning">
         <q-card-section>
           <div v-if="message!=null" class="text-h6">{{ message }}</div>
         </q-card-section>
@@ -384,11 +384,10 @@
       </q-card>
     </q-dialog>
     <q-dialog position="top" v-model="success">
-      <q-card class="bg-dark text-positive">
+      <q-card>
         <q-card-section>
-          <div v-if="message!=null" class="text-h6">{{ message }}</div>
+          <div class="text-h6">{{ message }}</div>
         </q-card-section>
-
       </q-card>
     </q-dialog>
     <q-dialog v-model="editLicenseCode" persistent>

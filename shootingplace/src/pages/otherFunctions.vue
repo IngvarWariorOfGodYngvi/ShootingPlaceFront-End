@@ -185,8 +185,8 @@
         </q-card-section>
       </q-card>
     </q-expansion-item>
-    <q-dialog position="top" v-model=" failure ">
-      <q-card>
+    <q-dialog position="standard" v-model=" failure ">
+      <q-card class="bg-warning">
         <q-card-section>
           <div v-if=" message != null " class="text-h6">{{message}}</div>
         </q-card-section>

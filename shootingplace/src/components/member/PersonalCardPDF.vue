@@ -1,5 +1,5 @@
 <template>
-  <div class="full-width">
+  <div class="full-width rounded">
     <q-btn class="full-width" @click="dialog=true" color="secondary">Pobierz kartę Członkowską Klubu
     </q-btn>
     <q-dialog v-model="dialog" @keypress.enter="dialog=false;getPersonalCardPDF()">

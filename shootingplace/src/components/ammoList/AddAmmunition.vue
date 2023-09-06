@@ -11,14 +11,17 @@
             <template v-slot:option="option">
               <q-item class="rounded bg-dark text-positive" dense style="padding: 0; margin: 0;" v-bind="option.itemProps"
                 v-on="option.itemEvents">
-                <q-item-section dense style="padding: 0.5em; margin: 0;"
-                  :class="option.opt.active ? '' : 'bg-warning rounded'"
-                  @click="otherName = '0 0'; memberName = option.opt.secondName + ' ' + option.opt.firstName + ' ' + option.opt.legitimationNumber">
-                  <div>{{ option.opt.secondName }} {{ option.opt.firstName }}
-                    {{ option.opt.legitimationNumber }} {{ option.opt.adult ? 'Ogólna' : 'Młodzież' }} {{
-                      option.opt.active ? '' : ' - BRAK SKŁADEK' }}
-                  </div>
-                </q-item-section>
+                <div class="container">
+                  <div class="background text-caption text-right">{{ !option.opt.declarationLOK && shootingPlace==='prod'?'Brak Podpisanej Deklaracji LOK':'' }}</div>
+                  <q-item-section dense style="padding: 0.5em; margin: 0;"
+                    :class="option.opt.active ? '' : 'bg-warning rounded'"
+                    @click="otherName = '0 0'; memberName = option.opt.secondName + ' ' + option.opt.firstName + ' ' + option.opt.legitimationNumber">
+                    <div>{{ option.opt.secondName }} {{ option.opt.firstName }}
+                      {{ option.opt.legitimationNumber }} {{ option.opt.adult ? 'Ogólna' : 'Młodzież' }} {{
+                        option.opt.active ? '' : ' - BRAK SKŁADEK' }}
+                    </div>
+                  </q-item-section>
+                </div>
               </q-item>
             </template>
             <template v-slot:no-option>
@@ -46,16 +49,16 @@
           <q-item dense v-for="(item, uuid) in calibers" :key="uuid" :val="item.uuid" style="">
             <div class="text-positive text-center col" style="display: flex;justify-content: center;align-content: center;flex-direction: column;">{{ item.name }}</div>
             <q-input v-model="item.counter" class="col" color="positive" label-color="positive" @focus="item.counter.startsWith('0')?item.counter='':item.counter=item.counter"
-          input-class="text-positive" dense filled :label="'max: ' + item.quantity" @input="item.counter===''?item.counter='0':item.counter=item.counter;onInput(item,item.counter)"
+          input-class="text-positive" dense filled :label="'max: ' + item.quantity" @input="item.counter===''?item.counter='0':item.counter=item.counter;onInput(item,item.counter)" @keypress.enter="simulateProgress(0)"
           onkeypress="return (event.charCode > 44 && event.charCode < 58)" type="number" :max="item.quantity"></q-input>
           <div class="col text-center" style="display: flex;justify-content: center;align-content: center;flex-direction: column;"> * {{ viewCurrency(item.unitPrice) }} = {{ viewCurrency(item.counter * item.unitPrice) }} </div>
           <div class="col text-center" style="display: flex;justify-content: center;align-content: center;flex-direction: column;"> * {{ viewCurrency(item.unitPriceForNotMember) }} = {{ viewCurrency(item.counter * item.unitPriceForNotMember) }}</div>
           </q-item>
         <q-item dense>
           <div class="col"></div>
-          <q-input class="col-3" v-model="discount" type="number" min="-23" max="100" dense filled label="rabat w %" onkeypress="return (event.charCode > 47 && event.charCode < 58)" label-color="positive" input-class="text-positive" suffix="%"></q-input>
-          <div class="col-3 text-center"><div>dla klubowicza: <div class="text-bold">{{ viewCurrency(sum(memberCostSum)) }}</div></div><div>po rabacie: <div class="text-bold text-primary">{{ viewCurrency(sum(memberCostSum) - (sum(memberCostSum)/100)*discount) }}</div></div></div>
-          <div class="col-3 text-center"><div>pozostali: <div class="text-bold">{{ viewCurrency(sum(notMemberCostSum)) }}</div></div><div>po rabacie: <div class="text-bold text-primary">{{ viewCurrency(sum(notMemberCostSum) - (sum(notMemberCostSum)/100)*discount) }}</div></div></div>
+          <q-input class="col-3" v-model="discount" type="number" min="-23" max="100" dense filled label="rabat w %" @focus="String(discount).startsWith('0')?discount='':discount=discount" onkeypress="return (event.charCode > 47 && event.charCode < 58)" label-color="positive" input-class="text-positive" suffix="%"></q-input>
+          <div class="col-3 text-center"><div>dla klubowicza: <div class="text-bold" style="border: solid 3px black">{{ viewCurrency(sum(memberCostSum)) }}</div></div><div>po rabacie: <div class="text-bold text-primary" style="border: solid 3px black">{{ viewCurrency(sum(memberCostSum) - (sum(memberCostSum)/100)*discount) }}</div></div></div>
+          <div class="col-3 text-center"><div>pozostali: <div class="text-bold" style="border: solid 3px black">{{ viewCurrency(sum(notMemberCostSum)) }}</div></div><div>po rabacie: <div class="text-bold text-primary" style="border: solid 3px black">{{ viewCurrency(sum(notMemberCostSum) - (sum(notMemberCostSum)/100)*discount) }}</div></div></div>
         </q-item>
         <div class="col">
           <q-card-actions class="row" align="right">
@@ -79,7 +82,7 @@
         </q-card-section>
       </q-card>
     </q-dialog>
-    <q-dialog position="top" v-model="failure">
+    <q-dialog position="standard" v-model="failure">
       <q-card class="bg-warning">
         <q-card-section>
           <div class="text-h6">{{ message }}</div>
@@ -88,6 +91,19 @@
     </q-dialog>
   </div>
 </template>
+<style src="src\style\style.scss" lang="scss">
+#container {
+   position: relative;
+}
+
+#background {
+   position: absolute;
+   padding: 50%;
+   margin: 50%;
+   z-index: -1;
+   overflow: hidden;
+}
+</style>
 <script>
 import { ref } from 'vue'
 import App from 'src/App.vue'
@@ -158,6 +174,7 @@ export default {
       message: null,
       success: false,
       failure: false,
+      shootingPlace: App.shootingPlace,
       local: App.host
     }
   },
@@ -224,7 +241,7 @@ export default {
     mapCalibers (calibersObject) {
       const map = new Map()
       for (let i = 0; i < calibersObject.length; i++) {
-        if (calibersObject[i].counter !== '0') {
+        if (calibersObject[i].counter !== '0' && calibersObject[i].counter !== '') {
           map.set(calibersObject[i].uuid, Number(calibersObject[i].counter))
         }
       }
@@ -252,6 +269,7 @@ export default {
             this.getListCalibers()
             this.memberCostSum = []
             this.notMemberCostSum = []
+            this.$emit('addMemberAndAmmoToCaliber')
             this.autoClose()
           })
         } else {

@@ -1,5 +1,5 @@
 <template>
-  <div class="full-width">
+  <div class="full-width rounded">
     <q-btn class="full-width" :disable="disable" @click="dialog=true" color="secondary">Pobierz deklarację członkowską LOK
     </q-btn>
     <q-dialog v-model="dialog" @keypress.enter="dialog=false;membershipDeclarationLOKPDF()">
@@ -25,7 +25,6 @@
 </template>
 
 <script>
-
 import axios from 'axios'
 import App from 'src/App.vue'
 
@@ -55,8 +54,9 @@ export default {
   },
   methods: {
     membershipDeclarationLOKPDF () {
+      console.log(this.uuid)
       axios({
-        url: 'http://' + this.local + '/files/membershipDeclarationLOK?uuid=' + this.uuid,
+        url: `http://${this.local}/files/membershipDeclarationLOK?uuid=${this.uuid}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
@@ -68,6 +68,7 @@ export default {
         fileLink.click()
         this.download = true
         this.autoClose()
+        this.$emit('membershipDeclarationLOKPDF')
       })
     },
     autoClose () {

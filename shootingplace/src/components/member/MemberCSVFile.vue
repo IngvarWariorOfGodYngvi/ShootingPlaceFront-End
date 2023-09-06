@@ -14,7 +14,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog :position="'top'" v-model="download">
+    <q-dialog position="top" v-model="download">
       <q-card>
         <q-card-section>
           <div class="text-h6">Pobrano plik .CSV</div>

@@ -1,6 +1,7 @@
 <template>
   <div v-if="member != null" class="full-width">
-    <q-card bordered :class="member.active ? 'row bg-green-3' : 'row bg-red-3'" :style="mobile?'height: 30vh;': ''">
+    <div class="text-h6 text-center bg-warning" v-if="shootingPlace==='prod' && !member.declarationLOK">Brak Podpisanej Deklaracji LOK</div>
+    <q-card bordered class="container" :class="member.active ? 'row bg-green-3' : 'row bg-red-3'" :style="mobile?'height: 30vh;': ''">
       <q-card-section v-if="member.imageUUID != null" avatar :class="mobile ? 'col-3 q-pa-none q-ma-none' : 'col-3'">
         <q-img fit=none style="max-height: 40vh" class="text-body1" alt="zdjęcie profilowe"
           :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)" />
@@ -398,30 +399,57 @@
           </q-item-section>
         </template>
             <div class="row">
-              <q-field dense v-if=" member.pzss " class="col q-pa-md" bg-color="green-3" standout="bg-green-3 text-black"
+              <q-btn dense class="col q-ma-md" text-color="black" @click=" main && !mobile ? (memberUUID = member.uuid, pzssPortal = true) : '' " :color="!member.pzss?'red-3':'green-3'" :label="!member.pzss?'Nie Wprowadzony do Portalu':'Wprowadzony do portalu'"/>
+              <!-- <q-field dense v-if=" member.pzss " class="col q-pa-md" :bg-color="member.pzss?'green-3':" standout="bg-green-3 text-black"
                 stack-label>
-                <div class="self-center full-width no-outline text-center text-black"
+                <div class="self-center full-width no-outline text-center text-black text-bold"
                   @dblclick=" memberUUID = member.uuid; pzssPortal = true ">Wprowadzony do portalu
                 </div>
               </q-field>
               <q-field dense v-if=" !member.pzss " class="col q-pa-md" bg-color="red-3" standout="bg-red-3 text-black"
                 stack-label>
-                <div class="self-center full-width no-outline text-center text-black"
+                <div class="self-center full-width no-outline text-center text-black text-bold"
                   @dblclick=" main && !mobile ? (memberUUID = member.uuid, pzssPortal = true) : '' ">Nie Wprowadzony do Portalu
                 </div>
-              </q-field>
-              <q-item v-if=" main && !mobile " class="q-pa-md">
-                <CSVFile :uuid=" member.uuid " :name=" (member.firstName + ' ' + member.secondName) "></CSVFile>
-              </q-item>
+              </q-field> -->
             </div>
-            <q-item v-if=" member.pzss ">
-              <q-btn class="full-width q-pa-none round" type="a" href="https://portal.pzss.org.pl/CLub/Player" target="_blank"
+            <q-item dense v-if=" main && !mobile " class="q-pa-md">
+              <CSVFile :uuid=" member.uuid " :name=" (member.firstName + ' ' + member.secondName) "></CSVFile>
+            </q-item>
+            <q-item dense v-if=" member.pzss " class="rounded">
+              <q-btn class="full-width q-pa-none" type="a" href="https://portal.pzss.org.pl/CLub/Player" target="_blank"
                 label="Przejdź do portalu" color="primary" />
             </q-item>
-            <q-item v-if=" !member.pzss ">
+            <q-item dense v-if=" !member.pzss " class="rounded">
               <q-btn class="full-width q-pa-none" type="a" href="https://portal.pzss.org.pl/CLub/Player" target="_blank"
                 label="Przejdź do portalu" color="primary" @click=" memberUUID = member.uuid; pzssPortal = true " />
             </q-item>
+          </q-expansion-item>
+          <q-expansion-item dense v-if=" !member.erased && shootingPlace === 'prod'" label="Deklaracja LOK" group="right-right-card">
+            <template v-slot:header>
+          <q-item-section avatar>
+            <q-avatar>
+              <img src="~assets/logo_LOK.png">
+            </q-avatar>
+          </q-item-section>
+
+          <q-item-section class="text-center">
+            Deklaracja LOKdeclarationLOK
+          </q-item-section>
+        </template>
+            <div class="row">
+              <q-btn dense class="col q-ma-md" text-color="black" @click=" main && !mobile ? (memberUUID = member.uuid, declarationLOK = true) : '' " :color="!member.declarationLOK?'red-3':'green-3'" :label="!member.declarationLOK?'Brak podpisanej Deklaracji':'Deklaracja Podpisana'"/>
+              <!-- <q-field style="cursor: pointer;" dense class="col q-pa-md" :bg-color="!member.declarationLOK?'red-3':'green-3'" :standout="!member.declarationLOK?'bg-red-3':'bg-green-3'"
+                stack-label>
+                <div class="self-center full-width text-center text-black text-bold">
+                  {{!member.declarationLOK?'Brak podpisanej Deklaracji':'Deklaracja Podpisana'}}
+                </div>
+              </q-field> -->
+            </div>
+              <q-item dense v-if=" main && !mobile " class="q-pa-md">
+              <DeklaracjaLOK v-on:membershipDeclarationLOKPDF="declarationLOK=true , memberUUID=member.uuid" :uuid=" member.uuid " :name=" (member.secondName + ' ' + member.firstName) "
+                :disable=" member.club.id !== 1 "/>
+                </q-item>
           </q-expansion-item>
           <q-expansion-item dense label="Pokaż statystyki" group="right-right-card"
             @show=" uuid = member.uuid; getPersonalStatistics(uuid) ">
@@ -655,8 +683,10 @@
             <q-item-label class="text-positive" caption lines="2">Pesel: {{ member.pesel }}</q-item-label>
             <q-item-label class="text-positive" caption lines="2">Numer Dowodu: {{ member.idcard }}</q-item-label>
             <p></p>
-            <q-btn class="full-width" v-if=" !member.erased && !mobile" label="Zmień Dane Podstawowe" color="secondary"
-              @click=" memberUUID = member.uuid; memberIdCard = member.idcard; memberFirstName = member.firstName; memberSecondName = member.secondName; basicDataConfirm = true "></q-btn>
+            <div class="rounded">
+              <q-btn class="full-width" square v-if=" !member.erased && !mobile" label="Zmień Dane Podstawowe" color="secondary"
+              @click=" memberUUID = member.uuid; memberIdCard = member.idcard; memberFirstName = member.firstName; memberSecondName = member.secondName; basicDataConfirm = true "/>
+            </div>
           </div>
         </q-card-section>
         <q-card-section :class=" main && !mobile ? 'col-4' : 'col-6' ">
@@ -688,8 +718,10 @@
               {{ member.address.flatNumber }}
             </q-item-label>
             <p></p>
-            <q-btn v-if=" !member.erased && !mobile" class="full-width" label="Zmień Dane Kontaktowe" color="secondary"
-              @click=" memberUUID = member.uuid; memberEmail = member.email; memberPhoneNumber = member.phoneNumber; memberPostOfficeCity = member.address.postOfficeCity; memberZipCode = member.address.zipCode; memberStreet = member.address.street; memberStreetNumber = member.address.streetNumber; memberFlatNumber = member.address.flatNumber; addressConfirm = true "></q-btn>
+            <div class="rounded">
+              <q-btn v-if=" !member.erased && !mobile" class="full-width" label="Zmień Dane Kontaktowe" color="secondary"
+              @click=" memberUUID = member.uuid; memberEmail = member.email; memberPhoneNumber = member.phoneNumber; memberPostOfficeCity = member.address.postOfficeCity; memberZipCode = member.address.zipCode; memberStreet = member.address.street; memberStreetNumber = member.address.streetNumber; memberFlatNumber = member.address.flatNumber; addressConfirm = true "/>
+            </div>
           </q-item-section>
         </q-card-section>
         <q-card-section v-if=" !member.erased && main && !mobile " class="col-5">
@@ -698,7 +730,7 @@
               <q-tooltip v-if=" member.club.id !== 1" content-class="text-h6 bg-red" anchor="top middle"
                 self="bottom middle" :offset=" [12, 12] ">INNY KLUB MACIERZYSTY
               </q-tooltip>
-              <DeklaracjaLOK :uuid=" member.uuid " :name=" (member.secondName + ' ' + member.firstName) "
+              <DeklaracjaLOK v-on:membershipDeclarationLOKPDF="declarationLOK=true, memberUUID=member.uuid" :uuid=" member.uuid " :name=" (member.secondName + ' ' + member.firstName) "
                 :disable=" member.club.id !== 1 " />
             </div>
             <div class="q-pb-md">
@@ -790,7 +822,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model=" addressConfirm " persistent>
+    <q-dialog v-model=" addressConfirm ">
       <q-card class="bg-dark text-positive">
         <q-card-section class="col items-center">
           <q-item-label class="text-bold text-center text-h6">Zmień dane adresowe</q-item-label>
@@ -860,12 +892,26 @@
         </q-card-section>
 
         <q-card-actions align="center">
-          <q-btn label="nie" color="secondary" v-close-popup />
-          <q-btn label="tak" color="primary" v-close-popup @click=" changePzss(memberUUID) " />
+          <q-btn label="nie" color="secondary" v-close-popup @click=" togglePzss(memberUUID,false) " />
+          <q-btn label="tak" color="primary" v-close-popup @click=" togglePzss(memberUUID,true) " />
+          <q-btn label="anuluj" color="secondary" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model=" basicDataConfirm " persistent>
+    <q-dialog v-model=" declarationLOK ">
+      <q-card class="bg-dark text-positive">
+        <q-card-section class="row text-center text-h6">
+          <span class="q-ml-sm">Czy Klubowicz podpisał deklarację LOK?</span>
+        </q-card-section>
+
+        <q-card-actions align="center">
+          <q-btn label="nie" color="secondary" v-close-popup @click=" toggleDeclarationLOK(memberUUID,false) " />
+          <q-btn label="tak" color="primary" v-close-popup @click=" toggleDeclarationLOK(memberUUID,true) " />
+          <q-btn label="anuluj" color="secondary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model=" basicDataConfirm ">
       <q-card class="bg-dark text-positive">
         <q-card-section class="col items-center">
           <q-item-label class="text-bold text-center text-h6">Zmień dane podstawowe</q-item-label>
@@ -1258,8 +1304,8 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog position="top" v-model=" failure ">
-      <q-card>
+    <q-dialog position="standard" v-model=" failure ">
+      <q-card class="bg-warning">
         <q-card-section>
           <div v-if=" message != null " class="text-h6">{{ message }}</div>
         </q-card-section>
@@ -1278,9 +1324,6 @@
       <q-card class="bg-dark text-positive">
         <q-card-section>
           <div class="text-h5 text-bold text-center">Edytuj Składkę</div>
-          <div class="text-h6 text-center">Uwaga! Wprowadzając zmiany bądź pewny tego co robisz</div>
-          <div v-if="shootingPlace === 'prod'" class="text-h6 text-center">Pamiętaj! Składki dla młodzieży ustaw na 02/28 lub 08/31</div>
-          <div v-if="shootingPlace === 'prod'" class="text-h6 text-center">Pamiętaj! Składki dla dorosłych ustaw na 06/30 lub 12/31</div>
           <div class="row">
               <q-input class="col-6" dense v-model=" editContributionPaymentDate " input-class="text-positive" label-color="positive" filled standout="bg-accent text-black" stack-label
                 mask="####-##-##" label="Data Opłacenia Składki">
@@ -1351,7 +1394,18 @@
     </q-dialog>
   </div>
 </template>
-<style src="src/style/style.scss" lang="scss"></style>
+<style src="src/style/style.scss" lang="scss">
+#container {
+   position: relative;
+}
+
+#background {
+   position: absolute;
+   padding: 50%;
+   margin: 50%;
+   z-index: -2;
+}
+</style>
 <script>
 import axios from 'axios'
 import App from 'src/App.vue'
@@ -1500,6 +1554,7 @@ export default {
       quantity: '',
       dateVar: /\//gi,
       pzssPortal: false,
+      declarationLOK: false,
       personalStatisticsObject: null,
       personalFiles: null,
       clubs: ['DZIESIĄTKA Łódź'],
@@ -2195,6 +2250,56 @@ export default {
     },
     changePzss (uuid) {
       fetch('http://' + this.local + '/member/pzss/' + uuid, {
+        method: 'PATCH'
+      }).then(response => {
+        if (response.status === 200) {
+          response.text().then(
+            response => {
+              this.success = true
+              this.message = response
+              this.showloading()
+              this.getMemberByUUID(this.memberUUID)
+              this.autoClose()
+            }
+          )
+        } else {
+          response.text().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            }
+          )
+        }
+      })
+    },
+    togglePzss (uuid, state) {
+      fetch(`http://${this.local}/member/togglePzss/${uuid}?isSignedTo=${state}`, {
+        method: 'PATCH'
+      }).then(response => {
+        if (response.status === 200) {
+          response.text().then(
+            response => {
+              this.success = true
+              this.message = response
+              this.showloading()
+              this.getMemberByUUID(this.memberUUID)
+              this.autoClose()
+            }
+          )
+        } else {
+          response.text().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            }
+          )
+        }
+      })
+    },
+    toggleDeclarationLOK (uuid, state) {
+      fetch(`http://${this.local}/member/toggleDeclaration/${uuid}?isSigned=${state}`, {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {

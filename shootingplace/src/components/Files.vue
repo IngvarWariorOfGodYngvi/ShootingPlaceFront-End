@@ -73,7 +73,7 @@
           </div>
         </template>
       </q-virtual-scroll>
-      <q-dialog :position="'top'" v-model="success" @keypress.enter="success=false">
+      <q-dialog position="top" v-model="success" @keypress.enter="success=false">
         <q-card>
           <q-card-section>
             <div v-if="message!=null" class="text-h6">{{ message }}</div>
@@ -81,8 +81,8 @@
 
         </q-card>
       </q-dialog>
-      <q-dialog v-model="failure" :position="'top'" @keypress.enter="failure=false">
-        <q-card>
+      <q-dialog v-model="failure" position="standard" @keypress.enter="failure=false">
+        <q-card class="bg-warning">
           <q-card-section>
             <div class="text-h6">{{ message }}</div>
           </q-card-section>

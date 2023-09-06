@@ -1,7 +1,19 @@
 <template>
-  <q-page padding>
+  <q-page>
+    <div class="full-width row reverse">
+      <q-btn v-if="!mobile && ClosedCompetitionTabEXP"
+          dense
+          color="primary"
+          class="q-pa-none q-ma-none brand"
+          :icon="icon"
+          @click="toggleShowClosedCompetitions=!toggleShowClosedCompetitions;toggleShowClosedCompetitions?getClosedTournaments(pageNumber):''"
+          @mousemove="!toggleShowClosedCompetitions?icon='arrow_left':icon='arrow_right'"
+          @mouseleave="icon='menu'"
+        >
+        <q-tooltip content-class="bg-secondary text-h6" content-style="opacity: 93%;">{{toggleShowClosedCompetitions?'Ukryj':'Pokaż'}} zamknięte zawody</q-tooltip></q-btn>
+    </div>
     <div class="row">
-      <q-card class="col-10 bg-dark text-positive">
+      <q-card class="col bg-dark text-positive">
         <div class="row">
           <q-card-section v-if="tournaments == null">
             <q-btn color="primary" label="dodaj zawody" @click="addNewTournament = true"></q-btn>
@@ -268,10 +280,13 @@
                         <q-item-section style="padding: 0.5em; margin: 0;"
                           :class="option.opt.active ? '' : 'bg-warning rounded text-black'"
                           @click="otherName = '0 0'; memberName = option.opt.secondName + ' ' + option.opt.firstName + ' ' + option.opt.legitimationNumber">
+                          <div class="container">
+                          <div class="background text-caption text-right">{{ !option.opt.declarationLOK && shootingPlace==='prod'?'Brak Podpisanej Deklaracji LOK':'' }}</div>
                           <div>{{ option.opt.secondName }} {{ option.opt.firstName }}
                             {{ option.opt.legitimationNumber }} {{ option.opt.adult ? 'Ogólna' : 'Młodzież' }} {{
                               option.opt.active ? '' : '- BRAK SKŁADEK' }}
                           </div>
+                        </div>
                         </q-item-section>
                       </q-item>
                     </template>
@@ -357,7 +372,7 @@
           </q-card>
         </div>
       </q-card>
-      <q-card class="col-2 bg-dark text-positive">
+      <q-card v-if="toggleShowClosedCompetitions" class="col-2 bg-dark text-positive">
         <div>
           <q-item>
             <q-item-label class="text-h5 text-bold">
@@ -842,14 +857,14 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="failure" position="top">
+    <q-dialog v-model="failure" position="standard">
       <q-card class="bg-warning">
         <q-card-section>
           <div class="text-h6">{{ message }}</div>
         </q-card-section>
       </q-card>
     </q-dialog>
-    <q-dialog position="top" v-model="gunAdded" persistent @keypress.enter="gunAdded = false">
+    <q-dialog position="top" v-model="gunAdded" @keypress.enter="gunAdded = false">
       <q-card>
         <q-card-section class="row items-center">
           <span class="q-ml-sm text-h6 text-bold">Broń została przydzielona</span>
@@ -1022,12 +1037,24 @@
     </q-dialog>
   </q-page>
 </template>
-<style src="../style/style.scss" lang="scss"></style>
+<style src="../style/style.scss" lang="scss">
+#container {
+   position: relative;
+}
+
+#background {
+   position: absolute;
+   padding: 50%;
+   margin: 50%;
+   z-index: -1;
+   overflow: hidden;
+}</style>
 <script>
 import axios from 'axios'
 import App from 'src/App.vue'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox.vue'
+import { isWindows } from 'mobile-device-detect'
 
 export default {
   name: 'tournament',
@@ -1044,8 +1071,12 @@ export default {
   data () {
     return {
       val: '',
+      icon: 'menu',
       backgroundDark: JSON.parse(window.localStorage.getItem('BackgroundDark')),
+      ClosedCompetitionTabEXP: JSON.parse(window.localStorage.getItem('ClosedCompetitionTab')),
+      mobile: !isWindows,
       a5rotate: false,
+      toggleShowClosedCompetitions: false,
       competitionsInfo: false,
       listOfCompetitions: [],
       pageNumber: 0,
@@ -1149,13 +1180,13 @@ export default {
       message: null,
       resp: '',
       filterOptions: [],
+      shootingPlace: App.shootingPlace,
       local: App.host
     }
   },
   created () {
     this.getListTournaments()
     this.getCompetitions()
-    this.getClosedTournaments(this.pageNumber)
     this.getOther()
     this.getListCalibers()
     this.getAllClubsToTournament()

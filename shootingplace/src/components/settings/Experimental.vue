@@ -3,27 +3,32 @@
     <div class="col">
       <div>
         <q-toggle dense v-model="AddShootingPacket" @input="toggleAddShootingPacket()">
-          <div class="text-positive">{{ !AddShootingPacket ? 'włącz Pakiety Strzeleckie w Liście Amunicji' : 'wyłącz Pakiety Strzeleckie w Liście Amunicji'}}</div>
+          <div class="text-positive">{{ !AddShootingPacket ? 'włącz' : 'wyłącz'}} Pakiety Strzeleckie w Liście Amunicji</div>
         </q-toggle>
       </div>
       <div>
         <q-toggle dense v-model="AddGroupAmmo" @input="toggleAddGroupAmmo()">
-          <div class="text-positive">{{ !AddGroupAmmo ? 'włącz Dodawanie wielu kalibrów w Liście Amunicji' : 'wyłącz Dodawanie wielu kalibrów w Liście Amunicji'}}</div>
+          <div class="text-positive">{{ !AddGroupAmmo ? 'włącz' : 'wyłącz'}} Dodawanie wielu kalibrów w Liście Amunicji</div>
         </q-toggle>
       </div>
       <div>
         <q-toggle dense v-model="AddSingleAmmo" @input="toggleAddSingleAmmo()">
-          <div class="text-positive">{{ !AddSingleAmmo ? 'włącz Pojedyńcze dodawanie w Liście Amunicji' : 'wyłącz Pojedyńcze dodawanie wielu kalibrów w Liście Amunicji'}}</div>
+          <div class="text-positive">{{ !AddSingleAmmo ? 'włącz' : 'wyłącz'}} Pojedyńcze dodawanie w Liście Amunicji</div>
         </q-toggle>
       </div>
       <div>
         <q-toggle dense v-model="GunList" @input="toggleGunList()">
-          <div class="text-positive">{{ !GunList ? 'włącz Listę Broni w Liście Amunicji' : 'wyłącz Listę Broni w Liście Amunicji'}}</div>
+          <div class="text-positive">{{ !GunList ? 'włącz' : 'wyłącz'}}  Listę Broni w Liście Amunicji</div>
         </q-toggle>
       </div>
-      <div>
+      <div v-if="!mobile">
         <q-toggle dense v-model="TopTenTab" @input="toggleTopTenTab()">
-          <div class="text-positive">{{ !TopTenTab ? 'włącz zakładki TOP 10' : 'wyłącz zakładki TOP 10'}}</div>
+          <div class="text-positive">{{ !TopTenTab ? 'włącz' : 'wyłącz'}} zakładki TOP 10</div>
+        </q-toggle>
+      </div>
+      <div v-if="!mobile">
+        <q-toggle dense v-model="ClosedCompetitionTab" @input="toggleClosedCompetitionTab()">
+          <div class="text-positive">{{ !ClosedCompetitionTab ? 'włącz' : 'wyłącz'}} listę zamkniętych zawodów</div>
         </q-toggle>
       </div>
     </div>
@@ -32,6 +37,7 @@
 
 <script>
 import App from 'src/App.vue'
+import { isWindows } from 'mobile-device-detect'
 export default {
   data () {
     return {
@@ -40,6 +46,8 @@ export default {
       AddSingleAmmo: JSON.parse(window.localStorage.getItem('AddSingleAmmo')),
       GunList: JSON.parse(window.localStorage.getItem('GunList')),
       TopTenTab: JSON.parse(window.localStorage.getItem('TopTenTab')),
+      ClosedCompetitionTab: JSON.parse(window.localStorage.getItem('ClosedCompetitionTab')),
+      mobile: !isWindows,
       local: App.host
     }
   },
@@ -58,6 +66,9 @@ export default {
     }
     if (JSON.parse(window.localStorage.getItem('TopTenTab')) == null) {
       window.localStorage.setItem('TopTenTab', 'true')
+    }
+    if (JSON.parse(window.localStorage.getItem('ClosedCompetitionTab')) == null) {
+      window.localStorage.setItem('ClosedCompetitionTab', 'true')
     }
   },
   methods: {
@@ -97,6 +108,13 @@ export default {
         window.localStorage.setItem('TopTenTab', 'true')
       }
       window.localStorage.setItem('TopTenTab', !JSON.parse(window.localStorage.getItem('TopTenTab')))
+      window.location.reload()
+    },
+    toggleClosedCompetitionTab () {
+      if (JSON.parse(window.localStorage.getItem('ClosedCompetitionTab')) == null) {
+        window.localStorage.setItem('ClosedCompetitionTab', 'true')
+      }
+      window.localStorage.setItem('ClosedCompetitionTab', !JSON.parse(window.localStorage.getItem('ClosedCompetitionTab')))
       window.location.reload()
     }
   }

@@ -1,5 +1,5 @@
 <template>
-  <div class="full-width">
+  <div class="full-width rounded">
     <q-btn class="full-width" @click="dialog=true" color="secondary">Pobierz ostatnie potwierdzenie składki
       <q-tooltip v-if="disable" content-class="text-h6 bg-red" anchor="top middle" self="bottom middle" :offset="[12, 12]">BRAK
         SKŁADEK

@@ -10,14 +10,17 @@
             <template v-slot:option="option">
               <q-item class="rounded bg-dark text-positive" dense style="padding: 0; margin: 0;" v-bind="option.itemProps"
                 v-on="option.itemEvents">
+                <div class="container">
+                  <div class="background text-caption text-right">{{ !option.opt.declarationLOK && shootingPlace==='prod'?'Brak Podpisanej Deklaracji LOK':'' }}</div>
                 <q-item-section dense style="padding: 0.5em; margin: 0;"
                   :class="option.opt.active ? '' : 'bg-warning rounded'"
                   @click="otherName = '0 0'; memberName = option.opt.secondName + ' ' + option.opt.firstName + ' ' + option.opt.legitimationNumber">
-                  <div>{{ option.opt.secondName }} {{ option.opt.firstName }}
-                    {{ option.opt.legitimationNumber }} {{ option.opt.adult ? 'Ogólna' : 'Młodzież' }} {{
-                      option.opt.active ? '' : ' - BRAK SKŁADEK' }}
+                    <div>{{ option.opt.secondName }} {{ option.opt.firstName }}
+                      {{ option.opt.legitimationNumber }} {{ option.opt.adult ? 'Ogólna' : 'Młodzież' }} {{
+                        option.opt.active ? '' : ' - BRAK SKŁADEK' }}
                   </div>
                 </q-item-section>
+              </div>
               </q-item>
             </template>
             <template v-slot:no-option>
@@ -81,6 +84,19 @@
     </q-dialog>
       </div>
 </template>
+<style src="src\style\style.scss" lang="scss">
+#container {
+   position: relative;
+}
+
+#background {
+   position: absolute;
+   padding: 50%;
+   margin: 50%;
+   z-index: -1;
+   overflow: hidden;
+}
+</style>
 <script>
 import { ref } from 'vue'
 import App from 'src/App.vue'
@@ -114,6 +130,7 @@ export default {
       success: false,
       failure: false,
       mobile: !isWindows,
+      shootingPlace: App.shootingPlace,
       local: App.host
     }
   },

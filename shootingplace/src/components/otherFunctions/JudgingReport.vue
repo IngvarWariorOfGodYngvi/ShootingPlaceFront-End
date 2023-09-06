@@ -194,7 +194,6 @@ export default {
     autoClose () {
       setTimeout(() => {
         this.success = false
-        this.failure = false
         this.message = null
         this.acceptWorkingTimeDial = false
         this.changeWorkingTimeDial = false

@@ -180,8 +180,8 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="failure" position="top">
-      <q-card>
+    <q-dialog v-model="failure" position="standard">
+      <q-card class="bg-warning">
         <q-card-section>
           <div class="text-h6">{{ message }}</div>
         </q-card-section>

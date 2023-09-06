@@ -208,7 +208,6 @@ export default {
     },
     autoClose () {
       setTimeout(() => {
-        this.failure = false
         this.message = null
         this.success = false
         this.barCode = null
