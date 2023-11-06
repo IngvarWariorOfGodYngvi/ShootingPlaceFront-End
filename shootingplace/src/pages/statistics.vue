@@ -20,6 +20,13 @@
       <MembersAndAmmo></MembersAndAmmo>
     </q-expansion-item>
     <p></p>
+    <q-expansion-item label="Pozostali i amunicja" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
+      <OthersAndAmmo></OthersAndAmmo>
+    </q-expansion-item>
+    <p></p>
+    <q-expansion-item label="Zużycie amunicji" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
+      <AmmoUsed></AmmoUsed>
+    </q-expansion-item>
   </q-page>
 </template>
 <style src="../style/style.scss" lang="scss">
@@ -50,6 +57,14 @@ export default {
     }),
     MembersAndAmmo: lazyLoadComponent({
       componentFactory: () => import('components/statistics/MembersAndAmmo.vue'),
+      loading: SkeletonBox
+    }),
+    OthersAndAmmo: lazyLoadComponent({
+      componentFactory: () => import('components/statistics/OthersAndAmmo.vue'),
+      loading: SkeletonBox
+    }),
+    AmmoUsed: lazyLoadComponent({
+      componentFactory: () => import('components/armory/AmmoUsed.vue'),
       loading: SkeletonBox
     })
   },

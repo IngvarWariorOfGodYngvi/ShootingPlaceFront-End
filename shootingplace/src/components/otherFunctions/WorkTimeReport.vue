@@ -43,8 +43,7 @@
       <div class="q-pa-none text-black full-width">
             <q-expansion-item dense class="col bg-grey-5" v-for="(i,index) in workList" :key="index"
                               :label="i.secondName + ' ' + i.firstName + ' ' + i.subType + ' czas pracy: ' + i.workTime">
-              <q-field :key="index" v-for="(item, index) in i.wtedtoList" dense class="bg-grey-2" color="black"
-                       standout="bg-accent text-black">
+              <div :key="index" v-for="(item, index) in i.wtedtoList" class="bg-grey-2 row hover1">
                 <div class="row full-width" @dblclick="uuid = item.uuid;workTimeStart = item.start.replace('T', ' ').substring(0, 16); workTimeStop = item.stop.replace('T', ' ').substring(0, 16); editWorkTime=true">
                   <div class="text-left self-center text-bold" style="width: 2vw">
                     {{ index + 1 }}
@@ -63,7 +62,7 @@
                                 @input="c = checkLength(workList)"/>
                   </div>
                 </div>
-              </q-field>
+              </div>
             </q-expansion-item>
       </div>
       <div class="row q-pt-md q-pb-md">
@@ -340,8 +339,6 @@ export default {
       const e = uuid + ';' + start + ';' + stop
       arr.push(e)
       this.workTimeChangeArray = arr
-      console.log(e)
-      console.log(this.workTimeChangeArray)
       this.message = 'dodano do listy zmian - pamiętaj by przed opuszczeniem strony wysłać zmiany'
       this.success = true
       this.autoClose()

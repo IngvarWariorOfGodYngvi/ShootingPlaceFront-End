@@ -39,8 +39,7 @@
                     input-class="text-positive" label-color="positive" label="Numer Legitymacji"
                     onkeypress="return (event.charCode > 47 && event.charCode < 58)" /></q-item>
                 <q-item><q-input class="full-width" dense filled color="green" v-model="memberJoinDate"
-                    input-class="text-positive" label-color="positive" mask="####-##-##" label="Data dołączenia do Klubu"
-                    hint="użyj kalendarza">
+                    input-class="text-positive" label-color="positive" mask="####-##-##" label="Data dołączenia do Klubu">
                     <template v-slot:append>
                       <q-icon name="event" class="cursor-pointer" color="positive">
                         <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -137,29 +136,29 @@
             <q-card-section class="col-6">
               <div>
                 <q-item>
-                  <q-field class="full-width" dense standout label-color="positive" label="Numer Patentu" stack-label>
-                    <template v-slot:control>
-                      <div class="self-center full-width text-positive" >{{patentNumber}}/PAT/{{ patentNumber1 }}</div>
-                    </template>
-                  </q-field>
+                  <div class="full-width">
+                    <label>Numer Patentu</label>
+                    <div class="self-center">{{patentNumber}}/PAT/{{ patentNumber1 }}</div>
+                  </div>
                 </q-item>
                 <q-item>
-                  <q-field class="full-width" dense standout label-color="positive" label="Data Nadania" stack-label>
-                    <template v-slot:control>
-                      <div class="self-center full-width text-positive" >{{patentDate}}</div>
-                    </template>
-                  </q-field>
+                  <div class="full-width">
+                    <label>Data Nadania</label>
+                    <div class="self-center">{{patentDate}}</div>
+                  </div>
                 </q-item>
                 <q-item>
-                    <q-field standout label="Dyscypliny" label-color="positive" dense stack-label class="full-width">
-                      <template v-slot:control>
-                        <div class="row full-width">
-                          <q-item v-if=" patentPistolPermission " dense class="self-center col text-positive" >Pistolet</q-item>
-                          <q-item v-if=" patentRiflePermission " dense class="self-center col text-positive" >Karabin</q-item>
-                          <q-item v-if=" patentShotgunPermission " dense class="self-center col text-positive" >Strzelba</q-item>
-                        </div>
-                      </template>
-                    </q-field>
+                  <div class="full-width">
+                    <label>Dyscypliny</label>
+                    <div class="row full-width">
+                      <q-item v-if=" patentPistolPermission " dense class="self-center col-4" >Pistolet</q-item>
+                      <q-item v-else dense class="self-center col-4" ></q-item>
+                      <q-item v-if=" patentRiflePermission " dense class="self-center col-4" >Karabin</q-item>
+                      <q-item v-else dense class="self-center col-4" ></q-item>
+                      <q-item v-if=" patentShotgunPermission " dense class="self-center col-4" >Strzelba</q-item>
+                      <q-item v-else dense class="self-center col-4" ></q-item>
+                    </div>
+                  </div>
                 </q-item>
               </div>
             </q-card-section>
@@ -176,7 +175,7 @@
                 <q-item><q-input class="full-width" label-color="positive" input-class="text-positive" dense v-model=" licenseNumber " placeholder="tylko cyfry" mask="########"
                     label="Numer Licencji" filled /></q-item>
                 <q-item><q-input class="full-width" label-color="positive" input-class="text-positive" dense filled v-model=" licenseDate " mask="####-12-31"
-                    label="Ważna do" hint="użyj kalendarza">
+                    label="Ważna do">
                     <template v-slot:append>
                       <q-icon name="event" class="cursor-pointer" color="positive">
                         <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -202,29 +201,29 @@
             <q-card-section class="col-6">
               <div>
                 <q-item>
-                  <q-field class="full-width" dense standout label-color="positive" label="Numer Licencji" stack-label>
-                    <template v-slot:control>
-                      <div class="self-center full-width text-positive" >{{licenseNumber}}</div>
-                    </template>
-                  </q-field>
+                  <div class="full-width" dense standout label-color="positive" label="Numer Licencji" stack-label>
+                    <label>Numer Licencji</label>
+                    <div class="self-center full-width text-positive" >{{licenseNumber}}</div>
+                  </div>
                 </q-item>
                 <q-item>
-                  <q-field class="full-width" dense standout label-color="positive" label="Data Ważności" stack-label>
-                    <template v-slot:control>
-                      <div class="self-center full-width text-positive" >{{licenseDate}}</div>
-                    </template>
-                  </q-field>
+                  <div class="full-width" dense standout label-color="positive" label="Numer Licencji" stack-label>
+                    <label>Data Ważności</label>
+                    <div class="self-center full-width text-positive" >{{licenseDate}}</div>
+                  </div>
                 </q-item>
                 <q-item>
-                  <q-field standout label="Dyscypliny" label-color="positive" dense stack-label class="full-width">
-                      <template v-slot:control>
-                        <div class="row full-width">
-                          <q-item v-if=" (licensePistolPermission && patentPistolPermission) || (!memberAdult && licensePistolPermission) " dense class="self-center col text-positive" >Pistolet</q-item>
-                          <q-item v-if=" (licenseRiflePermission && patentRiflePermission) || (!memberAdult && licenseRiflePermission) " dense class="self-center col text-positive" >Karabin</q-item>
-                          <q-item v-if=" (licenseShotgunPermission && patentShotgunPermission) || (!memberAdult && licenseShotgunPermission) " dense class="self-center col text-positive" >Strzelba</q-item>
-                        </div>
-                      </template>
-                    </q-field>
+                  <div class="full-width">
+                      <label>Dyscypliny</label>
+                      <div class="row full-width">
+                        <q-item v-if=" (licensePistolPermission && patentPistolPermission) || (!memberAdult && licensePistolPermission) " dense class="self-center col-4" >Pistolet</q-item>
+                        <q-item v-else dense class="self-center col-4" ></q-item>
+                        <q-item v-if=" (licenseRiflePermission && patentRiflePermission) || (!memberAdult && licenseRiflePermission) " dense class="self-center col-4" >Karabin</q-item>
+                        <q-item v-else dense class="self-center col-4" ></q-item>
+                        <q-item v-if=" (licenseShotgunPermission && patentShotgunPermission) || (!memberAdult && licenseShotgunPermission) " dense class="self-center col-4" >Strzelba</q-item>
+                        <q-item v-else dense class="self-center col-4" ></q-item>
+                      </div>
+                    </div>
                 </q-item>
               </div>
             </q-card-section>
@@ -264,7 +263,7 @@
                 <q-item><q-input class="full-width" dense v-model=" permissionsArbiterNumber " filled
                     label="Numer uprawnień" input-class="positive" label-color="positive"/></q-item>
                 <q-item><q-input class="full-width" dense filled v-model=" permissionsArbiterPermissionValidThru "
-                    mask="####-12-31" label="Ważne do" input-class="positive" label-color="positive" hint="użyj kalendarza">
+                    mask="####-12-31" label="Ważne do" input-class="positive" label-color="positive">
                     <template v-slot:append>
                       <q-icon name="event" class="cursor-pointer" color="positive">
                         <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -313,7 +312,7 @@
                 :name=" memberE != null ? (memberE.firstName + ' ' + memberE.secondName) : '' " />
             </q-item>
             <q-item v-if="shootingPlace === 'prod'">
-              <DeklaracjaLOK v-if=" uuid != null && uuid !== '' " :uuid=" uuid "
+              <DeklaracjaLOK v-on:membershipDeclarationLOKPDF="declarationLOK=true"  v-if=" uuid != null && uuid !== '' " :uuid=" uuid "
                 :name=" memberE != null ? (memberE.firstName + ' ' + memberE.secondName) : '' " />
             </q-item>
             <q-item>
@@ -327,6 +326,19 @@
         </template>
       </q-stepper>
     </div>
+    <q-dialog v-model=" declarationLOK ">
+      <q-card class="bg-dark text-positive">
+        <q-card-section class="row text-center text-h6">
+          <span class="q-ml-sm">Czy Klubowicz podpisał deklarację LOK?</span>
+        </q-card-section>
+
+        <q-card-actions align="center">
+          <q-btn label="nie" color="secondary" v-close-popup @click=" toggleDeclarationLOK(uuid,false) " />
+          <q-btn label="tak" color="primary" v-close-popup @click=" toggleDeclarationLOK(uuid,true) " />
+          <q-btn label="anuluj" color="secondary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
     <q-dialog position="top" v-model=" success ">
       <q-card>
         <q-card-section>
@@ -443,6 +455,7 @@ export default {
       alertResponse: null,
       success: false,
       failure: false,
+      declarationLOK: false,
       permissionsShootingLeaderNumber: null,
       permissionsInstructorNumber: null,
       permissionsArbiterNumber: null,
@@ -538,7 +551,7 @@ export default {
           flatNumber: memberFlatNumber
         }
       }
-      await fetch('http://' + this.local + '/member/?returningToClub=' + returningToClub + '&pinCode=' + this.code, {
+      await fetch(`http://${this.local}/member/?returningToClub=${returningToClub}&pinCode=${this.code}`, {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
@@ -611,6 +624,34 @@ export default {
               return response
             })
         }
+      }).catch(() => {
+        this.message = 'wystąpił błąd - nie można kontynuować'
+        this.failure = true
+        this.autoClose()
+      })
+    },
+    toggleDeclarationLOK (uuid, state) {
+      fetch(`http://${this.local}/member/toggleDeclaration/${uuid}?isSigned=${state}`, {
+        method: 'PATCH'
+      }).then(response => {
+        if (response.status === 200) {
+          response.text().then(
+            response => {
+              this.success = true
+              this.message = response
+              this.showloading()
+              this.autoClose()
+            }
+          )
+        } else {
+          response.text().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            }
+          )
+        }
       })
     },
     addPatent (uuid, patentNumber, patentPistolPermission, patentRiflePermission, patentShotgunPermission, patentDate) {
@@ -624,7 +665,7 @@ export default {
         shotgunPermission: patentShotgunPermission,
         dateOfPosting: patentDate.replace(this.dateVar, '-')
       }
-      fetch('http://' + this.local + '/patent/' + uuid, {
+      fetch(`http://${this.local}/patent/${uuid}`, {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {
@@ -659,7 +700,7 @@ export default {
         shotgunPermission: licenseShotgunPermission,
         validThru: licenseDate.replace(this.dateVar, '-')
       }
-      fetch('http://' + this.local + '/license/' + uuid, {
+      fetch(`http://${this.local}/license/${uuid}`, {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {
@@ -689,7 +730,7 @@ export default {
         number: weaponPermissionNumber,
         exist: isExist
       }
-      fetch('http://' + this.local + '/weapon/weapon/' + uuid, {
+      fetch(`http://${this.local}/weapon/weapon/${uuid}`, {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {
@@ -715,7 +756,7 @@ export default {
       })
     },
     changePzss (uuid) {
-      fetch('http://' + this.local + '/member/pzss/' + uuid, {
+      fetch(`http://${this.local}/member/pzss/${uuid}`, {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {
@@ -746,7 +787,7 @@ export default {
         arbiterNumber: this.permissionsArbiterNumber,
         arbiterPermissionValidThru: this.permissionsArbiterPermissionValidThru.replace(/\//gi, '-')
       }
-      fetch('http://' + this.local + '/permissions/' + uuid + '?ordinal=' + this.ordinal, {
+      fetch(`http://${this.local}/permissions/${uuid}?ordinal=${this.ordinal}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -773,7 +814,7 @@ export default {
       })
     },
     getMember (uuid) {
-      fetch('http://' + this.local + '/member/uuid/' + uuid, {
+      fetch(`http://${this.local}/member/uuid/${uuid}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -827,7 +868,7 @@ export default {
     },
     async isPresentPesel (pesel) {
       if (pesel.length === 11 && this.peselValue) {
-        await fetch('http://' + this.local + '/member/pesel?pesel=' + pesel, {
+        await fetch(`http://${this.local}/member/pesel?pesel=${pesel}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -860,7 +901,7 @@ export default {
     },
     async isPresentIDCard (IDCard) {
       if (IDCard.length > 9) {
-        await fetch('http://' + this.local + '/member/IDCard?IDCard=' + IDCard, {
+        await fetch(`http://${this.local}/member/IDCard?IDCard=${IDCard}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -898,7 +939,7 @@ export default {
       return color
     },
     async isPresentEmail (email) {
-      await fetch('http://' + this.local + '/member/email?email=' + email, {
+      await fetch(`http://${this.local}/member/email?email=${email}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'

@@ -22,7 +22,7 @@
          <div v-if="main" class="row reverse col">
           <q-icon class="fun" name="wifi" :color="networkStatusvar?'green':'red'" @click="funRotateCLicksIncrease()"></q-icon>
           <q-btn-dropdown v-if="shootingPlace === 'prod'" icon="calendar_month" rounded color="secondary" style="border: 1px solid white">
-            <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&bgcolor=%23374550&ctz=Europe%2FBrussels&showTitle=0&showNav=1&showDate=1&src=OTcwNXUwMTRuZXNicW05NGdiMWdkc3JvOGdAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ&src=MDRnOXVrazAwcjQzaHEwNHQ1cTcyaHRhaDRAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ&src=YzNqMG50a2kzN2dsZGpzMjlsOGYzYzN0NDBAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ&color=%234285F4&color=%23AD1457&color=%23A79B8E" style="width:40vw;height:50vh;" class="bg-secondary text-positive" frameborder="2" scrolling="no"/>
+            <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=1&bgcolor=%23ffffff&ctz=Europe%2FWarsaw&src=MTA0MjM0ZTI5MTEyZThiYTk0MzBmZWZmNDk5MjRhNmU0YzI4NzJlMzA3ODdhMzhjZjdmZmE2ZTE2MGEyNmNkNkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=OTcwNXUwMTRuZXNicW05NGdiMWdkc3JvOGdAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ&color=%23F09300&color=%234285F4" style="width:40vw;height:50vh;" class="bg-secondary text-positive" frameborder="2" scrolling="no"/>
           </q-btn-dropdown>
           <div v-if="topTenTabExp">
           <q-avatar text-color="white" color="secondary" size="3.5em" rounded
@@ -325,7 +325,7 @@ export default {
     },
     networkStatus () {
       setInterval(() => {
-        fetch('http://' + this.local + '/conf/ping', {
+        fetch(`http://${this.local}/conf/ping`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -342,7 +342,7 @@ export default {
         }).catch(() => {
           this.networkStatusvar = false
         })
-      }, 10000)
+      }, 100000)
     },
     siteNameChange () {
       return window.localStorage.getItem('SiteName')
@@ -361,7 +361,7 @@ export default {
     },
     getHighStarts () {
       if (this.starts.length < 1) {
-        fetch('http://' + this.local + '/statistics/highStarts', {
+        fetch(`http://${this.local}/statistics/highStarts`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -374,7 +374,7 @@ export default {
     },
     getTop10Competitors () {
       if (this.competitors.length < 1) {
-        fetch('http://' + this.local + '/statistics/highStartsCompetitors', {
+        fetch(`http://${this.local}/statistics/highStartsCompetitors`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -387,7 +387,7 @@ export default {
     },
     getTop10MembersWithTheMostMembershipContributions () {
       if (this.contributors.length < 1) {
-        fetch('http://' + this.local + '/statistics/highContributions', {
+        fetch(`http://${this.local}/statistics/highContributions`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -400,7 +400,7 @@ export default {
     },
     getTop10CompetitionPoints () {
       if (this.competitionPoints.length < 1) {
-        fetch('http://' + this.local + '/statistics/highCompetitionPoints', {
+        fetch(`http://${this.local}/statistics/highCompetitionPoints`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'

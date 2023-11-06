@@ -27,7 +27,7 @@
         </q-fab>
       </q-page-sticky>
     </div>
-    <q-card :class="mobile ? 'col bg-dark' : 'row bg-dark'" :style="mobile ? '' : 'height:20vh;'">
+    <q-card :class="mobile ? 'col bg-dark' : 'row bg-dark'">
       <div class="col-4">
         <q-select label="Wybierz osobę" color="white" input-class="text-white" label-color="white"
           popup-content-class="bg-dark text-positive"
@@ -35,7 +35,7 @@
           :option-label="opt => opt !== '' ? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber).toString() : ''"
           emit-value map-options options-dense options-selected-class="bg-negative text-positive" v-model="memberName"
           bg-color="primary" filled dense use-input hide-selected fill-input :options="options" @filter="filter"
-          @input="allMember = false" @focus="getMembersNames()">
+          @input="allMember = false">
           <template v-slot:option="option">
             <q-item class="rounded" dense style="padding: 0; margin: 0;" v-bind="option['itemProps']"
               v-on="option.itemEvents">
@@ -58,40 +58,26 @@
             </q-item>
           </template>
         </q-select>
-        <!-- <q-item>
-                   <div class="col-9 bg-grey-1"><q-input type="password" v-model="barcode" dense class="full-width" filled label="numer karty" @keypress.enter="findMemberByBarCode();allMember = false;memberName=null"></q-input></div>
-                   <div class="col-3 text-grey"><q-btn class="text-black full-width full-height" label="wyszukaj" @click="findMemberByBarCode();allMember = false;memberName=null"/></div>
-                 </q-item> -->
       </div>
       <div v-if="!mobile" class=" col-8">
         <q-card class="bg-accent q-pa-xs col">
-          <div class="row">
-            <q-checkbox dense
-              @input="memberName = null; temp = null; adult = null; active = null; erase = false; getMembersNames(); getAllMemberDTO()"
-              v-model="allMember" label="Wyświetl wszystkich" />
-            <div class="col full-width">
-              <div class="row flex flex-left full-width">
+          <div class="col full-width">
+              <q-checkbox dense
+                @input="memberName = ''; temp = null; adult = null; active = null; erase = false; getMembersNames(); getAllMemberDTO()"
+                v-model="allMember" label="Wyświetl wszystkich" />
                 <q-radio @input="member = null; allMember = false; getMembersNames(); rearrangeMemberDTO()" color="green"
                   v-model="adult" :val="true" label="Grupa Ogólna" />
                 <q-radio @input="member = null; allMember = false; getMembersNames(); rearrangeMemberDTO()"
                   color="warning" v-model="adult" :val="false" label="Grupa Młodzieżowa" />
-              </div>
-              <div class="row flex flex-left full-width">
                 <q-radio @input="member = null; allMember = false; erase = false; getMembersNames(); rearrangeMemberDTO()"
                   color="green" v-model="active" :val="true" label="Aktywni" />
                 <q-radio @input="member = null; allMember = false; getMembersNames(); rearrangeMemberDTO()"
                   color="warning" v-model="active" :val="false" label="Nieaktywni" />
-              </div>
             </div>
-          </div>
-          <div class="row">
             <q-checkbox dense
-              @input="memberName = null; temp = null; allMember = !erase; active = false; getMembersNames(); getAllMemberDTOWithArgs(); erasedType = erasedTypes[0]"
+              @input="memberName = ''; temp = null; allMember = !erase; active = false; getMembersNames(); getAllMemberDTOWithArgs(); erasedType = erasedTypes[0]"
               color="red" v-model="erase" :val="false" label="Skreśleni" />
-          </div>
-        </q-card>
-        <q-card>
-          <div class="row text-bold text-center text-caption text-positive bg-dark">
+          <div class="row text-bold text-center text-caption">
             <q-item dense v-if="allMember || allMember == null">
               Ogółem : {{ quantities[0] + quantities[3] }}
               ({{ quantities[0] }} + {{ quantities[3] }})
@@ -184,7 +170,7 @@
         <template v-slot="{ item, index }">
           <tr v-if="!item.erased" :key="index" class="rounded bg-dark text-positive" style="cursor:pointer"
             @click.ctrl="pushOrRemoveEmailToList(item.legitimationNumber)"
-            @click.exact="showloading(), allMember = false; memberName = Object(item.secondName + ' ' + item.firstName + ' ' + item.legitimationNumber); temp = item.legitimationNumber;">
+            @click.exact="showloading(), allMember = false; memberName = item; temp = item.legitimationNumber;">
             <td style="width:25%;" :class="item.club.id === 1 && !item.declarationLOK? 'xyz bg-warning' : item.club.id === 1 && item.declarationLOK ? 'xyz' : 'xyz bg-secondary text-white'">
               <b>{{ index + 1 + ' ' }}</b>{{ item.club.id === 1 ? item.secondName + ' ' + item.firstName : item.secondName + ' ' + item.firstName + ' ' + item.club.name }} {{ !item.declarationLOK? ' - Brak Deklaracji LOK' : ''}}
             </td>
@@ -236,7 +222,7 @@
             </td>
           </tr>
           <tr v-if="item.erased" :key="index" style="cursor:pointer" class="full-width bg-dark text-positive rounded"
-            @click="showloading(); allMember = false; memberName = item.secondName + ' ' + item.firstName + ' leg. ' + item.legitimationNumber; temp = item.legitimationNumber">
+            @click="showloading(); allMember = false; memberName = item; temp = item.legitimationNumber">
             <td style="width:25%;" class="xyz">
               <b>{{ index + 1 }}</b> {{ item.secondName }} {{ item.firstName }}
             </td>
@@ -328,6 +314,7 @@ export default {
       sortImage: false,
       filters: [],
       options: [],
+      erasedTypes: [],
       active: null,
       adult: null,
       erase: false,
@@ -346,6 +333,7 @@ export default {
   created () {
     this.getMembersQuantity()
     this.getAllMemberDTO()
+    this.getMembersNames()
   },
   components: {
     Member: lazyLoadComponent({
@@ -454,7 +442,7 @@ export default {
         })
     },
     getMembersNames () {
-      fetch('http://' + this.local + '/member/getAllNames', {
+      fetch(`http://${this.local}/member/getAllNames`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {

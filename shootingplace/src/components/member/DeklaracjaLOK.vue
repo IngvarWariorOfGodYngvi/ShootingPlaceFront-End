@@ -14,7 +14,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog :position="'top'" v-model="download">
+    <q-dialog position="top" v-model="download">
       <q-card>
         <q-card-section>
           <div class="text-h6">Pobrano składkę {{name}}</div>
@@ -34,6 +34,9 @@ export default {
     return {
       dialog: false,
       download: false,
+      failure: false,
+      success: false,
+      message: null,
       local: App.host
     }
   },

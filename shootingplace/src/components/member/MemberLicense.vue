@@ -1,38 +1,35 @@
 <template>
-  <div class="col-4">
+  <div class="col-4 bg-dark text-positive">
     <q-card-section class="items-center" :style="mobile?'':'height: 80vh'">
       <q-item-section class="col">
-        <div @dblclick="main&&!mobile?editLicense=true:''" class="full-width text-center">
-          <q-field dense class="col" standout="bg-accent text-positive" color="positive" label-color="positive"
-                   stack-label>
+        <div class="full-width text-center">
+          <div @dblclick="main&&!mobile?editLicense=true:''" class="col q-pa-md hover">
+            <Tooltip2clickTip></Tooltip2clickTip>
             <div class="self-center full-width text-center">Licencja</div>
-          </q-field>
-          <div class="row">
-            <div class="col">
-              <q-field dense class="col" v-if="license.number!=null" color="positive" label-color="positive"
-                       label="Numer Licencji i Ważność" label-slot
-                       standout="bg-accent text-positive" stack-label>
-                <div class="self-center col full-width no-outline text-left">
-                  {{ license.number }}
+        </div>
+          <div class="row hover1">
+              <div @dblclick="main&&!mobile?editLicense=true:''" class="col text-left " v-if="license.number!=null">
+                <Tooltip2clickTip></Tooltip2clickTip>
+                <label>Numer Licencji i Ważność</label>
+                <div class="row full-width">
+                  <div class="self-center text-left col">{{ license.number }}</div><div class=" self-center text-left col">{{ convertDate(license.validThru) }}</div>
                 </div>
-                <div class="self-center col full-width no-outline text-left">
-                  {{ convertDate(license.validThru) }}
-                </div>
-              </q-field>
-            </div>
+              </div>
           </div>
           <div
             v-if="shootingPatent.pistolPermission === true || shootingPatent.riflePermission === true || shootingPatent.shotgunPermission === true"
             class="row">
-            <q-field dense label="Dyscypliny" class="col" standout="bg-accent text-positive" color="positive"
-                     label-color="positive" stack-label>
+            <div class="col text-positive text-left">
+                     <label>Dyscypliny</label>
+                     <div class="row">
               <div v-if="license.pistolPermission" class="self-center text-center col-4">Pistolet
               </div>
               <div v-if="license.riflePermission" class="self-center text-center col-4">Karabin
               </div>
               <div v-if="license.shotgunPermission" class="self-center text-center col-4">Strzelba
               </div>
-            </q-field>
+              </div>
+            </div>
           </div>
         </div>
       </q-item-section>
@@ -81,69 +78,41 @@
                 ||!shootingPatent.shotgunPermission)&&!mobile?'height: 44vh':mobile?'':'height: 54vh'"
                           :items="licensePaymentHistory">
           <template v-slot="{ item }">
-            <div v-if="item.new" class="full-width bg-warning">
-              <q-field dense standout="bg-accent text-black" stack-label>
-                <div class="self-center col full-width no-outline text-center text-black">Licencja Nowa
+            <div class="row full-width">
+              <div v-if="item.new" class="full-width bg-warning round">
+                <div class="self-center full-width text-center text-positive q-pa-sm">Licencja Nowa
                 </div>
-              </q-field>
-              <div class="row full-width">
-                <div class="col-5"
-                >
-                  <q-field dense label="Opłacona dnia : " standout="bg-accent text-black" stack-label>
-                    <div class="self-center col full-width no-outline text-left text-black">
-                      {{ convertDate(item.date) }}
-                    </div>
-                  </q-field>
+              </div>
+            <div class="row full-width">
+              <div class="col row hover1">
+                <Tooltip2clickTip></Tooltip2clickTip>
+                <div class="col-6"
+                   @dblclick="main&&!mobile?(paymentUUID=item.uuid,editLicensePaymentDate = item.date,editLicensePaymentYear = item.validForYear,editLicensePayment=true):''">
+                <div class="text-left">
+                  <label>Opłacona Dnia:</label>
+                  <div class="">
+                    {{ convertDate(item.date) }}
+                  </div>
                 </div>
-                <div class="col-4"
-                     @dblclick="main&&!mobile?(paymentUUID = item.uuid,editLicensePaymentDate = item.date,editLicensePaymentYear = item.validForYear,editLicensePayment=true):''">
-                  <q-field dense standout="bg-accent text-black" label="Na rok : " stack-label>
-                    <div class="self-center col full-width no-outline text-left text-black">
-                      {{ item.validForYear }}
-                    </div>
-                  </q-field>
                 </div>
-                <div class="col-3"
-                     @dblclick="main&&!mobile?(paymentUUID = item.uuid,togglePaymentAlert = true):''">
-                  <q-field dense standout="bg-accent text-black" label="PZSS : "
-                           stack-label>
-                    <div class="full-width text-center text-black">
-                      <q-icon :name="item.payInPZSSPortal?'done':'cancel'"></q-icon>
-                    </div>
-                  </q-field>
+              <div class="col-6"
+                   @dblclick="main&&!mobile?(paymentUUID=item.uuid,editLicensePaymentDate = item.date,editLicensePaymentYear = item.validForYear,editLicensePayment=true):''">
+                <div class="text-left">
+                  <label>Na Rok:</label>
+                  <div class="">
+                    {{ item.validForYear }}
+                  </div>
                 </div>
               </div>
             </div>
-            <div v-if="!item.new" class="row full-width">
-              <div class="col-5"
-                   @dblclick="main&&!mobile?(paymentUUID=item.uuid,editLicensePaymentDate = item.date,editLicensePaymentYear = item.validForYear,editLicensePayment=true):''">
-                <q-field dense label="Opłacona dnia" standout="bg-accent text-positive" color="positive"
-                         label-color="positive" stack-label>
-                  <div class="self-center col full-width no-outline text-left">
-                    {{ convertDate(item.date) }}
-                  </div>
-                </q-field>
+              <div class="col-2 hover" @dblclick="main&&!mobile?(paymentUUID=item.uuid,togglePaymentAlert = true):''">
+                <Tooltip2clickTip></Tooltip2clickTip>
+                <div :class="item.payInPZSSPortal?'':'bg-red'">
+                  <label>PZSS</label>
+                  <q-icon class="full-width text-center " :name="item.payInPZSSPortal?'done':'cancel'"></q-icon>
+                </div>
               </div>
-              <div class="col-4"
-                   @dblclick="main&&!mobile?(paymentUUID=item.uuid,editLicensePaymentDate = item.date,editLicensePaymentYear = item.validForYear,editLicensePayment=true):''">
-                <q-field dense standout="bg-accent text-positive" color="positive" label-color="positive"
-                         label="Na rok" stack-label>
-                  <div class="self-center col full-width no-outline text-left">
-                    {{ item.validForYear }}
-                  </div>
-                </q-field>
-              </div>
-              <div class="col-3"
-                   @dblclick="main&&!mobile?(paymentUUID=item.uuid,togglePaymentAlert = true):''">
-                <q-field dense :class="item.payInPZSSPortal?'':'bg-red'"
-                         :standout="item.payInPZSSPortal?'bg-accent':'bg-red-4'" color="positive" label-color="positive"
-                         label="PZSS"
-                         stack-label>
-                  <div class="full-width text-center">
-                    <q-icon :name="item.payInPZSSPortal?'done':'cancel'"></q-icon>
-                  </div>
-                </q-field>
-              </div>
+            </div>
             </div>
           </template>
         </q-virtual-scroll>
@@ -353,25 +322,25 @@
         </q-card-section>
 
         <q-card-actions align="center">
-          <q-btn text-color="positive" label="nie" color="secondary" v-close-popup/>
-          <q-btn text-color="positive" label="tak" color="primary" v-close-popup
-                 @click="toggleHistoryPaymentCode = true"/>
+          <q-btn text-color="positive" label="nie" color="secondary" v-close-popup @click="condition = false;toggleHistoryPaymentCode = true"/>
+          <q-btn text-color="positive" label="tak" color="primary" v-close-popup @click="condition = true;toggleHistoryPaymentCode = true"/>
+          <q-btn text-color="positive" label="anuluj" color="secondary" v-close-popup/>
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="toggleHistoryPaymentCode" persistent>
+    <q-dialog v-model="toggleHistoryPaymentCode">
       <q-card class="bg-red-5 text-center">
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
           <div>
-            <q-input @keypress.enter="toggleHistoryPayment(paymentUUID)" autofocus type="password" v-model="code" filled
+            <q-input @keypress.enter="changeHistoryPayment(paymentUUID,condition)" autofocus type="password" v-model="code" filled
                      color="Yellow" class="bg-yellow text-bold" mask="####"></q-input>
           </div>
         </q-card-section>
 
         <q-card-actions align="right">
           <q-btn icon="cancel" color="black" v-close-popup @click="code=null"/>
-          <q-btn label="OK" color="black" v-close-popup @click="toggleHistoryPayment(paymentUUID)"/>
+          <q-btn label="OK" color="black" v-close-popup @click="changeHistoryPayment(paymentUUID,condition)"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -390,7 +359,7 @@
         </q-card-section>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="editLicenseCode" persistent>
+    <q-dialog v-model="editLicenseCode">
       <q-card class="bg-red-5 text-center">
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
@@ -450,9 +419,17 @@
 <script>
 import App from 'src/App'
 import { isWindows } from 'mobile-device-detect'
+import lazyLoadComponent from 'src/utils/lazyLoadComponent'
+import SkeletonBox from 'src/utils/SkeletonBox.vue'
 
 export default {
   name: 'MemberLicense.vue',
+  components: {
+    Tooltip2clickTip: lazyLoadComponent({
+      componentFactory: () => import('src/utils/Tooltip2clickTip.vue'),
+      loading: SkeletonBox
+    })
+  },
   data () {
     return {
       mobile: !isWindows,
@@ -460,6 +437,7 @@ export default {
       license: '',
       licensePaymentHistory: [],
       code: null,
+      condition: null,
       paymentUUID: '',
       newLicenseNumber: '',
       editLicenseNumber: '',
@@ -726,8 +704,8 @@ export default {
         }
       })
     },
-    toggleHistoryPayment (uuid) {
-      fetch('http://' + this.local + '/license/paymentToggle?paymentUUID=' + uuid + '&pinCode=' + this.code, {
+    changeHistoryPayment (uuid, condition) {
+      fetch(`http://${this.local}/license/paymentChange?paymentUUID=${uuid}&pinCode=${this.code}&condition=${condition}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -751,6 +729,7 @@ export default {
               this.autoClose()
             })
         }
+        this.condition = null
       })
     },
     forceUpdateLicence (uuid, number, date, paid) {

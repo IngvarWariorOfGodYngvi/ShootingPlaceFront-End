@@ -23,7 +23,13 @@
 </template>
 
 <script >
+import App from 'src/App.vue'
 export default {
-  name: 'LicenseEnd'
+  name: 'LicenseEnd',
+  data () {
+    return {
+      local: App.host
+    }
+  }
 }
 </script>

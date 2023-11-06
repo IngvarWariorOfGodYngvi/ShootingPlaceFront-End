@@ -9,7 +9,7 @@
               <template v-slot:append>
                 <q-icon name="event" color="positive" class="cursor-pointer">
                   <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                    <q-date @input="memberAmmoTakesInTime ()" v-model="firstDateAmmo" mask="YYYY-MM-DD" class="bg-dark text-positive">
+                    <q-date @input="otherAmmoTakesInTime ()" v-model="firstDateAmmo" mask="YYYY-MM-DD" class="bg-dark text-positive">
                       <div class="row items-center justify-end">
                         <q-btn v-close-popup label="Zamknij" color="primary"/>
                       </div>
@@ -25,7 +25,7 @@
               <template v-slot:append>
                 <q-icon name="event" color="positive" class="cursor-pointer">
                   <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                    <q-date @input="memberAmmoTakesInTime ()" v-model="secondDateAmmo" mask="YYYY-MM-DD" class="bg-dark text-positive">
+                    <q-date @input="otherAmmoTakesInTime ()" v-model="secondDateAmmo" mask="YYYY-MM-DD" class="bg-dark text-positive">
                       <div class="row items-center justify-end">
                         <q-btn v-close-popup label="Zamknij" color="primary"/>
                       </div>
@@ -36,7 +36,7 @@
             </q-input>
           </q-item>
           <div class="q-pa-md">
-            <q-btn color="primary" text-color="white" @click="memberAmmoTakesInTime ()">Wyszukaj</q-btn>
+            <q-btn color="primary" text-color="white" @click="otherAmmoTakesInTime ()">Wyszukaj</q-btn>
           </div>
         </q-card-section>
         <q-card-section class="col">
@@ -50,7 +50,7 @@
               <thead class="thead-sticky text-left">
               <tr class="bg-primary text-white text-left">
                 <th style="width: 25%">{{ quantityAmmo.length }} Nazwisko i Imię</th>
-                <th style="width: 15%">Numer<br/>Legitymacji</th>
+                <th style="width: 15%">Numer<br/>ID</th>
                 <th style="width: 10%">5,6mm</th>
                 <th style="width: 10%">9x19mm</th>
                 <th style="width: 10%">12/76</th>
@@ -61,13 +61,11 @@
               </thead>
             </template>
             <template v-slot="{ item, index }">
-              <tr :key="index" style="cursor:pointer"
-                  @dblclick="legitimationNumber = item.legitimationNumber; memberDial=true">
-                <Tooltip2clickToShow></Tooltip2clickToShow>
+              <tr :key="index" style="cursor:pointer">
                 <td class="text-left xyz">
                   <div><b>{{ index + 1 }} </b>{{ item.secondName }} {{ item.firstName }}</div>
                 </td>
-                <td class="text-left">nr leg. {{ item.legitimationNumber }}</td>
+                <td class="text-left">ID {{ item.legitimationNumber }}</td>
                 <td class="text-left">
                   <div v-for="(caliber,id) in item.caliber" :key="id">
                     <div v-if="caliber.name === '5,6mm'">{{ caliber.quantity }} szt.</div>
@@ -104,48 +102,23 @@
         </q-card-section>
       </div>
     </div>
-    <q-dialog v-model="memberDial" style="min-width: 80vw">
-      <q-card class="bg-dark" style="min-width: 80vw">
-        <q-card-section class="flex-center">
-          <Member :member-number-legitimation="legitimationNumber"></Member>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn label="zamknij" color="primary" text-color="white" v-close-popup/>
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
   </div>
 </template>
 <style src="src/style/style.scss" lang="scss">
 </style>
 <script>
 import App from 'src/App'
-import lazyLoadComponent from 'src/utils/lazyLoadComponent'
-import SkeletonBox from 'src/utils/SkeletonBox'
 
 export default {
   name: 'MembersAndAmmo.vue',
   data () {
     return {
-      memberDial: false,
-      legitimationNumber: null,
       firstDateAmmo: null,
       secondDateAmmo: this.createTodayDate(),
       quantityAmmo: [],
       mobile: App.mobile,
       local: App.host
     }
-  },
-  components: {
-    Member: lazyLoadComponent({
-      componentFactory: () => import('components/member/Member.vue'),
-      loading: SkeletonBox
-    }),
-    Tooltip2clickToShow: lazyLoadComponent({
-      componentFactory: () => import('src/utils/Tooltip2clickToShow.vue'),
-      loading: SkeletonBox
-    })
   },
   methods: {
     createTodayDate () {
@@ -164,8 +137,8 @@ export default {
       }
       return date.getFullYear() + '/' + month + '/' + day
     },
-    memberAmmoTakesInTime () {
-      fetch('http://' + this.local + '/statistics/memberAmmoTakesInTime?firstDate=' + this.firstDateAmmo.replace(/\//gi, '-') + '&secondDate=' + this.secondDateAmmo.replace(/\//gi, '-'), {
+    otherAmmoTakesInTime () {
+      fetch('http://' + this.local + '/statistics/otherAmmoTakesInTime?firstDate=' + this.firstDateAmmo.replace(/\//gi, '-') + '&secondDate=' + this.secondDateAmmo.replace(/\//gi, '-'), {
         method: 'GET'
       }).then(response => {
         response.json().then(response => {

@@ -3,11 +3,11 @@
       <div class="bg-dark text-positive" >
         <div class="row">
           <q-select label="Wybierz osobę z Klubu" popup-content-class="bg-dark text-positive"
-            :option-value="opt => opt !== '' ? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber).toString() : ''"
-            :option-label="opt => opt !== '' ? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber).toString() : ''"
-            emit-value map-options options-dense color="positive" input-class="text-positive" label-color="positive"
+            :option-label="opt => opt.secondName!== '0' ? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber).toString() : ''"
+            :class="memberName.secondName!=='0'?'bg-primary':'bg-secondary'" style="transition: 0.6s ease-in-out;"
+            emit-value map-options options-dense color="positive" input-class="text-white" label-color="white"
             v-model="memberName" fill-input filled dense use-input hide-selected input-debounce="0" :options="options"
-            @input="otherName = '0 0'"  @filter="filterFn" class="col">
+            @input="otherName = Object({secondName:'0', firstName: '0',id: '0'})"  @filter="filterFn" class="col">
             <template v-slot:option="option">
               <q-item class="rounded bg-dark text-positive" dense style="padding: 0; margin: 0;" v-bind="option.itemProps"
                 v-on="option.itemEvents">
@@ -15,7 +15,7 @@
                   <div class="background text-caption text-right">{{ !option.opt.declarationLOK && shootingPlace==='prod'?'Brak Podpisanej Deklaracji LOK':'' }}</div>
                   <q-item-section dense style="padding: 0.5em; margin: 0;"
                     :class="option.opt.active ? '' : 'bg-warning rounded'"
-                    @click="otherName = '0 0'; memberName = option.opt.secondName + ' ' + option.opt.firstName + ' ' + option.opt.legitimationNumber">
+                    @click="otherName = Object({secondName:'0', firstName: '0',id: '0'})">
                     <div>{{ option.opt.secondName }} {{ option.opt.firstName }}
                       {{ option.opt.legitimationNumber }} {{ option.opt.adult ? 'Ogólna' : 'Młodzież' }} {{
                         option.opt.active ? '' : ' - BRAK SKŁADEK' }}
@@ -34,8 +34,11 @@
           </q-select>
           <q-select @popup-show="getOther()" @popup-hide="getOther()" options-dense class="col" dense filled
             v-model="otherName" use-input hide-selected fill-input input-debounce="0" color="positive"
-            input-class="text-positive" label-color="positive" popup-content-class="bg-dark text-positive"
-            :options="options1" @input="memberName = '0 0'" @filter="filterOther" label="Dodaj osobę spoza klubu">
+            input-class="text-white" label-color="white" popup-content-class="bg-dark text-positive"
+            :option-label="opt => opt.secondName !== '0' ? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.id).toString() : ''"
+            emit-value map-options
+            :class="otherName.secondName!=='0'?'bg-primary':'bg-secondary'"
+            :options="options1" @input="memberName = Object({secondName:'0', firstName: '0',legitimationNumber: '0'})" @filter="filterOther" label="Dodaj osobę spoza klubu">
             <template v-slot:no-option>
               <div class="bg-dark text-center text-bold text-positive">
                 <div class="q-pa-md bg-dark text-center text-bold text-positive">Brak wyników - możesz dodać nową
@@ -49,7 +52,7 @@
           <q-item dense v-for="(item, uuid) in calibers" :key="uuid" :val="item.uuid" style="">
             <div class="text-positive text-center col" style="display: flex;justify-content: center;align-content: center;flex-direction: column;">{{ item.name }}</div>
             <q-input v-model="item.counter" class="col" color="positive" label-color="positive" @focus="item.counter.startsWith('0')?item.counter='':item.counter=item.counter"
-          input-class="text-positive" dense filled :label="'max: ' + item.quantity" @input="item.counter===''?item.counter='0':item.counter=item.counter;onInput(item,item.counter)" @keypress.enter="simulateProgress(0)"
+          input-class="text-positive" dense filled :label="'max: ' + item.quantity" @input="item.counter===''?item.counter='0':item.counter=item.counter;onInput(item,item.counter)" @keypress.enter="dis = true,simulateProgress(0,memberName.legitimationNumber,otherName.id)"
           onkeypress="return (event.charCode > 44 && event.charCode < 58)" type="number" :max="item.quantity"></q-input>
           <div class="col text-center" style="display: flex;justify-content: center;align-content: center;flex-direction: column;"> * {{ viewCurrency(item.unitPrice) }} = {{ viewCurrency(item.counter * item.unitPrice) }} </div>
           <div class="col text-center" style="display: flex;justify-content: center;align-content: center;flex-direction: column;"> * {{ viewCurrency(item.unitPriceForNotMember) }} = {{ viewCurrency(item.counter * item.unitPriceForNotMember) }}</div>
@@ -69,7 +72,7 @@
             <q-item>
               <q-btn class="full-width col" color="primary" :loading="loading[0]" icon="done"
                 :disable="dis || memberName === '' || otherName === ''"
-                @click="dis = true; simulateProgress(0)"
+                @click="dis = true; simulateProgress(0, memberName.legitimationNumber, otherName.id)"
                 ></q-btn>
             </q-item>
           </q-card-actions>
@@ -134,9 +137,9 @@ export default {
     ])
     const progress = ref(false)
 
-    function simulateProgress (number) {
+    function simulateProgress (number, memberNumberLegitimation, otherID) {
       loading.value[number] = true
-      this.addMemberAndAmmoToCaliber(this.mapCalibers(this.calibers))
+      this.addMemberAndAmmoToCaliber(this.mapCalibers(this.calibers), memberNumberLegitimation, otherID)
       setTimeout(() => {
         loading.value[number] = false
       }, 0)
@@ -158,8 +161,16 @@ export default {
   data () {
     return {
       dis: false,
-      memberName: '',
-      otherName: '',
+      memberName: {
+        firstName: '0',
+        secondName: '0',
+        legitimationNumber: 0
+      },
+      otherName: {
+        firstName: '0',
+        secondName: '0',
+        id: 0
+      },
       open1: open,
       calibers: [],
       options: [],
@@ -194,7 +205,7 @@ export default {
         })
     },
     getOther () {
-      fetch('http://' + this.local + '/other/', {
+      fetch('http://' + this.local + '/other/all', {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -247,14 +258,9 @@ export default {
       }
       return map
     },
-    addMemberAndAmmoToCaliber (map) {
-      const memberNameWord = this.memberName.split(' ')
-      const legNumber = memberNameWord.length
-      const memberNameUUID = memberNameWord[legNumber - 1]
-      const otherNameWord = this.otherName.split(' ')
-      const idNumber = otherNameWord.length
-      const otherNameID = otherNameWord[idNumber - 1]
-      fetch(`http://${this.local}/ammoEvidence/listOfAmmo?legitimationNumber=${memberNameUUID}&otherID=${otherNameID}`, {
+    addMemberAndAmmoToCaliber (map, memberNumberLegitimation, otherID) {
+      console.log(this.memberName)
+      fetch(`http://${this.local}/ammoEvidence/listOfAmmo?legitimationNumber=${memberNumberLegitimation}&otherID=${otherID}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -304,14 +310,14 @@ export default {
       if (val === '') {
         update(() => {
           const needle = val.toLowerCase()
-          this.options1 = this.filtersOther.filter(v => v.toLowerCase().indexOf(needle) > -1)
+          this.options1 = this.filtersOther.filter(v => v.fullName.toLowerCase().indexOf(needle) > -1)
         })
         return
       }
 
       update(() => {
         const needle = val.toLowerCase()
-        this.options1 = this.filtersOther.filter(v => v.toLowerCase().indexOf(needle) > -1)
+        this.options1 = this.filtersOther.filter(v => v.fullName.toLowerCase().indexOf(needle) > -1)
       })
     },
     autoClose () {
@@ -319,7 +325,6 @@ export default {
         this.success = false
         this.failure = false
         this.message = null
-        document.getElementById('1').close()
       }, 2000)
     }
   }

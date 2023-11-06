@@ -48,7 +48,7 @@
                  @dblclick="!mobile?(scoreUUID = item.uuid, player = item,scoreLabel=item.score,innerTen=item.innerTen,outerTen=item.outerTen,procedures=item.procedures,setScorePlayer=true,series=setSeriesValues (item.series),item.member!=null?
                  (temp=item.member) : (temp=item.otherPersonEntity),
                  startNumber=item.metricNumber,competitionTemp = competition) : ' '">
-              <q-field dense standout="bg-accent text-positive" class="text-positive text-caption" stack-label>
+              <div class="text-positive text-caption row" style="cursor: pointer;">
                 <div class="col-3 self-center no-outline text-left" :class="index%2===0?'text-black':'text-positive'">
                   <div>
                     {{
@@ -98,7 +98,7 @@
                     </div>
                   </div>
                 </div>
-              </q-field>
+              </div>
             </div>
           </div>
         </div>
@@ -250,7 +250,7 @@
                             style="opacity: 0.1"
                             @before-show="tempSeries = series[index];series[index] = '';series = setSeriesValues(series)"
                             @hide="innerTenSeries=0;outerTenSeries=0;manuallyClosed?'':(series[index]=tempSeries, series = setSeriesValues(series));manuallyClosed=false">
-                <q-field class="text-h6 text-positive" color="positive" label-color="positive">
+                <div class="text-h6 text-positive row" color="positive" label-color="positive">
                   <div class="col">
                     <div class="full-width">|{{ series[index] }}|</div>
                     <div class="full-width">
@@ -260,7 +260,7 @@
                       <div>10/: {{ outerTenSeries }} 10X: {{ innerTenSeries }} suma: {{ series[index].length > 0? sum(series[index]): '0'}}</div>
                     </div>
                   </div>
-                </q-field>
+                </div>
                 <div class="row">
                   <div class="col-9">
                     <div class="row">
@@ -486,7 +486,6 @@ export default {
     },
     sum (n) {
       if (n.length > 0) {
-        console.log(n)
         n = n.replaceAll('/', '')
         n = n.replaceAll('X', '')
         const arr = n.split('+')
@@ -497,7 +496,6 @@ export default {
     },
     sumByClick (n) {
       if (n.length > 0) {
-        console.log(n)
         n = n.replaceAll('/', '')
         n = n.replaceAll('X', '')
         const arr = n.split('+')
@@ -715,7 +713,6 @@ export default {
         if (response.status === 200) {
           response.text().then(
             response => {
-              console.log(response)
               this.message = response
               this.success = true
               this.getCompetitionByID(this.uuid)

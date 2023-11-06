@@ -103,7 +103,7 @@
               </div>
                 <q-virtual-scroll :items=" toEraseList " visible class="full-width q-pa-none">
                   <template v-slot=" { item, index } ">
-                  <div :key=" index " class="row">
+                  <div :key=" index " class="row hover1" @dblclick="legitimationNumber= item.legitimationNumber; memberDial=true">
                     <div class="q-pr-xs">{{index+1}}</div>
                     <div class="col">{{item.secondName}} {{item.firstName}}</div>
                     <div class="col-1 text-center">{{item.legitimationNumber}}</div>
@@ -207,6 +207,17 @@
         </q-card-section>
       </q-card>
     </q-dialog>
+    <q-dialog v-model="memberDial" style="min-width: 80vw">
+    <q-card style="min-width: 80vw" class="bg-dark">
+      <q-card-section class="flex-center">
+        <Member :member-number-legitimation="legitimationNumber"></Member>
+      </q-card-section>
+
+      <q-card-actions align="right">
+        <q-btn label="zamknij" color="primary" v-close-popup/>
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
   </q-page>
 </template>
 
@@ -240,10 +251,16 @@ export default {
     EvidenceBook: lazyLoadComponent({
       componentFactory: () => import('components/otherFunctions/EvidenceBook.vue'),
       loading: SkeletonBox
+    }),
+    Member: lazyLoadComponent({
+      componentFactory: () => import('components/member/Member.vue'),
+      loading: SkeletonBox
     })
   },
   data () {
     return {
+      memberDial: false,
+      legitimationNumber: null,
       dateEvidence: this.createTodayDate(),
       code: null,
       toEraseList: [],

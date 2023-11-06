@@ -159,7 +159,7 @@
     </q-dialog>
   </div>
 </template>
-<style src="../style/style.scss" lang="scss"></style>
+<style src="src/style/style.scss" lang="scss"></style>
 <script>
 import App from 'src/App'
 import { isWindows } from 'mobile-device-detect'

@@ -57,8 +57,7 @@
           </template>
           <template v-slot="{ item, index }">
             <tr :key="index" class="rounded text-positive" style="cursor:pointer" @dblclick="legitimationNumber = item.legitimation_number; memberDial=true">
-              <q-tooltip content-class="text-subtitle2" anchor="top middle">kliknij dwa razy aby wyświetlić podgląd
-              </q-tooltip>
+              <Tooltip2clickToShow></Tooltip2clickToShow>
               <td class="text-left xyz"><b>{{index+1}}</b> {{item.second_name}} {{item.first_name}}</td>
               <td class="text-left">nr leg. {{item.legitimation_number}}</td>
               <td class="text-left">{{convertDate(item.join_date)}}</td>
@@ -96,6 +95,10 @@ export default {
   components: {
     Member: lazyLoadComponent({
       componentFactory: () => import('components/member/Member.vue'),
+      loading: SkeletonBox
+    }),
+    Tooltip2clickToShow: lazyLoadComponent({
+      componentFactory: () => import('src/utils/Tooltip2clickToShow.vue'),
       loading: SkeletonBox
     })
   },
@@ -140,18 +143,18 @@ export default {
     },
     getSumJoinDateXLSXFile () {
       axios({
-        url: 'http://' + this.local + '/files/joinDateSum?firstDate=' + this.firstDateJoinDate.replace(/\//gi, '-') + '&secondDate=' + this.secondDateJoinDate.replace(/\//gi, '-'),
+        url: `http://${this.local}/files/joinDateSum?firstDate=${this.firstDateJoinDate.replace(/\//gi, '-')}&secondDate=${this.secondDateJoinDate.replace(/\//gi, '-')}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
-        fileLink.setAttribute('download', 'lista zapisów.xlsx')
+        fileLink.setAttribute('download', 'lista zapisów od ' + this.firstDateJoinDate.replace(/\//gi, '-') + ' do ' + this.secondDateJoinDate.replace(/\//gi, '-') + '.xlsx')
         document.body.appendChild(fileLink)
         fileLink.click()
-        this.listDownload = true
-        this.autoClose()
+        // this.listDownload = true
+        // this.autoClose()
       })
     },
     convertDate (date) {

@@ -12,44 +12,41 @@
       </div>
       <q-scroll-area style="height: 50vh">
         <div v-show="!visible">
-          <div v-for="(item, index) in list" :key="index" class="row">
+          <div v-for="(item, index) in list" :key="index" class="row hover1" @dblclick="legitimationNumber = item.legitimationNumber;memberDial=true">
+            <Tooltip2clickToShow></Tooltip2clickToShow>
             <q-checkbox dense v-if="item.license.paid" v-model="licenseList" value="" :val="item.uuid" left-label>
               {{ index + 1 }}.
             </q-checkbox>
             <q-checkbox value="" dense color="grey" v-else disable left-label>{{ index + 1 }}.</q-checkbox>
-            <div class="col" @dblclick="legitimationNumber = item.legitimationNumber;memberDial=true">
-              <q-tooltip content-class="text-subtitle2" anchor="top middle">kliknij dwa razy aby wyświetlić podgląd
-              </q-tooltip>
-              <q-field dense class="col" label="Nazwisko i Imię" color="positive" label-color="positive" standout="bg-accent text-positive" stack-label>
-                <div @dblclick="legitimationNumber = item.legitimationNumber;memberDial=true">
-                  <div class="self-center col full-width no-outline row text-positive" >{{ item.secondName }}
+            <div class="col">
+              <div>
+                <label>&nbsp;Nazwisko i Imię</label>
+                  <div>&nbsp;{{ item.secondName }}
                     {{ item.firstName }}
                   </div>
-                </div>
-              </q-field>
-            </div>
-            <q-field dense :class="item.active?'col-1':'col-1 bg-red-4'" label="Status" color="positive" :label-color="item.active?'positive':'black'" standout="bg-accent text-positive"
-                     stack-label>
-              <div>
-                <div :class="item.active?'row text-positive':'row text-black'" >{{item.active?'Aktywny':'Nieaktywny'}}</div>
               </div>
-            </q-field>
-            <q-field dense class="col-1" label="Numer Licencji" color="positive" label-color="positive" standout="bg-accent text-positive" stack-label>
-              <div class="self-center col full-width no-outline row text-positive" >
+            </div>
+            <div :class="item.active?'col-1':'col-1 bg-red-4'" style="border-radius: 2px">
+              <label :class="item.active?'':'text-black'">Status</label>
+              <div :class="item.active?'':'text-black'" >{{item.active?'Aktywny':'Nieaktywny'}}</div>
+            </div>
+            <div class="col-2">
+              <label>Numer Licencji</label>
+              <div>
                 {{ item.license.number }}
               </div>
-            </q-field>
-            <q-field dense class="col-2" label="Grupa" color="positive" label-color="positive" standout="bg-accent text-positive" stack-label>
-              <div class="self-center col full-width no-outline row text-positive" >{{item.adult?'Grupa Ogólna':'Grupa Młodzieżowa'}}
+            </div>
+            <div class="col-2">
+              <label>Grupa</label>
+              <div>{{item.adult?'Grupa Ogólna':'Grupa Młodzieżowa'}}
               </div>
-            </q-field>
-            <q-field dense class="col-2" label="Ważność licencji" color="positive" label-color="positive" standout="bg-accent text-positive" stack-label>
-              <div>
-                <div class="self-center col full-width no-outline row text-positive" >
+            </div>
+            <div class="col-2">
+                <label>Ważność licencji</label>
+                <div>
                   {{ convertDate(item.license.validThru) }}
                 </div>
-              </div>
-            </q-field>
+            </div>
             <div class="col-2">
               <q-tooltip v-if="!item.license.paid && !item.active" content-class="bg-red text-subtitle2" anchor="top middle">UREGULUJ SKŁADKI</q-tooltip>
             <q-btn dense disable color="grey-8" v-if="!item.license.paid && !item.active" class="fit"
@@ -71,7 +68,7 @@
       </q-scroll-area>
     </q-card>
     <q-dialog v-model="memberDial" style="min-width: 80vw">
-      <q-card style="min-width: 80vw" class="bg-dark text-positive">
+      <q-card style="min-width: 80vw" class="bg-dark">
         <q-card-section class="flex-center">
           <Member :member-number-legitimation="legitimationNumber" @hook:destroyed="getMembersWithLicense()"></Member>
         </q-card-section>
@@ -169,8 +166,9 @@
 
 <script>
 import App from 'src/App.vue'
-import Member from 'components/member/Member.vue'
 import { isWindows } from 'mobile-device-detect'
+import lazyLoadComponent from 'src/utils/lazyLoadComponent'
+import SkeletonBox from 'src/utils/SkeletonBox.vue'
 import Vue from 'vue'
 import SmoothScrollbar from 'vue-smooth-scrollbar'
 Vue.use(SmoothScrollbar)
@@ -203,11 +201,15 @@ export default {
     }
   },
   components: {
-    Member
+    Member: lazyLoadComponent({
+      componentFactory: () => import('components/member/Member.vue'),
+      loading: SkeletonBox
+    }),
+    Tooltip2clickToShow: lazyLoadComponent({
+      componentFactory: () => import('src/utils/Tooltip2clickToShow.vue'),
+      loading: SkeletonBox
+    })
   },
-  // watch: {
-  //
-  // },
   created () {
     this.getMembersWithLicense()
   },

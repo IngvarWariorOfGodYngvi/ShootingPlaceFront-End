@@ -6,7 +6,7 @@
                 :showing="visible"
                 label="Przetwarzanie..."
                 color="primary"/>
-        <q-input id="workTime" v-model="number" class="text-white" :disable="dis" type="password" dense label-color="white"
+        <q-input id="workTime" name="workTime" v-model="number" class="text-white" :disable="dis" type="password" dense label-color="white"
         label="Czas pracy - zeskanuj swoją kartę tutaj" input-class="text-white" filled
         @keypress.enter="dis=true;goToWork(number)"/>
         <div v-for="(item, index) in usersInWork" :key="index" class="full-width" style="height: auto">
@@ -111,7 +111,6 @@ export default {
         this.success = false
         this.message = null
         this.number = ''
-        document.getElementById('workTime').focus()
       }, 2000)
     }
   }

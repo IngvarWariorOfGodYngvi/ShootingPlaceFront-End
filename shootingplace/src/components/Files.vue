@@ -36,9 +36,8 @@
                  :disabled="files.length!==50" class="full-width text-black" color="white"></q-btn>
         </div>
       </div>
-      <div class="row">
-        <q-field color="positive" class="self-center col full-width no-outline text-bold text-center" dense
-                 standout="bg-accent text-positive" stack-label>
+      <div class="row text-positive q-pa-md">
+        <div color="positive" class="self-center col row text-bold text-center">
           <div class="col-5 self-center text-bold text-left">Nazwa pliku</div>
           <div class="col-1 self-center text-bold text-center">Data utworzenia</div>
           <div class="col-1 self-center text-bold text-center">Godzina utworzenia</div>
@@ -47,14 +46,12 @@
           <div class="col-2 self-center text-center">
             <div>Pobierz plik</div>
           </div>
-        </q-field>
+        </div>
       </div>
-      <q-virtual-scroll :items="files" dense visible class="full-width" style="height: 80vh;">
+      <q-virtual-scroll :items="files" dense visible class="full-width text-positive" style="height: 80vh;">
         <template v-slot="{ item, index }">
           <div :key="index">
-            <q-field color="positive" dense
-                     class="self-center col full-width no-outline text-bold text-center" standout="bg-accent text-black"
-                     stack-label>
+            <div class="self-center col text-bold text-center q-pa-xs row hover1">
               <q-tooltip v-if="item.type.includes('image')" :delay="750" @hide="url = ''"
                          @before-show="getUrl (item.uuid)" anchor="center middle" self="center middle"
                          transition-show="scale"
@@ -69,7 +66,7 @@
               <div class="col-2 q-pa-xs self-center text-center">
                 <q-btn color="primary" dense @click="showloading();fileName = item.name;getFile (item.uuid)">pobierz plik</q-btn>
               </div>
-            </q-field>
+            </div>
           </div>
         </template>
       </q-virtual-scroll>

@@ -1,6 +1,6 @@
 <template>
   <div class="full-width rounded">
-    <q-btn class="full-width" :disable="disable" @click="dialog=true" color="secondary">Pobierz Zaświadczenie o przynależności
+    <q-btn class="full-width" @click="dialog=true" color="secondary">Pobierz Zaświadczenie o przynależności
     </q-btn>
     <q-dialog v-model="dialog">
       <q-card style="width: 400px;" class="bg-dark text-positive">
@@ -24,9 +24,9 @@
 
         <q-card-actions align="right">
           <q-btn label="anuluj" color="primary" v-close-popup @click="certificateChoice = null"/>
-          <q-tooltip v-if="disable&&certificateChoice===certificateChoices[0]" content-class="text-h6 bg-red" anchor="top middle" self="bottom middle" :offset="[12, 12]">Brak Możliwości wystawienie zaświadczenia
+          <q-tooltip v-if="certificateChoice===certificateChoices[0]" content-class="text-h6 bg-red" anchor="top middle" self="bottom middle" :offset="[12, 12]">Brak Możliwości wystawienie zaświadczenia
           </q-tooltip>
-          <q-btn color="primary" :disable="disable&&certificateChoice===certificateChoices[0]" label="pobierz" @click="certificateDownload = true"></q-btn>
+          <q-btn color="primary" :disable="certificateChoice===certificateChoices[0]" label="pobierz" @click="certificateDownload = true"></q-btn>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -83,11 +83,6 @@ export default {
     name: {
       type: String,
       required: true
-    },
-    disable: {
-      type: Boolean,
-      required: true,
-      default: false
     }
   },
   methods: {

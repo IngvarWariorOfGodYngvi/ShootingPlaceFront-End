@@ -13,40 +13,41 @@
       </div>
       <q-scroll-area style="height: 50vh;">
         <div v-if="!visible">
-          <div v-for="(item,index) in list" :key="index" class="row">
+          <div v-for="(item,index) in list" :key="index" class="row hover1">
+            <Tooltip2clickToShow></Tooltip2clickToShow>
             <q-checkbox dense v-model="payPZSSList" :val="item.paymentUuid" left-label>{{ index + 1 }}.</q-checkbox>
             <div class="col" @dblclick="legitimationNumber = item.legitimationNumber;memberDial=true">
-              <q-tooltip content-class="text-subtitle2" anchor="top middle">kliknij dwa razy aby wyświetlić podgląd
-              </q-tooltip>
-              <q-field dense class="col" label="Nazwisko i Imię" color="positive" label-color="positive" standout="bg-accent text-positive" stack-label>
-                <div @dblclick="legitimationNumber = item.legitimationNumber;memberDial=true">
-                  <div class="self-center col full-width no-outline row" tabindex="1">{{ item.secondName }}
-                    {{ item.firstName }}
-                  </div>
+              <div>
+                <label>&nbsp;Nazwisko i Imię</label>
+                <div>&nbsp;{{ item.secondName }}
+                  {{ item.firstName }}
                 </div>
-              </q-field>
+              </div>
             </div>
-            <q-field dense class="col-2" label="Grupa" color="positive" label-color="positive" standout="bg-accent text-positive" stack-label>
-              <div class="self-center col full-width no-outline row" tabindex="1">{{item.adult?'Grupa Ogólna':'Grupa Młodzieżowa'}}
+            <div :class="item.active?'col-1':'col-1 bg-red-4'" style="border-radius: 2px">
+              <label :class="item.active?'':'text-black'">Status</label>
+              <div :class="item.active?'':'text-black'" >{{item.active?'Aktywny':'Nieaktywny'}}</div>
+            </div>
+            <div class="col-2">
+              <label>Grupa</label>
+              <div>{{item.adult?'Grupa Ogólna':'Grupa Młodzieżowa'}}
               </div>
-            </q-field>
-            <q-field dense class="col-1" label="Status" color="positive" label-color="positive" standout="bg-accent text-positive" stack-label>
-              <div>
-                <div class="self-center col full-width no-outline row" tabindex="1">{{item.active?'Aktywny':'Nieaktywny'}}</div>
+            </div>
+            <div class="col-2">
+              <label >Data wpłaty</label>
+              <div>{{ item.date }}
               </div>
-            </q-field>
-            <q-field dense class="col-2" label="Data wpłaty" color="positive" label-color="positive" standout="bg-accent text-positive" stack-label>
-              <div>
-                <div class="self-center col full-width no-outline row" tabindex="1">{{ item.date }}</div>
+            </div>
+            <div class="col-2">
+              <label >Na Rok</label>
+              <div>{{ item.validForYear }}
               </div>
-            </q-field>
-            <q-field dense class="col-1" label="Na Rok" color="positive" label-color="positive" standout="bg-accent text-positive" stack-label>
-              <div class="self-center col full-width no-outline row text-positive" tabindex="1">{{ item.validForYear }}
+            </div>
+            <div class="col-2" :class="item.new?'bg-warning':''">
+              <label>Nowa / Przedłużenie</label>
+              <div>{{item.new?'Nowa':'Przedłużenie'}}
               </div>
-            </q-field>
-            <q-field dense :class="item.new?'col-2 bg-warning':'col-2'" label="Rodzaj" label-color="positive" :standout="item.new?'bg-warning text-black':'bg-accent'" stack-label>
-              <div class="row text-positive" tabindex="1">{{item.new?'Nowa':'Przedłużenie'}}</div>
-            </q-field>
+            </div>
           </div>
         </div>
         <q-inner-loading
@@ -56,7 +57,7 @@
       </q-scroll-area>
     </q-card>
     <q-dialog v-model="memberDial" style="min-width: 80vw">
-      <q-card style="min-width: 80vw" class="bg-dark text-positive">
+      <q-card style="min-width: 80vw" class="bg-dark">
         <q-card-section class="flex-center">
           <Member :member-number-legitimation="legitimationNumber" @hook:destroyed="getAllLicencePayment()"></Member>
         </q-card-section>
@@ -143,6 +144,10 @@ export default {
     Member: lazyLoadComponent({
       componentFactory: () => import('components/member/Member.vue'),
       loading: SkeletonBox
+    }),
+    Tooltip2clickToShow: lazyLoadComponent({
+      componentFactory: () => import('src/utils/Tooltip2clickToShow.vue'),
+      loading: SkeletonBox
     })
   },
   created () {
@@ -198,7 +203,7 @@ export default {
       })
     },
     toggleHistoryPayment () {
-      fetch('http://' + this.local + '/license/paymentToggleArray?paymentUUIDs=' + this.payPZSSList + '&pinCode=' + this.pinCode, {
+      fetch(`http://${this.local}/license/paymentToggleArray?paymentUUIDs=${this.payPZSSList}&pinCode=${this.pinCode}&condition=true`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'

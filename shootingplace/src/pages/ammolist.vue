@@ -73,7 +73,7 @@
             <div class="col">
               <div class="row"
                 v-for="(ammoUsedToEvidenceDTOList, uuid) in ammoInEvidenceDTOList.ammoUsedToEvidenceDTOList" :key="uuid">
-                <div class="row full-width"
+                <div class="row col q-pl-sm hover1"
                   @dblclick="legitimationNumber = ammoUsedToEvidenceDTOList.legitimationNumber; memberDial = legitimationNumber != null">
                   <q-tooltip v-if="!mobile" content-style="width: 20vw" :delay="1500" :hide-delay="500"
                     @hide="personalAmmoFromList = []"
@@ -90,23 +90,24 @@
                       <div class="col">{{ item.counter }}szt.</div>
                     </div>
                   </q-tooltip>
-                  <q-field color="positive" dense class="col-10 text-positive" standout="bg-accent text-positive"
-                    label-color="positive" label="osoba" stack-label>
-                    <div class="row text-positive">{{ ammoUsedToEvidenceDTOList.name }}</div>
-                  </q-field>
+                  <div class="col q-pl-sm">
+                    <label>Osoba</label>
+                    <div>{{ ammoUsedToEvidenceDTOList.name }}</div>
+                  </div>
                   <div class="col-2"
                     @click="mobile ? (getPersonalAmmoFromList(ammoUsedToEvidenceDTOList.legitimationNumber, ammoUsedToEvidenceDTOList.idnumber, ammoList.uuid), personalAmmoFromListInfo = true) : ''">
-                    <q-field dense standout="bg-accent text-positive" label="ilość" label-color="positive" stack-label>
-                      <div class="row text-positive">{{ ammoUsedToEvidenceDTOList.counter }}</div>
-                    </q-field>
+                    <div>
+                      <label>Ilość</label>
+                      <div>{{ ammoUsedToEvidenceDTOList.counter }}</div>
+                    </div>
                   </div>
                 </div>
               </div>
               <div class="row reverse">
-                <q-field class="col-2 bg-dark text-positive" dense standout="bg-accent text-positive"
-                  label-color="positive" label="suma" stack-label>
-                  <div class="text-positive">{{ ammoInEvidenceDTOList.quantity }}</div>
-                </q-field>
+                <div class="col-2 q-pt-sm hover2">
+                  <label>suma</label>
+                  <div>{{ ammoInEvidenceDTOList.quantity }}</div>
+              </div>
               </div>
             </div>
           </div>
@@ -530,7 +531,7 @@ export default {
       loading: SkeletonBox
     }),
     Gun: lazyLoadComponent({
-      componentFactory: () => import('components/Gun.vue'),
+      componentFactory: () => import('src/components/armory/Gun.vue'),
       loading: SkeletonBox
     }),
     AddAmmunition: lazyLoadComponent({

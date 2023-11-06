@@ -68,8 +68,7 @@
           </template>
           <template v-slot="{ item, index }">
             <tr :key="index" class="rounded text-positive" style="cursor:pointer" @dblclick="legitimationNumber = item.member.legitimation_number; memberDial=true">
-              <q-tooltip content-class="text-subtitle2" anchor="top middle">kliknij dwa razy aby wyświetlić podgląd
-              </q-tooltip>
+              <Tooltip2clickToShow></Tooltip2clickToShow>
               <td class="xyz"><b>{{index+1}}</b> {{item.member.second_name}} {{item.member.first_name}}</td>
               <td>nr. leg {{item.member.legitimation_number}}</td>
               <td class="text-left">{{item.contribution.paymentDay}}</td>
@@ -106,11 +105,11 @@ export default {
   data () {
     return {
       memberDial: false,
+      legitimationNumber: null,
       firstDate: null,
       secondDate: this.createTodayDate(),
       adultCondition: null,
       quantitySumRearrangeTable: [],
-      legitimationNumber: null,
       mobile: App.mobile,
       local: App.host
     }
@@ -118,6 +117,10 @@ export default {
   components: {
     Member: lazyLoadComponent({
       componentFactory: () => import('components/member/Member.vue'),
+      loading: SkeletonBox
+    }),
+    Tooltip2clickToShow: lazyLoadComponent({
+      componentFactory: () => import('src/utils/Tooltip2clickToShow.vue'),
       loading: SkeletonBox
     })
   },

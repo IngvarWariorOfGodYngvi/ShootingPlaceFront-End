@@ -65,8 +65,7 @@
           </template>
           <template v-slot="{ item, index }">
             <tr :key="index" class="rounded" style="cursor:pointer" @dblclick="legitimationNumber = item.legitimationNumber; memberDial=true">
-              <q-tooltip content-class="text-subtitle2" anchor="top middle">kliknij dwa razy aby wyświetlić podgląd
-              </q-tooltip>
+              <Tooltip2clickToShow></Tooltip2clickToShow>
               <td v-if="!item.payInPZSSPortal" class="text-left xyz"><b>{{index+1}}</b><q-checkbox color="primary" dense v-model="licenseArray" :val="item.licenseUUID" :label="item.secondName + ' ' + item.firstName "></q-checkbox></td>
               <td v-else class="text-left xyz"><b>{{index+1}}</b> {{item.secondName}} {{item.firstName}} </td>
               <td class="text-left">nr leg. {{item.legitimationNumber}}</td>
@@ -135,6 +134,10 @@ export default {
   components: {
     Member: lazyLoadComponent({
       componentFactory: () => import('components/member/Member.vue'),
+      loading: SkeletonBox
+    }),
+    Tooltip2clickToShow: lazyLoadComponent({
+      componentFactory: () => import('src/utils/Tooltip2clickToShow.vue'),
       loading: SkeletonBox
     })
   },

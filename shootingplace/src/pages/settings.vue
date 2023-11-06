@@ -4,31 +4,31 @@
       <Experimental class="col"></Experimental>
       <SuperUser v-if="main"></SuperUser>
       <Users v-if="main"></Users>
-      <div v-if="main" class="q-pa-md text-bold text-center text-h6 text-positive">TWORZENIE KLUBU MACIERZYSTEGO</div>
-      <q-card v-if="main" class="row">
-            <q-card-section class="col-6 bg-grey-2">
+      <div v-if="main" class="q-pa-md text-bold text-center text-h6 text-positive bg-dark">TWORZENIE KLUBU MACIERZYSTEGO</div>
+      <q-card v-if="main" class="row bg-dark text-positive">
+            <q-card-section class="col-6">
               <q-item>
-                <q-input v-model="clubName" class="full-width" filled label="Nazwa"></q-input>
+                <q-input v-model="clubName" dense class="full-width" input-class="text-positive" label-color="positive" filled label="Nazwa"/>
               </q-item>
               <q-item>
-                <q-input v-model="clubFullName" class="full-width" filled label="Pełna nazwa do dokumentów"></q-input>
+                <q-input v-model="clubFullName" dense class="full-width" input-class="text-positive" label-color="positive" filled label="Pełna nazwa do dokumentów"/>
               </q-item>
               <q-item>
-                <q-input v-model="clubLicenseNumber" class="full-width" filled
-                         label="Numer licencji Klubowej"></q-input>
+                <q-input v-model="clubLicenseNumber" dense class="full-width" input-class="text-positive" label-color="positive" filled
+                         label="Numer licencji Klubowej"/>
               </q-item>
               <q-item>
-                <q-input v-model="clubPhoneNumber" type="tel" class="full-width" mask="### ### ###" filled
-                         label="Telefon"></q-input>
+                <q-input v-model="clubPhoneNumber" dense type="tel" class="full-width" input-class="text-positive" label-color="positive" mask="### ### ###" filled
+                         label="Telefon"/>
               </q-item>
               <q-item>
-                <q-input v-model="clubEmail" type="email" class="full-width" filled label="email"></q-input>
+                <q-input v-model="clubEmail" dense type="email" class="full-width" input-class="text-positive" label-color="positive" filled label="email"/>
               </q-item>
               <q-item>
-                <q-input v-model="clubAddress" type="address" class="full-width" filled label="Adres"></q-input>
+                <q-input v-model="clubAddress" dense type="address" class="full-width" input-class="text-positive" label-color="positive" filled label="Adres"/>
               </q-item>
               <q-item>
-                <q-input v-model="clubURL" type="url" class="full-width" filled label="Strona internetowa"></q-input>
+                <q-input v-model="clubURL" dense type="url" class="full-width" input-class="text-positive" label-color="positive" filled label="Strona internetowa"/>
               </q-item>
               <q-item>
                 <q-btn @click="createMotherClub ()" label="Dodaj" color="secondary"/>

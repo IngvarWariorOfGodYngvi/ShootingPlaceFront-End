@@ -185,17 +185,17 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model="userActions">
-      <q-card class="text-center bg-dark" style="width: 60vw; max-width: 60vw;">
+      <q-card class="text-center bg-dark text-positive" style="width: 60vw; max-width: 60vw;">
         <q-card-section>
-          <div class="text-h6 text-positive">Akcje użytkownika</div>
+          <div class="text-h6">Akcje użytkownika</div>
           <q-virtual-scroll :items="actions" dense visible class="full-width" style="height: 80vh;">
             <template v-slot="{ item, index }">
               <div class="row">
-                <q-field filled color="positive" class="col">
+                <div class="col row hover1">
                   <div class="col-4">{{ index + 1 }} {{ item.classNamePlusMethod }}</div>
                   <div class="col-4">{{ item.belongsTo }}</div>
                   <div class="col-4">{{ item.timeNow }} {{ item.dayNow }}</div>
-                </q-field>
+                </div>
               </div>
             </template>
           </q-virtual-scroll>

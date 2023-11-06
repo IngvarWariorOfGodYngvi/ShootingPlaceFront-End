@@ -1,25 +1,20 @@
 <template>
   <q-page>
     <div class="full-width row reverse">
-      <q-btn v-if="!mobile && ClosedCompetitionTabEXP"
-          dense
-          color="primary"
-          class="q-pa-none q-ma-none brand"
-          :icon="icon"
+      <q-btn v-if="!mobile && ClosedCompetitionTabEXP" dense color="primary" class="q-pa-none q-ma-none brand" :icon="icon"
           @click="toggleShowClosedCompetitions=!toggleShowClosedCompetitions;toggleShowClosedCompetitions?getClosedTournaments(pageNumber):''"
           @mousemove="!toggleShowClosedCompetitions?icon='arrow_left':icon='arrow_right'"
-          @mouseleave="icon='menu'"
-        >
+          @mouseleave="icon='menu'">
         <q-tooltip content-class="bg-secondary text-h6" content-style="opacity: 93%;">{{toggleShowClosedCompetitions?'Ukryj':'Pokaż'}} zamknięte zawody</q-tooltip></q-btn>
     </div>
     <div class="row">
       <q-card class="col bg-dark text-positive">
         <div class="row">
           <q-card-section v-if="tournaments == null">
-            <q-btn color="primary" label="dodaj zawody" @click="addNewTournament = true"></q-btn>
+            <q-btn color="primary" label="dodaj zawody" @click="addNewTournament = true"/>
           </q-card-section>
           <q-card-section>
-            <q-btn color="secondary" label="Kreator konkurencji" @click="createNewCompetiton = true"></q-btn>
+            <q-btn color="secondary" label="Kreator konkurencji" @click="createNewCompetiton = true"/>
           </q-card-section>
         </div>
         <div v-if="tournaments == null" class="text-center text-h6 text-positive full-width">{{resp}}</div>
@@ -40,75 +35,64 @@
           <div class="col-3">
             <q-item>
               <q-btn-dropdown @click="tournamentUUID = tournaments.uuid; date = tournaments.date; name = tournaments.name"
-                align="center" content-class="bg-dark" class="full-width" label="pobierz komunikat" color="primary">
+                align="center" content-class="bg-dark" class="full-width ghover1" label="pobierz komunikat" color="primary">
                 <q-list>
-                  <q-item v-close-popup class="q-pa-none">
-                    <q-item-section>
-                      <q-btn @click="getAnnouncementFromCompetition()" class="full-width bg-red-6"
-                        label="pobierz plik .pdf" color="secondary"></q-btn>
-                    </q-item-section>
-                  </q-item>
-                  <q-item v-close-popup class="q-pa-none">
-                    <q-item-section>
-                      <q-btn @click="getAnnouncementFromCompetitionXLSX()" class="full-width bg-green-6"
-                        label="pobierz plik .xslx" color="secondary"></q-btn>
-                    </q-item-section>
-                  </q-item>
+                      <q-btn v-close-popup @click="getAnnouncementFromCompetition()" rounded dense class="full-width bg-red-6 q-ma-xs"
+                        label="pobierz plik .pdf" color="secondary"/>
+                      <q-btn v-close-popup @click="getAnnouncementFromCompetitionXLSX()" rounded dense class="full-width bg-green-6 q-ma-xs"
+                        label="pobierz plik .xslx" color="secondary"/>
                 </q-list>
               </q-btn-dropdown>
             </q-item>
             <q-item>
-              <q-btn color="primary" class="full-width" label="pobierz listę Sędziów"
-                @click="getJudgeFromTournament(tournaments.uuid,tournaments.name,tournaments.date)"></q-btn>
+              <q-btn color="primary" class="full-width ghover1" label="pobierz listę Sędziów"
+                @click="getJudgeFromTournament(tournaments.uuid,tournaments.name,tournaments.date)"/>
             </q-item>
             <q-item>
-              <q-btn color="white" class="text-black full-width" v-if="tournaments.open" label="dodaj sędziów"
-                @click="tournamentUUID = tournaments.uuid;getOther(); addArbitersConfirmbtn = true"></q-btn>
+              <q-btn color="white" class="text-black full-width ghover1" v-if="tournaments.open" label="dodaj sędziów"
+                @click="tournamentUUID = tournaments.uuid;getArbiters();getOtherArbiters();addArbitersConfirmbtn = true"/>
             </q-item>
             <q-item v-if="tournaments.open">
-              <q-btn color="white" class="text-black full-width" label="dodaj konkurencje"
-                @click="tournamentUUID = tournaments.uuid; addCompetitionConfirmbtn = true"></q-btn>
+              <q-btn color="white" class="text-black full-width ghover1" label="dodaj konkurencje"
+                @click="tournamentUUID = tournaments.uuid; addCompetitionConfirmbtn = true"/>
             </q-item>
             <q-dialog v-model="addCompetitionConfirmbtn">
-              <q-card class="flex-center bg-dark text-positive">
-                <div class="text-center text-bold text-h5">Pistolet</div>
-                <div v-for="(item, uuid) in competitions" :key="uuid" class="col">
-                  <div v-if="item.discipline === 'Pistolet'"
-                    :class="backgroundDark ? 'bg-dark text-positive' : 'bg-grey-2'">
-                    <q-checkbox :val="item.uuid" v-model="competitionAddToTournamentList" :label="(item.name) + ' ' +
-                      (item.countingMethod === 'COMSTOCK' ? '(' + item.countingMethod + ')' : '')">
-                    </q-checkbox>
+              <q-card class="text-center bg-dark text-positive" style="min-width: 50vw;height: 75vh">
+                <q-checkbox v-model="check.pistol" :val=check.pistol :value=true label="Pistolet"></q-checkbox>
+                <q-checkbox v-model="check.rifle" :val=check.rifle :value=true label="Karabin"></q-checkbox>
+                <q-checkbox v-model="check.shotgun" :val=check.shotgun :value=true label="Strzelba"></q-checkbox>
+                <q-checkbox v-model="check.other" :val=check.other :value=true label="Pozostałe"></q-checkbox>
+                <div v-if="check.pistol" class="text-center text-bold text-h5">Pistolet</div>
+                <div v-for="(item, uuid) in competitions.filter(f=>f.discipline==='Pistolet' && check.pistol)" :key="uuid" class="col">
+                  <div class="text-left" style="padding-left: 25%" :class="backgroundDark ? 'bg-dark text-positive' : 'bg-grey-2'">
+                    <q-checkbox class="hover1" dense :val="item.uuid" v-model="competitionAddToTournamentList" :label="(item.name) + ' ' +
+                      (item.countingMethod === 'COMSTOCK' ? '(' + item.countingMethod + ')' : '')"/>
                   </div>
                 </div>
-                <div class="text-center text-bold text-h5">Karabin</div>
-                <div v-for="(item, uuid) in competitions" :key="uuid" class="col">
-                  <div v-if="item.discipline === 'Karabin'"
-                    :class="backgroundDark ? 'bg-dark text-positive' : 'bg-grey-3'">
-                    <q-checkbox :val="item.uuid" v-model="competitionAddToTournamentList" :label="(item.name) + ' ' +
-                      (item.countingMethod === 'COMSTOCK' ? '(' + item.countingMethod + ')' : '')">
-                    </q-checkbox>
+                <div v-if="check.rifle" class="text-center text-bold text-h5">Karabin</div>
+                <div v-for="(item, uuid) in competitions.filter(f=>f.discipline==='Karabin' && check.rifle)" :key="uuid" class="col">
+                  <div class="text-left" style="padding-left: 25%" :class="backgroundDark ? 'bg-dark text-positive' : 'bg-grey-3'">
+                    <q-checkbox class="hover1" dense :val="item.uuid" v-model="competitionAddToTournamentList" :label="(item.name) + ' ' +
+                      (item.countingMethod === 'COMSTOCK' ? '(' + item.countingMethod + ')' : '')"/>
                   </div>
                 </div>
-                <div class="text-center text-bold text-h5">Strzelba</div>
-                <div v-for="(item, uuid) in competitions" :key="uuid" class="col">
-                  <div v-if="item.discipline === 'Strzelba'"
-                    :class="backgroundDark ? 'bg-dark text-positive' : 'bg-grey-4'">
-                    <q-checkbox :val="item.uuid" v-model="competitionAddToTournamentList" :label="(item.name) + ' ' +
-                      (item.countingMethod === 'COMSTOCK' ? '(' + item.countingMethod + ')' : '')">
-                    </q-checkbox>
+                <div v-if="check.shotgun" class="text-center text-bold text-h5">Strzelba</div>
+                <div v-for="(item, uuid) in competitions.filter(f=>f.discipline==='Strzelba' && check.shotgun)" :key="uuid" class="col">
+                  <div class="text-left" style="padding-left: 25%" :class="backgroundDark ? 'bg-dark text-positive' : 'bg-grey-4'">
+                    <q-checkbox class="hover1" dense :val="item.uuid" v-model="competitionAddToTournamentList" :label="(item.name) + ' ' +
+                      (item.countingMethod === 'COMSTOCK' ? '(' + item.countingMethod + ')' : '')"/>
                   </div>
                 </div>
-                <div class="text-center text-bold text-h5">Pozostałe</div>
-                <div v-for="(item, uuid) in competitions" :key="uuid" class="col">
-                  <div v-if="item.discipline == null" :class="backgroundDark ? 'bg-dark text-positive' : 'bg-grey-5'">
-                    <q-checkbox :val="item.uuid" v-model="competitionAddToTournamentList" :label="(item.name) + ' ' +
-                      (item.countingMethod === 'COMSTOCK' ? '(' + item.countingMethod + ')' : '')">
-                    </q-checkbox>
+                <div v-if="check.other" class="text-center text-bold text-h5">Pozostałe</div>
+                <div v-for="(item, uuid) in competitions.filter(f=>f.discipline==null && check.other)" :key="uuid" class="col">
+                  <div class="text-left" style="padding-left: 25%" :class="backgroundDark ? 'bg-dark text-positive' : 'bg-grey-5'">
+                    <q-checkbox class="hover1" dense :val="item.uuid" v-model="competitionAddToTournamentList" :label="(item.name) + ' ' +
+                      (item.countingMethod === 'COMSTOCK' ? '(' + item.countingMethod + ')' : '')"/>
                   </div>
                 </div>
                 <q-card-actions align="right">
                   <q-item>
-                    <q-btn label="Dodaj konkurencję" color="secondary" @click="addCompetitionConfirm = true" />
+                    <q-btn label="Dodaj konkurencje" color="secondary" @click="addCompetitionConfirm = true" />
                   </q-item>
                   <q-btn label="zamknij" color="primary" v-close-popup @click="competitionAddToTournamentList = []" />
                 </q-card-actions>
@@ -117,16 +101,16 @@
           </div>
           <div class="col-3">
             <q-item>
-              <q-btn class="full-width" color="primary" label="Aktualizuj"
+              <q-btn class="full-width ghover1" color="primary" label="Aktualizuj"
                 @click="tournamentUUID = tournaments.uuid; tournamentUpdateConfirm = true" />
             </q-item>
             <q-item>
-              <q-btn class="full-width" color="primary" label="Statystyki"
+              <q-btn class="full-width ghover1" color="primary" label="Statystyki"
                 @click="tournamentUUID = tournaments.uuid; getStatistics(); statistics = true" />
             </q-item>
             <q-item
               v-if="(tournaments.mainArbiter != null || tournaments.otherMainArbiter != null) && (tournaments.commissionRTSArbiter != null || tournaments.otherCommissionRTSArbiter != null)">
-              <q-btn class="full-width" color="secondary" label="Zamknij zawody"
+              <q-btn class="full-width ghover1" color="secondary" label="Zamknij zawody"
                 @click="tournamentUUID = tournaments.uuid; (tournamentCloseConfirm = true) " />
             </q-item>
             <q-item v-else>
@@ -219,19 +203,15 @@
               </div>
             </div>
             <div class="col-6 text-center q-pr-md q-pl-xs q-pt-md">
-              <q-btn-dropdown label="Lista Konkurencji" class="text-bold full-width" text-color="black" color="grey-4">
-              <div class="text-positive" :class="backgroundDark?'bg-dark':'bg-grey-3'" dense>
+              <q-btn-dropdown label="Lista Konkurencji" class="text-bold full-width ghover1" text-color="black" color="grey-4">
+            <div class="text-positive" :class="backgroundDark?'bg-dark':'bg-grey-3'" dense>
                 <q-list>
-              <div class="row" v-for="(item, uuid) in tournaments.competitionsList" :key="uuid">
-                <q-field dense class="col" standout="bg-accent text-positive" stack-label>
-                  <div class="self-center full-width no-outline text-positive">{{ item.name }}
+              <div class="row ghover2" v-for="(item, uuid) in tournaments.competitionsList" :key="uuid">
+                  <div class="self-center col no-outline text-positive">{{ item.name }}
                     {{ item.countingMethod === 'COMSTOCK' ? '(' + item.countingMethod + ')' : '' }}
                   </div>
-                </q-field>
-                <q-btn dense v-if="item.scoreList < 1" color="warning" text-color="white" class="col-2"
-                  @click="competitionListUUID = item.uuid; tournamentUUID = tournaments.uuid; deleteListFromTournament()">
-                  usuń
-                </q-btn>
+                <q-btn dense v-if="item.scoreList < 1" color="warning"  text-color="white" class="col-2 q-ma-xs" label="usuń"
+                  @click="competitionListUUID = item.uuid; tournamentUUID = tournaments.uuid; deleteListFromTournament()"/>
               </div>
               </q-list>
             </div>
@@ -241,45 +221,24 @@
           <q-card class="full-width bg-dark" flat>
             <div class="row">
               <div class="text-h6 col-6 text-center text-bold self-center">Dodawanie zawodników</div>
-              <!--              <div class="col">Wydaj Broń na zawody-->
-              <!--                <div class="full-width bg-grey-1">-->
-              <!--                  <q-input type="password" v-model="barcode" color="black" bg-color="grey-4" dense filled-->
-              <!--                           label="zeskanuj kod tutaj"-->
-              <!--                           @keypress.enter="tournamentUUID = tournaments.uuid; addGunToTournament(barcode)"></q-input>-->
-              <!--                  <div>-->
-              <!--                    <q-expansion-item exact label="Lista Broni Na Zawodach" dense-->
-              <!--                                      class="text-left text-h6 text-bold bg-grey-3"-->
-              <!--                                      @click="tournamentUUID = tournaments.uuid; getGunInTournament()">-->
-              <!--                      <q-virtual-scroll :items="gunsUsed" visible class="full-width q-pa-none text-caption"-->
-              <!--                                        style="height: 200px;">-->
-              <!--                        <template v-slot="{ item, index }">-->
-              <!--                          <q-item :key="index" dense>-->
-              <!--                            <div class="col">{{ item.gunName }}</div>-->
-              <!--                            <div class="col-4">{{ item.gunSerialNumber }}</div>-->
-              <!--                          </q-item>-->
-              <!--                        </template>-->
-              <!--                      </q-virtual-scroll>-->
-              <!--                    </q-expansion-item>-->
-              <!--                  </div>-->
-              <!--                </div>-->
-              <!--              </div>-->
+              <div class="text-h6 col-6 text-center text-bold self-center">{{name}}</div>
             </div>
             <div class="row">
-              <q-card-section class="row full-width q-pl-md q-pr-md q-pb-none">
+              <q-card-section class="row full-width q-pl-md q-mr-md q-pb-none">
                   <q-select label="Wybierz osobę z Klubu"
-                            input-class="text-positive" label-color="positive"
+                            input-class="text-white" label-color="white"
                             popup-content-class="bg-dark text-positive"
-                            options-dense class="col q-pr-md"
-                    :option-value="opt => opt !== '0 0' ? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber).toString() : String('0 0')"
-                    :option-label="opt => opt !== '0 0' ? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber).toString() : String('0 0')"
+                            options-dense class="col q-mr-md"
+                            :class="memberName.secondName!=='0'?'bg-primary':'bg-secondary'"
+                    :option-label="opt => opt.secondName !== '0' ? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber).toString() : ''"
                     emit-value map-options v-model="memberName" filled dense use-input hide-selected fill-input
-                    :options="options" @input="otherName = '0 0'" @filter="filterFn">
+                    :options="options" @input="otherName = Object({secondName:'0', firstName: '0',id: '0'})" @filter="filterFn">
                     <template v-slot:option="option">
                       <q-item class="rounded" dense style="padding: 0; margin: 0;" v-bind="option.itemProps"
                         v-on="option.itemEvents">
                         <q-item-section style="padding: 0.5em; margin: 0;"
                           :class="option.opt.active ? '' : 'bg-warning rounded text-black'"
-                          @click="otherName = '0 0'; memberName = option.opt.secondName + ' ' + option.opt.firstName + ' ' + option.opt.legitimationNumber">
+                          @click="name = option.opt.name">
                           <div class="container">
                           <div class="background text-caption text-right">{{ !option.opt.declarationLOK && shootingPlace==='prod'?'Brak Podpisanej Deklaracji LOK':'' }}</div>
                           <div>{{ option.opt.secondName }} {{ option.opt.firstName }}
@@ -299,7 +258,7 @@
                     </template>
                   </q-select>
                   <div class="col">
-                  <q-btn v-if="memberName === '' || otherName === '' || memberName === null || otherName === null" color="grey-5" class="fit"
+                  <q-btn v-if="memberName.secondName === '0' && otherName.secondName === '0'" color="grey-5" class="fit"
                     label="Aby wybrać konkurencje najpierw wybierz osobę">
                     <q-tooltip :delay="1500" content-class="text-subtitle2" anchor="top middle" self="bottom middle"
                       :offset="[12, 12]">wybierz kogoś
@@ -312,44 +271,27 @@
                     </q-tooltip>
                   </q-btn>
                   <q-btn v-else
-                    @click="tournamentUUID = tournaments.uuid; getCompetitionsInTournament(); competitionsInfo = true"
+                    @click="tournamentUUID = tournaments.uuid; getCompetitionsInTournament();getAllUsersInWork(); competitionsInfo = true"
                     class="fit" color="primary" text-color="white" label="wybierz konkurencje" />
                 </div>
-                  <!-- <q-select @popup-show="getOther()" @popup-hide="getOther()" input-class="text-positive" label-color="positive" popup-content-class="bg-dark text-positive"
-                    v-model="otherName" options-dense filled dense use-input hide-selected fill-input
-                    :options="options" @input="memberName = '0 0'" @filter="filterOther" label="Wybierz osobę spoza klubu">
-                    <template v-slot:no-option>
-                      <div>
-                        <div class="q-pa-md bg-grey-5 text-center text-bold">Brak wyników - możesz dodać nową osobę
-                        </div>
-                        <div class="q-pa-md bg-grey-5">
-                            <AddNewOtherPerson @hook:destroyed="getOther()"></AddNewOtherPerson>
-                        </div>
-                      </div>
-                    </template>
-                  </q-select> -->
               </q-card-section>
               <q-card-section class="row full-width q-pl-md q-pr-md q-pt-xs">
-                <!-- <div class="col">
-                  <q-btn v-if="memberName === '' || otherName === '' || memberName === null || otherName === null" color="grey-5" class="full-width"
-                    label="Aby wybrać konkurencje najpierw wybierz osobę">
-                    <q-tooltip :delay="1500" content-class="text-subtitle2" anchor="top middle" self="bottom middle"
-                      :offset="[12, 12]">wybierz kogoś
-                    </q-tooltip>
-                    <q-tooltip :delay="4000" content-class="text-subtitle2" anchor="top middle" self="bottom middle"
-                      :offset="[12, 12]">NO WYBIERZ
-                    </q-tooltip>
-                    <q-tooltip :delay="8000" content-class="bg-red text-h2 text-bold" anchor="top middle"
-                      self="bottom middle" :offset="[12, 12]">WYBIERAJ!!!
-                    </q-tooltip>
-                  </q-btn>
-                  <q-btn v-else
-                    @click="tournamentUUID = tournaments.uuid; getCompetitionsInTournament(); competitionsInfo = true"
-                    class="full-width" color="primary" text-color="white" label="wybierz konkurencje" />
-                </div> -->
-                <q-select @popup-show="getOther()" @popup-hide="getOther()" input-class="text-positive" label-color="positive" popup-content-class="bg-dark text-positive"
-                    v-model="otherName" options-dense filled dense use-input hide-selected fill-input class="col q-pr-md"
-                    :options="options" @input="memberName = '0 0'" @filter="filterOther" label="Wybierz osobę spoza klubu">
+                <q-select @popup-show="getOther()" @popup-hide="getOther()" input-class="text-white" label-color="white" popup-content-class="bg-dark text-positive"
+                    v-model="otherName" options-dense filled dense use-input hide-selected fill-input class="col q-mr-md"
+                    :class="otherName.secondName!=='0'?'bg-primary':'bg-secondary'"
+                    :option-label="opt => opt.secondName !== '0' ? Object(opt.fullName + ' ' + opt.club.name).toString() : ''"
+                    :options="options" @input="memberName = Object({secondName:'0', firstName: '0',legitimationNumber: '0'})" @filter="filterOther" label="Wybierz osobę spoza klubu">
+                    <template v-slot:option="option">
+                      <q-item class="rounded" dense style="padding: 0; margin: 0;" v-bind="option.itemProps"
+                        v-on="option.itemEvents">
+                        <q-item-section style="padding: 0.5em; margin: 0;"
+                          :class="option.opt.active ? '' : 'bg-warning rounded text-black'"
+                          @click="name = option.opt.fullName + ' ' + option.opt.club.name">
+                          <div>{{option.opt.fullName}} {{ option.opt.club.name }}
+                          </div>
+                        </q-item-section>
+                      </q-item>
+                    </template>
                     <template v-slot:no-option>
                       <div>
                         <div class="q-pa-md bg-grey-5 text-center text-bold">Brak wyników - możesz dodać nową osobę
@@ -361,8 +303,8 @@
                     </template>
                   </q-select>
                 <div class="col">
-                  <q-btn :disable="memberName === '' || otherName === '' || memberName === null || otherName === null" class="fit" label="Drukuj metryki" color="secondary"
-                    @click="tournamentUUID = tournaments.uuid; getMemberUUIDFromLegitimationNumber();getMetricNumber()" />
+                  <q-btn :disable="memberName.secondName === '0' && otherName.secondName === '0'" class="fit" label="Drukuj metryki" color="secondary"
+                    @click="tournamentUUID = tournaments.uuid;name = memberName.name;date = tournaments.date; getMemberUUIDFromLegitimationNumber();getMetricNumber()" />
                 </div>
               </q-card-section>
             </div>
@@ -635,20 +577,43 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model="addArbitersConfirmbtn">
-      <q-card style="min-width: 60vw" class="bg-dark">
-        <q-card-section style="min-width: 500px" class="row items-center">
-          <div class="row full-width">
-            <div class="q-pa-md col-6 text-positive" :class="backgroundDark? 'bg-dark' : 'bg-grey-2'">
-              <q-item>
-                <div class="text-center full-width">Sędzia Główny</div>
-              </q-item>
+      <q-card style="min-width: 60vw" class="bg-dark text-positive">
+        <q-card-section style="min-width: 500px" class="row items-center bg-dark text-positive text-bold">
+          <div class="row full-width bg-dark">
+            <div class="q-pa-md col-6 text-positive">
+                <div class="text-center full-width q-pa-md">Sędzia Główny</div>
               <div>
-                <q-input @input="otherMainArbiterName = '0 0'" color="secondary" label-color="positive" input-class="text-positive" class="full-width" filled type="password"
-                  v-model="mainArbiter" use-input hide-selected fill-input input-debounce="0" :options="options"
-                  style="width: 350px" label="Zeskanuj Kartę" @keypress.enter="addMainArbiterToTournament(mainArbiter)">
-                </q-input>
-                <q-select @popup-show="getOtherArbiters()" @input="mainArbiter = ''" color="secondary" label-color="positive" input-class="text-positive" filled v-model="otherMainArbiterName" use-input
-                  hide-selected fill-input input-debounce="0" :options="options" @filter="filterOtherArbiters"
+                <q-select @input="otherMainArbiterName = ''" dense label="Dodaj sędziego z klubu" color="secondary" label-color="positive" input-class="text-positive" class="full-width" filled use-input
+                hide-selected fill-input input-debounce="0" :options="options"
+                popup-content-class="bg-dark text-positive"
+                :option-label="opt => opt !== '' ? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.arbiterClass).toString() : ''"
+                emit-value map-options options-dense options-selected-class="bg-green-3 text-positive"
+                v-model="mainArbiter" @filter="filterArbiters">
+                <template v-slot:option="option">
+            <q-item class="rounded" dense style="padding: 0; margin: 0;" v-bind="option['itemProps']"
+              v-on="option.itemEvents">
+              <q-item-section style="padding: 0.5em; margin: 0;" :class="option.opt.active ? '' : 'bg-warning rounded'"
+                >
+                <div class="container">
+                  <div class="background text-caption text-right">{{ !option.opt.declarationLOK && shootingPlace==='prod'?'Brak Podpisanej Deklaracji LOK':'' }}</div>
+                  {{ option.opt.secondName }} {{ option.opt.firstName }}
+                  {{ option.opt.arbiterClass }} {{ option.opt.active ? '' : ' - BRAK SKŁADEK' }}
+                </div>
+              </q-item-section>
+            </q-item>
+          </template>
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">
+                Brak wyników
+              </q-item-section>
+            </q-item>
+          </template>
+                </q-select>
+                <q-select @input="mainArbiter = ''" dense options-dense color="secondary" label-color="positive" input-class="text-positive" filled
+                  v-model="otherMainArbiterName" use-input
+                  hide-selected fill-input input-debounce="0" :options="options" @filter="filterOtherArbiters" popup-content-class="bg-dark text-positive" options-selected-class="bg-green-3 text-positive"
+                  :option-label="opt => opt !== '' ? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.arbiterClass).toString() : ''"
                   label="Dodaj sędziego spoza klubu">
                   <template v-slot:no-option>
                       <div class="q-pa-md bg-dark text-positive text-center text-bold">Brak wyników - możesz dodać nową osobę</div>
@@ -656,22 +621,45 @@
                   </template>
                 </q-select>
               </div>
-              <q-item v-if="mainArbiter !== '' || otherMainArbiterName !== '0 0'">
-                <q-btn label="Dodaj" color="primary" @click="addMainArbiterToTournament(mainArbiter)" />
+              <q-item v-if="mainArbiter !== '' || otherMainArbiterName !== ''">
+                <q-btn v-if="mainArbiter !== ''" label="Dodaj" color="primary" @click="addMainArbiterToTournament(mainArbiter)" />
+                <q-btn v-if="otherMainArbiterName !== ''" label="Dodaj" color="primary" @click="addMainArbiterToTournament(otherMainArbiterName)" />
               </q-item>
               <q-item v-else></q-item>
             </div>
-            <div class="q-pa-md col-6 text-positive" :class="backgroundDark? 'bg-dark' : 'bg-grey-2'">
-              <q-item standout stack-label>
-                <div class="text-center full-width">Sędzia RTS</div>
-              </q-item>
+            <div class="q-pa-md col-6 text-positive">
+                <div class="text-center full-width q-pa-md">Sędzia RTS</div>
               <div>
-                <q-input @input="otherRTSArbiterName = '0 0'" class="full-width" label-color="positive" input-class="text-positive" color="secondary" filled type="password"
-                  v-model="countArbiter" use-input hide-selected fill-input input-debounce="0" style="width: 350px"
-                  label="Zeskanuj Kartę" @keypress.enter="addRTSArbiterToTournament(countArbiter)">
-                </q-input>
-                <q-select @popup-show="getOtherArbiters()" @input="countArbiter = ''" class="full-width" label-color="positive" input-class="text-positive" color="secondary" filled
-                  v-model="otherRTSArbiterName" use-input hide-selected fill-input input-debounce="0" :options="options"
+                <q-select @input="otherRTSArbiterName = ''" dense label="Dodaj sędziego z klubu" color="secondary" label-color="positive" input-class="text-positive" class="full-width" filled use-input
+                hide-selected fill-input input-debounce="0" :options="options"
+                popup-content-class="bg-dark text-positive"
+                :option-label="opt => opt !== '' ? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.arbiterClass).toString() : ''"
+                emit-value map-options options-dense options-selected-class="bg-green-3 text-positive"
+                v-model="countArbiter" @filter="filterArbiters">
+                <template v-slot:option="option">
+            <q-item class="rounded" dense style="padding: 0; margin: 0;" v-bind="option['itemProps']"
+              v-on="option.itemEvents">
+              <q-item-section style="padding: 0.5em; margin: 0;" :class="option.opt.active ? '' : 'bg-warning rounded'"
+                >
+                <div class="container">
+                  <div class="background text-caption text-right">{{ !option.opt.declarationLOK && shootingPlace==='prod'?'Brak Podpisanej Deklaracji LOK':'' }}</div>
+                  {{ option.opt.secondName }} {{ option.opt.firstName }}
+                  {{ option.opt.arbiterClass }} {{ option.opt.active ? '' : ' - BRAK SKŁADEK' }}
+                </div>
+              </q-item-section>
+            </q-item>
+          </template>
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">
+                Brak wyników
+              </q-item-section>
+            </q-item>
+          </template>
+                </q-select>
+                <q-select @input="countArbiter = ''" dense options-dense class="full-width" label-color="positive" input-class="text-positive" color="secondary" filled
+                  v-model="otherRTSArbiterName" use-input hide-selected fill-input input-debounce="0" :options="options"  popup-content-class="bg-dark text-positive" options-selected-class="bg-green-3 text-positive"
+                  :option-label="opt => opt !== '' ? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.arbiterClass).toString() : ''"
                   @filter="filterOtherArbiters" label="Dodaj sędziego spoza klubu">
                   <template v-slot:no-option>
                       <div class="q-pa-md bg-dark text-positive text-center text-bold">Brak wyników - możesz dodać nową osobę</div>
@@ -679,25 +667,52 @@
                   </template>
                 </q-select>
               </div>
-              <q-item v-if="countArbiter !== '' || otherRTSArbiterName !== '0 0'">
-                <q-btn label="Dodaj" color="primary" @click="addRTSArbiterToTournament(countArbiter)" />
+              <q-item v-if="countArbiter !== '' || otherRTSArbiterName !== ''">
+                <q-btn v-if="countArbiter !== ''" label="Dodaj" color="primary" @click="addRTSArbiterToTournament(countArbiter)" />
+                <q-btn v-if="otherRTSArbiterName !== ''" label="Dodaj" color="primary" @click="addRTSArbiterToTournament(otherRTSArbiterName)" />
               </q-item>
               <q-item v-else>
               </q-item>
             </div>
           </div>
           <div class="row full-width">
-            <div class="q-pa-md col-6 text-positive" :class="backgroundDark? 'bg-dark' : 'bg-grey-3'">
-              <q-item standout stack-label>
-                <div class="text-center full-width">Sędziowie stanowiskowi</div>
-              </q-item>
+            <div class="q-pa-md col-6 text-positive">
+                <div class="text-center full-width q-pa-md">Sędziowie stanowiskowi</div>
               <div>
-                <q-input @input="otherArbitersList = '0 0'" label-color="positive" input-class="text-positive" color="secondary" class="full-width" filled type="password"
+                <!-- <q-input @input="otherArbitersList = '0 0'" label-color="positive" input-class="text-positive" color="secondary" class="full-width" filled type="password"
                   v-model="otherArbiter" use-input hide-selected fill-input input-debounce="0" style="width: 350px"
                   label="Zeskanuj Kartę" @keypress.enter="addOtherArbiterToTournament(otherArbiter)">
-                </q-input>
-                <q-select @popup-show="getOtherArbiters()" @input="otherArbiter = ''" class="full-width" color="secondary" label-color="positive" input-class="text-positive" filled
-                  v-model="otherArbitersList" use-input hide-selected fill-input input-debounce="0" :options="options"
+                </q-input> -->
+                <q-select @input="otherArbitersList = ''" dense label="Dodaj sędziego z klubu" color="secondary" label-color="positive" input-class="text-positive" class="full-width" filled use-input
+                hide-selected fill-input input-debounce="0" :options="options"
+                popup-content-class="bg-dark text-positive"
+                :option-label="opt => opt !== '' ? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.arbiterClass).toString() : ''"
+                emit-value map-options options-dense options-selected-class="bg-green-3 text-positive"
+                v-model="otherArbiter" @filter="filterArbiters">
+                <template v-slot:option="option">
+            <q-item class="rounded" dense style="padding: 0; margin: 0;" v-bind="option['itemProps']"
+              v-on="option.itemEvents">
+              <q-item-section style="padding: 0.5em; margin: 0;" :class="option.opt.active ? '' : 'bg-warning rounded'"
+                >
+                <div class="container">
+                  <div class="background text-caption text-right">{{ !option.opt.declarationLOK && shootingPlace==='prod'?'Brak Podpisanej Deklaracji LOK':'' }}</div>
+                  {{ option.opt.secondName }} {{ option.opt.firstName }}
+                  {{ option.opt.arbiterClass }} {{ option.opt.active ? '' : ' - BRAK SKŁADEK' }}
+                </div>
+              </q-item-section>
+            </q-item>
+          </template>
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">
+                Brak wyników
+              </q-item-section>
+            </q-item>
+          </template>
+                </q-select>
+                <q-select @input="otherArbiter = ''" dense options-dense class="full-width" color="secondary" label-color="positive" input-class="text-positive" filled
+                  v-model="otherArbitersList" use-input hide-selected fill-input input-debounce="0" :options="options"  popup-content-class="bg-dark text-positive" options-selected-class="bg-green-3 text-positive"
+                  :option-label="opt => opt !== '' ? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.arbiterClass).toString() : ''"
                   @filter="filterOtherArbiters" label="Dodaj sędziego spoza klubu">
                   <template v-slot:no-option>
                       <div class="q-pa-md bg-dark text-positive text-center text-bold">Brak wyników - możesz dodać nową osobę</div>
@@ -707,36 +722,61 @@
               </div>
               <div class="col">
                 <div>
-                  <q-item v-if="otherArbiter !== '' || otherArbitersList !== '0 0'">
-                    <q-btn class="full-width" label="Dodaj sędziego stanowiskowego" color="primary"
-                      @click="addOtherArbiterToTournament(otherArbiter)" />
+                  <q-item v-if="otherArbiter !== '' || otherArbitersList !== ''">
+                    <q-btn v-if="otherArbiter !== ''" class="full-width" label="Dodaj sędziego stanowiskowego" color="primary" @click="addOtherArbiterToTournament(otherArbiter)" />
+                    <q-btn v-if="otherArbitersList !== ''" class="full-width" label="Dodaj sędziego stanowiskowego" color="primary" @click="addOtherArbiterToTournament(otherArbitersList)" />
                   </q-item>
                   <q-item v-else>
                   </q-item>
                 </div>
                 <div>
-                  <q-item v-if="otherArbiter !== '' || otherArbitersList !== '0 0'">
-                    <q-btn class="full-width" label="usuń sędziego stanowiskowego" color="primary"
-                      @click="removeArbiter(otherArbiter)" />
+                  <q-item v-if="otherArbiter !== '' || otherArbitersList !== ''">
+                    <q-btn v-if="otherArbiter !== ''" class="full-width" label="usuń sędziego stanowiskowego" color="primary" @click="removeArbiter(otherArbiter)" />
+                    <q-btn v-if="otherArbitersList !== ''" class="full-width" label="usuń sędziego stanowiskowego" color="primary" @click="removeArbiter(otherArbitersList)" />
                   </q-item>
                   <q-item v-else>
                   </q-item>
                 </div>
               </div>
             </div>
-            <div class="q-pa-md col-6 text-positive" :class="backgroundDark? 'bg-dark' : 'bg-grey-3'">
-              <q-item standout stack-label>
-                <div class="text-center full-width">Sędziowie biura obliczeń
-                </div>
-              </q-item>
+            <div class="q-pa-md col-6 text-positive">
+                <div class="text-center full-width q-pa-md">Sędziowie biura obliczeń</div>
               <div>
-                <q-input @input="otherRTSArbitersList = '0 0'" label-color="positive" input-class="text-positive" color="secondary" class="full-width" filled
+                <!-- <q-input @input="otherRTSArbitersList = '0 0'" label-color="positive" input-class="text-positive" color="secondary" class="full-width" filled
                   v-model="otherRTSArbiter" use-input hide-selected fill-input input-debounce="0" type="password"
                   style="width: 350px" label="Zeskanuj kartę"
                   @keypress.enter="addOtherRTSArbiterToTournament(otherRTSArbiter)">
-                </q-input>
-                <q-select @popup-show="getOtherArbiters()" @input="otherRTSArbiter = ''" class="full-width" color="secondary" label-color="positive" input-class="text-positive" filled
-                  v-model="otherRTSArbitersList" use-input hide-selected fill-input input-debounce="0" :options="options"
+                </q-input> -->
+                <q-select @input="otherRTSArbitersList = ''" dense label="Dodaj sędziego z klubu" color="secondary" label-color="positive" input-class="text-positive" class="full-width" filled use-input
+                hide-selected fill-input input-debounce="0" :options="options"
+                popup-content-class="bg-dark text-positive"
+                :option-label="opt => opt !== '' ? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.arbiterClass).toString() : ''"
+                emit-value map-options options-dense options-selected-class="bg-green-3 text-positive"
+                v-model="otherRTSArbiter" @filter="filterArbiters">
+                <template v-slot:option="option">
+            <q-item class="rounded" dense style="padding: 0; margin: 0;" v-bind="option['itemProps']"
+              v-on="option.itemEvents">
+              <q-item-section style="padding: 0.5em; margin: 0;" :class="option.opt.active ? '' : 'bg-warning rounded'"
+                >
+                <div class="container">
+                  <div class="background text-caption text-right">{{ !option.opt.declarationLOK && shootingPlace==='prod'?'Brak Podpisanej Deklaracji LOK':'' }}</div>
+                  {{ option.opt.secondName }} {{ option.opt.firstName }}
+                  {{ option.opt.arbiterClass }} {{ option.opt.active ? '' : ' - BRAK SKŁADEK' }}
+                </div>
+              </q-item-section>
+            </q-item>
+          </template>
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">
+                Brak wyników
+              </q-item-section>
+            </q-item>
+          </template>
+                </q-select>
+                <q-select @popup-show="getOtherArbiters()" dense options-dense @input="otherRTSArbiter = ''" class="full-width" color="secondary" label-color="positive" input-class="text-positive" filled
+                  v-model="otherRTSArbitersList" use-input hide-selected fill-input input-debounce="0" :options="options"  popup-content-class="bg-dark text-positive" options-selected-class="bg-green-3 text-positive"
+                  :option-label="opt => opt !== '' ? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.arbiterClass).toString() : ''"
                   @filter="filterOtherArbiters" label="Dodaj sędziego spoza klubu">
                   <template v-slot:no-option>
                       <div class="q-pa-md bg-dark text-positive text-center text-bold">Brak wyników - możesz dodać nową osobę</div>
@@ -746,17 +786,17 @@
               </div>
               <div class="col">
                 <div>
-                  <q-item v-if="otherRTSArbiter !== '' || otherRTSArbitersList !== '0 0'">
-                    <q-btn class="full-width" label="Dodaj sędziego biura obliczeń" color="primary"
-                      @click="addOtherRTSArbiterToTournament(otherRTSArbiter)" />
+                  <q-item v-if="otherRTSArbiter !== '' || otherRTSArbitersList !== ''">
+                    <q-btn v-if="otherRTSArbiter !== ''" class="full-width" label="Dodaj sędziego biura obliczeń" color="primary" @click="addOtherRTSArbiterToTournament(otherRTSArbiter)" />
+                    <q-btn v-if="otherRTSArbitersList !== ''" class="full-width" label="Dodaj sędziego biura obliczeń" color="primary" @click="addOtherRTSArbiterToTournament(otherRTSArbitersList)" />
                   </q-item>
                   <q-item v-else>
                   </q-item>
                 </div>
                 <div>
-                  <q-item v-if="otherRTSArbiter !== '' || otherRTSArbitersList !== '0 0'">
-                    <q-btn class="full-width" label="usuń sędziego biura obliczeń" color="primary"
-                      @click="removeRTSArbiter(otherRTSArbiter)" />
+                  <q-item v-if="otherRTSArbiter !== '' || otherRTSArbitersList !== ''">
+                    <q-btn v-if="otherRTSArbiter !== ''" class="full-width" label="usuń sędziego biura obliczeń" color="primary" @click="removeRTSArbiter(otherRTSArbiter)" />
+                    <q-btn v-if="otherRTSArbitersList !== ''" class="full-width" label="usuń sędziego biura obliczeń" color="primary" @click="removeRTSArbiter(otherRTSArbitersList)" />
                   </q-item>
                   <q-item v-else>
                   </q-item>
@@ -767,7 +807,7 @@
         </q-card-section>
         <q-card-actions align="right">
           <q-btn label="zamknij" color="primary" v-close-popup
-            @click="mainArbiter = ''; countArbiter = ''; otherArbiter = ''; otherRTSArbiter = ''; otherMainArbiterName = '0 0'; otherRTSArbiterName = '0 0'; otherArbitersList = '0 0'; otherRTSArbitersList = '0 0'" />
+            @click="mainArbiter = ''; countArbiter = ''; otherArbiter = ''; otherRTSArbiter = ''; otherMainArbiterName = ''; otherRTSArbiterName = ''; otherArbitersList = ''; otherRTSArbitersList = ''" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -778,7 +818,7 @@
         </q-card-section>
         <q-card-actions align="right">
           <q-btn label="anuluj" color="secondary" v-close-popup />
-          <q-btn label="usuń" color="warning" v-close-popup @click="removeMemberFromCompetition(); finder = null" />
+          <q-btn label="usuń" color="warning" v-close-popup @click="removeMemberFromCompetition()" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -908,23 +948,48 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model="competitionsInfo">
-      <q-card class="bg-dark text-positive">
+      <q-card class="bg-dark text-positive" style="min-width:60vw;" v-if="usersInWork.length>0">
         <q-card-section>
-          <div v-for="(item, uuid) in options2" :key="uuid">
-            <div>
-              <q-checkbox v-model="listOfCompetitions" :val="uuid" :label="item"></q-checkbox>
+          <div class="col">
+            <div class="text-h6 text-bold text-center">DODAWANIE KONKURENCJI {{name}}</div>
+            <div class="text-center row"><div class="col">Konkurencje</div><div class="col">Amunicja</div></div>
+          <div v-for="(item, index) in options2" :key="index">
+            <div class="row text-left">
+              <q-checkbox class="col hover1" dense v-model="listOfCompetitions" :val="item.uuid" :label="item.name" @input="checkAtTap(item.uuid);listOfCompetitions.length===options2.length?addAllCompetition=true:addAllCompetition=false"></q-checkbox>
+              <div class="col-1"></div>
+              <q-checkbox v-if="item.caliberUUID != null" :disable="!listOfCompetitions.includes(item.uuid)" class="col hover1" dense v-model="listOfAddAmmo" :val="item.uuid" :label="item.caliberUUID + ' ' + item.numberOfShots + ' strzałów ' + '(' + (item.practiceShots!=null?item.practiceShots:'0') +' próbnych)'" @input="listOfAddAmmo.length===options2.length?addAllAmmo=true:addAllAmmo=false"/>
+              <div v-else class="col">Brak przypisanej amunicji</div>
             </div>
           </div>
+          <p></p>
+          <div class="row">
+            <q-checkbox color="secondary" class="col hover1" dense v-model="addAllCompetition" :val="false" :value="false" @input="selectAllToAddToCompetition()" label ="zaznacz wszystko" />
+            <div class="col-1"></div>
+            <q-checkbox color="secondary" class="col hover1" dense v-model="addAllAmmo" :disable="listOfCompetitions.length === 0" :val="false" :value="false" @input="selectAllToAddAmmunition()" label ="zaznacz wszystko" />
+          </div>
+      </div>
           <div class="row q-pa-md">
-            <q-btn class="col full-width" color="red" label="Usuń z listy"
-              @click="removeMemberFromCompetition(); finder = null"></q-btn>
-            <q-btn class="col full-width" color="secondary" label="Dodaj do listy"
-              @click="addMemberToCompetition(); (finder = null)"></q-btn>
+            <q-btn class="col full-width" color="red" label="Usuń z listy *"
+              @click="removeMemberFromCompetition()"></q-btn>
+            <q-btn class="col full-width" color="secondary" :loading="loading[0]" :disable="dis" label="Dodaj do listy"
+              @click="dis=true;simulateProgress(0)"></q-btn>
+          </div>
+          <div class="row">
+            <div class="q-pa-sm col-6">
+              * Osoby usunięte z listy NIE ZOSTANĄ automatycznie usunięte z listy amunicyjnej
+            </div>
+            <div class="q-pa-sm col-6">
+            </div>
           </div>
         </q-card-section>
         <q-card-actions align="right">
           <q-btn label="zamknij" color="primary" v-close-popup />
         </q-card-actions>
+      </q-card>
+      <q-card v-else class="text-h1 text-bold bg-warning text-center">
+        <q-card-section>
+          Zarejestruj Pobyt w Klubie
+        </q-card-section>
       </q-card>
     </q-dialog>
     <q-dialog v-model="metricsInfo">
@@ -933,14 +998,18 @@
           <div class="q-ml-sm text-h6 text-center text-bold">POBIERZ METRYKI STARTOWE ZAWODNIKA</div>
           <div class="q-ml-sm text-h6 text-center text-bold">{{ name }}</div>
           <ol class="col">
-            <li class="row" v-for="(item,index) in infoScore" :key="index">
-              <q-checkbox color="secondary" class="col" v-model="compList" :val="infoScore1[index]" :label="item" />
+            <li class="row hover1" v-for="(item,index) in infoScore" :key="index">
+              <q-checkbox color="secondary" class="col" v-model="compList" :val="infoScore1[index]" @input="compList.length===infoScore.length?printAll=true:printAll=false" :label="item" />
             </li>
           </ol>
-          <div>
-            <q-checkbox v-model="a5rotate" :value="a5rotate" label="rozmiar A5"></q-checkbox>
+          <div class="full-width">
+            <q-checkbox class="hover1" v-model="a5rotate" :value="a5rotate" label="rozmiar A5"></q-checkbox>
           </div>
           <div class="row q-pa-xs">
+            <q-btn v-if="memberExist" dense @click="memberDial=true, memberLeg = memberName.legitimationNumber" class="col q-pa-xs" color="primary">
+              wyświetl profil
+            </q-btn>
+            <q-item></q-item>
             <q-btn @click="getMemberMetrics(compList); compList = []" class="col q-pa-xs" color="secondary">
               wydrukuj wybrane metryki zawodnika
             </q-btn>
@@ -971,20 +1040,12 @@
           </div>
           <div>
             <q-item>
-              <q-btn-dropdown align="center" class="full-width" label="pobierz komunikat" color="primary">
-                <q-list dark>
-                  <q-item v-close-popup class="q-pa-none">
-                    <q-item-section>
-                      <q-btn @click="getAnnouncementFromCompetition()" class="full-width bg-red-6"
+              <q-btn-dropdown align="center" content-class="bg-dark" class="full-width" label="pobierz komunikat" color="primary">
+                <q-list>
+                      <q-btn v-close-popup @click="getAnnouncementFromCompetition()" rounded dense class="full-width bg-red-6 q-ma-xs"
                         label="pobierz plik .pdf" color="secondary"></q-btn>
-                    </q-item-section>
-                  </q-item>
-                  <q-item v-close-popup class="q-pa-none">
-                    <q-item-section>
-                      <q-btn @click="getAnnouncementFromCompetitionXLSX()" class="full-width bg-green-6"
+                      <q-btn v-close-popup @click="getAnnouncementFromCompetitionXLSX()" rounded dense class="full-width bg-green-6 q-ma-xs"
                         label="pobierz plik .xslx" color="secondary"></q-btn>
-                    </q-item-section>
-                  </q-item>
                 </q-list>
               </q-btn-dropdown>
             </q-item>
@@ -1035,6 +1096,17 @@
         </q-card-section>
       </q-card>
     </q-dialog>
+    <q-dialog v-model="memberDial" style="min-width: 80vw">
+      <q-card class="bg-dark" style="min-width: 80vw">
+        <q-card-section class="flex-center">
+          <Member :member-number-legitimation="memberLeg"></Member>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn text-color="white" label="zamknij" color="primary" v-close-popup/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 <style src="../style/style.scss" lang="scss">
@@ -1055,6 +1127,7 @@ import App from 'src/App.vue'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox.vue'
 import { isWindows } from 'mobile-device-detect'
+import { ref } from 'vue'
 
 export default {
   name: 'tournament',
@@ -1066,19 +1139,66 @@ export default {
     AddNewOtherPerson: lazyLoadComponent({
       componentFactory: () => import('components/AddNewOtherPerson.vue'),
       loading: SkeletonBox
+    }),
+    Member: lazyLoadComponent({
+      componentFactory: () => import('components/member/Member.vue'),
+      loading: SkeletonBox
     })
+  },
+  setup () {
+    const loading = ref([
+      false
+    ])
+    const progress = ref(false)
+
+    function simulateProgress (number) {
+      loading.value[number] = true
+      this.addMemberToCompetition()
+      setTimeout(() => {
+        loading.value[number] = false
+      }, 0)
+    }
+    function simulateProgressGun (number, evidenceUUID, barcode) {
+      loading.value[number] = true
+      this.addGunToList(evidenceUUID, barcode)
+      setTimeout(() => {
+        loading.value[number] = false
+      }, 0)
+    }
+
+    return {
+      loading,
+      progress,
+      simulateProgress,
+      simulateProgressGun
+    }
   },
   data () {
     return {
       val: '',
+      check: {
+        pistol: true,
+        rifle: true,
+        shotgun: true,
+        other: true
+      },
+      dis: false,
+      usersInWork: [],
       icon: 'menu',
       backgroundDark: JSON.parse(window.localStorage.getItem('BackgroundDark')),
       ClosedCompetitionTabEXP: JSON.parse(window.localStorage.getItem('ClosedCompetitionTab')),
       mobile: !isWindows,
       a5rotate: false,
+      printAll: false,
+      memberExist: false,
+      addAllCompetition: false,
+      addAllAmmo: false,
+      memberDial: false,
+      memberLeg: null,
       toggleShowClosedCompetitions: false,
       competitionsInfo: false,
       listOfCompetitions: [],
+      listOfAddAmmo: [],
       pageNumber: 0,
       code: null,
       barcode: null,
@@ -1122,7 +1242,6 @@ export default {
       tournaments: null,
       competitions: [],
       filters: [],
-      filtersPermission: [],
       filtersOther: [],
       tournamentsClosed: [],
       calibers: [],
@@ -1137,15 +1256,22 @@ export default {
       scoreUUID: null,
       options: [],
       options3: [],
-      finder: '',
       mainArbiter: '',
       countArbiter: '',
       otherArbiter: '',
       otherRTSArbiter: '',
       competitionAddToTournamentList: [],
       removeFromList: false,
-      memberName: null,
-      otherName: null,
+      memberName: {
+        firstName: '0',
+        secondName: '0',
+        legitimationNumber: 0
+      },
+      otherName: {
+        firstName: '0',
+        secondName: '0',
+        id: 0
+      },
       otherFirstName: null,
       otherSecondName: null,
       otherPhoneNumber: '',
@@ -1165,10 +1291,11 @@ export default {
       otherID: '',
       memberUUID: null,
       filtersOtherArbiters: [],
-      otherMainArbiterName: '0 0',
-      otherRTSArbiterName: '0 0',
-      otherArbitersList: '0 0',
-      otherRTSArbitersList: '0 0',
+      filtersArbiters: [],
+      otherMainArbiterName: '',
+      otherRTSArbiterName: '',
+      otherArbitersList: '',
+      otherRTSArbitersList: '',
       ordinal: '',
       permissionsOtherArbiterNumber: '',
       permissionsOtherArbiterPermissionValidThru: '',
@@ -1192,9 +1319,61 @@ export default {
     this.getAllClubsToTournament()
   },
   methods: {
+    distinct (value, index, array) {
+      return array.indexOf(value) === index
+    },
+    selectAllToPrint () {
+      this.compList = []
+      if (this.printAll) {
+        this.infoScore1.forEach(e => {
+          this.compList.push(e)
+        })
+      }
+    },
+    selectAllToAddToCompetition () {
+      this.listOfCompetitions = []
+      if (this.addAllCompetition) {
+        this.options2.forEach(e => {
+          this.listOfCompetitions.push(e.uuid)
+          if (this.addAllAmmo) {
+            this.listOfAddAmmo.push(e.uuid)
+          }
+        })
+      }
+      if (!this.addAllCompetition) {
+        this.listOfAddAmmo = []
+        this.addAllAmmo = false
+      }
+    },
+    selectAllToAddAmmunition () {
+      this.listOfAddAmmo = []
+      if (this.addAllAmmo) {
+        this.options2.forEach(e => {
+          if (e.caliberUUID != null && this.listOfCompetitions.includes(e.uuid)) {
+            this.listOfAddAmmo.push(e.uuid)
+          }
+        })
+      }
+    },
+    checkAtTap (uuid) {
+      if (!this.listOfCompetitions.includes(uuid) && this.listOfAddAmmo.includes(uuid)) {
+        this.listOfAddAmmo = this.listOfAddAmmo.filter(f => f !== uuid)
+        this.addAllAmmo = false
+      }
+      if (this.addAllAmmo) {
+        this.listOfAddAmmo.push(uuid)
+      }
+    },
+    getAllUsersInWork () {
+      fetch(`http://${this.local}/work/`, {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.usersInWork = response
+        })
+    },
     getListTournaments () {
       this.getMembersNames()
-      this.getMembersNamesWithPermissions()
       fetch('http://' + this.local + '/tournament/openTournament', {
         method: 'GET'
       }).then(response => {
@@ -1239,16 +1418,8 @@ export default {
           this.filters = response
         })
     },
-    getMembersNamesWithPermissions () {
-      fetch('http://' + this.local + '/member/getArbiters', {
-        method: 'GET'
-      }).then(response => response.json())
-        .then(response => {
-          this.filtersPermission = response
-        })
-    },
     getOther () {
-      fetch('http://' + this.local + '/other/', {
+      fetch('http://' + this.local + '/other/all', {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -1272,18 +1443,18 @@ export default {
         })
     },
     getMemberUUIDFromLegitimationNumber () {
-      const memberNameWord = this.memberName.split(' ')
-      const legNumber = memberNameWord.length
-      const memberlegNumber = memberNameWord[legNumber - 1]
+      const memberlegNumber = this.memberName.legitimationNumber
       fetch('http://' + this.local + '/member/ID/' + memberlegNumber, {
         method: 'GET'
       }).then(response => response.text())
         .then(response => {
           if (response.length > 0) {
             this.memberUUID = response
+            this.memberExist = true
           } else {
             this.message = response
             this.failure = true
+            this.memberExist = false
             this.autoClose()
           }
         })
@@ -1294,24 +1465,16 @@ export default {
         this.failure = true
         this.autoClose()
       } else {
-        const memberNameWord = this.memberName.split(' ')
-        const legNumber = memberNameWord.length
-        const memberlegNumber = memberNameWord[legNumber - 1]
-        const otherNameWord = this.otherName.split(' ')
-        const idNumber = otherNameWord.length
-        const otherNameID = otherNameWord[idNumber - 1]
+        const memberlegNumber = this.memberName.legitimationNumber
+        const otherNameID = this.otherName.id
         fetch('http://' + this.local + '/competitionMembersList/getMemberStartsByLegitimation?tournamentUUID=' + this.tournamentUUID + '&legNumber=' + memberlegNumber + '&otherID=' + otherNameID, {
           method: 'GET'
         }).then(response => response.json())
           .then(response => {
-            // const map = new Map()
             for (let i = 0; i < response.length; i++) {
-              // map.set(response[i].substring(0, response[i].indexOf(';')), response[i].substring(response[i].indexOf(';') + 1, response[i].length))
               this.infoScore.push(response[i].substring(0, response[i].indexOf(';')))
               this.infoScore1.push(response[i].substring(response[i].indexOf(';') + 1, response[i].length))
             }
-            // console.log(map)
-            // this.infoScore = Array.from(map.values())
             this.otherID = otherNameID
             this.metricsInfo = true
           })
@@ -1323,12 +1486,8 @@ export default {
         this.failure = true
         this.autoClose()
       } else {
-        const memberNameWord = this.memberName.split(' ')
-        const legNumber = memberNameWord.length
-        const memberlegNumber = memberNameWord[legNumber - 1]
-        const otherNameWord = this.otherName.split(' ')
-        const idNumber = otherNameWord.length
-        const otherNameID = otherNameWord[idNumber - 1]
+        const memberlegNumber = this.memberName.legitimationNumber
+        const otherNameID = this.otherName.id
         fetch('http://' + this.local + '/competitionMembersList/getMetricNumber?tournamentUUID=' + this.tournamentUUID + '&legNumber=' + memberlegNumber + '&otherID=' + otherNameID, {
           method: 'GET'
         }).then(response => {
@@ -1348,8 +1507,16 @@ export default {
         })
       }
     },
+    getArbiters () {
+      fetch(`http://${this.local}/member/getArbiters`, {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.filtersArbiters = response
+        })
+    },
     getOtherArbiters () {
-      fetch('http://' + this.local + '/other/arbiters', {
+      fetch(`http://${this.local}/other/arbiters`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -1510,11 +1677,11 @@ export default {
       }
     },
     async addMemberToCompetition () {
-      const { memberName, otherName, listOfCompetitions, local } = this
-      const memberUUID = memberName.split(' ').pop()
-      const otherUUID = otherName.split(' ').pop()
+      const { listOfCompetitions, listOfAddAmmo, local } = this
+      const memberlegNumber = this.memberName.legitimationNumber
+      const otherNameID = this.otherName.id
       const competitionUUIDList = listOfCompetitions.map(name => name.replaceAll(',', '.'))
-      const url = `http://${local}/competitionMembersList/addMember?competitionUUIDList=${competitionUUIDList}&legitimationNumber=${memberUUID}&otherPerson=${otherUUID}`
+      const url = `http://${local}/competitionMembersList/addMember?competitionUUIDList=${competitionUUIDList}&addAmmoList=${listOfAddAmmo}&legitimationNumber=${memberlegNumber}&otherPerson=${otherNameID}`
 
       try {
         const response = await fetch(url, {
@@ -1536,17 +1703,13 @@ export default {
       }
     },
     removeMemberFromCompetition () {
-      const memberNameWord = this.memberName.split(' ')
-      const legNumber = memberNameWord.length
-      const memberNameUUID = memberNameWord[legNumber - 1]
-      const otherNameWord = this.otherName.split(' ')
-      const idNumber = otherNameWord.length
-      const otherNameID = otherNameWord[idNumber - 1]
+      const memberlegNumber = this.memberName.legitimationNumber
+      const otherNameID = this.otherName.id
       const list = []
       for (let i = 0; i < this.listOfCompetitions.length; i++) {
         list.push(this.listOfCompetitions[i].replaceAll(',', '.'))
       }
-      fetch('http://' + this.local + '/competitionMembersList/removeMember?competitionNameList=' + list + '&legitimationNumber=' + memberNameUUID + '&otherPerson=' + otherNameID, {
+      fetch(`http://${this.local}/competitionMembersList/removeMember?competitionNameList=${list}&legitimationNumber=${memberlegNumber}&otherPerson=${otherNameID}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -1706,11 +1869,10 @@ export default {
           this.tournamentsClosed = response
         })
     },
-    removeArbiter (barcode) {
-      const otherPersonArbiterWord = this.otherArbitersList.split(' ')
-      const personLegNumber = otherPersonArbiterWord.length
-      const otherPersonArbiterID = otherPersonArbiterWord[personLegNumber - 1]
-      fetch('http://' + this.local + '/tournament/removeArbiter/' + this.tournamentUUID + '?barcode=' + barcode + '&id=' + otherPersonArbiterID, {
+    removeArbiter (member) {
+      const memberUUID = member.uuid
+      const otherId = member.id
+      fetch(`http://${this.local}/tournament/removeArbiter/${this.tournamentUUID}?memberUUID=${memberUUID}&id=${otherId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -1722,7 +1884,7 @@ export default {
               this.message = response
               this.success = true
               this.otherArbiter = ''
-              this.otherArbitersList = '0 0'
+              this.otherArbitersList = ''
               this.showloading()
               this.getListTournaments()
               this.autoClose()
@@ -1737,11 +1899,10 @@ export default {
         }
       })
     },
-    removeRTSArbiter (barcode) {
-      const otherPersonArbiterWord = this.otherRTSArbitersList.split(' ')
-      const personLegNumber = otherPersonArbiterWord.length
-      const otherPersonArbiterID = otherPersonArbiterWord[personLegNumber - 1]
-      fetch('http://' + this.local + '/tournament/removeRTSArbiter/' + this.tournamentUUID + '?barcode=' + barcode + '&id=' + otherPersonArbiterID, {
+    removeRTSArbiter (member) {
+      const memberUUID = member.uuid
+      const otherId = member.id
+      fetch(`http://${this.local}/tournament/removeRTSArbiter/${this.tournamentUUID}?memberUUID=${memberUUID}&id=${otherId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -1753,7 +1914,7 @@ export default {
               this.message = response
               this.success = true
               this.otherRTSArbiter = ''
-              this.otherRTSArbitersList = '0 0'
+              this.otherRTSArbitersList = ''
               this.showloading()
               this.getListTournaments()
               this.autoClose()
@@ -1768,11 +1929,10 @@ export default {
         }
       })
     },
-    addMainArbiterToTournament (barcode) {
-      const mainOtherArbiterWord = this.otherMainArbiterName.split(' ')
-      const otherLegNumber = mainOtherArbiterWord.length
-      const mainOtherArbiterID = mainOtherArbiterWord[otherLegNumber - 1]
-      fetch('http://' + this.local + '/tournament/addMainArbiter/' + this.tournamentUUID + '?barcode=' + barcode + '&id=' + mainOtherArbiterID, {
+    addMainArbiterToTournament (member) {
+      const memberUUID = member.uuid
+      const otherId = member.id
+      fetch(`http://${this.local}/tournament/addMainArbiter/${this.tournamentUUID}?memberUUID=${memberUUID}&id=${otherId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -1784,7 +1944,7 @@ export default {
               this.success = true
               this.message = response
               this.mainArbiter = ''
-              this.otherMainArbiterName = '0 0'
+              this.otherMainArbiterName = ''
               this.showloading()
               this.getListTournaments()
               this.autoClose()
@@ -1801,11 +1961,10 @@ export default {
         }
       })
     },
-    addRTSArbiterToTournament (barcode) {
-      const countOtherArbiterWord = this.otherRTSArbiterName.split(' ')
-      const otherLegNumber = countOtherArbiterWord.length
-      const countOtherArbiterID = countOtherArbiterWord[otherLegNumber - 1]
-      fetch('http://' + this.local + '/tournament/addRTSArbiter/' + this.tournamentUUID + '?barcode=' + barcode + '&id=' + countOtherArbiterID, {
+    addRTSArbiterToTournament (member) {
+      const memberUUID = member.uuid
+      const otherId = member.id
+      fetch(`http://${this.local}/tournament/addRTSArbiter/${this.tournamentUUID}?memberUUID=${memberUUID}&id=${otherId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -1817,7 +1976,7 @@ export default {
               this.success = true
               this.message = response
               this.countArbiter = ''
-              this.otherRTSArbiterName = '0 0'
+              this.otherRTSArbiterName = ''
               this.showloading()
               this.getListTournaments()
               this.autoClose()
@@ -1834,11 +1993,10 @@ export default {
         }
       })
     },
-    addOtherArbiterToTournament (barcode) {
-      const otherPersonArbiterWord = this.otherArbitersList.split(' ')
-      const personLegNumber = otherPersonArbiterWord.length
-      const otherPersonArbiterID = otherPersonArbiterWord[personLegNumber - 1]
-      fetch('http://' + this.local + '/tournament/addOthersArbiters/' + this.tournamentUUID + '?barcode=' + barcode + '&id=' + otherPersonArbiterID, {
+    addOtherArbiterToTournament (member) {
+      const memberUUID = member.uuid
+      const otherId = member.id
+      fetch(`http://${this.local}/tournament/addOthersArbiters/${this.tournamentUUID}?memberUUID=${memberUUID}&id=${otherId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -1850,7 +2008,7 @@ export default {
               this.success = true
               this.message = response
               this.otherArbiter = ''
-              this.otherArbitersList = '0 0'
+              this.otherArbitersList = ''
               this.showloading()
               this.getListTournaments()
               this.autoClose()
@@ -1867,11 +2025,10 @@ export default {
         }
       })
     },
-    addOtherRTSArbiterToTournament (barcode) {
-      const otherPersonArbiterWord = this.otherRTSArbitersList.split(' ')
-      const personLegNumber = otherPersonArbiterWord.length
-      const otherPersonArbiterID = otherPersonArbiterWord[personLegNumber - 1]
-      fetch('http://' + this.local + '/tournament/addOthersRTSArbiters/' + this.tournamentUUID + '?barcode=' + barcode + '&id=' + otherPersonArbiterID, {
+    addOtherRTSArbiterToTournament (member) {
+      const memberUUID = member.uuid
+      const otherId = member.id
+      fetch(`http://${this.local}/tournament/addOthersRTSArbiters/${this.tournamentUUID}?memberUUID=${memberUUID}&id=${otherId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -1883,7 +2040,7 @@ export default {
               this.success = true
               this.message = response
               this.otherRTSArbiter = ''
-              this.otherRTSArbitersList = '0 0'
+              this.otherRTSArbitersList = ''
               this.showloading()
               this.getListTournaments()
               this.autoClose()
@@ -1945,28 +2102,42 @@ export default {
       if (val === '') {
         update(() => {
           const needle = val.toLowerCase()
-          this.options = this.filtersOther.filter(v => v.toLowerCase().indexOf(needle) > -1)
+          this.options = this.filtersOther.filter(v => v.fullName.toLowerCase().indexOf(needle) > -1)
         })
         return
       }
 
       update(() => {
         const needle = val.toLowerCase()
-        this.options = this.filtersOther.filter(v => v.toLowerCase().indexOf(needle) > -1)
+        this.options = this.filtersOther.filter(v => v.fullName.toLowerCase().indexOf(needle) > -1)
       })
     },
     filterOtherArbiters (val, update) {
       if (val === '') {
         update(() => {
           const needle = val.toLowerCase()
-          this.options = this.filtersOtherArbiters.filter(v => v.toLowerCase().indexOf(needle) > -1)
+          this.options = this.filtersOtherArbiters.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
         })
         return
       }
 
       update(() => {
         const needle = val.toLowerCase()
-        this.options = this.filtersOtherArbiters.filter(v => v.toLowerCase().indexOf(needle) > -1)
+        this.options = this.filtersOtherArbiters.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
+      })
+    },
+    filterArbiters (val, update) {
+      if (val === '') {
+        update(() => {
+          const needle = val.toLowerCase()
+          this.options = this.filtersArbiters.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
+        })
+        return
+      }
+
+      update(() => {
+        const needle = val.toLowerCase()
+        this.options = this.filtersArbiters.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
       })
     },
     getAnnouncementFromCompetition () {
@@ -2020,22 +2191,22 @@ export default {
       })
     },
     getMemberMetrics (info) {
-      console.log(info)
       if (info.length < 1) {
         this.message = 'lista jest pusta - dodaj coś'
         this.failure = true
         this.autoClose()
         return
       }
+      const { local, tournamentUUID, otherID, memberUUID, name, date } = this
       axios({
-        url: 'http://' + this.local + '/files/downloadMetric/' + this.tournamentUUID + '?otherID=' + this.otherID + '&memberUUID=' + this.memberUUID + '&competitions=' + info + '&startNumber=' + this.startNumber + '&a5rotate=' + this.a5rotate,
+        url: `http://${local}/files/downloadMetric/${tournamentUUID}?otherID=${otherID}&memberUUID=${memberUUID}&competitions=${info}&startNumber=${this.startNumber}&a5rotate=${this.a5rotate}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
-        fileLink.setAttribute('download', 'metryki_' + this.name + '_' + this.date + '.pdf')
+        fileLink.setAttribute('download', 'metryki_' + name + '_' + date + '.pdf')
         document.body.appendChild(fileLink)
         fileLink.click()
         this.listDownload = true
@@ -2079,8 +2250,13 @@ export default {
         this.gunAdded = false
         this.listDownload = false
         this.listOfCompetitions = []
+        this.listOfAddAmmo = []
         this.competitionAddToTournamentList = []
         this.deleteTournamentAlert = false
+        this.printAll = false
+        this.addAllCompetition = false
+        this.addAllAmmo = false
+        this.dis = false
         this.message = null
         this.success = false
         this.failure = false
