@@ -8,32 +8,32 @@
             <q-card-section class="col-6">
               <div class="full-width">
                 <q-item><q-input class="full-width"
-                    @input="memberFirstNameC = memberFirstName.length === 0 ? '' : memberFirstNameC = memberFirstName.length < 3 ? 'red-2' : 'green-2'"
-                    dense :bg-color="memberFirstNameC" label-color="positive" v-model="memberFirstName" label="Imię *"
+                    @input="memberFirstNameC = member.firstName.length === 0 ? '' : memberFirstNameC = member.firstName.length < 3 ? 'red-2' : 'green-2'"
+                    dense :bg-color="memberFirstNameC" label-color="positive" v-model="member.firstName" label="Imię *"
                     onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode === 32"
                     filled /></q-item>
                 <q-item><q-input class="full-width"
-                    @input="memberSecondNameC = memberSecondName.length === 0 ? '' : memberSecondNameC = memberSecondName.length < 3 ? 'red-2' : 'green-2'"
-                    dense :bg-color="memberSecondNameC" label-color="positive" v-model="memberSecondName"
+                    @input="memberSecondNameC = member.secondName.length === 0 ? '' : memberSecondNameC = member.secondName.length < 3 ? 'red-2' : 'green-2'"
+                    dense :bg-color="memberSecondNameC" label-color="positive" v-model="member.secondName"
                     label="Nazwisko *"
                     onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode === 45"
                     filled /></q-item>
                 <q-item><q-input class="full-width"
-                    @input="memberIDCardC = memberIDCard.length === 0 ? '' : checkIDCard(memberIDCard)" dense
-                    :bg-color="memberIDCardC" v-model="memberIDCard" :suffix="memberIDCardS" label-color="positive"
+                    @input="memberIDCardC = member.IDCard.length === 0 ? '' : checkIDCard(member.IDCard)" dense
+                    :bg-color="memberIDCardC" v-model="member.IDCard" :suffix="memberIDCardS" label-color="positive"
                     label="Numer Dokumentu *" filled /></q-item>
                 <q-item><q-input class="full-width"
-                    @input="memberPeselC = memberPesel.length === 0 ? '' : checkPESEL(memberPesel)" dense
-                    :bg-color="memberPeselC" v-model="memberPesel" :suffix="memberPeselS" label-color="positive"
+                    @input="memberPeselC = member.pesel.length === 0 ? '' : checkPESEL(member.pesel)" dense
+                    :bg-color="memberPeselC" v-model="member.pesel" :suffix="memberPeselS" label-color="positive"
                     placeholder="tylko cyfry" label="Pesel *" mask="###########" filled /></q-item>
                 <q-item><q-input class="full-width"
-                    @input="memberPhoneC = memberPhone.length === 0 ? '' : memberPhone.length < 11 ? 'red-2' : 'green-2'" dense
-                    :bg-color="memberPhoneC" type="tel" v-model="memberPhone" label-color="positive"
+                    @input="memberPhoneC = member.phone.length === 0 ? '' : member.phone.length < 11 ? 'red-2' : 'green-2'" dense
+                    :bg-color="memberPhoneC" type="tel" v-model="member.phone" label-color="positive"
                     placeholder="tylko cyfry" prefix="+48 " label="Numer telefonu *" mask="### ### ###" filled
                     onkeypress="return (event.charCode > 47 && event.charCode < 58)" /></q-item>
                 <q-item><q-input class="full-width"
-                    @input="memberEmailC = memberEmail.length === 0 ? '' : checkEmail(memberEmail)" :bg-color="memberEmailC"
-                    dense filled type="email" v-model="memberEmail" label-color="positive" :suffix="memberEmailS"
+                    @input="memberEmailC = member.email.length === 0 ? '' : checkEmail(member.email)" :bg-color="memberEmailC"
+                    dense filled type="email" v-model="member.email" label-color="positive" :suffix="memberEmailS"
                     label="e-mail *" /></q-item>
                 <q-item><q-input class="full-width" dense filled color="green" v-model="memberLegitimation"
                     input-class="text-positive" label-color="positive" label="Numer Legitymacji"
@@ -66,26 +66,26 @@
               <div class="fit col">
                 <div class="fit">
                   <q-item><q-input class="full-width" dense filled color="primary" label-color="positive"
-                      input-class="text-positive" v-model="memberPostOfficeCity" label="Miasto *" /></q-item>
+                      input-class="text-positive" v-model="address.postOfficeCity" label="Miasto *" /></q-item>
                   <q-item><q-input class="full-width" dense filled color="primary" label-color="positive"
-                      input-class="text-positive" v-model="memberZipCode" placeholder="00-000" label="Kod Pocztowy *"
+                      input-class="text-positive" v-model="address.zipCode" placeholder="00-000" label="Kod Pocztowy *"
                       mask="##-###" /></q-item>
                   <q-item><q-input class="full-width" dense filled color="primary" label-color="positive"
-                      input-class="text-positive" v-model="memberStreet" label="Ulica *" /></q-item>
+                      input-class="text-positive" v-model="address.street" label="Ulica *" /></q-item>
                   <q-item><q-input class="full-width" dense filled color="primary" label-color="positive"
-                      input-class="text-positive" v-model="memberStreetNumber" label="Numer Ulicy *" /></q-item>
+                      input-class="text-positive" v-model="address.streetNumber" label="Numer Ulicy *" /></q-item>
                   <q-item><q-input class="full-width" dense filled color="primary" label-color="positive"
-                      input-class="text-positive" v-model="memberFlatNumber" label="Numer Mieszkania" /></q-item>
-                  <q-item v-if="memberFirstName.length >= 3
-                    && memberSecondName.length >= 3
-                    && memberIDCard.length >= 3
-                    && memberPesel.length === 11
-                    && memberPhone.length === 11
-                    && memberEmail.length >= 3
-                    && memberPostOfficeCity != null
-                    && memberZipCode != null
-                    && memberStreet != null
-                    && memberStreetNumber != null" class="reverse"><q-btn class="full-width text-bold" :loading="loading[0]"
+                      input-class="text-positive" v-model="address.flatNumber" label="Numer Mieszkania" /></q-item>
+                  <q-item v-if="member.firstName.length >= 3
+                    && member.secondName.length >= 3
+                    && member.IDCard.length >= 3
+                    && member.pesel.length === 11
+                    && member.phone.length === 11
+                    && member.email.length >= 3
+                    && address.postOfficeCity != null
+                    && address.zipCode != null
+                    && address.street != null
+                    && address.streetNumber != null" class="reverse"><q-btn class="full-width text-bold" :loading="loading[0]"
                       style="font-weight: bold; font-size: medium; letter-spacing: 1em;" color="primary"
                       @click="acceptCode = true">dodaj do klubu</q-btn></q-item>
                   <q-item v-else class="reverse"><q-btn class="full-width text-bold"
@@ -293,9 +293,11 @@
         <template v-slot:navigation>
           <q-stepper-navigation class="flex bg-dark">
             <q-item clickable v-if=" (step < 5 && (uuid != null && uuid !== '')) " @click=" alertResponse = null ">
-              <q-btn @click=" step < 4? $refs.stepper.next(): redirect()" color="primary"
-                :label=" step === 4 ? 'Zakończ' : 'Przejdź Dalej' " /></q-item>
-            <q-item><q-btn v-if=" step > 1 " flat color="primary" @click=" $refs.stepper.previous() " label="Wróć" /></q-item>
+              <q-btn v-if="step<4" @click="$refs.stepper.next()" color="primary"
+                label="Przejdź Dalej" />
+              <q-btn v-else @click="memberDial=true" color="primary" label="wyświetl profil"/>
+              </q-item>
+            <q-item v-if=" step > 1 " ><q-btn flat color="primary" @click=" $refs.stepper.previous() " label="Wróć" /></q-item>
             <!-- <q-item><q-btn v-if=" step > 1 " @click=" redirect() " color="primary" label="Zakończ" /></q-item> -->
             <q-item><q-btn v-if=" uuid != null && uuid !== '' " type="a" href="https://portal.pzss.org.pl/CLub/Player"
                 target="_blank" label="Przejdź do portalu PZSS" color="primary" @click=" pzssPortal = true "><q-avatar>
@@ -308,7 +310,7 @@
                 :name=" memberE != null ? (memberE.firstName + ' ' + memberE.secondName) : '' " />
             </q-item>
             <q-item>
-              <LastContributionPDF v-if=" uuid != null && uuid !== '' " :uuid=" uuid "
+              <LastContributionPDF v-if=" uuid != null && uuid !== '' " :uuid=" uuid " :title="'Pobierz Potwierdzenie opłacenia składki'"
                 :name=" memberE != null ? (memberE.firstName + ' ' + memberE.secondName) : '' " />
             </q-item>
             <q-item v-if="shootingPlace === 'prod'">
@@ -353,15 +355,16 @@
         </q-card-section>
       </q-card>
     </q-dialog>
-    <q-dialog v-model=" pzssPortal " persistent @keypress.enter=" changePzss(uuid); pzssPortal = false ">
+    <q-dialog v-model=" pzssPortal ">
       <q-card class="bg-dark text-positive">
         <q-card-section class="row text-center text-h6">
           <span class="q-ml-sm">Czy Klubowicz został dodany do portalu?</span>
         </q-card-section>
 
         <q-card-actions align="center">
-          <q-btn text-color="white" label="nie" color="primary" v-close-popup />
-          <q-btn text-color="white" label="tak" color="primary" v-close-popup @click=" changePzss(uuid) " />
+          <q-btn label="nie" color="secondary" v-close-popup @click=" togglePzss(uuid,false) " />
+          <q-btn label="tak" color="primary" v-close-popup @click=" togglePzss(uuid,true) " />
+          <q-btn label="anuluj" color="secondary" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -376,6 +379,17 @@
         <q-card-actions align="right">
           <q-btn label="anuluj" color="black" v-close-popup @click=" code = null " />
           <q-btn id="3" label="Dodaj" color="black" v-close-popup @click="simulateProgress(0)" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="memberDial" style="min-width: 80vw">
+      <q-card style="min-width: 80vw" class="bg-dark">
+        <q-card-section class="flex-center">
+          <Member :member-number-legitimation="memberLegitimation"></Member>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn text-color="white" label="zamknij" color="primary" v-close-popup @click="code = null" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -408,6 +422,10 @@ export default {
     CSVFile: lazyLoadComponent({
       componentFactory: () => import('components/member/MemberCSVFile.vue'),
       loading: SkeletonBox
+    }),
+    Member: lazyLoadComponent({
+      componentFactory: () => import('components/member/Member.vue'),
+      loading: SkeletonBox
     })
   },
   setup () {
@@ -419,18 +437,18 @@ export default {
     function simulateProgress (number) {
       loading.value[number] = true
       this.addMember(this.memberLegitimation,
-        this.memberFirstName,
-        this.memberSecondName,
-        this.memberIDCard,
-        this.memberPesel,
-        this.memberPhone,
-        this.memberEmail,
+        this.member.firstName,
+        this.member.secondName,
+        this.member.IDCard,
+        this.member.pesel,
+        this.member.phone,
+        this.member.email,
         this.memberAdult,
-        this.memberPostOfficeCity,
-        this.memberZipCode,
-        this.memberStreet,
-        this.memberStreetNumber,
-        this.memberFlatNumber,
+        this.address.postOfficeCity,
+        this.address.zipCode,
+        this.address.street,
+        this.address.streetNumber,
+        this.address.flatNumber,
         this.returningToClub)
       setTimeout(() => {
         loading.value[number] = false
@@ -463,7 +481,6 @@ export default {
       step: 1,
       number: '',
       validThru: '',
-      member: null,
       patentNumber: null,
       patentNumber1: null,
       patentNumberConfirm: false,
@@ -478,33 +495,38 @@ export default {
       licenseDate: '',
       weaponPermissionNumber: '',
       isExist: true,
-      memberFirstName: '',
+      uuid: '',
+      member: {
+        firstName: '',
+        secondName: '',
+        IDCard: '',
+        pesel: '',
+        phone: '',
+        email: ''
+      },
+      address: {
+        postOfficeCity: null,
+        zipCode: null,
+        street: null,
+        streetNumber: null,
+        flatNumber: null
+      },
+      memberDial: false,
       memberFirstNameC: '',
-      memberSecondName: '',
       memberSecondNameC: '',
-      memberIDCard: '',
       memberIDCardC: '',
       memberIDCardS: '',
-      memberPesel: '',
       memberPeselC: '',
       memberPeselS: '',
-      memberPhone: '',
       memberPhoneC: '',
-      memberEmail: '',
       memberEmailC: '',
       memberEmailS: '',
       memberAdult: true,
       memberAdultConfirm: false,
       memberLegitimation: '',
       memberJoinDate: '',
-      memberZipCode: null,
-      memberPostOfficeCity: null,
-      memberStreet: null,
-      memberStreetNumber: null,
-      memberFlatNumber: null,
       memberE: null,
       active: true,
-      uuid: '',
       ordinal: '',
       dateVar: /\//gi,
       pzssPortal: false,
@@ -530,25 +552,25 @@ export default {
         this.timer = 0
       }, 1000)
     },
-    async addMember (memberLegitimation, memberFirstName, memberSecondName, memberIDCard, memberPesel, memberPhone, memberEmail, memberAdult, memberPostOfficeCity, memberZipCode, memberStreet, memberStreetNumber, memberFlatNumber, returningToClub) {
+    async addMember (legitimation, firstName, memberSecondName, IDCard, pesel, phone, email, adult, postOfficeCity, zipCode, street, streetNumber, flatNumber, returningToClub) {
       const data = {
         member: {
-          legitimationNumber: memberLegitimation,
-          firstName: memberFirstName,
+          legitimationNumber: legitimation,
+          firstName: firstName,
           secondName: memberSecondName,
-          idcard: memberIDCard,
-          pesel: memberPesel,
-          email: memberEmail,
-          phoneNumber: memberPhone,
-          adult: memberAdult,
+          idcard: IDCard,
+          pesel: pesel,
+          phoneNumber: phone,
+          email: email,
+          adult: adult,
           joinDate: this.memberJoinDate.replace(/\//gi, '-')
         },
         address: {
-          postOfficeCity: memberPostOfficeCity,
-          zipCode: memberZipCode,
-          street: memberStreet,
-          streetNumber: memberStreetNumber,
-          flatNumber: memberFlatNumber
+          postOfficeCity: postOfficeCity,
+          zipCode: zipCode,
+          street: street,
+          streetNumber: streetNumber,
+          flatNumber: flatNumber
         }
       }
       await fetch(`http://${this.local}/member/?returningToClub=${returningToClub}&pinCode=${this.code}`, {
@@ -755,17 +777,17 @@ export default {
         }
       })
     },
-    changePzss (uuid) {
-      fetch(`http://${this.local}/member/pzss/${uuid}`, {
+    togglePzss (uuid, state) {
+      fetch(`http://${this.local}/member/togglePzss/${uuid}?isSignedTo=${state}`, {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {
           response.text().then(
             response => {
-              this.showloading()
               this.success = true
               this.message = response
-              this.getMember(uuid)
+              this.showloading()
+              this.getMemberByUUID(this.memberUUID)
               this.autoClose()
             }
           )
@@ -863,6 +885,20 @@ export default {
         }
         sum = sum % 10
         this.peselValue = (10 - sum) % 10 === controlNumber
+
+        let year = 1900 + Number(pesel[0] * 10) + Number(pesel[1])
+        if (pesel[2] >= 2 && pesel[2] < 8) { year += Math.floor(pesel[2] / 2) * 100 }
+        if (pesel[2] >= 8) { year -= 100 }
+
+        const month = Number((pesel[2] % 2) * 10) + Number(pesel[3])
+        const day = Number(pesel[4] * 10 + pesel[5])
+
+        const enteredAge = this.getAge(year, month - 1, day)
+        if (enteredAge > 18) {
+          this.memberAdult = true
+        } else {
+          this.memberAdult = false
+        }
         return this.peselValue
       }
     },
@@ -879,6 +915,16 @@ export default {
             return response
           })
       } else { return this.isPresent }
+    },
+    getAge (year, month, day) {
+      const today = new Date()
+      const birthDate = new Date(year, month, day)
+      let age = today.getFullYear() - birthDate.getFullYear()
+      const m = today.getMonth() - birthDate.getMonth()
+      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--
+      }
+      return age
     },
     checkIDCard (number) {
       let color = ''

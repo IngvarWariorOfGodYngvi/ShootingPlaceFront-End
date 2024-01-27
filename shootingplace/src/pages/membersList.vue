@@ -27,7 +27,7 @@
         </q-fab>
       </q-page-sticky>
     </div>
-    <q-card :class="mobile ? 'col bg-dark' : 'row bg-dark'">
+    <q-card :class="mobile ? 'col bg-dark' : 'row bg-dark'" flat>
       <div class="col-4">
         <q-select label="Wybierz osobę" color="white" input-class="text-white" label-color="white"
           popup-content-class="bg-dark text-positive"
@@ -172,7 +172,7 @@
             @click.ctrl="pushOrRemoveEmailToList(item.legitimationNumber)"
             @click.exact="showloading(), allMember = false; memberName = item; temp = item.legitimationNumber;">
             <td style="width:25%;" :class="item.club.id === 1 && !item.declarationLOK? 'xyz bg-warning' : item.club.id === 1 && item.declarationLOK ? 'xyz' : 'xyz bg-secondary text-white'">
-              <b>{{ index + 1 + ' ' }}</b>{{ item.club.id === 1 ? item.secondName + ' ' + item.firstName : item.secondName + ' ' + item.firstName + ' ' + item.club.name }} {{ !item.declarationLOK? ' - Brak Deklaracji LOK' : ''}}
+              <b>{{ index + 1 + ' ' }}</b>{{ item.club.id === 1 ? item.secondName + ' ' + item.firstName : item.secondName + ' ' + item.firstName + ' ' + item.club.name }} {{ !item.declarationLOK && shootingPlace === 'prod'? ' - Brak Deklaracji LOK' : ''}}
             </td>
             <td style="width:10%;" class="text-center">
               {{ convertDate(item.joinDate) }}
@@ -252,8 +252,8 @@
               <q-icon name="density_large" />
               <q-icon name="density_large" />
             </td>
-            <td class="bg-grey-3">
-              <div class="self-center full-width no-outline text-center text-black" tabindex="0">
+            <td>
+              <div class="self-center full-width text-center">
                 {{ item.erasedEntity.erasedType }} {{ convertDate(item.erasedEntity.date) }}
               </div>
               <q-tooltip v-if="item.erasedEntity.additionalDescription != null" anchor="top middle" :offset="[35, 35]"
@@ -295,14 +295,14 @@ import App from 'src/App.vue'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox.vue'
 import axios from 'axios'
-import { isWindows } from 'mobile-device-detect'
+// import { isWindows } from 'mobile-device-detect'
 export default {
   data () {
     return {
       mailing: true,
       url: '',
       mailingList: JSON.parse(window.localStorage.getItem('mailingList')),
-      mobile: !isWindows,
+      mobile: App.mobile,
       temp: null,
       memberName: '',
       sortLicense: false,
@@ -544,7 +544,6 @@ export default {
         }
       }
       if (type === 'date') {
-        console.log('sortuję')
         if (!this.sortDate) {
           this.memberDTOArg.sort((a, b) => new Date(b.joinDate) - new Date(a.joinDate))
           this.memberDTOArgRearrangeTable.sort((a, b) => new Date(b.joinDate) - new Date(a.joinDate))

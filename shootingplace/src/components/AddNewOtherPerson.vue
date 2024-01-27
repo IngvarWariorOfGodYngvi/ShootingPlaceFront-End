@@ -161,6 +161,7 @@ export default {
           response.text().then(
             response => {
               this.message = response
+              this.$emit('addOtherPerson')
               this.success = true
               this.autoClose()
             }

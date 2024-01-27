@@ -102,7 +102,7 @@ import { ref } from 'vue'
 import App from 'src/App.vue'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox.vue'
-import { isWindows } from 'mobile-device-detect'
+// import { isWindows } from 'mobile-device-detect'
 export default {
   created () {
     this.getPacketList()
@@ -129,7 +129,7 @@ export default {
       message: null,
       success: false,
       failure: false,
-      mobile: !isWindows,
+      mobile: App.mobile,
       shootingPlace: App.shootingPlace,
       local: App.host
     }

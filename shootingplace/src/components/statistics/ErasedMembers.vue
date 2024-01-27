@@ -68,8 +68,8 @@
       </q-card-section>
     </div>
   </div>
-  <q-dialog v-model="memberDial" style="min-width: 80vw">
-    <q-card class="bg-dark text-positive" style="min-width: 80vw">
+  <q-dialog v-model="memberDial">
+    <q-card style="min-width: 80vw" class="bg-dark">
       <q-card-section class="flex-center">
         <Member :member-number-legitimation="legitimationNumber"></Member>
       </q-card-section>
@@ -98,6 +98,8 @@ export default {
       secondDateErased: this.createTodayDate(),
       quantitySumErased: [],
       legitimationNumber: null,
+      success: false,
+      message: null,
       mobile: App.mobile,
       local: App.host
     }
@@ -153,6 +155,12 @@ export default {
         this.listDownload = true
         this.autoClose()
       })
+    },
+    autoClose () {
+      setTimeout(() => {
+        this.success = false
+        this.message = null
+      }, 2000)
     }
   }
 }

@@ -116,7 +116,7 @@
 import App from 'src/App.vue'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox'
-import { isWindows } from 'mobile-device-detect'
+// import { isWindows } from 'mobile-device-detect'
 export default {
   components: {
     Users: lazyLoadComponent({
@@ -134,7 +134,7 @@ export default {
   },
   data () {
     return {
-      mobile: !isWindows,
+      mobile: App.mobile,
       cities: ['Białystok', 'Bydgoszcz', 'Gdańsk', 'Gorzów Wielkopolski', 'Katowice', 'Kielce', 'Kraków', 'Lublin', 'Łódź', 'Olsztyn', 'Opole', 'Poznań', 'Rzeszów', 'Szczecin', 'Warszawa', 'Wrocław', 'BRAK WYNIKÓW'],
       ulAl: ['ul. ', 'al. '],
       ul_al: '',

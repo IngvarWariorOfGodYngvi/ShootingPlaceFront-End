@@ -53,7 +53,7 @@
             <div class="row text-positive">
               <div class="q-pr-xs">{{ index + 1 }}</div>
               <div class="col-2">{{ item.secondName }} {{ item.firstName }}</div>
-              <div class="col-2"><div>{{ convertDateTime(item.date).substring(0,10) }}<div>{{ convertDateTime(item.date).substring(10,19) }}</div></div></div>
+              <div class="col-2"><div>{{ convertDateTime(item.dateTime).substring(0,10) }}<div>{{ convertDateTime(item.dateTime).substring(10,19) }}</div></div></div>
               <div class="col-3">{{ item.weaponPermission != null ? item.weaponPermission : item.address }}</div>
               <div class="col-1 text-center">{{ item.dataProcessingAgreement ? 'tak' : 'nie' }}</div>
               <div class="col-1 text-center">{{ item.statementOnReadingTheShootingPlaceRegulations ? 'tak' : 'nie' }}</div>
@@ -84,7 +84,7 @@ export default {
   },
   methods: {
     getRecordsFromBook (firstDate, secondDate) {
-      fetch('http://' + this.local + '/evidence/?firstDate=' + firstDate + '&secondDate=' + secondDate, {
+      fetch(`http://${this.local}/evidence/?firstDate=${firstDate}&secondDate=${secondDate}`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -94,7 +94,7 @@ export default {
     getJudgingReport (firstDate, secondDate) {
       if (firstDate != null && secondDate != null) {
         axios({
-          url: 'http://' + this.local + '/files/downloadEvidenceBook?firstDate=' + firstDate + '&secondDate=' + secondDate,
+          url: `http://${this.local}/files/downloadEvidenceBook?firstDate=${firstDate}&secondDate=${secondDate}`,
           method: 'GET',
           responseType: 'blob'
         }).then(response => {

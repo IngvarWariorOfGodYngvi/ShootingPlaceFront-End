@@ -1,8 +1,8 @@
 <template>
-  <q-layout view="lHh Lpr lFf" :class="[funRotate?'fun2':'', this.funRotateCLicks > 8 ? 'fun': '']" >
+  <q-layout class="bg-none" view="lHh Lpr lFf" :class="[funRotate?'fun2':'', this.funRotateCLicks > 8 ? 'fun': '']" >
     <q-header elevated>
       <q-page-sticky v-if="mobile" position="top-right" :offset="[5, -50]" style="z-index: 100">
-           <q-icon class="fun" name="wifi" :color="networkStatusvar?'green':'red'"></q-icon>
+           <q-icon class="fun" name="wifi" :color="networkStatusvar!=null?networkStatusvar?'green':'red':''"/>
            </q-page-sticky>
       <q-toolbar class="full-width row">
         <q-btn
@@ -18,12 +18,31 @@
         />
         <q-toggle v-model="backgroundDark" :val="true" :value="true" color="dark" keep-color
                   @input="changeColor()" class="fun"><q-tooltip content-class="bg-secondary text-body2">{{backgroundDark?'Wyłącz': 'Włącz' }} ciemny motyw</q-tooltip></q-toggle>
-                  <div class="text-center text-h5 text-bold">{{siteNameChange()}}</div>
+                  <div :class="`text-center text-h5 text-bold ${networkStatusvar!=null && networkStatusvar?'':'bg-warning'}`">{{siteNameChange()}} {{ networkStatusvar!=null && networkStatusvar?'':'&nbsp; Brak Połączenia Z Bazą' }}</div>
          <div v-if="main" class="row reverse col">
           <q-icon class="fun" name="wifi" :color="networkStatusvar?'green':'red'" @click="funRotateCLicksIncrease()"></q-icon>
-          <q-btn-dropdown v-if="shootingPlace === 'prod'" icon="calendar_month" rounded color="secondary" style="border: 1px solid white">
-            <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=1&bgcolor=%23ffffff&ctz=Europe%2FWarsaw&src=MTA0MjM0ZTI5MTEyZThiYTk0MzBmZWZmNDk5MjRhNmU0YzI4NzJlMzA3ODdhMzhjZjdmZmE2ZTE2MGEyNmNkNkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=OTcwNXUwMTRuZXNicW05NGdiMWdkc3JvOGdAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ&color=%23F09300&color=%234285F4" style="width:40vw;height:50vh;" class="bg-secondary text-positive" frameborder="2" scrolling="no"/>
-          </q-btn-dropdown>
+          <div v-if="shootingPlace === 'prod'">
+          <q-tooltip content-class="bg-primary text-h6">Kalendarz</q-tooltip>
+            <q-btn-dropdown class="fit" icon="calendar_month" rounded color="secondary" style="border: 1px solid white">
+              <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=1&bgcolor=%23ffffff&ctz=Europe%2FWarsaw&src=MTA0MjM0ZTI5MTEyZThiYTk0MzBmZWZmNDk5MjRhNmU0YzI4NzJlMzA3ODdhMzhjZjdmZmE2ZTE2MGEyNmNkNkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=OTcwNXUwMTRuZXNicW05NGdiMWdkc3JvOGdAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ&color=%23F09300&color=%234285F4" style="width:40vw;height:50vh;" class="bg-primary text-positive" frameborder="2" scrolling="no"/>
+            </q-btn-dropdown>
+          </div>
+          <div>
+            <q-tooltip content-class="bg-primary text-h6">Lista pobytu na strzelnicy</q-tooltip>
+            <q-btn-dropdown class="fit" content-class="bg-primary text-white q-pa-xs" icon="groups" rounded color="secondary" style="border: 1px solid white" @click="getRecordsFromBook (today, today)">
+              <div v-if="evidenceBookList.length>0" style="width:30vw;height:50vh;">
+                <div class="row border1">
+                  <div class="col">lp Nazwisko i Imię</div>
+                  <div class="col">Godzina Wejścia</div>
+                </div>
+                <div v-for="(item, index) in evidenceBookList" :key="index" class="row border1">
+                  <div class="col">{{index+1}} {{ item.nameOnRecord }}</div>
+                  <div class="col">{{ item.dateTime.substring(11,19) }}</div>
+                </div>
+              </div>
+              <div v-else class="bg-primary text-white text-h6">Nie ma nic do wyświetlenia</div>
+            </q-btn-dropdown>
+          </div>
           <div v-if="topTenTabExp">
           <q-avatar text-color="white" color="secondary" size="3.5em" rounded
                     style="border: solid 1px white; border-radius: 50%" class="reverse"
@@ -152,7 +171,7 @@ import EssentialLink from 'components/EssentialLink.vue'
 import membersQuantities from 'components/MembersQuantities.vue'
 import WorkTimeList from 'components/WorkTimeList.vue'
 import App from 'src/App.vue'
-import { isWindows } from 'mobile-device-detect'
+// import { isWindows } from 'mobile-device-detect'
 import { reactive } from 'vue'
 import { useNetwork } from '@vueuse/core'
 // import { VueIdentifyNetwork } from 'vue-identify-network'
@@ -178,6 +197,7 @@ export default {
     }
     this.networkStatus()
     this.stata()
+    this.createTodayDate()
   },
   data () {
     return {
@@ -185,12 +205,12 @@ export default {
       siteName: 'Strona Główna',
       zero: 1,
       arbiter: window.localStorage.getItem('arbiter'),
-      mobile: !isWindows,
+      mobile: App.mobile,
       main: App.main,
       backgroundDark: JSON.parse(window.localStorage.getItem('BackgroundDark')),
+      leftDrawerOpen: JSON.parse(window.localStorage.getItem('drawer')),
       topTenTabExp: JSON.parse(window.localStorage.getItem('TopTenTab')),
       icon: 'menu',
-      leftDrawerOpen: JSON.parse(window.localStorage.getItem('drawer')),
       distance: 1200000,
       number: null,
       barcode: null,
@@ -198,6 +218,8 @@ export default {
       tournamentCheck: false,
       funRotateCLicks: 0,
       funRotate: false,
+      evidenceBookList: [],
+      today: new Date(),
       starts: [],
       competitors: [],
       contributors: [],
@@ -298,6 +320,30 @@ export default {
         this.timer = 0
       }, 500)
     },
+    getRecordsFromBook (firstDate, secondDate) {
+      fetch(`http://${this.local}/evidence/?firstDate=${firstDate}&secondDate=${secondDate}`, {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.evidenceBookList = response
+        })
+    },
+    createTodayDate () {
+      const date = new Date()
+      let month = 0
+      let day = 0
+      if ((date.getMonth() + 1) < 10) {
+        month = '0' + (date.getMonth() + 1)
+      } else {
+        month = (date.getMonth() + 1)
+      }
+      if (date.getDate() < 10) {
+        day = '0' + (date.getDate())
+      } else {
+        day = (date.getDate())
+      }
+      this.today = date.getFullYear() + '-' + month + '-' + day
+    },
     getEnv () {
       import('src/App.vue').then(App => {
         fetch(`http://${App.default.host}/conf/env`, {
@@ -324,25 +370,29 @@ export default {
       }
     },
     networkStatus () {
+      this.networkStatusFunction()
       setInterval(() => {
-        fetch(`http://${this.local}/conf/ping`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }).then(response => {
-          if (response.status === 200) {
-            response.text().then(
-              () => {
-                this.networkStatusvar = true
-              })
-          } else {
-            this.networkStatusvar = false
-          }
-        }).catch(() => {
+        this.networkStatusFunction()
+      }, 10000)
+    },
+    networkStatusFunction () {
+      fetch(`http://${this.local}/conf/ping`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          response.text().then(
+            () => {
+              this.networkStatusvar = true
+            })
+        } else {
           this.networkStatusvar = false
-        })
-      }, 100000)
+        }
+      }).catch(() => {
+        this.networkStatusvar = false
+      })
     },
     siteNameChange () {
       return window.localStorage.getItem('SiteName')

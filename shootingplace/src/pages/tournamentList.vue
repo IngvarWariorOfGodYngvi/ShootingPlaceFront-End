@@ -23,11 +23,8 @@
             <q-item-section class="col q-pa-md">
               <div class="col">
                 <q-item-label>{{ tournaments.name }} {{ tournaments.date }}</q-item-label>
-                <q-item-label v-if="tournaments.wzss" caption lines="2" class="text-positive">zawody wpisane do
+                <q-item-label caption lines="2" class="text-positive">zawody{{ !tournaments.wzss?' nie':'' }} wpisane do
                   kalendarza Wojewódzkiego Związku Strzelectwa Sportowego
-                </q-item-label>
-                <q-item-label v-if="!tournaments.wzss" caption lines="2">zawody nie wpisane do kalendarza Wojewódzkiego
-                  związku
                 </q-item-label>
               </div>
             </q-item-section>
@@ -128,14 +125,15 @@
                   <q-item dense stack-label>
                     <div class="text-bold self-center full-width text-positive">Sędzia główny</div>
                   </q-item>
-                  <q-item dense v-if="tournaments.mainArbiter != null" class="col">
-                    <div class="self-center col full-width no-outline text-positive">
+                  <q-item dense v-if="tournaments.mainArbiter != null" class="col" style="cursor: pointer;" @dblclick="memberLeg=tournaments.mainArbiter.legitimationNumber;memberDial=true">
+                    <Tooltip2clickToShow></Tooltip2clickToShow>
+                    <div class="self-center col full-width text-positive">
                       {{ tournaments.mainArbiter.firstName }} {{ tournaments.mainArbiter.secondName }}
                       {{ tournaments.mainArbiter.memberPermissions.arbiterClass }}
                     </div>
                   </q-item>
                   <q-item dense v-if="tournaments.otherMainArbiter != null" class="col">
-                    <div class="self-center col full-width no-outline text-positive">
+                    <div class="self-center col full-width text-positive">
                       {{ tournaments.otherMainArbiter.firstName }} {{ tournaments.otherMainArbiter.secondName }}
                       {{ tournaments.otherMainArbiter.permissionsEntity.arbiterClass }}
                     </div>
@@ -147,7 +145,8 @@
                       stanowiskowi
                     </div>
                   </q-item>
-                  <q-item dense v-for="(arbiters, uuid) in tournaments.arbitersList" :key="uuid">
+                  <q-item dense v-for="(arbiters, uuid) in tournaments.arbitersList" :key="uuid" style="cursor: pointer;" @dblclick="memberLeg=arbiters.legitimationNumber;memberDial=true">
+                    <Tooltip2clickToShow></Tooltip2clickToShow>
                     <div class="self-center full-width text-positive">{{ arbiters.firstName }}
                       {{ arbiters.secondName }} {{ arbiters.memberPermissions.arbiterClass }}
                     </div>
@@ -167,7 +166,8 @@
                       RTS
                     </div>
                   </q-item>
-                  <q-item dense v-if="tournaments.commissionRTSArbiter != null" class="col">
+                  <q-item dense v-if="tournaments.commissionRTSArbiter != null" class="col" style="cursor: pointer;" @dblclick="memberLeg=tournaments.commissionRTSArbiter.legitimationNumber;memberDial=true">
+                    <Tooltip2clickToShow></Tooltip2clickToShow>
                     <div class="self-center col full-width text-positive">
                       {{ tournaments.commissionRTSArbiter.firstName }} {{ tournaments.commissionRTSArbiter.secondName }}
                       {{ tournaments.commissionRTSArbiter.memberPermissions.arbiterClass }}
@@ -187,7 +187,8 @@
                       obliczeń
                     </div>
                   </q-item>
-                  <q-item dense v-for="(arbitersRTSList, uuid) in tournaments.arbitersRTSList" :key="uuid">
+                  <q-item dense v-for="(arbitersRTSList, uuid) in tournaments.arbitersRTSList" :key="uuid" style="cursor: pointer;" @dblclick="memberLeg=arbitersRTSList.legitimationNumber;memberDial=true">
+                    <Tooltip2clickToShow></Tooltip2clickToShow>
                     <div class="self-center full-width text-positive">
                       {{ arbitersRTSList.firstName }} {{ arbitersRTSList.secondName }}
                       {{ arbitersRTSList.memberPermissions.arbiterClass }}
@@ -297,14 +298,14 @@
                         <div class="q-pa-md bg-grey-5 text-center text-bold">Brak wyników - możesz dodać nową osobę
                         </div>
                         <div class="q-pa-md bg-grey-5">
-                            <AddNewOtherPerson @hook:destroyed="getOther()"></AddNewOtherPerson>
+                            <AddNewOtherPerson v-on:addOtherPerson="getOther()"></AddNewOtherPerson>
                         </div>
                       </div>
                     </template>
                   </q-select>
                 <div class="col">
                   <q-btn :disable="memberName.secondName === '0' && otherName.secondName === '0'" class="fit" label="Drukuj metryki" color="secondary"
-                    @click="tournamentUUID = tournaments.uuid;name = memberName.name;date = tournaments.date; getMemberUUIDFromLegitimationNumber();getMetricNumber()" />
+                    @click="tournamentUUID = tournaments.uuid;memberName.secondName != '0'?name = memberName.name:otherName.name;date = tournaments.date; getMemberUUIDFromLegitimationNumber();getMetricNumber()" />
                 </div>
               </q-card-section>
             </div>
@@ -423,25 +424,24 @@
                 :val="' bocznego zapłonu'" label="bocznego zapłonu"></q-radio>
             </div>
             <div class="row bg-grey-4">
+              <div class="q-pa-xs">Strzały oceniane</div>
+              <div>
               <q-radio class="row" color="orange" @input="quantity = false" v-model="choice10" :val="'5'"
                 label="5 strzałów"></q-radio>
               <q-radio class="row" color="orange" @input="quantity = false" v-model="choice10" :val="'7'"
                 label="7 strzałów"></q-radio>
               <q-radio class="row" color="orange" @input="quantity = false" v-model="choice10" :val="'10'"
                 label="10 strzałów"></q-radio>
-              <q-radio class="row" color="orange" @input="quantity = false" v-model="choice10" :val="'13'"
-                label="13 strzałów"></q-radio>
               <q-radio class="row" color="orange" @input="quantity = false" v-model="choice10" :val="'15'"
                 label="15 strzałów"></q-radio>
               <q-radio class="row" color="orange" @input="quantity = false" v-model="choice10" :val="'20'"
                 label="20 strzałów"></q-radio>
               <q-checkbox class="row" color="orange" @input="choice10 = []" v-model="quantity" :val="false"
                 label="inne"></q-checkbox>
-              <q-item class="row">
                 <q-input @focus="choice10 = []" onkeypress="return (event.charCode > 44 && event.charCode < 58)"
                   class="full-width bg-grey-4 center justify" filled v-if="quantity" style="width: 100px"
                   v-model="choice10" stack-label label="Ilość strzałów"></q-input>
-              </q-item>
+              </div>
             </div>
             <div class="row bg-grey-5">
               <q-radio color="orange" v-model="choice11" :val="' OPEN'" label="OPEN"></q-radio>
@@ -617,7 +617,7 @@
                   label="Dodaj sędziego spoza klubu">
                   <template v-slot:no-option>
                       <div class="q-pa-md bg-dark text-positive text-center text-bold">Brak wyników - możesz dodać nową osobę</div>
-                          <AddNewOtherPerson @hook:destroyed="getOther()"></AddNewOtherPerson>
+                          <AddNewOtherPerson v-on:addOtherPerson="getOther()"></AddNewOtherPerson>
                   </template>
                 </q-select>
               </div>
@@ -663,7 +663,7 @@
                   @filter="filterOtherArbiters" label="Dodaj sędziego spoza klubu">
                   <template v-slot:no-option>
                       <div class="q-pa-md bg-dark text-positive text-center text-bold">Brak wyników - możesz dodać nową osobę</div>
-                          <AddNewOtherPerson @hook:destroyed="getOther()"></AddNewOtherPerson>
+                          <AddNewOtherPerson v-on:addOtherPerson="getOther()"></AddNewOtherPerson>
                   </template>
                 </q-select>
               </div>
@@ -716,7 +716,7 @@
                   @filter="filterOtherArbiters" label="Dodaj sędziego spoza klubu">
                   <template v-slot:no-option>
                       <div class="q-pa-md bg-dark text-positive text-center text-bold">Brak wyników - możesz dodać nową osobę</div>
-                          <AddNewOtherPerson @hook:destroyed="getOther()"></AddNewOtherPerson>
+                          <AddNewOtherPerson v-on:addOtherPerson="getOther()"></AddNewOtherPerson>
                   </template>
                 </q-select>
               </div>
@@ -780,7 +780,7 @@
                   @filter="filterOtherArbiters" label="Dodaj sędziego spoza klubu">
                   <template v-slot:no-option>
                       <div class="q-pa-md bg-dark text-positive text-center text-bold">Brak wyników - możesz dodać nową osobę</div>
-                          <AddNewOtherPerson @hook:destroyed="getOther()"></AddNewOtherPerson>
+                          <AddNewOtherPerson v-on:addOtherPerson="getOther()"></AddNewOtherPerson>
                   </template>
                 </q-select>
               </div>
@@ -957,7 +957,7 @@
             <div class="row text-left">
               <q-checkbox class="col hover1" dense v-model="listOfCompetitions" :val="item.uuid" :label="item.name" @input="checkAtTap(item.uuid);listOfCompetitions.length===options2.length?addAllCompetition=true:addAllCompetition=false"></q-checkbox>
               <div class="col-1"></div>
-              <q-checkbox v-if="item.caliberUUID != null" :disable="!listOfCompetitions.includes(item.uuid)" class="col hover1" dense v-model="listOfAddAmmo" :val="item.uuid" :label="item.caliberUUID + ' ' + item.numberOfShots + ' strzałów ' + '(' + (item.practiceShots!=null?item.practiceShots:'0') +' próbnych)'" @input="listOfAddAmmo.length===options2.length?addAllAmmo=true:addAllAmmo=false"/>
+              <q-checkbox v-if="item.caliberUUID != null" :disable="!listOfCompetitions.includes(item.uuid)" class="col hover1" dense v-model="listOfAddAmmo" :val="item.uuid" :label="item.name + ' ' + item.numberOfShots + ' strzałów ' + '(' + (item.practiceShots!=null?item.practiceShots:'0') +' próbnych)'" @input="listOfAddAmmo.length===options2.length?addAllAmmo=true:addAllAmmo=false"/>
               <div v-else class="col">Brak przypisanej amunicji</div>
             </div>
           </div>
@@ -1126,7 +1126,7 @@ import axios from 'axios'
 import App from 'src/App.vue'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox.vue'
-import { isWindows } from 'mobile-device-detect'
+// import { isWindows } from 'mobile-device-detect'
 import { ref } from 'vue'
 
 export default {
@@ -1142,6 +1142,10 @@ export default {
     }),
     Member: lazyLoadComponent({
       componentFactory: () => import('components/member/Member.vue'),
+      loading: SkeletonBox
+    }),
+    Tooltip2clickToShow: lazyLoadComponent({
+      componentFactory: () => import('src/utils/Tooltip2clickToShow.vue'),
       loading: SkeletonBox
     })
   },
@@ -1187,7 +1191,7 @@ export default {
       icon: 'menu',
       backgroundDark: JSON.parse(window.localStorage.getItem('BackgroundDark')),
       ClosedCompetitionTabEXP: JSON.parse(window.localStorage.getItem('ClosedCompetitionTab')),
-      mobile: !isWindows,
+      mobile: App.mobile,
       a5rotate: false,
       printAll: false,
       memberExist: false,
@@ -1319,9 +1323,6 @@ export default {
     this.getAllClubsToTournament()
   },
   methods: {
-    distinct (value, index, array) {
-      return array.indexOf(value) === index
-    },
     selectAllToPrint () {
       this.compList = []
       if (this.printAll) {

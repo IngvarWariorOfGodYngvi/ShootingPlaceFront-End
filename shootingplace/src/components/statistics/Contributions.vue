@@ -1,7 +1,7 @@
 <template>
 <div>
   <div class="text-body2 bg-dark text-positive" style="border: 0">
-    <div :class="mobile?'col':'row'">
+    <div class="col">
       <q-card-section class="col-3">
         <q-item class="col">
           <q-input class="full-width" color="positive" input-class="text-positive" label-color="positive" dense filled v-model="firstDate" mask="####-##-##" label="Data początkowa">
@@ -33,49 +33,46 @@
             </template>
           </q-input>
         </q-item>
-        <div class="row-reverse">
-          <div class="row-reverse">
-            <q-radio color="primary" @input="rearrangeSumTable ()" class="q-pa-md text-positive" v-model="adultCondition" :val="false">
-              młodzież
-            </q-radio>
-            <q-radio color="primary" @input="rearrangeSumTable ()" class="q-pa-md text-positive" v-model="adultCondition" :val="true">
-              dorośli
-            </q-radio>
-          </div>
-          <q-btn color="primary" text-color="white" align=right @click="getSum();rearrangeSumTable ()">Wyszukaj</q-btn>
+        <div>
+          <q-btn color="primary" text-color="white" @click="getSum()">Wyszukaj</q-btn>
+          <p></p>
+          <q-btn :disable="list.length < 1" color="green" text-color="white" @click="getXlsFile()" >pobierz plik .xls</q-btn> {{ loading }}
         </div>
       </q-card-section>
+      <q-inner-loading
+              :showing="visible"
+              label="Przetwarzanie..."
+              color="primary"/>
       <q-card-section class="col">
-        <div v-if="quantitySumRearrangeTable.length >0" class="q-pa-md col text-bold text-center text-h6">Ilość Składek : {{quantitySumRearrangeTable.length}}</div>
-        <q-virtual-scroll v-if="quantitySumRearrangeTable.length >0"
-           :items="quantitySumRearrangeTable"
-           :virtual-scroll-item-size="48"
-                        :virtual-scroll-sticky-size-start="48"
-                        :virtual-scroll-sticky-size-end="32"
-            type="table"
-             dense
-              class="row full-width q-pa-none bg-dark"
-               style="height: 40vh;">
-          <template v-slot:before>
-            <thead class="thead-sticky text-left">
-            <tr class="bg-primary text-white">
-              <th class="text-left">{{quantitySumRearrangeTable.length}} Nazwisko i Imię</th>
-              <th class="text-left" style="width: 20%">Numer<br/>Legitymacji</th>
-              <th class="text-left" style="width: 20%">Data</th>
-              <th class="text-center" style="width: 20%">Status</th>
-            </tr>
-            </thead>
-          </template>
-          <template v-slot="{ item, index }">
-            <tr :key="index" class="rounded text-positive" style="cursor:pointer" @dblclick="legitimationNumber = item.member.legitimation_number; memberDial=true">
-              <Tooltip2clickToShow></Tooltip2clickToShow>
-              <td class="xyz"><b>{{index+1}}</b> {{item.member.second_name}} {{item.member.first_name}}</td>
-              <td>nr. leg {{item.member.legitimation_number}}</td>
-              <td class="text-left">{{item.contribution.paymentDay}}</td>
-              <td class="text-center text-black" :class="item.member.active?'bg-green-3':'bg-red'">{{item.member.active?'Aktywny':'Nieaktywny'}}</td>
-            </tr>
-          </template>
-        </q-virtual-scroll>
+        <div v-if="list.length < 1" class="q-pa-md self-center col full-width text-bold text-center text-h6">Brak wyników zapisów - Wybierz daty</div>
+        <div v-if="list.length > 0" class="q-pa-md col text-bold text-center text-h6">Ilość Składek : {{list.length}}</div>
+        <div class="row text-caption" style="cursor: pointer">
+        <div class="col" @click="sortF('name')">lp <q-icon size="2em" :name="sortName ? 'arrow_drop_up' : 'arrow_drop_down'" />Nazwisko i imię</div>
+        <div class="col-2 text-center" @click="sortF('legitimation')"><q-icon size="2em" :name="sortLegitimation ? 'arrow_drop_up' : 'arrow_drop_down'" />Numer<br> Legitymacji</div>
+        <div class="col-2" @click="sortF('date')"><q-icon size="2em" :name="sortDate ? 'arrow_drop_up' : 'arrow_drop_down'" />Data Składki</div>
+        <div class="col-2" @click="sortF('group')"><q-icon size="2em" :name="sortGroup ? 'arrow_drop_up' : 'arrow_drop_down'" />Grupa</div>
+        <div class="col-2 text-center" @click="sortF('status')"><q-icon size="2em" :name="sortStatus ? 'arrow_drop_up' : 'arrow_drop_down'" />Status</div>
+      </div>
+      <q-scroll-area style="height: 50vh">
+          <div v-for="(item, index) in list" :key="index" class="row hover1 items-center" @dblclick="legitimationNumber = item.member.legitimation_number;memberDial=true">
+            <Tooltip2clickToShow></Tooltip2clickToShow>
+            <div class="col">{{index + 1}}&nbsp;
+              {{ item.member.second_name }} {{ item.member.first_name }}
+            </div>
+            <div class="col-2 text-center">
+              {{ item.member.legitimation_number }}
+            </div>
+            <div class="col-2">
+              {{ item.contribution.validThru }}
+            </div>
+            <div class="col-2">
+              {{ item.member.adult?'Grupa Ogólna':'Grupa Młodzieżowa'}}
+            </div>
+            <div :class="`col-2 ${item.member.active?'bg-green-4':'bg-red-4'} text-black text-center`" style="border-radius: 2px">
+              {{ item.member.active?'Aktywny':'Nieaktywny'}}
+            </div>
+          </div>
+      </q-scroll-area>
       </q-card-section>
     </div>
   </div>
@@ -90,6 +87,14 @@
       </q-card-actions>
     </q-card>
   </q-dialog>
+  <q-dialog position="top" v-model="success">
+      <q-card>
+        <q-card-section>
+          <div v-if="message!=null" class="text-h6">{{ message }}</div>
+        </q-card-section>
+
+      </q-card>
+    </q-dialog>
 </div>
 
 </template>
@@ -97,6 +102,7 @@
 </style>
 <script>
 import App from 'src/App'
+import axios from 'axios'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox'
 
@@ -109,7 +115,16 @@ export default {
       firstDate: null,
       secondDate: this.createTodayDate(),
       adultCondition: null,
-      quantitySumRearrangeTable: [],
+      list: [],
+      visible: false,
+      sortName: false,
+      sortLegitimation: false,
+      sortDate: false,
+      sortStatus: false,
+      sortGroup: false,
+      success: false,
+      message: null,
+      loading: null,
       mobile: App.mobile,
       local: App.host
     }
@@ -142,26 +157,92 @@ export default {
       return date.getFullYear() + '/' + month + '/' + day
     },
     getSum () {
-      fetch('http://' + this.local + '/statistics/contributionSum?firstDate=' + this.firstDate.replace(/\//gi, '-') + '&secondDate=' + this.secondDate.replace(/\//gi, '-'), {
+      this.visible = true
+      fetch(`http://${this.local}/statistics/contributionSum?firstDate=${this.firstDate.replace(/\//gi, '-')}&secondDate=${this.secondDate.replace(/\//gi, '-')}`, {
         method: 'GET'
       }).then(response => {
         response.json().then(response => {
-          this.quantitySum = response
-          this.quantitySumRearrangeTable = response
+          this.list = response
         })
+      }).then(() => {
+        this.visible = false
+      }).catch(() => {
+        this.visible = false
       })
     },
-    rearrangeSumTable () {
-      const arr = this.quantitySum
-      const arr1 = []
-      if (this.adultCondition !== null) {
-        for (let i = 0; i < arr.length; i++) {
-          if (arr[i].adult === this.adultCondition) {
-            arr1.push(arr[i])
-          }
+    getXlsFile () {
+      this.loading = 'pobieranie'
+      axios({
+        url: `http://${this.local}/files/contributions?firstDate=${this.firstDate.replace(/\//gi, '-')}&secondDate=${this.secondDate.replace(/\//gi, '-')}`,
+        method: 'GET',
+        responseType: 'blob'
+      }).then(response => {
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        const fileLink = document.createElement('a')
+        fileLink.href = fileURL
+        fileLink.setAttribute('download', `lista składek od ${this.firstDate.replace(/\//gi, '-')} do ${this.secondDate.replace(/\//gi, '-')}.xlsx`)
+        document.body.appendChild(fileLink)
+        fileLink.click()
+        this.message = 'Pobrano plik'
+        this.success = true
+        this.autoClose()
+      }).catch(() => {
+        this.loading = null
+      })
+    },
+    sortF (type) {
+      if (type === 'name') {
+        if (!this.sortName) {
+          this.list.sort((a, b) => ('' + b.member.second_name).localeCompare(a.member.second_name))
+          this.sortName = !this.sortName
+        } else {
+          this.list.sort((a, b) => ('' + a.member.second_name).localeCompare(b.member.second_name))
+          this.sortName = !this.sortName
         }
       }
-      this.quantitySumRearrangeTable = arr1
+      if (type === 'status') {
+        if (!this.sortStatus) {
+          this.list.sort((a, b) => b.member.active - a.member.active)
+          this.sortStatus = !this.sortStatus
+        } else {
+          this.list.sort((a, b) => a.member.active - b.member.active)
+          this.sortStatus = !this.sortStatus
+        }
+      }
+      if (type === 'group') {
+        if (!this.sortGroup) {
+          this.list.sort((a, b) => b.member.adult - a.member.adult)
+          this.sortGroup = !this.sortGroup
+        } else {
+          this.list.sort((a, b) => a.member.adult - b.member.adult)
+          this.sortGroup = !this.sortGroup
+        }
+      }
+      if (type === 'legitimation') {
+        if (!this.sortLicense) {
+          this.list.sort((a, b) => b.member.legitimation_number - a.member.legitimation_number)
+          this.sortLicense = !this.sortLicense
+        } else {
+          this.list.sort((a, b) => a.member.legitimation_number - b.member.legitimation_number)
+          this.sortLicense = !this.sortLicense
+        }
+      }
+      if (type === 'date') {
+        if (!this.sortDate) {
+          this.list.sort((a, b) => new Date(b.contribution.validThru) - new Date(a.contribution.validThru))
+          this.sortDate = !this.sortDate
+        } else {
+          this.list.sort((a, b) => new Date(a.contribution.validThru) - new Date(b.contribution.validThru))
+          this.sortDate = !this.sortDate
+        }
+      }
+    },
+    autoClose () {
+      setTimeout(() => {
+        this.success = false
+        this.message = null
+        this.loading = null
+      }, 2000)
     }
   }
 }

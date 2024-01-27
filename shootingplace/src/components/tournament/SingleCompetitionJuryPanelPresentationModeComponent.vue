@@ -7,27 +7,27 @@
     </div>
     <div class="row q-pa-none q-ma-none">
       <div class="row fit q-pa-sm self-center text-positive">
-        <div class="col-3 self-center no-outline text-left text-positive">Zawodnik</div>
-        <div class="col-2 self-center no-outline text-left text-positive">Klub</div>
-        <div class="col-1 self-center no-outline text-left text-positive">Numer Startowy</div>
+        <div class="col-3 self-center text-left text-positive">Zawodnik</div>
+        <div class="col-2 self-center text-left text-positive">Klub</div>
+        <div class="col-1 self-center text-left text-positive">Numer Startowy</div>
         <div v-if="competition.countingMethod !== 'COMSTOCK'" class="col row">
           <div v-for="(item1,index1) in competition.scoreList[0].series" :key="index1"
-               class="col self-center text-center text-caption text-positive">
+               class="col self-center text-center text-positive">
             <div class="col">Seria {{ arabicToRomanNumberConverter(index1+1) }}</div>
           </div>
         </div>
-        <div class="col-1 self-center no-outline text-center text-positive">
+        <div class="col-1 self-center text-center text-positive">
           {{ competition.countingMethod === 'COMSTOCK' ? 'trafienia' : '10/' }}
         </div>
-        <div class="col-1 self-center no-outline text-center text-positive">
+        <div class="col-1 self-center text-center text-positive">
           {{ competition.countingMethod === 'COMSTOCK' ? 'czas' : '10X' }}
         </div>
         <div v-if="competition.countingMethod === 'COMSTOCK'"
-             class="col-1 self-center no-outline text-center text-positive">
+             class="col-1 self-center text-center text-positive">
           procedury
         </div>
         <div v-if="competition.countingMethod === 'COMSTOCK'" class="col"></div>
-        <div class="col-2 self-center no-outline text-positive">
+        <div class="col-2 self-center text-positive">
           <div v-if="competition.countingMethod === 'COMSTOCK'" class="text-center">
             <div>
               Wynik / HF
@@ -44,7 +44,7 @@
         <div class="row text-body2 full-width" :class="index%2===0?'bg-grey-3 text-black':'text-positive'">
           <!-- name & club -->
             <div class="col row q-pa-none q-pl-xs q-pr-xs self-center text-positive">
-              <div class="col-3 self-center no-outline text-left text-caption text-bold"
+              <div class="col-3 self-center text-left text-bold"
                    :class="index%2===0?'text-black':'text-positive'">
                 <div class="q-pa-none">
                   {{index+1}}
@@ -52,43 +52,43 @@
                   {{ item.member != null ? item.member.firstName : item.otherPersonEntity.firstName }}
                 </div>
               </div>
-              <div class="col-2 self-center no-outline text-left text-caption "
+              <div class="col-2 self-center text-left  "
                    :class="index%2===0?'text-black':'text-positive'">
                 {{ item.member != null ? item.member.club.name : item.otherPersonEntity.club.name }}
               </div>
-              <div class="col-1 self-center no-outline text-center text-caption"
+              <div class="col-1 self-center text-center "
                    :class="index%2===0?'text-black':'text-positive'">{{ item.metricNumber }}
               </div>
               <div v-if="competition.countingMethod !== 'COMSTOCK'" class="col row">
                 <div v-for="(item1,index1) in item.series" :key="index1"
-                     class="col self-center text-center text-caption" :class="index%2===0?'text-black':'text-positive'">
+                     class="col self-center text-center " :class="index%2===0?'text-black':'text-positive'">
                   <div class="col">{{ item1 }}</div>
                 </div>
               </div>
-              <div class="col-1 self-center no-outline text-center text-caption"
-                   :class="index%2===0?'text-black':'text-positive'">{{ item.outerTen !== 0 && item.innerTen !== 0 ? item.outerTen: '' }}
+              <div class="col-1 self-center text-center "
+                   :class="index%2===0?'text-black':'text-positive'">{{ item.outerTen !== 0 ? item.outerTen: '' }}
               </div>
-              <div class="col-1 self-center no-outline text-center text-caption"
-                   :class="index%2===0?'text-black':'text-positive'">{{ item.outerTen !== 0 && item.innerTen !== 0 ? competition.countingMethod === 'COMSTOCK' ? (item.innerTen + ' s') : item.innerTen : '' }}
+              <div class="col-1 self-center text-center "
+                   :class="index%2===0?'text-black':'text-positive'">{{ item.innerTen !== 0 ? competition.countingMethod === 'COMSTOCK' ? (item.innerTen + ' s') : item.innerTen : '' }}
               </div>
               <div v-if="competition.countingMethod === 'COMSTOCK'"
-                   class="col-1 self-center no-outline text-center text-caption"
+                   class="col-1 self-center text-center "
                    :class="index%2===0?'text-black':'text-positive'">{{ item.outerTen !== 0 && item.innerTen !== 0 ? item.procedures: '' }}
               </div>
               <div v-if="competition.countingMethod === 'COMSTOCK'" class="col"></div>
               <div class="col-2 self-center text-center">
                 <div v-if="item.dnf||item.dsq||item.pk" :class="index%2===0?'text-black':'text-positive'"
-                     class="self-center full-width no-outline text-center">
-                  <div v-if="item.dnf">DNF</div>
-                  <div v-if="item.dsq">DSQ</div>
-                  <div v-if="item.pk">PK</div>
+                     class="self-center full-width text-center">
+                  <div v-if="item.dnf">DNF ({{ item.score }})</div>
+                  <div v-if="item.dsq">DSQ ({{ item.score }})</div>
+                  <div v-if="item.pk">PK ({{ item.score }})</div>
                 </div>
-                <div v-else class="self-center no-outline text-caption text-center text-bold q-pa-none q-ma-none">
+                <div v-else class="self-center text-center text-bold q-pa-none q-ma-none">
                   <div v-if="competition.countingMethod === 'COMSTOCK'" class="q-pa-none q-ma-none"
                        :class="index%2===0?'text-black':'text-positive'">
                     <div class="q-pa-none q-ma-none">{{ item.outerTen !== 0 && item.innerTen !== 0 ? (item.score + ' / ' + item.hf) : ''}}</div>
                   </div>
-                  <div v-else class="text-center self-center text-caption text-bold"
+                  <div v-else class="text-center self-center text-bold"
                        :class="index%2===0?'text-black':'text-positive'">
                     {{ item.score }}
                   </div>
@@ -112,9 +112,18 @@ export default {
       required: true
     }
   },
+  created () {
+    this.getCompetitionByID(this.uuid)
+    this.scrollToElement(window.frameElement.scroll)
+  },
   watch: {
     uuid (newValue, oldValue) {
       if (newValue !== oldValue) {
+        console.log('zmiana')
+        this.getCompetitionByID(this.uuid)
+      }
+      if (newValue === oldValue) {
+        console.log('bez zmian')
         this.getCompetitionByID(this.uuid)
       }
     }
@@ -127,7 +136,7 @@ export default {
   },
   methods: {
     getCompetitionByID (uuid) {
-      fetch('http://' + App.host + '/competitionMembersList/getByID/?uuid=' + uuid, {
+      fetch(`http://${App.host}/competitionMembersList/getByID/?uuid=${uuid}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'

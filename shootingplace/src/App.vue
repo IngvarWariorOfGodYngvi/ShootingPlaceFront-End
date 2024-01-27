@@ -53,15 +53,16 @@ export default {
   },
   name: 'App',
   shootingPlace: window.localStorage.getItem('shootingPlace'),
-  mobile: !isWindows,
+  mobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+  // mobile: isMobile(),
   main: JSON.parse(window.localStorage.getItem('main')), // dev //
   // prod: '192.168.1.30:8080/strzelnica/#/', // test //
-  prod: location.hostname + ':8081/#/', // dev //
-  host: location.hostname + ':8080/' // test + dev //
+  prod: `${location.hostname}:8081/#/`, // dev //
+  host: `${location.hostname}:8080/` // test + dev //
   // prod: '192.168.1.30:8080/strzelnica/#/', // prod dom //
   // prod: '192.168.100.2:8080/strzelnica/#/', // prod //
   // prod: '192.168.1.150:8080/strzelnica/#/', // rcs //
-  // host: location.hostname + ':8080/shootingplace-1.0/' // test + prod + dev + rcs //
+  // host: `${location.hostname}:8080/shootingplace-1.0/` // test + prod + dev + rcs //
 
 }
 

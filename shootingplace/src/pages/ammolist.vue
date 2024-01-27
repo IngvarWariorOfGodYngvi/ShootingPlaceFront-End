@@ -481,7 +481,7 @@
 </style>
 <script>
 import { ref } from 'vue'
-import { isWindows } from 'mobile-device-detect'
+// import { isWindows } from 'mobile-device-detect'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox.vue'
 
@@ -550,7 +550,7 @@ export default {
   data () {
     return {
       pageNumber: 0,
-      mobile: !isWindows,
+      mobile: App.mobile,
       toggleShowClosedList: false,
       open: false,
       packet: false,

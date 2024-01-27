@@ -1,14 +1,14 @@
 <template>
   <div v-if="member != null" class="full-width">
     <div class="text-h6 text-center bg-warning" v-if="shootingPlace==='prod' && !member.declarationLOK">Brak Podpisanej Deklaracji LOK</div>
-    <q-card bordered class="container" :class="member.active ? 'row bg-green-3' : 'row bg-red-3'" :style="mobile?'height: 30vh;': ''">
+    <q-card bordered class="container round" :class="`row bg-${member.active ?'green' : 'red'}-3`" :style="`rotate: -${rotateFun}deg; height: ${mobile? '30vh' : ''}`" @dblclick="rotateFun+=0.25" @click.ctrl="rotateFun=0" @click.shift.left="rotateFun+=25">
       <q-card-section v-if="member.imageUUID != null" avatar :class="mobile ? 'col-3 q-pa-none q-ma-none' : 'col-3'">
-        <q-img fit=none style="max-height: 40vh" class="text-body1" alt="zdjęcie profilowe"
-          :src="('http://' + local + '/files/getFile?uuid=' + member.imageUUID)" />
+        <q-img fit=none style="max-height: 40vh; border-radius: 5px" class="text-body1" alt="zdjęcie profilowe"
+          :src="(`http://${local}/files/getFile?uuid=${member.imageUUID}`)" />
       </q-card-section>
       <q-card-section v-else avatar class="col-4">
         <q-uploader class="fit" method="POST"
-          :url="('http://' + local + '/files/member/' + member.uuid)" label="Dodaj zdjęcie"
+          :url="(`http://${local}/files/member/${member.uuid}`)" label="Dodaj zdjęcie"
           max-file-size="40960000" accept=".jpg, image/*" @rejected="onRejected" field-name="file"
           @uploaded="getMemberByUUID(member.uuid)" />
       </q-card-section>
@@ -28,7 +28,7 @@
           <q-btn color="primary" label="zmień zdjęcie">
             <q-popup-edit value="" content-class="bg-dark text-positive" >
               <q-uploader style="width:100%;height:100%" method="POST"
-                :url="('http://' + local + '/files/member/' + member.uuid)" label="Dodaj zdjęcie"
+                :url="(`http://${local}/files/member/${member.uuid}`)" label="Dodaj zdjęcie"
                 max-file-size="40960000" accept=".jpg, image/*" @rejected="onRejected" field-name="file"
                 @uploaded="getMemberByUUID(member.uuid)" />
             </q-popup-edit>
@@ -52,7 +52,7 @@
         </div>
       </q-card-section>
     </q-card>
-    <q-card bordered :class="mobile ? 'col bg-dark' : 'row bg-dark'">
+    <q-card bordered :style="`rotate: ${rotateFun}deg;`" :class="mobile ? 'col bg-dark' : 'row bg-dark'">
       <q-card-section class="col-3">
         <div class="col q-pa-md text-positive">
           <div class="self-center full-width text-center">Historia Składek</div>
@@ -60,7 +60,7 @@
         <div v-if="!member.erased && main && !mobile">
           <div>
             <q-btn class="full-width round" color="green" label="Przedłuż składkę"
-              @click="memberUUID = member.uuid; name = member.firstName; name2 = member.secondName; contribution = true" />
+              @click="memberUUID = member.uuid; name = member.secondName + ' ' + member.firstName; contribution = true; rotateFun+=0.125" />
           </div>
         </div>
         <q-expansion-item dense default-opened class="bg-dark full-width q-pa-none text-center text-positive"
@@ -68,18 +68,35 @@
           <q-virtual-scroll class="full-width q-pa-none" :style=" mobile ? '' : 'height: 65vh;' "
             :items=" member.history.contributionList ">
             <template class="row" v-slot=" { item } ">
-              <div class="row full-width hover1" @dblclick="contributionUUID = item.uuid, name = (member.firstName + ' ' + member.secondName);
+              <div class="row full-width hover1" @dblclick="contributionUUID = item.uuid, name = (member.secondName + ' ' + member.firstName);
                 !main && !mobile ? '' : (contributionUUID = item.uuid, memberUUID = member.uuid, editContributionPaymentDate = item.paymentDay
                   , editContributionValidThruDate = item.validThru, editContribution = true)">
                   <Tooltip2clickTip></Tooltip2clickTip>
-                <div class="col-6 q-pl-xs text-left">
-                  <label class="">Opłacona dnia</label>
+                  <div class="col text-left">
+                  <label v-if="item.acceptedBy!=null" class="q-pl-xs">{{(item.edited?'Edytowano':'Zaakceptowano')}} przez: {{ item.acceptedBy }}</label>
+                    <div class="row">
+                      <div class="col-6 q-pl-xs text-left">
+                  <label>Opłacona dnia</label>
                   <div>{{ convertDate(item.paymentDay) }}</div>
                 </div>
-                  <div class="col-6 q-pl-xs text-left">
+                <div class="col-6 q-pl-xs text-left">
                   <label class="">Ważna do:</label>
                   <div>{{ convertDate(item.validThru) }}</div>
                 </div>
+                    </div>
+                  </div>
+                <!-- <div :class="`col-${item.acceptedBy!=null? '4' : '6'} q-pl-xs text-left`">
+                  <label class="">Opłacona dnia</label>
+                  <div>{{ convertDate(item.paymentDay) }}</div>
+                </div>
+                <div :class="`col-${item.acceptedBy!=null? '4' : '6'} q-pl-xs text-left`">
+                  <label class="">Ważna do:</label>
+                  <div>{{ convertDate(item.validThru) }}</div>
+                </div>
+                <div v-if="item.acceptedBy!=null" :class="`col-4 q-pl-xs text-left`">
+                  <label class="">Akceptowane przez:</label>
+                  <div>{{ item.acceptedBy }}</div>
+                </div> -->
               </div>
             </template>
           </q-virtual-scroll>
@@ -224,7 +241,7 @@
         <q-expansion-item dense v-if=" !member.erased && main && !mobile " :header-class="!headerColorChange?'':'bg-grey-3 text-black round'" @hide="headerColorChange=!headerColorChange" @show="headerColorChange=!headerColorChange" label="Opcje Dodatkowe" group="right-card"
           class="bg-dark text-positive">
           <q-expansion-item dense v-if=" !member.erased "
-            :label=" member.shootingPatent.patentNumber !== null ? (helpersDefault[0] + ': ' + member.shootingPatent.patentNumber) : helpersDefault[0] "
+            :label=" member.shootingPatent.patentNumber !== null ? (helpersDefault[0] + ': ' + member.shootingPatent.patentNumber + ' Data: ' + member.shootingPatent.dateOfPosting) : helpersDefault[0] "
             group="right-right-card" class="text-positive">
             <q-btn class="full-width round" color="primary" v-if=" member.shootingPatent.patentNumber !== null "
               label="AKTUALIZUJ PATENT" @click="
@@ -365,7 +382,7 @@
               <q-btn dense class="col q-ma-md" text-color="black" @click=" main && !mobile ? (memberUUID = member.uuid, pzssPortal = true) : '' " :color="!member.pzss?'red-3':'green-3'" :label="!member.pzss?'Nie Wprowadzony do Portalu':'Wprowadzony do portalu'"/>
             </div>
             <q-item dense v-if=" main && !mobile " class="q-pa-md">
-              <CSVFile :uuid=" member.uuid " :name=" (member.firstName + ' ' + member.secondName) "></CSVFile>
+              <CSVFile :uuid=" member.uuid " :name=" (member.secondName + ' ' + member.firstName) "></CSVFile>
             </q-item>
             <q-item dense v-if=" member.pzss " class="rounded">
               <q-btn class="full-width q-pa-none" type="a" href="https://portal.pzss.org.pl/CLub/Player" target="_blank"
@@ -470,7 +487,7 @@
             </q-item>
             <q-item class="bg-red-2 text-black">
               <q-select color="black" options-cover filled stack-label class="full-width" v-model=" erasedReasonType "
-                :options=" erasedTypes " label="wybierz przyczynę"></q-select>
+                :options=" erasedTypes " label="wybierz przyczynę" @show="getListErasedType()"></q-select>
               <q-input class="col-5" color="black" outlined filled v-model=" erasedDate " mask="####-##-##" label="w dniu:">
                 <template v-slot:append>
                   <q-icon name="event" class="cursor-pointer">
@@ -630,7 +647,7 @@
       </q-card-section>
 
       <q-card bordered :class=" mobile ? 'col bg-dark text-positive' : 'row full-width bg-dark text-positive' ">
-        <q-card-section :class=" main && !mobile ? 'col-3' : 'col-6' " style="height:100%;">
+        <q-card-section :class="`col-${main && !mobile ?'3':'6'}`" style="height:100%;">
           <div class="full-height text-positive">
             <q-item-label>
               <q-icon name="person_search" size="1.5rem" />
@@ -651,7 +668,7 @@
             </div>
           </div>
         </q-card-section>
-        <q-card-section :class=" main && !mobile ? 'col-4' : 'col-6' ">
+        <q-card-section :class="`col-${main && !mobile ?'4':'6'}`">
           <q-item-section>
             <q-item-label>
               <q-icon name="contact_mail" size="1.5rem" />
@@ -699,7 +716,7 @@
               <personalCardPDF :uuid=" member.uuid " :name=" (member.secondName + ' ' + member.firstName) " />
             </div>
             <div v-if=" member.history.contributionList.length > 0 " class="q-pb-md">
-              <LastContributionPDF :uuid=" member.uuid " :name=" (member.secondName + ' ' + member.firstName) "
+              <LastContributionPDF :title="'Pobierz ostatnie potwierdzenie składki'" :uuid=" member.uuid " :name=" (member.secondName + ' ' + member.firstName) "
                 :disable=" member.history.contributionList.length < 1 " />
             </div>
             <div v-if=" !member.erased " class="q-pb-md">
@@ -906,8 +923,8 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model=" deactivate " persistent>
-      <q-card>
-        <q-card-section class="row text-center text-h6">
+      <q-card class="bg-dark text-positive">
+        <q-card-section class="row text-h6 text-bold text-center">
           <span class="q-ml-sm">Czy na pewno przenieść do nieaktywnych?</span>
         </q-card-section>
 
@@ -1091,7 +1108,7 @@
     </q-dialog>
     <q-dialog v-model=" contributionDownloadConfirm "
       @keypress.enter=" contributionDownloadConfirm = false; getContributionPDF() ">
-      <q-card>
+      <q-card class="bg-dark text-positive">
         <q-card-section class="col text-center text-h6">
           <div class="q-ml-sm text-bold text-h6">Pobrać potwierdzenie składki?</div>
           <q-checkbox val="" v-model="a5rotate" label="rozmiar A5"></q-checkbox>
@@ -1111,7 +1128,7 @@
 
         <q-card-actions align="center">
           <q-btn label="anuluj" color="secondary" v-close-popup />
-          <q-btn label="wydaj" color="primary" v-close-popup @click=" addMemberAndAmmoToCaliber() " />
+          <q-btn label="wydaj" color="primary" v-close-popup @click="showloading(); addMemberAndAmmoToCaliber() " />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -1370,7 +1387,7 @@
           </div>
           <div class="col-6 q-pa-md">
             <q-btn dense class="full-width" label="Wydrukuj potwierdzenie dla tej składki" color="primary" v-close-popup
-              @click=" contributionDownloadConfirm = true " />
+              @click=" uuid = member.uuid;contributionDownloadConfirm = true " />
           </div>
         </q-card-section>
 
@@ -1416,7 +1433,7 @@ import App from 'src/App.vue'
 import MemberLicense from 'components/member/MemberLicense.vue'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox.vue'
-import { isWindows } from 'mobile-device-detect'
+// import { isWindows } from 'mobile-device-detect'
 import Vue from 'vue'
 import SmoothScrollbar from 'vue-smooth-scrollbar'
 Vue.use(SmoothScrollbar)
@@ -1467,6 +1484,7 @@ export default {
         name: '',
         date: ''
       },
+      rotateFun: 0,
       showCompetition: false,
       a5rotate: true,
       updateMemberCode: false,
@@ -1474,7 +1492,7 @@ export default {
       headerColorChange1: false,
       headerColorChange2: false,
       temp: 0,
-      mobile: !isWindows,
+      mobile: App.mobile,
       main: App.main,
       shootingPlace: App.shootingPlace,
       member: null,
@@ -1836,14 +1854,14 @@ export default {
     },
     getContributionPDF () {
       axios({
-        url: 'http://' + this.local + '/files/downloadContribution/' + this.memberUUID + '?contributionUUID=null&a5rotate=' + this.a5rotate,
+        url: `http://${this.local}/files/downloadContribution/${this.uuid}?contributionUUID=${this.contributionUUID}&a5rotate=${this.a5rotate}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
-        fileLink.setAttribute('download', 'Składka_' + this.name + '.pdf')
+        fileLink.setAttribute('download', `Składka ${this.name}.pdf`)
         document.body.appendChild(fileLink)
         fileLink.click()
       })
@@ -1855,7 +1873,7 @@ export default {
         email: email,
         phoneNumber: phone.replace('+48', '')
       }
-      fetch('http://' + this.local + '/member/' + uuid + '?pinCode=' + code, {
+      fetch(`http://${this.local}/member/${uuid}?pinCode=${code}`, {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {
@@ -1889,7 +1907,7 @@ export default {
         firstName: firstName,
         secondName: secondName
       }
-      fetch('http://' + this.local + '/member/' + uuid + '?pinCode=' + code, {
+      fetch(`http://${this.local}/member/${uuid}?pinCode=${code}`, {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {
@@ -2278,31 +2296,6 @@ export default {
         }
       })
     },
-    changePzss (uuid) {
-      fetch('http://' + this.local + '/member/pzss/' + uuid, {
-        method: 'PATCH'
-      }).then(response => {
-        if (response.status === 200) {
-          response.text().then(
-            response => {
-              this.success = true
-              this.message = response
-              this.showloading()
-              this.getMemberByUUID(this.memberUUID)
-              this.autoClose()
-            }
-          )
-        } else {
-          response.text().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.autoClose()
-            }
-          )
-        }
-      })
-    },
     togglePzss (uuid, state) {
       fetch(`http://${this.local}/member/togglePzss/${uuid}?isSignedTo=${state}`, {
         method: 'PATCH'
@@ -2438,7 +2431,7 @@ export default {
     },
     onRejected () {
       this.failure = true
-      this.message = 'Nie można dodać, sprawdź rozmiar pliku i jego typ'
+      this.message = 'Nie można dodać pliku, sprawdź jego rozmiar i typ'
       this.autoClose()
     },
     autoClose () {

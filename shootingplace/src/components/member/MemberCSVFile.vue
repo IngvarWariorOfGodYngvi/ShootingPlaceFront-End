@@ -17,7 +17,7 @@
     <q-dialog position="top" v-model="download">
       <q-card>
         <q-card-section>
-          <div class="text-h6">Pobrano plik .CSV</div>
+          <div class="text-h6">Pobrano plik .csv</div>
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -50,7 +50,7 @@ export default {
   methods: {
     getCSVFile () {
       axios({
-        url: 'http://' + this.local + '/files/downloadCSVFile/' + this.uuid,
+        url: `http://${this.local}/files/downloadCSVFile/${this.uuid}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {

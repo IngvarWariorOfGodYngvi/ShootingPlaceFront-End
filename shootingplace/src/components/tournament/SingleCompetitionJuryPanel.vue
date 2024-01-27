@@ -1,27 +1,27 @@
 <template>
   <div v-if="competition!=null" class="col">
-    <div
+    <div v-if="!juryPanelCompetitionInExpansionItem"
       class="full-width text-h5 text-bold text-center q-pa-none q-ma-none text-positive">{{
         competition.countingMethod === 'COMSTOCK' ? competition.name + ' ' + competition.countingMethod : competition.name
       }}
     </div>
     <div class="row q-pa-none q-ma-none">
       <div class="row fit q-pa-sm self-center text-positive">
-        <div class="col-3 self-center no-outline text-left text-positive">Zawodnik</div>
-        <div class="col-3 self-center no-outline text-left text-positive">Klub</div>
-        <div class="col-1 self-center no-outline text-center text-positive">M.</div>
-        <div class="col-1 self-center no-outline text-center text-positive">
+        <div class="col-3 self-center text-left text-positive">Zawodnik</div>
+        <div class="col-3 self-center text-left text-positive">Klub</div>
+        <div class="col-1 self-center text-center text-positive">M.</div>
+        <div class="col-1 self-center text-center text-positive">
           {{ competition.countingMethod === 'COMSTOCK' ? 'tr.' : '10/' }}
         </div>
-        <div class="col-1 self-center no-outline text-center text-positive">
+        <div class="col-1 self-center text-center text-positive">
           {{ competition.countingMethod === 'COMSTOCK' ? 'cz.' : '10X' }}
         </div>
         <div v-if="competition.countingMethod === 'COMSTOCK'"
-             class="col-1 self-center no-outline text-right text-positive"
+             class="col-1 self-center text-right text-positive"
         >proc.
         </div>
         <div v-if="competition.countingMethod !== 'COMSTOCK'" class="col-1"></div>
-        <div class="col-2 self-center no-outline text-positive">
+        <div class="col-2 self-center text-positive">
           <div v-if="competition.countingMethod === 'COMSTOCK'" class="text-center">
             <div>
               Wynik
@@ -36,11 +36,10 @@
         </div>
       </div>
     </div>
-    <q-virtual-scroll :items="competition.scoreList" visible class="full-width q-pa-none q-ma-none">
+    <q-virtual-scroll :items="competition.scoreList" virtual-scroll-slice-size="500" visible class="full-width q-pa-none q-ma-none">
       <template v-slot="{ item, index }">
         <div :key="index">
           <div class="row text-body2 full-width" :class="index%2===0?'bg-grey text-black':'text-positive'">
-            <!-- name & club -->
             <div class="col"
                  @click="mobile?(scoreUUID = item.uuid, player = item,scoreLabel=item.score,innerTen=item.innerTen,outerTen=item.outerTen,procedures=item.procedures,setScorePlayer=true,series=setSeriesValues (item.series),item.member!=null?
                  (temp=item.member) : (temp=item.otherPersonEntity),
@@ -48,52 +47,50 @@
                  @dblclick="!mobile?(scoreUUID = item.uuid, player = item,scoreLabel=item.score,innerTen=item.innerTen,outerTen=item.outerTen,procedures=item.procedures,setScorePlayer=true,series=setSeriesValues (item.series),item.member!=null?
                  (temp=item.member) : (temp=item.otherPersonEntity),
                  startNumber=item.metricNumber,competitionTemp = competition) : ' '">
-              <div class="text-positive text-caption row" style="cursor: pointer;">
-                <div class="col-3 self-center no-outline text-left" :class="index%2===0?'text-black':'text-positive'">
+              <div class="text-positive text-caption row q-pa-xs" style="cursor: pointer;">
+                <div class="col-3 self-center text-left" :class="index%2===0?'text-black':'text-positive'">
                   <div>
-                    {{
-                      item.member != null ? temp = item.member.secondName : temp = item.otherPersonEntity.secondName
-                    }}
+                    {{ item.member != null ? temp = item.member.secondName : temp = item.otherPersonEntity.secondName }}
                   </div>
                   <div>
                     {{ item.member != null ? temp = item.member.firstName : temp = item.otherPersonEntity.firstName }}
                   </div>
                 </div>
-                <div class="col-3 self-center no-outline text-left" :class="index%2===0?'text-black':'text-positive'"
+                <div class="col-3 self-center text-left" :class="index%2===0?'text-black':'text-positive'"
                 >
                   {{ item.member != null ? temp = item.member.club.name : temp = item.otherPersonEntity.club.name }}
                 </div>
-                <div class="col-1 self-center no-outline text-center text-h6"
+                <div class="col-1 self-center text-center text-h6"
                      :class="index%2===0?'text-positive':'text-positive'"
                 >{{ item.metricNumber }}
                 </div>
-                <div class="col-1 self-center no-outline text-center text-caption"
+                <div class="col-1 self-center text-center text-caption"
                      :class="index%2===0?'text-black':'text-positive'">
                   {{ competition.countingMethod === 'NORMAL' ? item.outerTen : item.outerTen }}
                 </div>
-                <div class="col-1 self-center no-outline text-right text-caption"
+                <div class="col-1 self-center text-right text-caption"
                      :class="index%2===0?'text-black':'text-positive'">{{ item.innerTen }}
                 </div>
                 <div v-if="competition.countingMethod === 'COMSTOCK'"
-                     class="col-1 self-center no-outline text-right text-caption"
+                     class="col-1 self-center text-right text-caption"
                      :class="index%2===0?'text-black':'text-positive'">{{ item.procedures }}
                 </div>
                 <div v-if="competition.countingMethod !== 'COMSTOCK'" class="col-1"></div>
                 <div class="col-2 self-center text-center">
                   <div v-if="item.dnf||item.dsq||item.pk" :class="index%2===0?'text-black':'text-positive'"
-                       class="self-center full-width no-outline text-center">
-                    <div v-if="item.dnf">DNF</div>
-                    <div v-if="item.dsq">DSQ</div>
-                    <div v-if="item.pk">PK</div>
+                       class="self-center full-width text-center">
+                    <div v-if="item.dnf">DNF ({{ item.score }})</div>
+                    <div v-if="item.dsq">DSQ ({{ item.score }})</div>
+                    <div v-if="item.pk">PK ({{ item.score }})</div>
                   </div>
-                  <div v-else class="self-center no-outline text-caption text-center">
+                  <div v-else class="self-center text-caption text-center">
                     <div v-if="competition.countingMethod === 'COMSTOCK'"
                          :class="index%2===0?'text-black':'text-positive'">
                       <div>{{ item.score }}</div>
                       <div>{{ item.hf }}</div>
                     </div>
                     <div v-else class="text-center self-center"
-                         :class="index%2===0?'text-black':'text-positive'">
+                         :class="`${index%2===0?'text-black':'text-positive'} ${item.edited ? '': 'bg-warning round1'}`">
                       {{ item.score }}
                     </div>
                   </div>
@@ -223,7 +220,7 @@
             <q-input input-class="text-center text-positive text-h6" v-model="procedures" type="number"
                      @keypress.enter="onEnter(scoreUUID)"
                      @focus="procedures = null"
-                     stack-label label="procedury + 3 sek" label-color="positive"
+                     stack-label :label="`procedury + ${shootingPlace == 'prod'?'3':'5'} sek`" label-color="positive"
                      onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
           </div>
           <q-input v-if="competitionTemp.countingMethod === 'NORMAL'" input-class="text-center text-positive text-h6"
@@ -254,7 +251,7 @@
                   <div class="col">
                     <div class="full-width">|{{ series[index] }}|</div>
                     <div class="full-width">
-                      <div :class="tableLength(series[index])>(competitionTemp.numberOfShots>10?10:competitionTemp.numberOfShots)?'text-h4 text-red':''">Ilość strzałów:
+                      <div :class="series[index]!=null?tableLength(series[index])>(competitionTemp.numberOfShots>10?10:competitionTemp.numberOfShots)?'text-h4 text-red':'':series[index] = 0">Ilość strzałów:
                         {{ tableLength(series[index]) }}
                       </div>
                       <div>10/: {{ outerTenSeries }} 10X: {{ innerTenSeries }} suma: {{ series[index].length > 0? sum(series[index]): '0'}}</div>
@@ -307,12 +304,16 @@
                     </div>
                     <div class="row">
                       <q-btn color="primary"
+                             @click="series[index].length<1? series[index] = series[index]+'0':series[index] = series[index]+'+0';innerTenSeriesCounter(series[index]);series=setSeriesValues(series)"
+                             class="q-pa-xs text-h6 col-4" style="border: 2px solid">0
+                      </q-btn>
+                      <q-btn color="primary"
                              @click="series[index].length<1? series[index] = series[index]+'10X':series[index] = series[index]+'+10X';innerTenSeriesCounter(series[index]);series=setSeriesValues(series)"
-                             class="q-pa-xs text-h6 col-6" style="border: 2px solid">10X
+                             class="q-pa-xs text-h6 col-4" style="border: 2px solid">10X
                       </q-btn>
                       <q-btn color="primary"
                              @click="series[index].length<1? series[index] = series[index]+'10/':series[index] = series[index]+'+10/';outerTenSeriesCounter(series[index]);series=setSeriesValues(series)"
-                             class="q-pa-xs text-h6 col-6" style="border: 2px solid">10/
+                             class="q-pa-xs text-h6 col-4" style="border: 2px solid">10/
                       </q-btn>
                     </div>
                   </div>
@@ -324,7 +325,7 @@
                            @click="series[index] = '';innerTenSeries=0;outerTenSeries=0;series = setSeriesValues(series);manuallyClosed=true"/>
                     <q-btn class="q-pa-xs full-width text-h6" style="border: 2px solid" color="primary" label="sumuj"
                            v-close-popup
-                           @click="series[index] = sumByClick(series[index]);series = setSeriesValues(series);manuallyClosed=true"/>
+                           @click="series[index] ==null?series[index] ='':'';series[index] = sumByClick(series[index]);series = setSeriesValues(series);manuallyClosed=true"/>
                     <q-btn class="q-pa-xs full-width text-h6" style="border: 2px solid" color="primary"
                            text-color="white" label="Anuluj"
                            @click="series[index]=tempSeries;manuallyClosed=true;series = setSeriesValues(series)"
@@ -386,7 +387,7 @@
 
 <script>
 import App from 'src/App.vue'
-import { isWindows } from 'mobile-device-detect'
+// import { isWindows } from 'mobile-device-detect'
 
 export default {
   name: 'SingleCompetitionJuryPanel',
@@ -395,10 +396,12 @@ export default {
   },
   data () {
     return {
+      juryPanelCompetitionInExpansionItem: JSON.parse(window.localStorage.getItem('JuryPanelCompetitionInExpansionItem')),
       competition: null,
       controlSize: 0,
+      shootingPlace: App.shootingPlace,
       main: App.main,
-      mobile: !isWindows,
+      mobile: App.mobile,
       val: [],
       temp: '',
       competitionTemp: '',
@@ -495,6 +498,9 @@ export default {
       }
     },
     sumByClick (n) {
+      if (n == null) {
+        return '0'
+      }
       if (n.length > 0) {
         n = n.replaceAll('/', '')
         n = n.replaceAll('X', '')
@@ -530,6 +536,9 @@ export default {
       }
     },
     tableLength (n) {
+      if (n === '' || n == null) {
+        n = ''
+      }
       if (n.length > 0) {
         const arr = n.split('+')
         return arr.length.toString()
@@ -618,6 +627,10 @@ export default {
             }
           )
         }
+      }).catch(() => {
+        this.message = 'Pojawił się problem - wynik niezostał wprowadzony'
+        this.failure = true
+        this.autoClose()
       })
     },
     forceSetScore (scoreUUID, score, innerTen, outerTen, alfa, charlie, delta, procedures) {
@@ -674,6 +687,10 @@ export default {
             }
           )
         }
+      }).catch(() => {
+        this.message = 'Pojawił się problem - wynik niezostał wprowadzony'
+        this.failure = true
+        this.autoClose()
       })
     },
     toggleAmmunitionInScore (scoreUUID) {
@@ -757,6 +774,10 @@ export default {
             }
           )
         }
+      }).catch(() => {
+        this.message = 'Pojawił się problem - wynik niezostał wprowadzony'
+        this.failure = true
+        this.autoClose()
       })
     },
     toggleDsqScore () {
@@ -784,6 +805,10 @@ export default {
             }
           )
         }
+      }).catch(() => {
+        this.message = 'Pojawił się problem - wynik niezostał wprowadzony'
+        this.failure = true
+        this.autoClose()
       })
     },
     togglePkScore () {
@@ -811,6 +836,10 @@ export default {
             }
           )
         }
+      }).catch(() => {
+        this.message = 'Pojawił się problem - wynik niezostał wprowadzony'
+        this.failure = true
+        this.autoClose()
       })
     },
     autoClose () {

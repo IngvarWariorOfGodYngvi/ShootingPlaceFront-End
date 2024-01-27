@@ -1,7 +1,9 @@
 <template>
-  <div class="full-width rounded">
-    <q-btn class="full-width" :disable="disable" @click="dialog=true" color="secondary">Pobierz deklarację członkowską LOK
-    </q-btn>
+  <div class="full-width">
+    <q-btn class="full-width round" :disable="disable" @click="dialog=true" color="secondary" label="Pobierz deklarację członkowską LOK">
+      &nbsp;&nbsp;<q-avatar>
+        <img src="~assets/logo_LOK.png">
+      </q-avatar></q-btn>
     <q-dialog v-model="dialog" @keypress.enter="dialog=false;membershipDeclarationLOKPDF()">
       <q-card class="bg-dark text-positive">
         <q-card-section class="row items-center">
@@ -66,7 +68,7 @@ export default {
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
-        fileLink.setAttribute('download', 'Deklaracja Członkowska LOK ' + this.name + '.pdf')
+        fileLink.setAttribute('download', `Deklaracja Członkowska LOK ${this.name}.pdf`)
         document.body.appendChild(fileLink)
         fileLink.click()
         this.download = true

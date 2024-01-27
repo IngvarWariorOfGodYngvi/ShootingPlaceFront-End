@@ -8,7 +8,7 @@
           <ShootingPlaceStatuteDziesiątka v-if="shootingPlace === 'prod'"></ShootingPlaceStatuteDziesiątka>
         </div>
         <div v-if="!nonMember" class="row q-mb-xs">
-          <q-input v-model="pesel" class="col" dense input-class="text-positive" label="Wpisz numer PESEL" label-color="positive" filled @input="pesel.length>10?getMemberByPesel(pesel): member=null" mask="###########" onkeypress="return (event.charCode > 47 && event.charCode < 58)"></q-input>
+          <q-input v-model="pesel" class="col" dense input-class="text-positive" label="Wpisz numer PESEL" label-color="positive" filled type="text" inputmode="numeric" @input="pesel.length>10?getMemberByPesel(pesel): member=null" mask="###########" onkeypress="return (event.charCode > 47 && event.charCode < 58)"></q-input>
           <q-btn color="primary" label="resetuj" @click="reset()"></q-btn>
         </div>
         <div v-if="nonMember" class="row q-mb-xs">
@@ -67,7 +67,7 @@
             <q-input filled v-model="nonMemberZipCode" label="Kod Pocztowy *" mask="##-###" dense input-class="text-positive" label-color="positive"/>
             <q-input filled v-model="nonMemberStreet" label="Ulica *" dense input-class="text-positive" label-color="positive"/>
             <q-input filled v-model="nonMemberStreetNumber" @input="nonMemberStreetNumber.length===0?nonMemberStreetNumber=null:''" label="Numer Ulicy *" dense input-class="text-positive" label-color="positive"/>
-            <q-input filled v-model="nonMemberFlatNumber" @input="nonMemberFlatNumber.length===0?nonMemberFlatNumber=null:''" label="Mieszkania" dense input-class="text-positive" label-color="positive"/>
+            <q-input filled v-model="nonMemberFlatNumber" @input="nonMemberFlatNumber.length===0?nonMemberFlatNumber=null:''" label="Numer Mieszkania" dense input-class="text-positive" label-color="positive"/>
           </div>
           <div v-if="permission">
             <q-input filled v-model="nonMemberWeaponPermissionNumber" @input="nonMemberWeaponPermissionNumber.length===0?nonMemberWeaponPermissionNumber=null:''" label="Numer pozwolenia na Broń" dense input-class="text-positive" label-color="positive"/>
@@ -77,7 +77,9 @@
       <div v-if="member != null || phone.length > 10 || (nonMemberFirstName!=null&&nonMemberSecondName!=null&&nonMemberZipCode!=null&&nonMemberPostOfficeCity!=null&&nonMemberStreet!=null&&nonMemberStreetNumber!=null)|| (nonMemberWeaponPermissionNumber!=null&&nonMemberWeaponPermissionNumber.length>8)">
       <div class="text-positive full-width text-h6 text-center ">Podpisz poniżej</div>
       <q-card-section>
-        <div style="padding-left: 12.5vw; padding-right: 12.5vw;"><VueSignaturePad id="canvas" ref="signaturePad" style="height: 25vh;background-color: white;"></VueSignaturePad></div>
+        <div style="padding-left: 12.5vw; padding-right: 12.5vw;">
+          <VueSignaturePad id="canvas" ref="signaturePad" style="height: 25vh;background-color: white;"></VueSignaturePad>
+        </div>
         <q-checkbox v-model="statementOnReadingTheShootingPlaceRegulations" class="text-positive col">Zapoznałem się z regulaminem strzelnicy</q-checkbox>
       </q-card-section>
       <div>
@@ -317,6 +319,9 @@ export default {
           street: this.nonMemberStreet,
           streetNumber: this.nonMemberStreetNumber,
           flatNumber: this.nonMemberFlatNumbenr
+        },
+        club: {
+          name: this.nonMemberClubName
         }
       }
       const { data } = this.$refs.signaturePad.saveSignature()

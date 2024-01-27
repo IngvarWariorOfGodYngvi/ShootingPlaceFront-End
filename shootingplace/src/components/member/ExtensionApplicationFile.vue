@@ -55,14 +55,14 @@ export default {
   methods: {
     getApplicationForExtensionOfTheCompetitorsLicense () {
       axios({
-        url: 'http://' + this.local + '/files/downloadApplication/' + this.uuid,
+        url: `http://${this.local}/files/downloadApplication/${this.uuid}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
-        fileLink.setAttribute('download', 'Wniosek ' + this.name + '.pdf')
+        fileLink.setAttribute('download', `Wniosek ${this.name}.pdf`)
         document.body.appendChild(fileLink)
         fileLink.click()
         this.download = true

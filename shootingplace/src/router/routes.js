@@ -13,7 +13,7 @@ if (App.main) {
         {
           path: '/evidenceBook',
           name: 'Książka',
-          component: () => import('src/pages/EvidenceBookPage.vue')
+          component: () => import(/* webpackChunkName: "Rejestr Pobytu na Strzelnicy" */'src/pages/EvidenceBookPage.vue')
         },
         {
           path: '/member/adding',

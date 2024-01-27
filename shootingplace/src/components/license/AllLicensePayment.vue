@@ -11,42 +11,36 @@
           </q-btn>
         </div>
       </div>
+      <div class="row text-caption">
+        <div class="col" @click="sortF('name')">lp <q-icon size="2em" :name="sortName ? 'arrow_drop_up' : 'arrow_drop_down'" />Nazwisko i imię</div>
+        <div class="col-1" @click="sortF('status')"><div><q-icon size="2em" :name="sortStatus ? 'arrow_drop_up' : 'arrow_drop_down'" />Status</div></div>
+        <div class="col-2" @click="sortF('group')"><q-icon size="2em" :name="sortGroup ? 'arrow_drop_up' : 'arrow_drop_down'" />Grupa</div>
+        <div class="col-2" @click="sortF('date')"><q-icon size="2em" :name="sortDate ? 'arrow_drop_up' : 'arrow_drop_down'" />Data Wpłaty</div>
+        <div class="col-2" @click="sortF('year')"><q-icon size="2em" :name="sortYear ? 'arrow_drop_up' : 'arrow_drop_down'" />Na Rok</div>
+        <div class="col-2" @click="sortF('isNew')"><q-icon size="2em" :name="sortIsNew ? 'arrow_drop_up' : 'arrow_drop_down'" />Nowa / Przedłużenie</div>
+      </div>
       <q-scroll-area style="height: 50vh;">
         <div v-if="!visible">
-          <div v-for="(item,index) in list" :key="index" class="row hover1">
+          <div v-for="(item,index) in list" :key="index" style="min-height: 2em;" class="row hover1 items-center" @dblclick="legitimationNumber = item.legitimationNumber;memberDial=true">
             <Tooltip2clickToShow></Tooltip2clickToShow>
             <q-checkbox dense v-model="payPZSSList" :val="item.paymentUuid" left-label>{{ index + 1 }}.</q-checkbox>
-            <div class="col" @dblclick="legitimationNumber = item.legitimationNumber;memberDial=true">
-              <div>
-                <label>&nbsp;Nazwisko i Imię</label>
-                <div>&nbsp;{{ item.secondName }}
-                  {{ item.firstName }}
-                </div>
-              </div>
+            <div class="col">&nbsp;
+              {{ item.secondName }} {{ item.firstName }}
             </div>
-            <div :class="item.active?'col-1':'col-1 bg-red-4'" style="border-radius: 2px">
-              <label :class="item.active?'':'text-black'">Status</label>
-              <div :class="item.active?'':'text-black'" >{{item.active?'Aktywny':'Nieaktywny'}}</div>
+            <div :class="`col-1 ${item.active?'':'bg-red-4 text-black'}`" style="border-radius: 2px;">
+              {{ item.active?'Aktywny':'Nieaktywny' }}
             </div>
             <div class="col-2">
-              <label>Grupa</label>
-              <div>{{item.adult?'Grupa Ogólna':'Grupa Młodzieżowa'}}
-              </div>
+              {{item.adult?'Grupa Ogólna':'Grupa Młodzieżowa'}}
             </div>
             <div class="col-2">
-              <label >Data wpłaty</label>
-              <div>{{ item.date }}
-              </div>
+              {{ item.date }}
             </div>
             <div class="col-2">
-              <label >Na Rok</label>
-              <div>{{ item.validForYear }}
-              </div>
+              {{ item.validForYear }}
             </div>
             <div class="col-2" :class="item.new?'bg-warning':''">
-              <label>Nowa / Przedłużenie</label>
-              <div>{{item.new?'Nowa':'Przedłużenie'}}
-              </div>
+              {{item.new?'Nowa':'Przedłużenie'}}
             </div>
           </div>
         </div>
@@ -117,17 +111,23 @@
 import App from 'src/App.vue'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox.vue'
-import { isWindows } from 'mobile-device-detect'
+// import { isWindows } from 'mobile-device-detect'
 
 export default {
   name: 'AllLicencePayment',
   data () {
     return {
-      mobile: !isWindows,
+      mobile: App.mobile,
       main: App.main,
       visible: true,
       list: [],
       payPZSSList: [],
+      sortName: false,
+      sortStatus: false,
+      sortGroup: false,
+      sortDate: false,
+      sortYear: false,
+      sortIsNew: false,
       memberName: '',
       memberDial: false,
       pinCode: null,
@@ -227,6 +227,62 @@ export default {
             })
         }
       })
+    },
+    sortF (type) {
+      if (type === 'name') {
+        if (!this.sortName) {
+          this.list.sort((a, b) => ('' + b.secondName).localeCompare(a.secondName))
+          this.sortName = !this.sortName
+        } else {
+          this.list.sort((a, b) => ('' + a.secondName).localeCompare(b.secondName))
+          this.sortName = !this.sortName
+        }
+      }
+      if (type === 'status') {
+        if (!this.sortStatus) {
+          this.list.sort((a, b) => b.active - a.active)
+          this.sortStatus = !this.sortStatus
+        } else {
+          this.list.sort((a, b) => a.active - b.active)
+          this.sortStatus = !this.sortStatus
+        }
+      }
+      if (type === 'date') {
+        if (!this.sortDate) {
+          this.list.sort((a, b) => new Date(b.date) - new Date(a.date))
+          this.sortDate = !this.sortDate
+        } else {
+          this.list.sort((a, b) => new Date(a.date) - new Date(b.date))
+          this.sortDate = !this.sortDate
+        }
+      }
+      if (type === 'group') {
+        if (!this.sortGroup) {
+          this.list.sort((a, b) => b.adult - a.adult)
+          this.sortGroup = !this.sortGroup
+        } else {
+          this.list.sort((a, b) => a.adult - b.adult)
+          this.sortGroup = !this.sortGroup
+        }
+      }
+      if (type === 'year') {
+        if (!this.sortYear) {
+          this.list.sort((a, b) => b.validForYear - a.validForYear)
+          this.sortYear = !this.sortYear
+        } else {
+          this.list.sort((a, b) => a.validForYear - b.validForYear)
+          this.sortYear = !this.sortYear
+        }
+      }
+      if (type === 'isNew') {
+        if (!this.sortIsNew) {
+          this.list.sort((a, b) => a.new - b.new)
+          this.sortIsNew = !this.sortIsNew
+        } else {
+          this.list.sort((a, b) => a.new - b.new)
+          this.sortIsNew = !this.sortIsNew
+        }
+      }
     },
     autoClose () {
       setTimeout(() => {

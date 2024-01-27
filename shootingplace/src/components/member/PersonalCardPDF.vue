@@ -14,7 +14,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog :position="'top'" v-model="download">
+    <q-dialog position="top" v-model="download">
       <q-card>
         <q-card-section>
           <div class="text-h6">Pobrano kartę {{name}}</div>
@@ -50,7 +50,7 @@ export default {
   methods: {
     getPersonalCardPDF () {
       axios({
-        url: 'http://' + this.local + '/files/downloadPersonalCard/' + this.uuid,
+        url: `http://${this.local}/files/downloadPersonalCard/${this.uuid}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {

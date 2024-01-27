@@ -120,7 +120,7 @@
             <div class="row full-width">
               <div class="q-pa-md col-6"><q-btn class="full-width" color="primary" label="wyświetl listę osób"
                   @click=" showloading(); getMembersErased() " /></div>
-              <div class="q-pa-md col"><q-btn class="full-width" color="primary" label="pobierz listę .pdf"
+              <div class="q-pa-md col"><q-btn class="full-width" color="primary"  label="pobierz listę .pdf"
                   @click=" showloading(); getErasedMembers() " /></div>
             </div>
             <div class="row full-width">

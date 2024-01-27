@@ -1,6 +1,6 @@
 <template>
   <div class="full-width rounded">
-    <q-btn class="full-width" @click="dialog=true" color="secondary">Pobierz ostatnie potwierdzenie składki
+    <q-btn class="full-width" @click="dialog=true" color="secondary" :label="title">
       <q-tooltip v-if="disable" content-class="text-h6 bg-red" anchor="top middle" self="bottom middle" :offset="[12, 12]">BRAK
         SKŁADEK
       </q-tooltip>
@@ -55,19 +55,24 @@ export default {
       type: Boolean,
       required: true,
       default: false
+    },
+    title: {
+      type: String,
+      required: false,
+      dafault: 'Pobierz ostatnie potwierdzenie składki'
     }
   },
   methods: {
     getContributionPDF () {
       axios({
-        url: 'http://' + this.local + '/files/downloadContribution/' + this.uuid + '?contributionUUID=null&a5rotate=' + this.a5rotate,
+        url: `http://${this.local}/files/downloadContribution/${this.uuid}?contributionUUID=null&a5rotate=${this.a5rotate}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
-        fileLink.setAttribute('download', 'Składka ' + this.name + '.pdf')
+        fileLink.setAttribute('download', `Składka ${this.name}.pdf`)
         document.body.appendChild(fileLink)
         fileLink.click()
         this.download = true

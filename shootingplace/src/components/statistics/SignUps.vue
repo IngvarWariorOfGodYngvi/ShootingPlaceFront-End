@@ -1,7 +1,7 @@
 <template>
 <div>
   <div class="text-body2 bg-dark text-positive" style="border: 0">
-    <div :class="mobile?'col':'row'">
+    <div class="col">
       <q-card-section class="col-3">
         <q-item class="col">
           <q-input class="full-width" color="positive" input-class="text-positive" label-color="positive" dense filled v-model="firstDateJoinDate" mask="####-##-##" label="Data początkowa">
@@ -33,43 +33,49 @@
             </template>
           </q-input>
         </q-item>
-        <div class="q-pa-md">
           <q-btn color="primary" text-color="positive" @click="getSumJoinDate()" label="Wyszukaj"></q-btn>
           <p></p>
           <q-btn v-if="firstDateJoinDate!=null&&secondDateJoinDate!=null" @click="getSumJoinDateXLSXFile()" label="pobierz plik xlsx" color="green-3" text-color="black"></q-btn>
-          <q-btn v-else-if="!mobile" label="pobierz plik xlsx" color="green-3" disabled text-color="black"></q-btn>
-        </div>
+          <q-btn v-else-if="!mobile" label="pobierz plik xlsx" color="green-3" disabled text-color="black"></q-btn>{{ loading }}
       </q-card-section>
+      <q-inner-loading
+              :showing="visible"
+              label="Przetwarzanie..."
+              color="primary"/>
       <q-card-section class="col">
-        <div v-if="quantitySumJoinDateRearrangeTable.length <1" class="q-pa-md self-center col full-width no-outline text-bold text-center text-h6">Brak wyników zapisów - Wybierz daty</div>
-        <div v-if="quantitySumJoinDateRearrangeTable.length >0" class="q-pa-md self-center col full-width no-outline text-bold text-center text-h6">Ilość Zapisów : {{quantitySumJoinDateRearrangeTable.length}}</div>
-        <q-virtual-scroll v-if="quantitySumJoinDateRearrangeTable.length >0" :items="quantitySumJoinDateRearrangeTable" type="table" dense class="row full-width q-pa-none bg-dark" style="height: 50vh;">
-          <template v-slot:before>
-            <thead class="thead-sticky text-left">
-            <tr class="bg-primary text-white">
-              <th class="text-left">{{quantitySumJoinDateRearrangeTable.length}} Nazwisko i Imię</th>
-              <th class="text-left" style="width: 15%">Numer<br/>Legitymacji</th>
-              <th class="text-left" style="width: 15%">Data dołączenia do<br/>Klubu</th>
-              <th class="text-left" style="width: 15%">Grupa</th>
-              <th class="text-left" style="width: 15%">Status</th>
-            </tr>
-            </thead>
-          </template>
-          <template v-slot="{ item, index }">
-            <tr :key="index" class="rounded text-positive" style="cursor:pointer" @dblclick="legitimationNumber = item.legitimation_number; memberDial=true">
-              <Tooltip2clickToShow></Tooltip2clickToShow>
-              <td class="text-left xyz"><b>{{index+1}}</b> {{item.second_name}} {{item.first_name}}</td>
-              <td class="text-left">nr leg. {{item.legitimation_number}}</td>
-              <td class="text-left">{{convertDate(item.join_date)}}</td>
-              <td class="text-left"><div>{{item.adult? 'Ogólna' : 'Młodzieżowa'}}</div></td>
-              <td class="text-center text-black" :class="item.active?'bg-green-3':'bg-red'">{{item.active?'Aktywny':'Nieaktywny'}}</td>
-            </tr>
-          </template>
-        </q-virtual-scroll>
+        <div v-if="list.length < 1" class="q-pa-md self-center col full-width text-bold text-center text-h6">Brak wyników zapisów - Wybierz daty</div>
+        <div v-if="list.length > 0" class="q-pa-md col text-bold text-center text-h6">Ilość Zapisów : {{list.length}}</div>
+        <div class="row text-caption" style="cursor: pointer">
+        <div class="col" @click="sortF('name')">lp <q-icon size="2em" :name="sortName ? 'arrow_drop_up' : 'arrow_drop_down'" />Nazwisko i imię</div>
+        <div class="col-2 text-center" @click="sortF('legitimation')"><q-icon size="2em" :name="sortLegitimation ? 'arrow_drop_up' : 'arrow_drop_down'" />Numer<br> Legitymacji</div>
+        <div class="col-2" @click="sortF('date')"><q-icon size="2em" :name="sortDate ? 'arrow_drop_up' : 'arrow_drop_down'" />Data Zapisu</div>
+        <div class="col-2" @click="sortF('group')"><q-icon size="2em" :name="sortGroup ? 'arrow_drop_up' : 'arrow_drop_down'" />Grupa</div>
+        <div class="col-2 text-center" @click="sortF('status')"><q-icon size="2em" :name="sortStatus ? 'arrow_drop_up' : 'arrow_drop_down'" />Status</div>
+      </div>
+      <q-scroll-area style="height: 50vh">
+          <div v-for="(item, index) in list" :key="index" class="row hover1 items-center" @dblclick="legitimationNumber = item.legitimation_number;memberDial=true">
+            <Tooltip2clickToShow></Tooltip2clickToShow>
+            <div class="col">{{index + 1}}&nbsp;
+              {{ item.second_name }} {{ item.first_name }}
+            </div>
+            <div class="col-2 text-center">
+              {{ item.legitimation_number }}
+            </div>
+            <div class="col-2">
+              {{ item.join_date }}
+            </div>
+            <div class="col-2">
+              {{ item.adult?'Grupa Ogólna':'Grupa Młodzieżowa'}}
+            </div>
+            <div :class="`col-2 ${item.active?'bg-green-4':'bg-red-4'} text-black text-center`" style="border-radius: 2px">
+              {{ item.active?'Aktywny':'Nieaktywny'}}
+            </div>
+          </div>
+      </q-scroll-area>
       </q-card-section>
     </div>
   </div>
-  <q-dialog v-model="memberDial" style="min-width: 80vw">
+  <q-dialog v-model="memberDial">
     <q-card class="bg-dark" style="min-width: 80vw">
       <q-card-section class="flex-center">
         <Member :member-number-legitimation="legitimationNumber"></Member>
@@ -108,8 +114,16 @@ export default {
       firstDateJoinDate: null,
       legitimationNumber: null,
       secondDateJoinDate: this.createTodayDate(),
-      quantitySumJoinDate: [],
-      quantitySumJoinDateRearrangeTable: [],
+      list: [],
+      visible: false,
+      sortName: false,
+      sortLegitimation: false,
+      sortDate: false,
+      sortStatus: false,
+      sortGroup: false,
+      loading: null,
+      success: false,
+      message: null,
       mobile: App.mobile,
       local: App.host
     }
@@ -136,12 +150,14 @@ export default {
         method: 'GET'
       }).then(response => {
         response.json().then(response => {
-          this.quantitySumJoinDate = response
-          this.quantitySumJoinDateRearrangeTable = response
+          this.list = response
+        }).then(() => {
+          this.visible = false
         })
       })
     },
     getSumJoinDateXLSXFile () {
+      this.loading = 'pobieranie'
       axios({
         url: `http://${this.local}/files/joinDateSum?firstDate=${this.firstDateJoinDate.replace(/\//gi, '-')}&secondDate=${this.secondDateJoinDate.replace(/\//gi, '-')}`,
         method: 'GET',
@@ -150,12 +166,62 @@ export default {
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
-        fileLink.setAttribute('download', 'lista zapisów od ' + this.firstDateJoinDate.replace(/\//gi, '-') + ' do ' + this.secondDateJoinDate.replace(/\//gi, '-') + '.xlsx')
+        fileLink.setAttribute('download', `lista zapisów od ${this.firstDateJoinDate.replace(/\//gi, '-')} do ${this.secondDateJoinDate.replace(/\//gi, '-')}.xlsx`)
         document.body.appendChild(fileLink)
         fileLink.click()
-        // this.listDownload = true
-        // this.autoClose()
+        this.message = 'Pobrano plik'
+        this.success = true
+        this.autoClose()
+      }).catch(() => {
+        this.loading = null
       })
+    },
+    sortF (type) {
+      if (type === 'name') {
+        if (!this.sortName) {
+          this.list.sort((a, b) => ('' + b.second_name).localeCompare(a.second_name))
+          this.sortName = !this.sortName
+        } else {
+          this.list.sort((a, b) => ('' + a.second_name).localeCompare(b.second_name))
+          this.sortName = !this.sortName
+        }
+      }
+      if (type === 'status') {
+        if (!this.sortStatus) {
+          this.list.sort((a, b) => b.active - a.active)
+          this.sortStatus = !this.sortStatus
+        } else {
+          this.list.sort((a, b) => a.active - b.active)
+          this.sortStatus = !this.sortStatus
+        }
+      }
+      if (type === 'group') {
+        if (!this.sortGroup) {
+          this.list.sort((a, b) => b.adult - a.adult)
+          this.sortGroup = !this.sortGroup
+        } else {
+          this.list.sort((a, b) => a.adult - b.adult)
+          this.sortGroup = !this.sortGroup
+        }
+      }
+      if (type === 'legitimation') {
+        if (!this.sortLicense) {
+          this.list.sort((a, b) => b.legitimation_number - a.legitimation_number)
+          this.sortLicense = !this.sortLicense
+        } else {
+          this.list.sort((a, b) => a.legitimation_number - b.legitimation_number)
+          this.sortLicense = !this.sortLicense
+        }
+      }
+      if (type === 'date') {
+        if (!this.sortDate) {
+          this.list.sort((a, b) => new Date(b.join_date) - new Date(a.join_date))
+          this.sortDate = !this.sortDate
+        } else {
+          this.list.sort((a, b) => new Date(a.join_date) - new Date(b.join_date))
+          this.sortDate = !this.sortDate
+        }
+      }
     },
     convertDate (date) {
       const current = new Date(date)
@@ -168,6 +234,13 @@ export default {
         month = '0' + (month)
       }
       return day + '-' + (month) + '-' + current.getFullYear()
+    },
+    autoClose () {
+      setTimeout(() => {
+        this.success = false
+        this.message = null
+        this.loading = null
+      }, 2000)
     }
   }
 }

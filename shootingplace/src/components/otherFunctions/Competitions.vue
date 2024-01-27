@@ -32,7 +32,7 @@
       </q-scroll-area>
     </q-card>
     <q-dialog v-model="competitionInfo" @hide="getCompetitions()">
-      <q-card class="bg-dark text-positive">
+      <q-card class="bg-dark text-positive" @show="method = competition.countingMethod">
         <q-card-section class="text-bold">
           <div class="text-h6">{{ competition.name }}</div>
           <div>ID: {{ competition.uuid }}</div>
@@ -43,12 +43,12 @@
           <div>Numer Kolejności na Listach: {{ competition.ordering }}</div>
           <div>Ilość Strzałów próbnych: {{ competition.practiceShots }}</div>
           <div>Kaliber: {{ competition.caliberUUID }}</div>
-          <q-input dense input-class="text-positive" label-color="positive" v-model="orderNumber" label="kolejność na listach" onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-          <q-input dense input-class="text-positive" label-color="positive" v-model="numberOfShots" label="ilość strzałów ocenianych" onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-          <q-input dense input-class="text-positive" label-color="positive" v-model="practiceShots" label="ilość strzałów próbnych" onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-          <q-input dense input-class="text-positive" label-color="positive" v-model="caliberUUID" label="identyfikator kalibru"/>
-          <q-input dense input-class="text-positive" label-color="positive" v-model="name" label="nazwa"/>
-          <div>Metoda Liczenia : Normalnie<q-toggle v-model="method" keep-color color="primary"  false-value="NORMAL" true-value="COMSTOCK" ></q-toggle>COMSTOCK</div>
+          <q-input @keypress.enter="competitionInfo=false;acceptDialog=true" dense input-class="text-positive" label-color="positive" v-model="orderNumber" label="kolejność na listach" onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
+          <q-input @keypress.enter="competitionInfo=false;acceptDialog=true" dense input-class="text-positive" label-color="positive" v-model="numberOfShots" label="ilość strzałów ocenianych" onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
+          <q-input @keypress.enter="competitionInfo=false;acceptDialog=true" dense input-class="text-positive" label-color="positive" v-model="practiceShots" label="ilość strzałów próbnych" onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
+          <q-input @keypress.enter="competitionInfo=false;acceptDialog=true" dense input-class="text-positive" label-color="positive" v-model="caliberUUID" label="identyfikator kalibru"/>
+          <q-input @keypress.enter="competitionInfo=false;acceptDialog=true" dense input-class="text-positive" label-color="positive" v-model="name" label="nazwa"/>
+          <div>Metoda Liczenia : Normalnie<q-toggle v-model="method" keep-color color="primary" :val="competition.countingMethod" false-value="NORMAL" true-value="COMSTOCK" ></q-toggle>COMSTOCK</div>
         </q-card-section>
         <q-card-actions align="right">
           <q-btn label="zapisz" color="primary" @click="acceptDialog = true" v-close-popup />
@@ -137,7 +137,7 @@ export default {
         countingMethod: this.method,
         numberOfShots: this.numberOfShots
       }
-      fetch('http://' + this.local + '/competition/update?uuid=' + this.compID + '&pinCode=' + this.code, {
+      fetch(`http://${this.local}/competition/update?uuid=${this.compID}&pinCode=${this.code}`, {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {

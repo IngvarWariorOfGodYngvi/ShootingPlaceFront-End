@@ -24,9 +24,7 @@
 
         <q-card-actions align="right">
           <q-btn label="anuluj" color="primary" v-close-popup @click="certificateChoice = null"/>
-          <q-tooltip v-if="certificateChoice===certificateChoices[0]" content-class="text-h6 bg-red" anchor="top middle" self="bottom middle" :offset="[12, 12]">Brak Możliwości wystawienie zaświadczenia
-          </q-tooltip>
-          <q-btn color="primary" :disable="certificateChoice===certificateChoices[0]" label="pobierz" @click="certificateDownload = true"></q-btn>
+          <q-btn color="primary" label="pobierz" @click="certificateDownload = true"></q-btn>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -88,14 +86,14 @@ export default {
   methods: {
     getDownloadCertificateOfClubMembership () {
       axios({
-        url: 'http://' + this.local + '/files/downloadCertificateOfClubMembership/' + this.uuid + '?reason=' + this.certificateChoice.label + '&city=' + this.city + '&enlargement=' + this.toggleEnlargement,
+        url: `http://${this.local}/files/downloadCertificateOfClubMembership/${this.uuid}?reason=${this.certificateChoice.label}&city=${this.city}&enlargement=${this.toggleEnlargement}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
-        fileLink.setAttribute('download', 'Zaświadczenie ' + this.certificateChoice.label + ' ' + this.name + '.pdf')
+        fileLink.setAttribute('download', `Zaświadczenie ${this.certificateChoice.label} ${this.name}.pdf`)
         document.body.appendChild(fileLink)
         fileLink.click()
         this.certificateChoice = null

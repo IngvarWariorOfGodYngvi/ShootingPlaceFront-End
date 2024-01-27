@@ -6,6 +6,7 @@
   "author": "izebr <i.zebrowski.ul@gmail.com>",
   "private": true,
   "scripts": {
+    "format": "prettier --write \"**/*.{js,vue,scss,html,md,json}\" --ignore-path .gitignore",
     "serve": "vue-cli-service --openssl-legacy-provider serve",
     "build": "vue-cli-service --openssl-legacy-provider build",
     "lint": "vue-cli-service --openssl-legacy-provider lint"

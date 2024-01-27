@@ -14,20 +14,23 @@
           <q-card-section :class="!mobile ? 'row full-width' : 'col'" class="text-positive">
             <div class="col">
             <div class="text-h6 text-center">Informacje o broni</div>
-            <div>Identyfikator : {{ gun.uuid }}</div>
-            <div>Dostępność : {{ (gun.available ? 'tak' : 'nie') }}</div>
-            <div>Nazwa : {{ gun.modelName }}</div>
-            <div>Kaliber : {{ gun.caliber }}</div>
-            <div>Rodzaj : {{ gun.gunType }}</div>
-            <div>Numer seryjny : {{ gun.serialNumber }}</div>
-            <div>Ilość magazynków : {{ gun.numberOfMagazines }}</div>
-            <div>Numer Świadectwa : {{ gun.gunCertificateSerialNumber }}</div>
-            <div>Pozycja w książce : {{ gun.recordInEvidenceBook }}</div>
-            <div>Rok produkcji : {{ gun.productionYear }}</div>
-            <div>Podstawa wpisu : {{ gun.basisForPurchaseOrAssignment }}</div>
-            <div>Wyposażenie dodatkowe : {{ gun.additionalEquipment }}</div>
-            <div>Uwagi : {{ gun.comment }}</div>
-            <div>Numer Kodu Kreskowego : {{ gun.barcode }}</div>
+            <div>
+              <div class="row"><div class="col-3">Identyfikator:</div><div>{{ gun.uuid }}</div></div>
+              <div class="row"><div class="col-3">Dostępność:</div><div>{{ (gun.available ? 'tak' : 'nie') }}</div></div>
+              <div class="row"><div class="col-3">Nazwa:</div><div>{{ gun.modelName }}</div></div>
+              <div class="row"><div class="col-3">Kaliber:</div><div>{{ gun.caliber }}</div></div>
+              <div class="row"><div class="col-3">Rodzaj:</div><div>{{ gun.gunType }}</div></div>
+              <div class="row"><div class="col-3">Numer seryjny:</div><div>{{ gun.serialNumber }}</div></div>
+              <div class="row"><div class="col-3">Ilość magazynków:</div><div>{{ gun.numberOfMagazines }}</div></div>
+              <div class="row"><div class="col-3">Numer Świadectwa:</div><div>{{ gun.gunCertificateSerialNumber }}</div></div>
+              <div class="row"><div class="col-3">Pozycja w książce:</div><div>{{ gun.recordInEvidenceBook }}</div></div>
+              <div class="row"><div class="col-3">Rok produkcji:</div><div>{{ gun.productionYear }}</div></div>
+              <div class="row"><div class="col-3">Podstawa <br/> wpisu:</div><div>{{ gun.basisForPurchaseOrAssignment }}</div></div>
+              <div class="row"><div class="col-3">Wyposażenie dodatkowe:</div><div>{{ gun.additionalEquipment }}</div></div>
+              <div class="row"><div class="col-3">Uwagi:</div><div>{{ gun.comment }}</div></div>
+              <div class="row"><div class="col-3">Numer Kodu Kreskowego:</div><div>{{ gun.barcode }}</div></div>
+              <div class="row"><div class="col-3">Data wpisu:</div><div>{{ gun.addedDate }}</div></div>
+            </div>
           </div>
           <div class="col">
             <div class="text-h6 text-center">Wydarzenia broni</div>
@@ -49,12 +52,12 @@
           </q-card-section>
         </div>
         <q-card-section v-if="armory" class="col">
-          <div v-if="!mobile" class="col q-pa-md">
-            <q-btn class="full-width" color="secondary" :label="gun.available ? 'wydaj do naprawy' : 'odblokuj'"
-              @click="(gun.available ? addGunToRepair(gun.uuid) : returnToStore(gun.uuid))"></q-btn>
-            <q-btn class="full-width" color="negative" label="usuń z ewidencji"
+          <div v-if="!mobile" class="q-pa-md text-right">
+            <q-btn class="q-ma-xs" color="secondary" :label="gun.available ? 'wydaj do naprawy' : 'odblokuj'"
+              @click="(gun.available ? addGunToRepair(gun.uuid) : returnToStore(gun.uuid))"/>
+            <q-btn class="q-ma-xs" color="negative" label="usuń z ewidencji"
               @click=" gunUUID = gun.uuid; acceptCode = true" />
-            <q-btn class="full-width" color="primary" label="edytuj" @click="
+            <q-btn class="q-ma-xs" color="primary" label="edytuj" @click="
               gunUUID = gun.uuid;
             gunModelName = gun.modelName;
             gunCaliber = gun.caliber;
@@ -68,6 +71,7 @@
             gunComment = gun.comment;
             gunBasisForPurchaseOrAssignment = gun.basisForPurchaseOrAssignment;
             gunBarcode = gun.barcode;
+            gunDate = gun.addedDate;
             editGun = true" />
           </div>
         </q-card-section>
@@ -77,7 +81,7 @@
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
           <div><q-input autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold"
-              mask="####"></q-input></div>
+              mask="####"/></div>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -91,7 +95,7 @@
         <q-card-section class="col">
           <div class="self-center col full-width no-outline text-center text-h6 text-bold">Edytuj informacje o broni</div>
           <q-input dense label-color="positive" input-class="text-positive" filled v-model="gunModelName"
-            label="nazwa i marka"></q-input>
+            label="nazwa i marka"/>
           <q-select dense label-color="positive" filled v-model="gunCaliber" options-selected-class="text-positive"
             input-class="text-positive" use-input hide-selected fill-input :options="calibers" options-dense
             popup-content-class="bg-dark text-positive" @filter="filter" label="kaliber">
@@ -115,23 +119,37 @@
             </template>
           </q-select>
           <q-input dense label-color="positive" filled v-model="gunSerialNumber" input-class="text-positive"
-            label="numer seryjny"></q-input>
+            label="numer seryjny"/>
           <q-input dense label-color="positive" filled onkeypress="return (event.charCode > 44 && event.charCode < 58)"
-            mask="####" v-model="gunProductionYear" input-class="text-positive" label="rok produkcji"></q-input>
+            mask="####" v-model="gunProductionYear" input-class="text-positive" label="rok produkcji"/>
           <q-input dense label-color="positive" filled onkeypress="return (event.charCode > 44 && event.charCode < 58)"
-            v-model="gunRecordInEvidenceBook" input-class="text-positive" label="pozycja z książki ewidencji"></q-input>
+            v-model="gunRecordInEvidenceBook" input-class="text-positive" label="pozycja z książki ewidencji"/>
           <q-input dense label-color="positive" filled onkeypress="return (event.charCode > 44 && event.charCode < 58)"
-            v-model="gunNumberOfMagazines" input-class="text-positive" label="ilość magazynków"></q-input>
+            v-model="gunNumberOfMagazines" input-class="text-positive" label="ilość magazynków"/>
           <q-input dense label-color="positive" filled v-model="gunCertificateSerialNumber" input-class="text-positive"
-            fill-mask="X" label="numer świadectwa"></q-input>
+            fill-mask="X" label="numer świadectwa"/>
           <q-input dense label-color="positive" filled v-model="gunBasisForPurchaseOrAssignment"
-            input-class="text-positive" label="podstawa wpisu"></q-input>
+            input-class="text-positive" label="podstawa wpisu"/>
           <q-input dense label-color="positive" filled v-model="gunAdditionalEquipment" input-class="text-positive"
-            label="wyposażenie dodatkowe"></q-input>
+            label="wyposażenie dodatkowe"/>
           <q-input dense label-color="positive" filled v-model="gunComment" input-class="text-positive"
-            label="uwagi"></q-input>
+            label="uwagi"/>
           <q-input dense label-color="positive" filled v-model="gunBarcode" input-class="text-positive"
-            label="kod kreskowy"></q-input>
+            label="kod kreskowy"/>
+          <q-input label-color="positive" input-class="text-positive" class="full-width" filled v-model="gunDate"
+            mask="####-##-##" label="data wprowadzenia na stan">
+            <template v-slot:append>
+              <q-icon color="positive" name="event" class="cursor-pointer">
+                <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                  <q-date v-model="gunDate" mask="YYYY-MM-DD" class="bg-dark text-positive">
+                    <div class="row items-center justify-end">
+                      <q-btn v-close-popup label="Zamknij" color="primary" />
+                    </div>
+                  </q-date>
+                </q-popup-proxy>
+              </q-icon>
+            </template>
+          </q-input>
         </q-card-section>
 
         <q-card-actions align="center">
@@ -162,7 +180,7 @@
 <style src="src/style/style.scss" lang="scss"></style>
 <script>
 import App from 'src/App'
-import { isWindows } from 'mobile-device-detect'
+// import { isWindows } from 'mobile-device-detect'
 export default {
   created () {
     this.getGun(this.uuid)
@@ -189,7 +207,7 @@ export default {
   },
   data () {
     return {
-      mobile: !isWindows,
+      mobile: App.mobile,
       backgroundDark: JSON.parse(window.localStorage.getItem('BackgroundDark')),
       gun: '',
       gunModelName: null,
@@ -204,6 +222,7 @@ export default {
       gunComment: '',
       gunBarcode: null,
       gunBasisForPurchaseOrAssignment: null,
+      gunDate: this.createTodayDate(),
       options: [],
       editGun: false,
       calibers: [],
@@ -224,8 +243,31 @@ export default {
         return dateTime
       }
     },
+    showloading () {
+      this.$q.loading.show({ message: 'Dzieje się coś ważnego... Poczekaj' })
+      this.timer = setTimeout(() => {
+        this.$q.loading.hide()
+        this.timer = 0
+      }, 1000)
+    },
+    createTodayDate () {
+      const date = new Date()
+      let month = 0
+      let day = 0
+      if ((date.getMonth() + 1) < 10) {
+        month = '0' + (date.getMonth() + 1)
+      } else {
+        month = (date.getMonth() + 1)
+      }
+      if (date.getDate() < 10) {
+        day = '0' + (date.getDate())
+      } else {
+        day = (date.getDate())
+      }
+      return date.getFullYear() + '-' + month + '-' + day
+    },
     getGun (gunUUID) {
-      fetch('http://' + this.local + '/armory/getGun?gunUUID=' + gunUUID, {
+      fetch(`http://${this.local}/armory/getGun?gunUUID=${gunUUID}`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -233,7 +275,7 @@ export default {
         })
     },
     getListCalibersSelect () {
-      fetch('http://' + this.local + '/armory/calibersList', {
+      fetch(`http://${this.local}/armory/calibersList`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -241,7 +283,7 @@ export default {
         })
     },
     getGunTypes () {
-      fetch('http://' + this.local + '/armory/gunType', {
+      fetch(`http://${this.local}/armory/gunType`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -254,7 +296,7 @@ export default {
       this.autoClose()
     },
     removeGun () {
-      fetch('http://' + this.local + '/armory/remove?gunUUID=' + this.gunUUID + '&pinCode=' + this.code, {
+      fetch(`http://${this.local}/armory/remove?gunUUID=${this.gunUUID}&pinCode=${this.code}`, {
         method: 'PUT'
       }).then(response => {
         if (response.status === 200) {
@@ -278,7 +320,7 @@ export default {
       })
     },
     editingGun () {
-      if (this.gunNumberOfMagazines === '') {
+      if (this.gunNumberOfMagazines === '' || this.gunNumberOfMagazines === 0) {
         this.gunNumberOfMagazines = 'BRAK'
       }
       const data = {
@@ -294,9 +336,10 @@ export default {
         recordInEvidenceBook: this.gunRecordInEvidenceBook,
         comment: this.gunComment,
         barcode: this.gunBarcode,
-        basisForPurchaseOrAssignment: this.gunBasisForPurchaseOrAssignment
+        basisForPurchaseOrAssignment: this.gunBasisForPurchaseOrAssignment,
+        addedDate: this.gunDate
       }
-      fetch('http://' + this.local + '/armory/editGun', {
+      fetch(`http://${this.local}/armory/editGun`, {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
@@ -304,7 +347,7 @@ export default {
         }
       }).then(response => {
         if (response.status === 200) {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.success = true
@@ -321,12 +364,14 @@ export default {
               this.gunComment = ''
               this.gunBarcode = null
               this.gunBasisForPurchaseOrAssignment = null
+              this.$emit('editingGun')
+              this.getGun(this.uuid)
               this.showloading()
               this.autoClose()
             }
           )
         } else {
-          response.json().then(
+          response.text().then(
             response => {
               this.message = response
               this.failure = true
@@ -338,7 +383,7 @@ export default {
     },
     returnToStore (gunUUID) {
       const list = [gunUUID]
-      fetch('http://' + this.local + '/armory/returnToStore?gunsUUID=' + list, {
+      fetch(`http://${this.local}armory/returnToStore?gunsUUID=${list}`, {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {
@@ -358,7 +403,7 @@ export default {
       })
     },
     addGunToRepair (gunUUID) {
-      fetch('http://' + this.local + '/armory/addGunToRepair?gunUUID=' + gunUUID, {
+      fetch(`http://${this.local}/armory/addGunToRepair?gunUUID=${gunUUID}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'

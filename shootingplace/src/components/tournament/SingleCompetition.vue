@@ -25,7 +25,7 @@
           </div>
             <!-- name & club -->
             <div class="col-5"
-                 @dblclick="memberExist=true;item.member!=null?
+                 @dblclick="item.member!=null && item.member.uuid?memberExist=true:memberExist=false;item.member!=null?
                  (memberUUID=item.member.uuid,otherID = 0,temp=item.member,memberLeg = item.member.legitimationNumber,name = item.member.secondName + ' ' + item.member.firstName + ' ' + item.member.legitimationNumber)
                  :
                  (memberUUID='0',otherID = item.otherPersonEntity.id,temp=item.otherPersonEntity,name = item.otherPersonEntity.secondName + ' ' + item.otherPersonEntity.firstName + ' ' + item.otherPersonEntity.id);
@@ -217,7 +217,7 @@
                 <q-popup-edit v-model="procedures" value="" content-class="bg-dark text-positive">
                   <q-input @focus="scoreUUID = item.uuid" input-class="text-center text-positive" v-model="procedures"
                            @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
-                           stack-label label="procedury + 3 sek" label-color="positive"
+                           stack-label :label="`procedury + ${shootinglPlace == 'prod'?'3':'5'} sek`" label-color="positive"
                            onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                   <div class="q-pa-xs row full-width">
                     <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
@@ -310,12 +310,12 @@
                   </div>
                 </q-popup-edit>
                 <div v-if="item.dnf||item.dsq||item.pk"
-                     class="self-center full-width col text-center">
-                  <div v-if="item.dnf" class="text-positive">DNF</div>
-                  <div v-if="item.dsq" class="text-positive">DSQ</div>
-                  <div v-if="item.pk" class="text-positive">PK</div>
+                     class="self-center full-width col text-center text-positive text-caption">
+                  <div v-if="item.dnf">DNF ({{ item.score }})</div>
+                  <div v-if="item.dsq">DSQ ({{ item.score }})</div>
+                  <div v-if="item.pk">PK ({{ item.score }})</div>
                 </div>
-                <div v-else class="self-center full-width col text-center text-positive text-caption">
+                <div v-else :class="`self-center full-width col text-center text-positive text-caption ${item.edited ? '': 'bg-warning round1'}`">
                 {{ item.score }}
                 </div>
               </div>
@@ -508,6 +508,7 @@ export default {
         scoreList: []
       },
       controlSize: 0,
+      shootingPlace: App.shootingPlace,
       a5rotate: false,
       val: [],
       info: [],
@@ -714,6 +715,10 @@ export default {
             }
           )
         }
+      }).catch(() => {
+        this.message = 'Pojawił się problem - wynik niezostał wprowadzony'
+        this.failure = true
+        this.autoClose()
       })
     },
     forceSetScore (scoreUUID, score) {

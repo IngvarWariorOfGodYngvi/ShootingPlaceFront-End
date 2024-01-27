@@ -8,12 +8,12 @@
 <script>
 import axios from 'axios'
 import App from 'src/App.vue'
-import { isWindows } from 'mobile-device-detect'
+// import { isWindows } from 'mobile-device-detect'
 export default {
   name: 'downloadBtn',
   data () {
     return {
-      mobile: !isWindows,
+      mobile: App.mobile,
       main: App.main,
       local: App.host
     }

@@ -22,7 +22,7 @@
 <script>
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox.vue'
-import { isWindows } from 'mobile-device-detect'
+// import { isWindows } from 'mobile-device-detect'
 import App from 'src/App'
 
 export default {
@@ -50,7 +50,7 @@ export default {
   },
   data () {
     return {
-      mobile: !isWindows,
+      mobile: App.mobile,
       main: App.main
     }
   },
