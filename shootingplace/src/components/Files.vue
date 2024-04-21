@@ -113,16 +113,22 @@ export default {
       message: null,
       failure: false,
       success: false,
+      visible: false,
       local: App.host
     }
   },
   methods: {
     showloading () {
       this.$q.loading.show({ message: 'Dzieje się coś ważnego... Poczekaj' })
+      let time = 200
       this.timer = setTimeout(() => {
-        this.$q.loading.hide()
-        this.timer = 0
-      }, 1000)
+        if (!this.visible) {
+          this.$q.loading.hide()
+          this.timer = 0
+        } else {
+          time = 200
+        }
+      }, time)
     },
     countPages () {
       fetch('http://' + this.local + '/files/countPages', {
@@ -167,6 +173,7 @@ export default {
       }).then(response => response.json())
         .then(response => {
           this.files = response
+          this.visible = false
         })
     },
     getFile (uuid) {

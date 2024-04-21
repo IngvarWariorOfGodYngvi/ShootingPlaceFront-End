@@ -52,7 +52,7 @@
             </div>
             <p v-if="quantitySum.length > 0"></p>
             <div v-for="(      ammo, id      ) in       quantitySum      " :key="id">
-              <div class="row text-bold text-left hover2">
+              <div class="row text-bold text-left hover1">
                 <div class="self-center col">{{ ammo.name }}</div>
                 <div class="self-center col">{{ ammo.quantity }}</div>
             </div>

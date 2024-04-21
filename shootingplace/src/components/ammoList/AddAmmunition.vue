@@ -197,7 +197,7 @@ export default {
       return sum
     },
     getMembersNames () {
-      fetch('http://' + this.local + '/member/getAllNames', {
+      fetch(`http://${this.local}/member/getAllNames`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -205,7 +205,7 @@ export default {
         })
     },
     getOther () {
-      fetch('http://' + this.local + '/other/all', {
+      fetch(`http://${this.local}/other/all`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -259,7 +259,6 @@ export default {
       return map
     },
     addMemberAndAmmoToCaliber (map, memberNumberLegitimation, otherID) {
-      console.log(this.memberName)
       fetch(`http://${this.local}/ammoEvidence/listOfAmmo?legitimationNumber=${memberNumberLegitimation}&otherID=${otherID}`, {
         method: 'POST',
         headers: {

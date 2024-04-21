@@ -24,8 +24,7 @@
           <div v-if="shootingPlace === 'prod'">
           <q-tooltip content-class="bg-primary text-h6">Kalendarz</q-tooltip>
             <q-btn-dropdown class="fit" icon="calendar_month" rounded color="secondary" style="border: 1px solid white">
-              <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=1&bgcolor=%23ffffff&ctz=Europe%2FWarsaw&src=MTA0MjM0ZTI5MTEyZThiYTk0MzBmZWZmNDk5MjRhNmU0YzI4NzJlMzA3ODdhMzhjZjdmZmE2ZTE2MGEyNmNkNkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=OTcwNXUwMTRuZXNicW05NGdiMWdkc3JvOGdAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ&color=%23F09300&color=%234285F4" style="width:40vw;height:50vh;" class="bg-primary text-positive" frameborder="2" scrolling="no"/>
-            </q-btn-dropdown>
+              <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&bgcolor=%23ffffff&ctz=Europe%2FWarsaw&src=MTA0MjM0ZTI5MTEyZThiYTk0MzBmZWZmNDk5MjRhNmU0YzI4NzJlMzA3ODdhMzhjZjdmZmE2ZTE2MGEyNmNkNkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=OTcwNXUwMTRuZXNicW05NGdiMWdkc3JvOGdAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ&color=%23F09300&color=%234285F4" style="border:solid 1px #777" width="800" height="600" frameborder="0" scrolling="no"></iframe>            </q-btn-dropdown>
           </div>
           <div>
             <q-tooltip content-class="bg-primary text-h6">Lista pobytu na strzelnicy</q-tooltip>
@@ -144,20 +143,6 @@
     <q-page-container>
       <q-page>
         <router-view/>
-        <!--        <q-page-sticky :position="'top-right'" :offset="[30, 30]">-->
-        <!--          <q-fab-->
-        <!--            v-if="color!=='primary'||tournamentCheck"-->
-        <!--            :color="color"-->
-        <!--            glossy-->
-        <!--            icon="keyboard_arrow_left"-->
-        <!--            direction="left"-->
-        <!--          >-->
-        <!--            <q-fab-action v-if="color!=='primary'" external-label label-position="top" color="primary" icon="book" @click="redirectToAmmoList()"><q-tooltip anchor="top middle" self="top middle" content-class="text-h6">Otwarta lista amunicyjna</q-tooltip></q-fab-action>-->
-        <!--            <q-fab-action v-if="tournamentCheck" external-label label-position="top" color="secondary" icon="people" @click="redirectToCompetitionList()"><q-tooltip anchor="top middle" self="top middle" content-class="text-h6">Otwarte zawody</q-tooltip></q-fab-action>-->
-        <!--            &lt;!&ndash; <q-fab-action square external-label label-:position="'top'" color="orange" icon="airplay" label="Airplay" /> &ndash;&gt;-->
-        <!--            &lt;!&ndash; <q-fab-action square external-label label-:position="'top'" color="accent" icon="room" label="Map" /> &ndash;&gt;-->
-        <!--          </q-fab>-->
-        <!--        </q-page-sticky>-->
       </q-page>
     </q-page-container>
   </q-layout>
@@ -171,10 +156,8 @@ import EssentialLink from 'components/EssentialLink.vue'
 import membersQuantities from 'components/MembersQuantities.vue'
 import WorkTimeList from 'components/WorkTimeList.vue'
 import App from 'src/App.vue'
-// import { isWindows } from 'mobile-device-detect'
 import { reactive } from 'vue'
 import { useNetwork } from '@vueuse/core'
-// import { VueIdentifyNetwork } from 'vue-identify-network'
 export default {
   name: 'MainLayout',
   visible2: false,
@@ -373,7 +356,7 @@ export default {
       this.networkStatusFunction()
       setInterval(() => {
         this.networkStatusFunction()
-      }, 10000)
+      }, 100000)
     },
     networkStatusFunction () {
       fetch(`http://${this.local}/conf/ping`, {

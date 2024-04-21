@@ -11,10 +11,9 @@
       </div>
       <div v-else>
         <div v-for="(comp, index) in tournament.competitionsList" :key="index">
-          <q-expansion-item v-if="juryPanelCompetitionInExpansionItem" :label="comp.name" :header-class="index%2===0?'bg-grey text-black text-center text-h6 text-bold':'text-positive text-center text-h6 text-bold'" dense group="list" class="text-positive bg-dark">
+          <q-expansion-item :label="comp.name" :header-class="index%2===0?'bg-grey text-black text-center text-h6 text-bold':'text-positive text-center text-h6 text-bold'" dense group="list" class="text-positive bg-dark">
             <SingleCompetitionJuryPanel :uuid="comp.uuid" :size="comp.scoreListSize"></SingleCompetitionJuryPanel>
           </q-expansion-item>
-          <SingleCompetitionJuryPanel v-else :uuid="comp.uuid" :size="comp.scoreListSize"></SingleCompetitionJuryPanel>
         </div>
       </div>
     </div>

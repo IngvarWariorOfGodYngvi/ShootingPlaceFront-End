@@ -146,7 +146,6 @@
 import App from 'src/App.vue'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox.vue'
-// import { isWindows } from 'mobile-device-detect'
 
 export default {
   name: 'NotValidLicense',
@@ -187,14 +186,12 @@ export default {
   },
   methods: {
     getMembersWithLicenseNotValid () {
-      fetch('http://' + this.local + '/license/membersWithNotValidLicense', {
+      fetch(`http://${this.local}/license/membersWithNotValidLicense`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
           this.list = response
-          setTimeout(() => {
-            this.visible = false
-          }, 1500)
+          this.visible = false
         })
     },
     convertDate (date) {

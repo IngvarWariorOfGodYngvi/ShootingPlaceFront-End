@@ -1,6 +1,6 @@
 <template>
   <q-page padding>
-    <q-expansion-item label="Broń" dense class="text-left text-h6 text-bold bg-grey-3" group="list" @show="getGunTypes();getAllGuns()">
+    <q-expansion-item label="Broń" dense class="text-left text-h6 text-bold bg-grey-3 q-mb-md" group="list" @show="getGunTypes();getAllGuns()">
       <q-card class="bg-dark">
         <div v-if="!mobile" class="row q-pb-md full-width">
           <q-btn class="col" color="primary" @click="open = !open">{{ open ? 'zwiń' : 'rozwiń' }} wszystko</q-btn>
@@ -101,10 +101,7 @@
         </q-expansion-item>
       </q-card>
     </q-expansion-item>
-    <q-card>
-    </q-card>
-    <p></p>
-    <q-expansion-item v-if="!mobile" label="Amunicja" dense class="text-left text-bold text-h6 bg-grey-3" group="list">
+    <q-expansion-item v-if="!mobile" label="Amunicja" dense class="text-left text-bold text-h6 bg-grey-3 q-mb-md" group="list">
       <q-card>
         <q-card-section class="col bg-dark">
           <div class="row q-pa-md">
@@ -115,34 +112,53 @@
           </div>
           <div class="col text-body2 text-bold">
             <q-item class="col text-positive">
-              <div class="col-3 text-left">KALIBER</div>
-              <div class="col-3 text-left">ILOŚĆ NA STANIE</div>
-              <div class="col text-center"></div>
+              <div class="col text-left">KALIBER</div>
+              <div class="col text-center">
+                <div>ILOŚĆ NA STANIE<q-icon name="info"><q-tooltip anchor="top middle" content-style="width: 15vw;" content-class="bg-primary text-caption">Ilość na stanie jest wyliczana na podstawie amunicji wprowadzonej na stan i zejścia na podstawie list amunicyjnych</q-tooltip></q-icon></div>
+                <div class="row items-center text-center">
+                  <div class="col">{{ createTodayDate() }}</div>
+                  <q-btn @click="refresh=!refresh" size="sm" color="blue" class="col text-positive"><q-tooltip anchor="top middle" content-class="bg-blue text-caption">odśwież</q-tooltip><q-icon name="sync" class="rotate"></q-icon></q-btn>
+                </div>
+              </div>
+              <div class="col text-center">
+                <div>STAN NA DZIEŃ</div>
+                <div class="row items-center text-center">
+                  <div class="col">{{ quantityOnDate }}</div>
+                  <q-btn class="col" icon="event" color="primary" size="sm">
+                      <q-tooltip anchor="top middle" content-class="bg-primary text-caption">wybierz datę</q-tooltip>
+                      <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                        <q-date no-unset v-model="quantityOnDate" mask="YYYY-MM-DD" class="bg-dark text-positive">
+                          <div class="row items-center justify-end">
+                            <q-btn v-close-popup label="Zamknij" color="primary" />
+                          </div>
+                        </q-date>
+                      </q-popup-proxy>
+                  </q-btn>
+                </div>
+              </div>
+              <div class="col-4 text-center"></div>
             </q-item>
           </div>
           <div class="row text-positive text-body1" v-for="(item, id) in calibers" :key="id">
-            <div class="col-6 hover1 self-center">
-              <div @dblclick=" caliberUUID = item.uuid;temp=item; caliberInfo = true" class="row self-center">
+            <div class="col hover1 self-center">
+              <div @dblclick=" caliberUUID = item.uuid;temp=item; caliberInfo = true" class="row self-center text-bold">
                 <Tooltip2clickTip></Tooltip2clickTip>
-                <div class="col">{{ item.name }}</div>
-                <div class="col">{{ item.quantity }}</div>
+                <div class="col text-bold">{{ item.name }}</div>
+                <QuantityOnDate :uuid="item.uuid" :date="quantityTodayDate" :refresh="refresh" class="col"></QuantityOnDate>
+                <QuantityOnDate :uuid="item.uuid" :date="quantityOnDate" :refresh="refresh" class="col"></QuantityOnDate>
               </div>
             </div>
             <q-btn color="primary" dense @click=" caliberUUID = item.uuid; addCaliberDialog = true"
-              class="col">aktualizuj stan {{ item.name }}</q-btn>
+              class="col-2"><div class="col"><div>wprowadź na stan</div><div>{{item.name}}</div></div></q-btn>
             <q-btn color="secondary" dense
-              @click=" caliberUUID = item.uuid; caliberHistory = true; getCaliberHistory()" class="col">historia
-              dodawania</q-btn>
+              @click=" caliberUUID = item.uuid; caliberHistory = true; getCaliberHistory()" class="col-2"><div class="col"><div>sprawdź</div><div>historię</div></div></q-btn>
           </div>
         </q-card-section>
       </q-card>
     </q-expansion-item>
-    <p></p>
-    <q-expansion-item label="Zużycie amunicji" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
+    <q-expansion-item label="Zużycie amunicji" dense class="text-left text-h6 text-bold bg-grey-3 q-mb-md" group="list">
       <AmmoUsed></AmmoUsed>
     </q-expansion-item>
-    <p></p>
-    <p></p>
     <q-dialog v-model="addCaliberDialog">
       <q-card class="bg-dark">
         <q-card-section>
@@ -226,7 +242,7 @@
           </div>
           <div class="row hover2" v-for="(      caliber, uuid      ) in       history      " :key="uuid">
             <div class="self-center row col text-bold q-pa-xs">
-              <div class="self-center col">{{ caliber.date }}</div>
+              <div class="self-center col">{{ convertDate(caliber.date) }}</div>
               <div class="self-center col">{{ caliber.description }}</div>
               <div class="self-center col">{{ caliber.finalStateForAddedDay }}</div>
               <div class="self-center col">{{ caliber.ammoAdded }}</div>
@@ -423,10 +439,6 @@
           <div class="text-h6">Caliber ID <q-btn @click=" copyClipboard()" borderless icon-right="content_copy">
               <div itemtype="text" id="copybtn">{{ caliberUUID }}</div>
             </q-btn></div>
-          <div class="text-h6 full-width row">Popraw ilość na stanie</div> <q-input v-model="quantity" dense
-              input-class="text-positive" label="wprowadź ilość" label-color="positive"
-              mask="###########"></q-input><q-btn color="primary" dense label="zapisz"
-              @click="acceptCodeCaliber = true"></q-btn>
           <div class="text-h6 full-width row">Wprowadź cenę dla klubowicza (aktualnie: {{ viewCurrency(temp.unitPrice) }}) </div><q-input v-model="unitPrice" dense
               input-class="text-positive" label="tylko cyfry" label-color="positive"
               onkeypress="return (event.charCode > 44 && event.charCode < 58)"></q-input><q-btn color="primary" dense label="zapisz"
@@ -460,6 +472,10 @@ export default {
     }),
     AmmoUsed: lazyLoadComponent({
       componentFactory: () => import('components/armory/AmmoUsed.vue'),
+      loading: SkeletonBox
+    }),
+    QuantityOnDate: lazyLoadComponent({
+      componentFactory: () => import('components/armory/QuantityOnDate.vue'),
       loading: SkeletonBox
     }),
     Tooltip2clickTip: lazyLoadComponent({
@@ -525,6 +541,9 @@ export default {
       gunComment: '',
       gunBarcode: null,
       gunDate: this.createTodayDate(),
+      quantityOnDate: this.createTodayDate(),
+      quantityTodayDate: this.createTodayDate(),
+      refresh: true,
       gunBasisForPurchaseOrAssignment: null,
       transportCertificate: false,
       open: false,
@@ -544,6 +563,18 @@ export default {
         this.$q.loading.hide()
         this.timer = 0
       }, 1000)
+    },
+    convertDate (date) {
+      const current = new Date(date)
+      let month = current.getMonth() + 1
+      let day = current.getDate()
+      if (day < 10) {
+        day = '0' + day
+      }
+      if (month < 10) {
+        month = '0' + (month)
+      }
+      return day + '-' + (month) + '-' + current.getFullYear()
     },
     viewCurrency (money) {
       if (money === undefined) { money = '0' }
@@ -608,29 +639,6 @@ export default {
     },
     changeCaliberUnitPriceForNotMember (caliberUUID, price, pinCode) {
       fetch(`http://${this.local}/armory/changeCaliberUnitPriceForNotMember?caliberUUID=${caliberUUID}&price=${price}&pinCode=${pinCode}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.text().then(response => {
-            this.getListCalibers()
-            this.message = response
-            this.success = true
-            this.autoClose()
-          })
-        } else {
-          response.text().then(response => {
-            this.message = response
-            this.failure = true
-            this.autoClose()
-          })
-        }
-      })
-    },
-    changeCaliberQuantity (caliberUUID, quantity, pinCode) {
-      fetch('http://' + this.local + '/armory/changeCaliberQuantity?caliberUUID=' + caliberUUID + '&quantity=' + quantity + '&pinCode=' + pinCode, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -775,7 +783,7 @@ export default {
         })
     },
     getListCalibers () {
-      fetch('http://' + this.local + '/armory/calibers', {
+      fetch(`http://${this.local}/armory/calibers`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -801,7 +809,7 @@ export default {
           this.ammoQuantity = null
           this.ammoDescription = null
           this.showloading()
-          this.getListCalibers()
+          this.refresh = !this.refresh
           this.autoClose()
         } else {
           this.failure = true

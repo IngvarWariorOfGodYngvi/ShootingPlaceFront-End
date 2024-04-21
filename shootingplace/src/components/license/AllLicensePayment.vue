@@ -159,10 +159,8 @@ export default {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
-          setTimeout(() => {
-            this.list = response
-            this.visible = false
-          }, 1500)
+          this.list = response
+          this.visible = false
         })
     },
     convertDate (date) {

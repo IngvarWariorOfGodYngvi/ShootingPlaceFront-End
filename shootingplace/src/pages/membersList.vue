@@ -171,7 +171,7 @@
           <tr v-if="!item.erased" :key="index" class="rounded bg-dark text-positive" style="cursor:pointer"
             @click.ctrl="pushOrRemoveEmailToList(item.legitimationNumber)"
             @click.exact="showloading(), allMember = false; memberName = item; temp = item.legitimationNumber;">
-            <td style="width:25%;" :class="item.club.id === 1 && !item.declarationLOK? 'xyz bg-warning' : item.club.id === 1 && item.declarationLOK ? 'xyz' : 'xyz bg-secondary text-white'">
+            <td style="width:25%;" :class="item.club.id === 1 && (!item.declarationLOK && shootingPlace==='prod')? 'xyz bg-warning' : item.club.id === 1 && (item.declarationLOK && shootingPlace==='prod')? 'xyz' : 'xyz bg-secondary text-white'">
               <b>{{ index + 1 + ' ' }}</b>{{ item.club.id === 1 ? item.secondName + ' ' + item.firstName : item.secondName + ' ' + item.firstName + ' ' + item.club.name }} {{ !item.declarationLOK && shootingPlace === 'prod'? ' - Brak Deklaracji LOK' : ''}}
             </td>
             <td style="width:10%;" class="text-center">

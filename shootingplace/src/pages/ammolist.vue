@@ -609,6 +609,7 @@ export default {
     this.getListCalibers()
     this.getMembersNames()
     this.getOther()
+    this.checkAmmoEvidence()
   },
   methods: {
     showloading () {
@@ -620,6 +621,29 @@ export default {
     },
     back () {
       this.gunImage = false
+    },
+    checkAmmoEvidence () {
+      setInterval(() => {
+        this.check(this.count())
+      }, 10000)
+    },
+    count () {
+      const t = this.ammoList
+      let count = 0
+      for (let i = 0; i < t.ammoInEvidenceDTOList.length; i++) {
+        count += t.ammoInEvidenceDTOList[i].quantity
+      }
+      return count
+    },
+    check (count) {
+      fetch(`http://${this.local}/ammoEvidence/isEvidenceIsClosed?quantity=${count}`, {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          if (!response) {
+            this.getAmmoData()
+          }
+        })
     },
     convertDate (date) {
       const current = new Date(date)
@@ -634,7 +658,7 @@ export default {
       return day + '-' + (month) + '-' + current.getFullYear()
     },
     getPersonalAmmoFromList (legitimationNumber, IDNumber, evidenceUUID) {
-      fetch('http://' + this.local + '/ammoEvidence/personalAmmoFromList?legitimationNumber=' + legitimationNumber + '&IDNumber=' + IDNumber + '&evidenceUUID=' + evidenceUUID, {
+      fetch(`http://${this.local}/ammoEvidence/personalAmmoFromList?legitimationNumber=${legitimationNumber}&IDNumber=${IDNumber}&evidenceUUID=${evidenceUUID}`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -642,7 +666,7 @@ export default {
         })
     },
     getAmmoData () {
-      fetch('http://' + this.local + '/ammoEvidence/evidence', {
+      fetch(`http://${this.local}/ammoEvidence/evidence`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -661,7 +685,7 @@ export default {
       }
     },
     getClosedEvidence (pageNumber) {
-      fetch('http://' + this.local + '/ammoEvidence/closedEvidences?page=' + pageNumber + '&size=25', {
+      fetch(`http://${this.local}/ammoEvidence/closedEvidences?page=${pageNumber}&size=25`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -669,7 +693,7 @@ export default {
         })
     },
     getEvidence () {
-      fetch('http://' + this.local + '/ammoEvidence/oneEvidence?uuid=' + this.uuid, {
+      fetch(`http://${this.local}/ammoEvidence/oneEvidence?uuid=${this.uuid}`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {

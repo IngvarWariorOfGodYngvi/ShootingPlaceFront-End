@@ -1,13 +1,8 @@
 <template>
-  <div class="col">
-    <q-item
-      class="full-width text-h5 text-bold text-center">{{
-        competition.countingMethod === 'COMSTOCK' ? competition.name + ' ' + competition.countingMethod : competition.name
-      }}
-    </q-item>
+  <div class="col q-pa-md bg-dark">
     <div class="row">
       <div dense class="row col" standout="bg-accent text-positive">
-        <div class="col-1 self-center text-left text-positive">amunicja</div>
+        <div class="col-1 self-center text-left text-positive">Amunicja</div>
         <div class="col-4 self-center text-center text-positive">Zawodnik</div>
         <div class="col-3 self-center text-center text-positive">Klub</div>
         <div class="col self-center text-center text-positive">Wynik</div>
@@ -51,266 +46,48 @@
             <div class="col-1 text-positive" @dblclick="scoreUUID = item.uuid;metric = item.metricNumber; toggleDSQDNF=true">
               <div class="text-center">
                 <label style="font-size: 10px">metryka</label>
-                <div class="self-center full-width col text-center text-positive text-caption">
+                <div class="self-center text-center text-positive text-caption">
                   {{ item.metricNumber }}
                 </div>
               </div>
             </div>
-            <!-- innerTen -->
-            <div v-if="competition.disciplines==null && competition.countingMethod === 'COMSTOCK'" class="box col-1 text-positive">
-              <div class="text-center">
-                <label class="text-positive" style="font-size: 10px;">trafienia</label>
-                <q-popup-edit v-model="outerTen" value="" content-class="bg-dark text-positive">
-                  <q-input v-if="alfa === 0 && charlie === 0 && delta === 0" @focus="scoreUUID = item.uuid"
-                           input-class="text-center text-positive" v-model="outerTen"
-                           @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
-                           stack-label label="trafienia" label-color="positive"
-                           onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                  <q-input @focus="scoreUUID = item.uuid" label-color="positive"
-                           @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
-                           input-class="text-center text-positive" v-model="alfa" stack-label label="Alfa"
-                           onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                  <q-input @focus="scoreUUID = item.uuid" label-color="positive"
-                           @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
-                           input-class="text-center text-positive" v-model="charlie" stack-label label="Charlie"
-                           onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                  <q-input @focus="scoreUUID = item.uuid" label-color="positive"
-                           @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
-                           input-class="text-center text-positive" v-model="delta" stack-label label="Delta"
-                           onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                  <div class="q-pa-xs">
-                    <q-btn color="primary" label="Anuluj" v-close-popup
-                           @click="outerTen='';alfa='';charlie='';delta=''"></q-btn>
-                    <q-btn color="primary" label="Zapisz" v-close-popup
-                           @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures,series)"></q-btn>
-                  </div>
-                </q-popup-edit>
-                <div class="self-center full-width col text-center text-positive text-caption">
-                  {{ item.outerTen }}
+            <div v-if="competition.countingMethod === 'NORMAL'" class="row col box">
+              <q-popup-edit @before-show="setVariables(item);series = setSeriesValues (item.series)" value="" content-class="bg-dark text-positive">
+                <q-input @focus="scoreUUID = item.uuid" input-class="text-center text-positive" v-model="outerTen"
+                  @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
+                  stack-label label="ilość 10 zwykłe" label-color="positive"
+                   onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
+                <q-input @focus="scoreUUID = item.uuid" input-class="text-center text-positive" v-model="innerTen"
+                  @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
+                  stack-label label="ilość 10 wewnętrzne" label-color="positive"
+                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
+                <q-input v-for="(item,index) in item.series" :key="index"
+                  @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
+                  onkeypress="return (event.charCode > 47 && event.charCode < 58) || event.charCode === 44  || event.charCode === 46"
+                  @focus="scoreUUID = item.uuid" v-model="series[index]" stack-label label-color="positive"
+                  :label="'Seria ' + (index + 1)" input-class="text-center text-positive"/>
+                <div class="q-pa-xs text-center">
+                  <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
+                  <q-btn color="primary" label="Zapisz" v-close-popup
+                         @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures,miss,series)"></q-btn>
                 </div>
-              </div>
-            </div>
-            <div v-if="competition.disciplines!=null && competition.countingMethod === 'COMSTOCK'" class="row col-1 text-positive">
-              <div v-if="competition.disciplines.includes('Pistolet')" class="box text-center col">
-                <div>
-                <label class="text-positive" style="font-size: 10px;">P</label>
-                <div class="self-center full-width col text-center text-positive text-caption">
-                {{ item.outerTen }}
-                </div>
-                <q-popup-edit v-model="outerTen" value="" content-class="bg-dark text-positive">
-                  <q-input v-if="alfa === '' && charlie === '' && delta === ''" @focus="scoreUUID = item.uuid"
-                           input-class="text-center text-positive" v-model="outerTen"
-                           @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
-                           stack-label label="trafienia" label-color="positive"
-                           onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                  <q-input @focus="scoreUUID = item.uuid"
-                           @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
-                           input-class="text-center text-positive" v-model="alfa" stack-label label="Alfa" label-color="positive"
-                           onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                  <q-input @focus="scoreUUID = item.uuid"
-                           @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
-                           input-class="text-center text-positive" v-model="charlie" stack-label label="Charlie" label-color="positive"
-                           onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                  <q-input @focus="scoreUUID = item.uuid"
-                           @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
-                           input-class="text-center text-positive" v-model="delta" stack-label label="Delta" label-color="positive"
-                           onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                  <div class="q-pa-xs">
-                    <q-btn color="primary" label="Anuluj" v-close-popup
-                           @click="outerTen='';alfa='';charlie='';delta=''"></q-btn>
-                    <q-btn color="primary" label="Zapisz" v-close-popup
-                           @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures,series)"></q-btn>
-                  </div>
                 </q-popup-edit>
-              </div>
-              </div>
-              <div v-if="competition.disciplines.includes('Karabin')" class="box text-center col">
-                <div>
-                <label class="text-positive" style="font-size: 10px;">K</label>
-                <q-popup-edit v-model="outerTen" value="" content-class="bg-dark text-positive">
-                  <q-input v-if="alfa === '' && charlie === '' && delta === ''" @focus="scoreUUID = item.uuid"
-                           input-class="text-center text-positive" v-model="outerTen"
-                           @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
-                           stack-label label="trafienia" label-color="positive"
-                           onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                  <q-input @focus="scoreUUID = item.uuid"
-                           @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
-                           input-class="text-center text-positive" v-model="alfa" stack-label label="Alfa" label-color="positive"
-                           onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                  <q-input @focus="scoreUUID = item.uuid"
-                           @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
-                           input-class="text-center text-positive" v-model="charlie" stack-label label="Charlie" label-color="positive"
-                           onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                  <q-input @focus="scoreUUID = item.uuid"
-                           @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
-                           input-class="text-center text-positive" v-model="delta" stack-label label="Delta" label-color="positive"
-                           onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                  <div class="q-pa-xs">
-                    <q-btn color="primary" label="Anuluj" v-close-popup
-                           @click="outerTen='';alfa='';charlie='';delta=''"></q-btn>
-                    <q-btn color="primary" label="Zapisz" v-close-popup
-                           @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures,series)"></q-btn>
-                  </div>
-                </q-popup-edit>
-                <div class="self-center full-width col text-center text-positive text-caption">
-                {{ item.outerTen }}
-                </div>
-              </div>
-              </div>
-              <div v-if="competition.disciplines.includes('Strzelba')" class="box text-center col">
-                <div class="text-center">
-                <label class="text-positive" style="font-size: 10px;">S</label>
-                <q-popup-edit v-model="outerTen" value="" content-class="bg-dark text-positive">
-                  <q-input v-if="alfa === '' && charlie === '' && delta === ''" @focus="scoreUUID = item.uuid"
-                           input-class="text-center text-positive" v-model="outerTen"
-                           @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
-                           stack-label label="trafienia" label-color="positive"
-                           onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                  <q-input @focus="scoreUUID = item.uuid"
-                           @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
-                           input-class="text-center text-positive" v-model="alfa" stack-label label="Alfa" label-color="positive"
-                           onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                  <q-input @focus="scoreUUID = item.uuid"
-                           @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
-                           input-class="text-center text-positive" v-model="charlie" stack-label label="Charlie" label-color="positive"
-                           onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                  <q-input @focus="scoreUUID = item.uuid"
-                           @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
-                           input-class="text-center text-positive" v-model="delta" stack-label label="Delta" label-color="positive"
-                           onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                  <div class="q-pa-xs">
-                    <q-btn color="primary" label="Anuluj" v-close-popup
-                           @click="outerTen='';alfa='';charlie='';delta=''"></q-btn>
-                    <q-btn color="primary" label="Zapisz" v-close-popup
-                           @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures,series)"></q-btn>
-                  </div>
-                </q-popup-edit>
-                <div class="self-center full-width col text-center text-positive text-caption">
-                {{ item.outerTen }}
-                </div>
-              </div>
-              </div>
-            </div>
-            <div v-if="competition.countingMethod === 'COMSTOCK'" class="box col-1 text-positive">
-              <div class="text-center">
-                <label class="text-positive" style="font-size: 10px;">czas</label>
-                <q-popup-edit v-model="innerTen" value="" content-class="bg-dark text-positive">
-                  <q-input @focus="scoreUUID = item.uuid" input-class="text-center text-positive" v-model="innerTen"
-                           @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
-                           stack-label label="czas" label-color="positive"
-                           onkeypress="return (event.charCode > 47 && event.charCode < 58) || event.charCode > 44 || event.charCode < 46"/>
-                  <div class="q-pa-xs">
-                    <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
-                    <q-btn color="primary" label="Zapisz" v-close-popup
-                           @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures,series)"></q-btn>
-                  </div>
-                </q-popup-edit>
-                <div class="self-center full-width col text-center text-positive text-caption">
+              <div class="text-center col">
+                <label class="text-positive" style="font-size: 10px;">10 wew.</label>
+                <div class="self-center col text-center text-positive text-caption">
                 {{ item.innerTen }}
                 </div>
               </div>
-            </div>
-            <!-- procedures -->
-            <div v-if="competition.countingMethod === 'COMSTOCK'" class="box col-1 ">
-              <div class="text-center">
-                       <label class="text-positive" style="font-size: 10px;">procedury</label>
-                <q-popup-edit v-model="procedures" value="" content-class="bg-dark text-positive">
-                  <q-input @focus="scoreUUID = item.uuid" input-class="text-center text-positive" v-model="procedures"
-                           @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
-                           stack-label :label="`procedury + ${shootinglPlace == 'prod'?'3':'5'} sek`" label-color="positive"
-                           onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                  <div class="q-pa-xs row full-width">
-                    <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
-                    <q-btn color="primary" label="Zapisz" v-close-popup
-                           @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures,series)"></q-btn>
-                  </div>
-                </q-popup-edit>
-                <div class="self-center full-width col text-center text-positive text-caption">
-                {{ item.procedures }}
-                </div>
-              </div>
-            </div>
-            <div v-if="competition.countingMethod === 'COMSTOCK'" class="box col-1 ">
-              <div class="text-center">
-                       <label class="text-positive" style="font-size: 10px;">HF</label>
-                <q-tooltip v-if="item.alfa>0||item.charlie>0||item.delta>0" anchor="top middle"
-                           self="bottom middle" :offset="[12, 12]">
-                  <div v-if="item.alfa>0">alfa: {{ item.alfa }}</div>
-                  <div v-if="item.charlie>0">charlie: {{ item.charlie }}</div>
-                  <div v-if="item.delta>0">delta: {{ item.delta }}</div>
-                </q-tooltip>
-                <div class="self-center full-width col text-center text-positive text-caption">
-                {{ item.hf }}
-                </div>
-              </div>
-            </div>
-            <div v-if="competition.countingMethod === 'NORMAL'" class="box col">
-              <div class="text-center">
-                       <label class="text-positive" style="font-size: 10px;">10 zw.</label>
-                <q-popup-edit v-model="outerTen" value="" content-class="bg-dark text-positive">
-                  <q-input @focus="scoreUUID = item.uuid" input-class="text-center text-positive" v-model="outerTen"
-                           @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
-                           stack-label label="ilość 10 zwykłe" label-color="positive"
-                           onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                  <div class="q-pa-xs">
-                    <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
-                    <q-btn color="primary" label="Zapisz" v-close-popup
-                           @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures,series)"></q-btn>
-                  </div>
-                </q-popup-edit>
-                <div class="self-center full-width col text-center text-positive text-caption">
+              <div class="text-center col">
+                <label class="text-positive" style="font-size: 10px;">10 zw.</label>
+                <div class="self-center col text-center text-positive text-caption">
                 {{ item.outerTen }}
                 </div>
               </div>
-            </div>
-            <div v-if="competition.countingMethod === 'NORMAL'" class="box col">
-              <div class="text-center">
-                       <label class="text-positive" style="font-size: 10px;">10 wewn.</label>
-                <q-popup-edit value="" content-class="bg-dark">
-                  <q-input @focus="scoreUUID = item.uuid" input-class="text-center text-positive" v-model="innerTen"
-                           @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
-                           stack-label label="ilość 10 wewnętrznych" label-color="positive"
-                           onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                  <div class="q-pa-xs">
-                    <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
-                    <q-btn color="primary" label="Zapisz" v-close-popup
-                           @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures,series)"></q-btn>
-                  </div>
-                </q-popup-edit>
-                <div class="self-center full-width col text-center text-positive text-caption">
-                {{ item.innerTen }}
-                </div>
-              </div>
-            </div>
-            <!-- wynik -->
-            <div class="box col ">
-              <div class="text-center">
-                       <label class="text-positive" style="font-size: 10px;">Wynik</label>
-                <q-popup-edit v-if="item.series.length>0" @before-show="series = setSeriesValues (item.series)" value="" content-class="bg-dark text-positive">
-                  <q-input v-for="(item,index) in item.series" :key="index"
-                           @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
-                           onkeypress="return (event.charCode > 47 && event.charCode < 58) || event.charCode === 44  || event.charCode === 46"
-                           @focus="scoreUUID = item.uuid" v-model="series[index]" stack-label label-color="positive"
-                           :label="'Seria ' + (index + 1)" input-class="text-center text-positive"/>
-                  <div class="q-pa-xs">
-                    <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
-                    <q-btn color="primary" label="Zapisz" v-close-popup
-                           @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures,series)"></q-btn>
-                  </div>
-                </q-popup-edit>
-                <q-popup-edit v-else value="">
-                  <q-input @focus="scoreUUID = item.uuid" input-class="text-center" v-model="scoreLabel"
-                           @keypress.enter="scoreUUID = item.uuid; forceOnEnter(scoreUUID)" dense autofocus
-                           stack-label label="Wynik"
-                           onkeypress="return (event.charCode > 47 && event.charCode < 58) || event.charCode > 44 || event.charCode < 46"/>
-                  <div class="q-pa-xs">
-                    <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
-                    <q-btn color="primary" label="Zapisz" v-close-popup
-                           @click="scoreUUID = item.uuid; forceSetScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures,series)"></q-btn>
-                  </div>
-                </q-popup-edit>
+              <div class="text-center col">
+                <label class="text-positive" style="font-size: 10px;">Wynik</label>
                 <div v-if="item.dnf||item.dsq||item.pk"
-                     class="self-center full-width col text-center text-positive text-caption">
+                     class="self-center col text-center text-positive text-caption">
                   <div v-if="item.dnf">DNF ({{ item.score }})</div>
                   <div v-if="item.dsq">DSQ ({{ item.score }})</div>
                   <div v-if="item.pk">PK ({{ item.score }})</div>
@@ -320,8 +97,259 @@
                 </div>
               </div>
             </div>
+            <div v-if="competition.countingMethod === 'COMSTOCK'" class="row col box">
+              <q-popup-edit @before-show="setVariables(item);series = setSeriesValues (item.series)" value="" content-class="bg-dark text-positive">
+                <q-input type="number" min="0"
+                  input-class="text-center text-positive text-h6" v-model="outerTen" class="col-3"
+                  @keypress.enter=" onEnter(scoreUUID)"
+                  stack-label label="trafienia" label-color="positive"
+                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
+                <q-input
+                  @keypress.enter=" onEnter(scoreUUID)" type="number" min="0"
+                  input-class="text-center text-positive text-h6" v-model="alfa" class="col" stack-label label="Alfa"
+                  label-color="positive"
+                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
+                <q-input
+                  @keypress.enter=" onEnter(scoreUUID)" type="number" min="0"
+                  input-class="text-center text-positive text-h6" v-model="charlie" class="col" stack-label
+                  label="Charlie" label-color="positive"
+                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
+                <q-input
+                  @keypress.enter=" onEnter(scoreUUID)" type="number" min="0"
+                  input-class="text-center text-positive text-h6" v-model="delta" class="col" stack-label label="Delta"
+                  label-color="positive"
+                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
+                <q-input
+                  @keypress.enter=" onEnter(scoreUUID)"
+                  input-class="text-center text-positive text-h6" v-model="innerTen" class="col" stack-label label="czas"
+                  label-color="positive"
+                  onkeypress="return (event.charCode > 47 && event.charCode < 58 || event.charCode > 44 || event.charCode < 46)"/>
+                <q-input
+                  @keypress.enter=" onEnter(scoreUUID)" type="number" min="0"
+                  input-class="text-center text-positive text-h6" v-model="procedures" class="col" stack-label label="procedury"
+                  label-color="positive"
+                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
+                <div class="q-pa-xs text-center">
+                  <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
+                  <q-btn color="primary" label="Zapisz" v-close-popup
+                         @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures,miss,series)"></q-btn>
+                </div>
+                </q-popup-edit>
+              <div class="text-center col">
+                <label class="text-positive" style="font-size: 10px;">tr.</label>
+                <div class="self-center col text-center text-positive text-caption">
+                {{ item.outerTen }}
+                </div>
+              </div>
+              <div class="text-center col">
+                <label class="text-positive" style="font-size: 10px;">czas</label>
+                <div class="self-center col text-center text-positive text-caption">
+                {{ item.innerTen }}
+                </div>
+              </div>
+              <div class="text-center col">
+                <label class="text-positive" style="font-size: 10px;">proc.</label>
+                <div class="self-center col text-center text-positive text-caption">
+                {{ item.procedures }}
+                </div>
+              </div>
+              <div class="text-center col-3">
+                <label class="text-positive" style="font-size: 10px;">Wynik / HF</label>
+                <div v-if="item.dnf||item.dsq||item.pk"
+                     class="self-center col text-center text-positive text-caption">
+                  <div v-if="item.dnf">DNF ({{ item.score }})</div>
+                  <div v-if="item.dsq">DSQ ({{ item.score }})</div>
+                  <div v-if="item.pk">PK ({{ item.score }})</div>
+                </div>
+                <div v-else :class="`self-center full-width col text-center text-positive text-caption ${item.edited ? '': 'bg-warning round1'}`">
+                {{ item.score }} / {{ item.hf }}
+                </div>
+              </div>
+            </div>
+            <div v-if="competition.countingMethod === 'CZAS'" class="row col box">
+              <q-popup-edit @before-show="setVariables(item);series = setSeriesValues (item.series)" value="" content-class="bg-dark text-positive">
+                <q-input @focus="scoreUUID = item.uuid" input-class="text-center text-positive" v-model="scoreLabel"
+                  @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
+                  stack-label label="czas" label-color="positive"
+                  onkeypress="return (event.charCode > 47 && event.charCode < 58 || event.charCode > 44 || event.charCode < 46)"/>
+                <q-input @focus="scoreUUID = item.uuid" input-class="text-center text-positive" v-model="procedures"
+                  @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
+                  stack-label label="procedury" label-color="positive"
+                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
+                <div class="q-pa-xs text-center">
+                  <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
+                  <q-btn color="primary" label="Zapisz" v-close-popup
+                         @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures,miss,series)"></q-btn>
+                </div>
+              </q-popup-edit>
+              <div class="text-center col">
+                <label class="text-positive" style="font-size: 10px;">proc.</label>
+                <div class="self-center col text-center text-positive text-caption">
+                {{ item.procedures }}
+                </div>
+              </div>
+              <div class="text-center col">
+                <label class="text-positive" style="font-size: 10px;">czas</label>
+                <div class="self-center col text-center text-positive text-caption">
+                {{ item.score }}
+                </div>
+              </div>
+            </div>
+            <div v-if="competition.countingMethod === 'IPSC'" class="row col box">
+              <q-popup-edit @before-show="setVariables(item);series = setSeriesValues (item.series)" value="" content-class="bg-dark text-positive">
+                <q-input
+                  @keypress.enter=" onEnter(scoreUUID)"
+                  input-class="text-center text-positive text-h6" v-model="alfa" class="col" stack-label label="Alfa"
+                  label-color="positive"
+                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
+                <q-input
+                  @keypress.enter=" onEnter(scoreUUID)"
+                  input-class="text-center text-positive text-h6" v-model="charlie" class="col" stack-label
+                  label="Charlie" label-color="positive"
+                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
+                <q-input
+                  @keypress.enter=" onEnter(scoreUUID)"
+                  input-class="text-center text-positive text-h6" v-model="delta" class="col" stack-label label="Delta"
+                  label-color="positive"
+                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
+                <q-input
+                  @keypress.enter=" onEnter(scoreUUID)"
+                  input-class="text-center text-positive text-h6" v-model="innerTen" class="col" stack-label label="czas"
+                  label-color="positive"
+                  onkeypress="return (event.charCode > 47 && event.charCode < 58 || event.charCode > 44 || event.charCode < 46)"/>
+                <q-input
+                  @keypress.enter=" onEnter(scoreUUID)"
+                  input-class="text-center text-positive text-h6" v-model="procedures" class="col" stack-label label="procedury"
+                  label-color="positive"
+                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
+                <q-input
+                  @keypress.enter=" onEnter(scoreUUID)"
+                  input-class="text-center text-positive text-h6" v-model="miss" class="col" stack-label label="miss"
+                  label-color="positive"
+                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
+                <div class="q-pa-xs text-center">
+                  <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
+                  <q-btn color="primary" label="Zapisz" v-close-popup
+                         @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures,miss,series)"></q-btn>
+                </div>
+              </q-popup-edit>
+              <div class="text-center row col">
+                <div class="col">
+                  <label class="text-positive" style="font-size: 10px;">alfa</label>
+                  <div class="self-center col text-center text-positive text-caption">
+                    {{ item.alfa }}
+                  </div>
+                </div>
+                <div class="col">
+                  <label class="text-positive" style="font-size: 10px;">charlie</label>
+                  <div class="self-center col text-center text-positive text-caption">
+                    {{ item.charlie }}
+                  </div>
+                </div>
+                <div class="col">
+                  <label class="text-positive" style="font-size: 10px;">delta</label>
+                  <div class="self-center col text-center text-positive text-caption">
+                    {{ item.delta }}
+                  </div>
+                </div>
+              </div>
+              <div class="text-center col-1">
+                <label class="text-positive" style="font-size: 10px;">miss</label>
+                <div class="self-center col text-center text-positive text-caption">
+                {{ item.miss }}
+                </div>
+              </div>
+              <div class="text-center col-1">
+                <label class="text-positive" style="font-size: 10px;">czas</label>
+                <div class="self-center col text-center text-positive text-caption">
+                {{ item.innerTen }}
+                </div>
+              </div>
+              <div class="text-center col">
+                <label class="text-positive" style="font-size: 10px;">Wynik / HF</label>
+                <div class="self-center col text-center text-positive text-caption">
+                {{ item.score }} / {{ item.hf.toFixed(4) }}
+                </div>
+              </div>
+            </div>
+            <div v-if="competition.countingMethod === 'Dynamika Dziesiątka'" class="row col box">
+              <q-popup-edit @before-show="setVariables(item);series = setSeriesValues (item.series)" value="" content-class="bg-dark text-positive">
+                <q-input
+                  @keypress.enter=" onEnter(scoreUUID)"
+                  input-class="text-center text-positive text-h6" v-model="alfa" class="col" stack-label label="Alfa"
+                  label-color="positive"
+                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
+                <q-input
+                  @keypress.enter=" onEnter(scoreUUID)"
+                  input-class="text-center text-positive text-h6" v-model="charlie" class="col" stack-label
+                  label="Charlie" label-color="positive"
+                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
+                <q-input
+                  @keypress.enter=" onEnter(scoreUUID)"
+                  input-class="text-center text-positive text-h6" v-model="delta" class="col" stack-label label="Delta"
+                  label-color="positive"
+                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
+                <q-input
+                  @keypress.enter=" onEnter(scoreUUID)"
+                  input-class="text-center text-positive text-h6" v-model="innerTen" class="col" stack-label label="czas"
+                  label-color="positive"
+                  onkeypress="return (event.charCode > 47 && event.charCode < 58 || event.charCode > 44 || event.charCode < 46)"/>
+                <q-input
+                  @keypress.enter=" onEnter(scoreUUID)"
+                  input-class="text-center text-positive text-h6" v-model="procedures" class="col" stack-label label="procedury"
+                  label-color="positive"
+                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
+                <q-input
+                  @keypress.enter=" onEnter(scoreUUID)"
+                  input-class="text-center text-positive text-h6" v-model="miss" class="col" stack-label label="miss"
+                  label-color="positive"
+                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
+                <div class="q-pa-xs text-center">
+                  <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
+                  <q-btn color="primary" label="Zapisz" v-close-popup
+                         @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures,miss,series)"></q-btn>
+                </div>
+              </q-popup-edit>
+              <div class="text-center row col">
+                <div class="col">
+                  <label class="text-positive" style="font-size: 10px;">alfa</label>
+                  <div class="self-center col text-center text-positive text-caption">
+                    {{ item.alfa }}
+                  </div>
+                </div>
+                <div class="col">
+                  <label class="text-positive" style="font-size: 10px;">charlie</label>
+                  <div class="self-center col text-center text-positive text-caption">
+                    {{ item.charlie }}
+                  </div>
+                </div>
+                <div class="col">
+                  <label class="text-positive" style="font-size: 10px;">delta</label>
+                  <div class="self-center col text-center text-positive text-caption">
+                    {{ item.delta }}
+                  </div>
+                </div>
+              </div>
+              <div class="text-center col-1">
+                <label class="text-positive" style="font-size: 10px;">miss</label>
+                <div class="self-center col text-center text-positive text-caption">
+                {{ item.miss }}
+                </div>
+              </div>
+              <div class="text-center col-1">
+                <label class="text-positive" style="font-size: 10px;">czas</label>
+                <div class="self-center col text-center text-positive text-caption">
+                {{ item.innerTen }}
+                </div>
+              </div>
+              <div class="text-center col">
+                <label class="text-positive" style="font-size: 10px;">Wynik / HF</label>
+                <div class="self-center col text-center text-positive text-caption">
+                {{ item.score }} / {{ item.hf.toFixed(4) }}
+                </div>
+              </div>
+            </div>
           </div>
-          <!--          </div>-->
       </div>
     <q-dialog v-model="toggleDSQDNF">
       <q-card class="bg-dark text-positive">
@@ -526,15 +554,16 @@ export default {
       caliberUUID: null,
       scoreUUID: null,
       singleScore: null,
-      score: null,
-      scoreLabel: null,
-      innerTen: null,
-      outerTen: null,
+      score: '',
+      scoreLabel: '',
+      innerTen: '',
+      outerTen: '',
       alfa: '',
       charlie: '',
       delta: '',
+      miss: '',
       series: [],
-      procedures: null,
+      procedures: '',
       quantity: false,
       metric: null,
       addAmmo: false,
@@ -584,8 +613,26 @@ export default {
       }
       return series
     },
+    setVariables (item) {
+      this.scoreUUID = item.uuid
+      this.scoreLabel = item.score
+      this.innerTen = checkZero(item.innerTen)
+      this.outerTen = checkZero(item.outerTen)
+      this.procedures = checkZero(item.procedures)
+      this.alfa = checkZero(item.alfa)
+      this.charlie = checkZero(item.charlie)
+      this.delta = checkZero(item.delta)
+      this.miss = checkZero(item.miss)
+      this.series = this.setSeriesValues(item.series)
+      this.temp = item.member != null ? item.member : item.otherPersonEntity
+      this.startNumber = item.metricNumber
+      this.competitionTemp = this.competition
+      function checkZero (number) {
+        return number.toString() !== 0 ? number : ''
+      }
+    },
     getCompetitionByID (uuid) {
-      fetch('http://' + App.host + '/competitionMembersList/getByID/?uuid=' + uuid, {
+      fetch(`http://${this.local}/competitionMembersList/getByID/?uuid=${uuid}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -598,13 +645,10 @@ export default {
       })
     },
     onEnter (scoreUUID) {
-      this.setScore(scoreUUID, this.scoreLabel, this.innerTen, this.outerTen, this.alfa, this.charlie, this.delta, this.procedures, this.series)
-    },
-    forceOnEnter (scoreUUID) {
-      this.forceSetScore(scoreUUID, this.scoreLabel)
+      this.setScore(scoreUUID, this.scoreLabel, this.innerTen, this.outerTen, this.alfa, this.charlie, this.delta, this.procedures, this.miss, this.series)
     },
     getListCalibers () {
-      fetch('http://' + this.local + '/armory/calibers', {
+      fetch(`http://${this.local}/armory/calibers`, {
         method: 'GET'
       }).then(response => response.json())
         .then(calibers => {
@@ -619,7 +663,7 @@ export default {
       }, 1000)
     },
     getScoreInfo () {
-      fetch('http://' + this.local + '/competitionMembersList/getMemberStarts?tournamentUUID=' + this.competition.attachedToTournament + '&memberUUID=' + this.memberUUID + '&otherID=' + this.otherID, {
+      fetch(`http://${this.local}/competitionMembersList/getMemberStarts?tournamentUUID=${this.competition.attachedToTournament}&memberUUID=${this.memberUUID}&otherID=${this.otherID}`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -631,7 +675,7 @@ export default {
     },
     addMemberAndAmmoToCaliber () {
       const quantity = this.ammoQuantity
-      fetch('http://' + this.local + '/ammoEvidence/ammo?caliberUUID=' + this.caliberUUID + '&legitimationNumber=' + this.memberLeg + '&counter=' + this.ammoQuantity + '&otherID=' + this.otherID, {
+      fetch(`http://${this.local}/ammoEvidence/ammo?caliberUUID=${this.caliberUUID}&legitimationNumber=${this.memberLeg}&counter=${this.ammoQuantity}&otherID=${this.otherID}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -660,29 +704,40 @@ export default {
       }
       )
     },
-    setScore (scoreUUID, score, innerTen, outerTen, alfa, charlie, delta, procedures, series) {
-      if (innerTen === null) {
-        innerTen = '-1'
+    setScore (scoreUUID, score, innerTen, outerTen, alfa, charlie, delta, procedures, miss, series) {
+      if (innerTen === '' || innerTen === 'NaN') {
+        innerTen = '-1.0'
       }
-      if (outerTen === null) {
-        outerTen = '-1'
+      if (outerTen === '' || outerTen === 'NaN') {
+        outerTen = '-1.0'
       }
-      if (alfa === '') {
+      if (alfa === '' || alfa === 'NaN') {
         alfa = '-1'
       }
-      if (charlie === '') {
+      if (charlie === '' || charlie === 'NaN') {
         charlie = '-1'
       }
-      if (delta === '') {
+      if (delta === '' || delta === 'NaN') {
         delta = '-1'
       }
       if (score === null) {
         score = '-1'
       }
-      if (procedures === null) {
+      if (procedures === '' || procedures === 'NaN') {
         procedures = '-1'
       }
-      fetch('http://' + this.local + '/competition/score/set?scoreUUID=' + scoreUUID + '&score=' + parseFloat(score.replace(/,/gi, '.')) + '&innerTen=' + parseFloat(innerTen.replace(/,/gi, '.')) + '&outerTen=' + parseFloat(outerTen.replace(/,/gi, '.')) + '&alfa=' + parseFloat(alfa.replace(/,/gi, '.')) + '&charlie=' + parseFloat(charlie.replace(/,/gi, '.')) + '&delta=' + parseFloat(delta.replace(/,/gi, '.')) + '&procedures=' + procedures + '&series=' + series, {
+      if (miss === '' || miss === 'NaN') {
+        miss = '-1'
+      }
+      score = score.toString().replaceAll(/,/gi, '.')
+      innerTen = innerTen.toString().replaceAll(/,/gi, '.')
+      outerTen = outerTen.toString().replaceAll(/,/gi, '.')
+      alfa = alfa.toString().replaceAll(/,/gi, '.')
+      charlie = charlie.toString().replaceAll(/,/gi, '.')
+      delta = delta.toString().replaceAll(/,/gi, '.')
+      procedures = procedures.toString().replaceAll(/,/gi, '.')
+      miss = miss.toString().replaceAll(/,/gi, '.')
+      fetch(`http://${this.local}/competition/score/set?scoreUUID=${scoreUUID}&score=${score}&innerTen=${innerTen}&outerTen=${outerTen}&alfa=${alfa}&charlie=${charlie}&delta=${delta}&procedures=${procedures}&miss=${miss}&series=${series}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -692,14 +747,14 @@ export default {
           response.text().then(
             response => {
               this.showloading()
-              this.scoreLabel = null
-              this.innerTen = null
-              this.outerTen = null
-              this.procedures = null
+              this.scoreLabel = ''
+              this.innerTen = ''
+              this.outerTen = ''
+              this.procedures = ''
               this.alfa = ''
               this.charlie = ''
               this.delta = ''
-              this.series = []
+              this.miss = ''
               this.message = response
               this.success = true
               this.getCompetitionByID(this.uuid)
@@ -721,46 +776,8 @@ export default {
         this.autoClose()
       })
     },
-    forceSetScore (scoreUUID, score) {
-      if (score === null) {
-        score = '-1'
-      }
-      fetch('http://' + this.local + '/competition/score/forceSetScore?scoreUUID=' + scoreUUID + '&score=' + parseFloat(score.replace(/,/gi, '.')), {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.text().then(
-            response => {
-              this.showloading()
-              this.scoreLabel = null
-              this.innerTen = null
-              this.outerTen = null
-              this.procedures = null
-              this.alfa = ''
-              this.charlie = ''
-              this.delta = ''
-              this.message = response
-              this.success = true
-              this.getCompetitionByID(this.uuid)
-              this.autoClose()
-            }
-          )
-        } else {
-          response.text().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.autoClose()
-            }
-          )
-        }
-      })
-    },
     toggleAmmunitionInScore (scoreUUID) {
-      fetch('http://' + this.local + '/competition/score/ammo?scoreUUID=' + scoreUUID, {
+      fetch(`http://${this.local}/competition/score/ammo?scoreUUID=${scoreUUID}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -787,7 +804,7 @@ export default {
       })
     },
     toggleGunInScore () {
-      fetch('http://' + this.local + '/competition/score/gun?scoreUUID=' + this.scoreUUID, {
+      fetch(`http://${this.local}/competition/score/gun?scoreUUID=${this.scoreUUID}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -816,7 +833,7 @@ export default {
       })
     },
     toggleDnfScore () {
-      fetch('http://' + this.local + '/competition/score/dnf?scoreUUID=' + this.scoreUUID, {
+      fetch(`http://${this.local}/competition/score/dnf?scoreUUID=${this.scoreUUID}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -843,7 +860,7 @@ export default {
       })
     },
     toggleDsqScore () {
-      fetch('http://' + this.local + '/competition/score/dsq?scoreUUID=' + this.scoreUUID, {
+      fetch(`http://${this.local}/competition/score/dsq?scoreUUID=${this.scoreUUID}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -870,7 +887,7 @@ export default {
       })
     },
     togglePkScore () {
-      fetch('http://' + this.local + '/competition/score/pk?scoreUUID=' + this.scoreUUID, {
+      fetch(`http://${this.local}/competition/score/pk?scoreUUID=${this.scoreUUID}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -912,7 +929,7 @@ export default {
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
-        fileLink.setAttribute('download', 'metryki_' + name + '_' + date + '.pdf')
+        fileLink.setAttribute('download', `metryki ${name} ${date}.pdf`)
         document.body.appendChild(fileLink)
         fileLink.click()
         this.listDownload = true

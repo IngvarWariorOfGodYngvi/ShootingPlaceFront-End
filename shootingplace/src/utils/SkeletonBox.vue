@@ -35,8 +35,9 @@ export default {
     computedWidth () {
       // Either use the given fixed width or
       // a random width between the given min
-      // and max values.
-      return this.width || `${Math.floor((Math.random() * (this.maxWidth - this.minWidth)) + this.minWidth)}%`
+      // and max values
+      return '100%'
+      // return this.width || `${Math.floor((Math.random() * (this.maxWidth - this.minWidth)) + this.minWidth)}%`
     }
   }
 }

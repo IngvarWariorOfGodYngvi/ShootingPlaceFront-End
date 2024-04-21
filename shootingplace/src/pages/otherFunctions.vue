@@ -310,7 +310,7 @@ export default {
       return date.getFullYear() + '-' + month + '-' + day
     },
     getAccess (accessCode) {
-      fetch('http://' + this.local + '/users/getAccess?pinCode=' + accessCode, {
+      fetch(`http://${this.local}/users/getAccess?pinCode=${accessCode}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'

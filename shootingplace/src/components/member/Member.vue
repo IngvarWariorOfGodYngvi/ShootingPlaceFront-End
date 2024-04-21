@@ -57,9 +57,18 @@
         <div class="col q-pa-md text-positive">
           <div class="self-center full-width text-center">Historia Składek</div>
         </div>
+        <div v-if="shootingPlace === 'prod'" class="col q-pa-md text-positive">
+          <div class="text-center text-positive">Ilość Składek</div>
+          <div class="row col">
+            <q-radio v-model="contributionCount" :val="1" label="1" color="primary" class="col"><q-tooltip content-class="bg-primary text-h6" :offset="[15,0]" anchor="top middle" self="bottom middle">3 miesiące</q-tooltip></q-radio>
+            <q-radio v-model="contributionCount" :val="2" label="2" color="primary" class="col"><q-tooltip content-class="bg-primary text-h6" :offset="[15,0]" anchor="top middle" self="bottom middle">6 miesięcy</q-tooltip></q-radio>
+            <q-radio v-model="contributionCount" :val="3" label="3" color="primary" class="col"><q-tooltip content-class="bg-primary text-h6" :offset="[15,0]" anchor="top middle" self="bottom middle">9 miesięcy</q-tooltip></q-radio>
+            <q-radio v-model="contributionCount" :val="4" label="4" color="primary" class="col"><q-tooltip content-class="bg-primary text-h6" :offset="[15,0]" anchor="top middle" self="bottom middle">1 rok</q-tooltip></q-radio>
+          </div>
+        </div>
         <div v-if="!member.erased && main && !mobile">
           <div>
-            <q-btn class="full-width round" color="green" label="Przedłuż składkę"
+            <q-btn class="full-width round" color="green" label="Przedłuż składkę" :disable="contributionCount==0&&shootingPlace==='prod'"
               @click="memberUUID = member.uuid; name = member.secondName + ' ' + member.firstName; contribution = true; rotateFun+=0.125" />
           </div>
         </div>
@@ -71,32 +80,20 @@
               <div class="row full-width hover1" @dblclick="contributionUUID = item.uuid, name = (member.secondName + ' ' + member.firstName);
                 !main && !mobile ? '' : (contributionUUID = item.uuid, memberUUID = member.uuid, editContributionPaymentDate = item.paymentDay
                   , editContributionValidThruDate = item.validThru, editContribution = true)">
-                  <Tooltip2clickTip></Tooltip2clickTip>
-                  <div class="col text-left">
-                  <label v-if="item.acceptedBy!=null" class="q-pl-xs">{{(item.edited?'Edytowano':'Zaakceptowano')}} przez: {{ item.acceptedBy }}</label>
-                    <div class="row">
-                      <div class="col-6 q-pl-xs text-left">
-                  <label>Opłacona dnia</label>
-                  <div>{{ convertDate(item.paymentDay) }}</div>
-                </div>
-                <div class="col-6 q-pl-xs text-left">
-                  <label class="">Ważna do:</label>
-                  <div>{{ convertDate(item.validThru) }}</div>
-                </div>
+                <Tooltip2clickTip></Tooltip2clickTip>
+                <div class="col text-left">
+                  <label v-if="item.acceptedBy!=null" class="q-pa-xs">{{(item.edited?'Edytowano':'Zaakceptowano')}} przez: {{ item.acceptedBy }}</label>
+                  <div class="row">
+                    <div class="col-6 q-pl-xs text-left">
+                      <label>Opłacona dnia</label>
+                      <div>{{ convertDate(item.paymentDay) }}</div>
+                    </div>
+                    <div class="col-6 q-pl-xs text-left">
+                      <label>Ważna do:</label>
+                      <div>{{ convertDate(item.validThru) }}</div>
                     </div>
                   </div>
-                <!-- <div :class="`col-${item.acceptedBy!=null? '4' : '6'} q-pl-xs text-left`">
-                  <label class="">Opłacona dnia</label>
-                  <div>{{ convertDate(item.paymentDay) }}</div>
                 </div>
-                <div :class="`col-${item.acceptedBy!=null? '4' : '6'} q-pl-xs text-left`">
-                  <label class="">Ważna do:</label>
-                  <div>{{ convertDate(item.validThru) }}</div>
-                </div>
-                <div v-if="item.acceptedBy!=null" :class="`col-4 q-pl-xs text-left`">
-                  <label class="">Akceptowane przez:</label>
-                  <div>{{ item.acceptedBy }}</div>
-                </div> -->
               </div>
             </template>
           </q-virtual-scroll>
@@ -238,8 +235,18 @@
             </div>
           </div>
         </q-expansion-item>
-        <q-expansion-item dense v-if=" !member.erased && main && !mobile " :header-class="!headerColorChange?'':'bg-grey-3 text-black round'" @hide="headerColorChange=!headerColorChange" @show="headerColorChange=!headerColorChange" label="Opcje Dodatkowe" group="right-card"
-          class="bg-dark text-positive">
+        <q-expansion-item icon dense v-if=" !member.erased && main && !mobile " :header-class="!headerColorChange?'':'bg-grey-3 text-black round'" @hide="headerColorChange=!headerColorChange" @show="headerColorChange=!headerColorChange" label="Opcje Dodatkowe" group="right-card" class="bg-dark text-positive">
+          <template v-slot:header>
+            <q-item-section v-if="(!member.pzss && member.club.id == 1) || !member.declarationLOK" class="text-left col-4">
+              <q-icon v-if="(!member.pzss && member.club.id == 1) || !member.declarationLOK" name="warning" color="warning" size="5vh" class="pulse"/>
+            </q-item-section>
+            <q-item-section v-if="(!member.pzss && member.club.id == 1) || !member.declarationLOK" class="col text-left">
+              Opcje Dodatkowe
+            </q-item-section>
+            <q-item-section v-else class="col text-center">
+              Opcje Dodatkowe
+            </q-item-section>
+          </template>
           <q-expansion-item dense v-if=" !member.erased "
             :label=" member.shootingPatent.patentNumber !== null ? (helpersDefault[0] + ': ' + member.shootingPatent.patentNumber + ' Data: ' + member.shootingPatent.dateOfPosting) : helpersDefault[0] "
             group="right-right-card" class="text-positive">
@@ -368,16 +375,16 @@
           </q-expansion-item>
           <q-expansion-item dense v-if=" !member.erased " label="Portal PZSS" group="right-right-card">
             <template v-slot:header>
-          <q-item-section avatar>
-            <q-avatar>
-              <img src="~assets/logo-PZSS.png">
-            </q-avatar>
-          </q-item-section>
-
-          <q-item-section class="text-center">
-            Portal PZSS
-          </q-item-section>
-        </template>
+              <q-item-section class="col-4 text-left">
+                <q-icon v-if="!member.pzss && member.club.id == 1" size="5vh" class="pulse" name="warning" color="warning"/>
+                <q-icon v-else size="5vh">
+                  <img src="~assets/logo-PZSS.png">
+                </q-icon>
+              </q-item-section>
+              <q-item-section class="col text-left">
+                Portal PZSS
+              </q-item-section>
+            </template>
             <div class="row">
               <q-btn dense class="col q-ma-md" text-color="black" @click=" main && !mobile ? (memberUUID = member.uuid, pzssPortal = true) : '' " :color="!member.pzss?'red-3':'green-3'" :label="!member.pzss?'Nie Wprowadzony do Portalu':'Wprowadzony do portalu'"/>
             </div>
@@ -395,16 +402,16 @@
           </q-expansion-item>
           <q-expansion-item dense v-if=" !member.erased && shootingPlace === 'prod'" label="Deklaracja LOK" group="right-right-card">
             <template v-slot:header>
-          <q-item-section avatar>
-            <q-avatar>
-              <img src="~assets/logo_LOK.png">
-            </q-avatar>
-          </q-item-section>
-
-          <q-item-section class="text-center">
-            Deklaracja LOK
-          </q-item-section>
-        </template>
+              <q-item-section class="text-left col-4">
+                <q-icon v-if="!member.declarationLOK" name="warning" size="5vh" color="warning" class="pulse"/>
+                <q-icon v-else size="5vh">
+                  <img src="~assets/logo_LOK.png">
+                </q-icon>
+              </q-item-section>
+              <q-item-section class="col text-left">
+                Deklaracja LOK
+              </q-item-section>
+            </template>
             <div class="row">
               <q-btn dense class="col q-ma-md" text-color="black" @click=" main && !mobile ? (memberUUID = member.uuid, declarationLOK = true) : '' " :color="!member.declarationLOK?'red-3':'green-3'" :label="!member.declarationLOK?'Brak podpisanej Deklaracji':'Deklaracja Podpisana'"/>
             </div>
@@ -600,9 +607,9 @@
                       {{ item.discipline }}
                     </div>
                   </div>
-                  <div v-if=" item.discipline == null " class="col-4 ">
+                  <div v-if="item.discipline == null " class="col-4 ">
                   <label class="text-caption full-width">Konkurencje</label><br/>
-                    <span v-for="( disc, id ) in  item.disciplines " :key=" id " class="text-left">
+                    <span v-for="( disc, id ) in  item.disciplineList " :key=" id " class="text-left">
                       <span class="col">{{disc.substring(0,1)}} </span>
                     </span>
                   </div>
@@ -1427,13 +1434,14 @@
    z-index: -2;
 }
 </style>
+<script src="print.js"></script>
 <script>
 import axios from 'axios'
 import App from 'src/App.vue'
+import Print from 'print-js'
 import MemberLicense from 'components/member/MemberLicense.vue'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox.vue'
-// import { isWindows } from 'mobile-device-detect'
 import Vue from 'vue'
 import SmoothScrollbar from 'vue-smooth-scrollbar'
 Vue.use(SmoothScrollbar)
@@ -1574,6 +1582,7 @@ export default {
       admissionToPossessIsExist: true,
       admission: false,
       permission: false,
+      contributionCount: 0,
       secondName: '',
       memberEmail: '',
       memberPhoneNumber: '',
@@ -1596,6 +1605,7 @@ export default {
       clubChoiceToggle: false,
       clubChoice: '',
       test: [],
+      visible: true,
       local: App.host
     }
   },
@@ -1619,10 +1629,15 @@ export default {
   methods: {
     showloading () {
       this.$q.loading.show({ message: 'Dzieje się coś ważnego... Poczekaj' })
+      let time = 500
       this.timer = setTimeout(() => {
-        this.$q.loading.hide()
-        this.timer = 0
-      }, 1000)
+        if (!this.visible) {
+          this.$q.loading.hide()
+          this.timer = 0
+        } else {
+          time = 500
+        }
+      }, time)
     },
     checkAge (pesel) {
       const s = pesel
@@ -1667,6 +1682,7 @@ export default {
         .then(response => {
           this.showloading()
           this.test = response
+          this.visible = false
         })
     },
     getMemberByLegitimationNumber (number) {
@@ -1688,6 +1704,7 @@ export default {
       this.getPersonalStatistics(this.member.uuid)
       this.getAllMemberFiles(this.member.uuid)
       this.helpers = this.helpersDefault
+      this.visible = false
     },
     getPersonalStatistics (uuid) {
       fetch('http://' + this.local + '/statistics/personal?uuid=' + uuid, {
@@ -1826,7 +1843,7 @@ export default {
       })
     },
     prolongContribution (uuid) {
-      fetch('http://' + this.local + '/contribution/' + uuid + '?pinCode=' + this.code, {
+      fetch(`http://${this.local}/contribution/${uuid}?pinCode=${this.code}&contributionCount=${this.contributionCount}`, {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {
@@ -1835,9 +1852,10 @@ export default {
               this.success = true
               this.message = response
               this.contributionAlert = true
+              this.contributionCount = 0
               this.showloading()
-              this.getContributionPDF()
               this.getMemberByUUID(this.memberUUID)
+              this.getContributionPDF()
               this.autoClose()
               this.code = null
             })
@@ -1854,7 +1872,7 @@ export default {
     },
     getContributionPDF () {
       axios({
-        url: `http://${this.local}/files/downloadContribution/${this.uuid}?contributionUUID=${this.contributionUUID}&a5rotate=${this.a5rotate}`,
+        url: `http://${this.local}/files/downloadContribution/${this.memberUUID}?contributionUUID=${this.contributionUUID}&a5rotate=${this.a5rotate}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
@@ -1864,6 +1882,9 @@ export default {
         fileLink.setAttribute('download', `Składka ${this.name}.pdf`)
         document.body.appendChild(fileLink)
         fileLink.click()
+        if (this.shootingPlace === 'prod') {
+          printJS(fileURL)
+        }
       })
     },
     updateMember (uuid, email, phoneNumber, code) {
@@ -2027,6 +2048,11 @@ export default {
       if (patentNumber.includes('null')) {
         patentNumber = null
       }
+      if (patentDate === null) {
+        this.message = 'Sprawdź poprawność daty'
+        this.failure = true
+        this.autoClose()
+      }
       const data = {
         patentNumber: patentNumber,
         pistolPermission: patentPistolPermission,
@@ -2034,7 +2060,7 @@ export default {
         shotgunPermission: patentShotgunPermission,
         dateOfPosting: patentDate.replace(this.dateVar, '-')
       }
-      fetch('http://' + this.local + '/patent/' + uuid, {
+      fetch(`http://${this.local}/patent/${uuid}`, {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {
@@ -2063,6 +2089,10 @@ export default {
               this.autoClose()
             })
         }
+      }).catch(() => {
+        this.message = 'Sprawdź poprawność danych'
+        this.failure = true
+        this.autoClose()
       })
     },
     changeWeaponPermission (uuid, weaponPermissionNumber, isExist) {
@@ -2435,6 +2465,7 @@ export default {
       this.autoClose()
     },
     autoClose () {
+      this.visible = false
       setTimeout(() => {
         this.failure = false
         this.success = false

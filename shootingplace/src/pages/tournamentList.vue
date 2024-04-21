@@ -13,9 +13,10 @@
           <q-card-section v-if="tournaments == null">
             <q-btn color="primary" label="dodaj zawody" @click="addNewTournament = true"/>
           </q-card-section>
-          <q-card-section>
-            <q-btn color="secondary" label="Kreator konkurencji" @click="createNewCompetiton = true"/>
-          </q-card-section>
+          <!-- <q-card-section>
+            <q-btn color="secondary" label="Kreator konkurencji" @click="getCountingMethods ();createNewCompetiton = true"/>
+          </q-card-section> -->
+          <CompetitonCreator v-on:createCompetition="getCompetitions" class="q-pa-md"></CompetitonCreator>
         </div>
         <div v-if="tournaments == null" class="text-center text-h6 text-positive full-width">{{resp}}</div>
         <div v-if="tournaments != null" class="row text-h6">
@@ -63,28 +64,28 @@
                 <div v-for="(item, uuid) in competitions.filter(f=>f.discipline==='Pistolet' && check.pistol)" :key="uuid" class="col">
                   <div class="text-left" style="padding-left: 25%" :class="backgroundDark ? 'bg-dark text-positive' : 'bg-grey-2'">
                     <q-checkbox class="hover1" dense :val="item.uuid" v-model="competitionAddToTournamentList" :label="(item.name) + ' ' +
-                      (item.countingMethod === 'COMSTOCK' ? '(' + item.countingMethod + ')' : '')"/>
+                      (item.countingMethod === 'NORMAL' ? '' : '(' + item.countingMethod + ')')"/>
                   </div>
                 </div>
                 <div v-if="check.rifle" class="text-center text-bold text-h5">Karabin</div>
                 <div v-for="(item, uuid) in competitions.filter(f=>f.discipline==='Karabin' && check.rifle)" :key="uuid" class="col">
                   <div class="text-left" style="padding-left: 25%" :class="backgroundDark ? 'bg-dark text-positive' : 'bg-grey-3'">
                     <q-checkbox class="hover1" dense :val="item.uuid" v-model="competitionAddToTournamentList" :label="(item.name) + ' ' +
-                      (item.countingMethod === 'COMSTOCK' ? '(' + item.countingMethod + ')' : '')"/>
+                      (item.countingMethod === 'NORMAL' ? '' : '(' + item.countingMethod + ')')"/>
                   </div>
                 </div>
                 <div v-if="check.shotgun" class="text-center text-bold text-h5">Strzelba</div>
                 <div v-for="(item, uuid) in competitions.filter(f=>f.discipline==='Strzelba' && check.shotgun)" :key="uuid" class="col">
                   <div class="text-left" style="padding-left: 25%" :class="backgroundDark ? 'bg-dark text-positive' : 'bg-grey-4'">
                     <q-checkbox class="hover1" dense :val="item.uuid" v-model="competitionAddToTournamentList" :label="(item.name) + ' ' +
-                      (item.countingMethod === 'COMSTOCK' ? '(' + item.countingMethod + ')' : '')"/>
+                      (item.countingMethod === 'NORMAL' ? '' : '(' + item.countingMethod + ')')"/>
                   </div>
                 </div>
                 <div v-if="check.other" class="text-center text-bold text-h5">Pozostałe</div>
                 <div v-for="(item, uuid) in competitions.filter(f=>f.discipline==null && check.other)" :key="uuid" class="col">
                   <div class="text-left" style="padding-left: 25%" :class="backgroundDark ? 'bg-dark text-positive' : 'bg-grey-5'">
                     <q-checkbox class="hover1" dense :val="item.uuid" v-model="competitionAddToTournamentList" :label="(item.name) + ' ' +
-                      (item.countingMethod === 'COMSTOCK' ? '(' + item.countingMethod + ')' : '')"/>
+                      (item.countingMethod === 'NORMAL' ? '' : '(' + item.countingMethod + ')')"/>
                   </div>
                 </div>
                 <q-card-actions align="right">
@@ -208,8 +209,7 @@
             <div class="text-positive" :class="backgroundDark?'bg-dark':'bg-grey-3'" dense>
                 <q-list>
               <div class="row ghover2" v-for="(item, uuid) in tournaments.competitionsList" :key="uuid">
-                  <div class="self-center col no-outline text-positive">{{ item.name }}
-                    {{ item.countingMethod === 'COMSTOCK' ? '(' + item.countingMethod + ')' : '' }}
+                  <div class="self-center col no-outline text-positive">{{ item.name }} ({{ item.countingMethod }})
                   </div>
                 <q-btn dense v-if="item.scoreList < 1" color="warning"  text-color="white" class="col-2 q-ma-xs" label="usuń"
                   @click="competitionListUUID = item.uuid; tournamentUUID = tournaments.uuid; deleteListFromTournament()"/>
@@ -309,9 +309,13 @@
                 </div>
               </q-card-section>
             </div>
-            <q-item v-for="(comp, uuid) in tournaments.competitionsList" :key="uuid">
-              <SingleCompetition :uuid="comp.uuid" :size="comp.scoreListSize"></SingleCompetition>
-            </q-item>
+            <div class="full-width text-right q-pa-md"><q-btn @click="openAll=!openAll" color="primary">{{ openAll ? 'zwiń' : 'rozwiń' }} wszystko</q-btn></div>
+            <div v-for="(item, index) in tournaments.competitionsList" :key="index" class="q-pl-md q-pr-md">
+              <q-expansion-item :label="`${item.name} ${item.countingMethod}`" class="col" :header-class="index%2===0?'bg-grey text-black':''" :value="openAll">
+                <SingleCompetition :uuid="item.uuid" :size="item.scoreListSize"></SingleCompetition>
+              </q-expansion-item>
+            </div>
+            <div style="height: 20vh"></div>
           </q-card>
         </div>
       </q-card>
@@ -449,8 +453,9 @@
             </div>
             <div class="row bg-grey-6">
               <q-item class="items-center">Metoda Liczenia :</q-item>
-              <q-radio class="col" color="primary" v-model="choice12" :val="'NORMAL'" label="Normalnie"></q-radio>
-              <q-radio class="col" color="primary" v-model="choice12" :val="'COMSTOCK'" label="Comstock"></q-radio>
+              <q-radio v-for="(item,index) in countingMethods" v-model="choice12" :key="index" :val="item" :label="item"></q-radio>
+              <!-- <q-radio class="col" color="primary" v-model="choice12" :val="'NORMAL'" label="Normalnie"></q-radio>
+              <q-radio class="col" color="primary" v-model="choice12" :val="'COMSTOCK'" label="Comstock"></q-radio> -->
             </div>
             <div class="row bg-grey-7">
               <q-item dense class="row justify-around">Kaliber :</q-item>
@@ -1067,7 +1072,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog :position="'top'" v-model="listDownload">
+    <q-dialog position="top" v-model="listDownload">
       <q-card>
         <q-card-section>
           <div class="text-h6">Pobrano Dokument</div>
@@ -1126,7 +1131,6 @@ import axios from 'axios'
 import App from 'src/App.vue'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox.vue'
-// import { isWindows } from 'mobile-device-detect'
 import { ref } from 'vue'
 
 export default {
@@ -1146,6 +1150,10 @@ export default {
     }),
     Tooltip2clickToShow: lazyLoadComponent({
       componentFactory: () => import('src/utils/Tooltip2clickToShow.vue'),
+      loading: SkeletonBox
+    }),
+    CompetitonCreator: lazyLoadComponent({
+      componentFactory: () => import('components/tournament/CompetitionCreator.vue'),
       loading: SkeletonBox
     })
   },
@@ -1220,6 +1228,7 @@ export default {
       addCompetitionConfirm: false,
       createNewCompetiton: false,
       competitionName: null,
+      countingMethods: [],
       failure: false,
       clubs: [],
       dynamicChoice: [],
@@ -1311,6 +1320,8 @@ export default {
       message: null,
       resp: '',
       filterOptions: [],
+      openAll: false,
+      visible: true,
       shootingPlace: App.shootingPlace,
       local: App.host
     }
@@ -1319,7 +1330,6 @@ export default {
     this.getListTournaments()
     this.getCompetitions()
     this.getOther()
-    this.getListCalibers()
     this.getAllClubsToTournament()
   },
   methods: {
@@ -1365,6 +1375,14 @@ export default {
         this.listOfAddAmmo.push(uuid)
       }
     },
+    getCountingMethods () {
+      fetch(`http://${this.local}/competition/getCountingMethods`, {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.countingMethods = response
+        })
+    },
     getAllUsersInWork () {
       fetch(`http://${this.local}/work/`, {
         method: 'GET'
@@ -1375,7 +1393,7 @@ export default {
     },
     getListTournaments () {
       this.getMembersNames()
-      fetch('http://' + this.local + '/tournament/openTournament', {
+      fetch(`http://${this.local}/tournament/openTournament`, {
         method: 'GET'
       }).then(response => {
         if (response.status === 200) {
@@ -1389,7 +1407,7 @@ export default {
       })
     },
     getCompetitions () {
-      fetch('http://' + this.local + '/competition/', {
+      fetch(`http://${this.local}/competition/`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -1397,7 +1415,7 @@ export default {
         })
     },
     getListCalibers () {
-      fetch('http://' + this.local + '/armory/calibers', {
+      fetch(`http://${this.local}/armory/calibers`, {
         method: 'GET'
       }).then(response => response.json())
         .then(calibers => {
@@ -1406,13 +1424,18 @@ export default {
     },
     showloading () {
       this.$q.loading.show({ message: 'Dzieje się coś ważnego... Poczekaj' })
+      let time = 1000
       this.timer = setTimeout(() => {
-        this.$q.loading.hide()
-        this.timer = 0
-      }, 1000)
+        if (!this.visible) {
+          this.$q.loading.hide()
+          this.timer = 0
+        } else {
+          time = 1000
+        }
+      }, time)
     },
     getMembersNames () {
-      fetch('http://' + this.local + '/member/getAllNames', {
+      fetch(`http://${this.local}/member/getAllNames`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -1420,7 +1443,7 @@ export default {
         })
     },
     getOther () {
-      fetch('http://' + this.local + '/other/all', {
+      fetch(`http://${this.local}/other/all`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -1428,7 +1451,7 @@ export default {
         })
     },
     getCompetitionsInTournament () {
-      fetch('http://' + this.local + '/tournament/competitions?tournamentUUID=' + this.tournamentUUID, {
+      fetch(`http://${this.local}/tournament/competitions?tournamentUUID=${this.tournamentUUID}`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -1436,7 +1459,7 @@ export default {
         })
     },
     getStatistics () {
-      fetch('http://' + this.local + '/tournament/stat?tournamentUUID=' + this.tournamentUUID, {
+      fetch(`http://${this.local}/tournament/stat?tournamentUUID=${this.tournamentUUID}`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -1445,7 +1468,7 @@ export default {
     },
     getMemberUUIDFromLegitimationNumber () {
       const memberlegNumber = this.memberName.legitimationNumber
-      fetch('http://' + this.local + '/member/ID/' + memberlegNumber, {
+      fetch(`http://${this.local}/member/ID/${memberlegNumber}`, {
         method: 'GET'
       }).then(response => response.text())
         .then(response => {
@@ -1468,7 +1491,7 @@ export default {
       } else {
         const memberlegNumber = this.memberName.legitimationNumber
         const otherNameID = this.otherName.id
-        fetch('http://' + this.local + '/competitionMembersList/getMemberStartsByLegitimation?tournamentUUID=' + this.tournamentUUID + '&legNumber=' + memberlegNumber + '&otherID=' + otherNameID, {
+        fetch(`http://${this.local}/competitionMembersList/getMemberStartsByLegitimation?tournamentUUID=${this.tournamentUUID}&legNumber=${memberlegNumber}&otherID=${otherNameID}`, {
           method: 'GET'
         }).then(response => response.json())
           .then(response => {
@@ -1489,7 +1512,7 @@ export default {
       } else {
         const memberlegNumber = this.memberName.legitimationNumber
         const otherNameID = this.otherName.id
-        fetch('http://' + this.local + '/competitionMembersList/getMetricNumber?tournamentUUID=' + this.tournamentUUID + '&legNumber=' + memberlegNumber + '&otherID=' + otherNameID, {
+        fetch(`http://${this.local}/competitionMembersList/getMetricNumber?tournamentUUID=${this.tournamentUUID}&legNumber=${memberlegNumber}&otherID=${otherNameID}`, {
           method: 'GET'
         }).then(response => {
           if (response.status === 200) {
@@ -1525,7 +1548,7 @@ export default {
         })
     },
     getGunInTournament () {
-      fetch('http://' + this.local + '/tournament/getGunInTournament?tournamentUUID=' + this.tournamentUUID, {
+      fetch(`http://${this.local}/tournament/getGunInTournament?tournamentUUID=${this.tournamentUUID}`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -1539,7 +1562,7 @@ export default {
         open: true,
         wzss: this.wzss
       }
-      fetch('http://' + this.local + '/tournament/', {
+      fetch(`http://${this.local}/tournament/`, {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
@@ -1601,7 +1624,7 @@ export default {
         caliberUUID: this.choice13,
         practiceShots: this.choice14
       }
-      fetch('http://' + this.local + '/competition', {
+      fetch(`http://${this.local}/competition`, {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
@@ -1642,13 +1665,13 @@ export default {
         }
       })
     },
-    async updateTournament () {
+    updateTournament () {
       const data = {
         name: this.tournamentName,
         date: this.tournamentDate.replace(/\//gi, '-')
       }
       try {
-        const response = await fetch(`http://${this.local}/tournament/${this.tournamentUUID}`, {
+        const response = fetch(`http://${this.local}/tournament/${this.tournamentUUID}`, {
           method: 'PUT',
           body: JSON.stringify(data),
           headers: {
@@ -1656,7 +1679,7 @@ export default {
           }
         })
         if (response.ok) {
-          const message = await response.text()
+          const message = response.text()
           this.message = message
           this.tournamentName = ''
           this.tournamentDate = ''
@@ -1665,7 +1688,7 @@ export default {
           this.getListTournaments()
           this.autoClose()
         } else {
-          const message = await response.text()
+          const message = response.text()
           this.message = message
           this.failure = true
           this.autoClose()
@@ -1677,31 +1700,44 @@ export default {
         this.autoClose()
       }
     },
-    async addMemberToCompetition () {
+    addMemberToCompetition () {
       const { listOfCompetitions, listOfAddAmmo, local } = this
       const memberlegNumber = this.memberName.legitimationNumber
       const otherNameID = this.otherName.id
       const competitionUUIDList = listOfCompetitions.map(name => name.replaceAll(',', '.'))
       const url = `http://${local}/competitionMembersList/addMember?competitionUUIDList=${competitionUUIDList}&addAmmoList=${listOfAddAmmo}&legitimationNumber=${memberlegNumber}&otherPerson=${otherNameID}`
-
-      try {
-        const response = await fetch(url, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
+      fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          if (response.status === 200) {
+            response.text().then(
+              response => {
+                this.message = response
+                this.success = true
+                this.showloading()
+                this.getListTournaments()
+                this.autoClose()
+              }
+            )
+          } else {
+            response.text().then(
+              response => {
+                this.message = response
+                this.failure = true
+                this.autoClose()
+              }
+            )
           }
-        })
-        const data = await response.json()
-        this.message = data
-        this.success = response.status === 200
-        this.showloading()
-        this.getListTournaments()
-        this.autoClose()
-      } catch (error) {
-        this.message = error
+        }
+      }).catch(() => {
+        this.message = 'Coś się nie udało'
         this.failure = true
         this.autoClose()
-      }
+      })
     },
     removeMemberFromCompetition () {
       const memberlegNumber = this.memberName.legitimationNumber
@@ -1739,7 +1775,7 @@ export default {
       })
     },
     addCompetitionToTournament () {
-      fetch('http://' + this.local + '/tournament/addCompetition/' + this.tournamentUUID + '?competitionsUUID=' + this.competitionAddToTournamentList, {
+      fetch(`http://${this.local}/tournament/addCompetition/${this.tournamentUUID}?competitionsUUID=${this.competitionAddToTournamentList}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -1768,7 +1804,7 @@ export default {
       })
     },
     closeTournament () {
-      fetch('http://' + this.local + '/tournament/' + this.tournamentUUID, {
+      fetch(`http://${this.local}/tournament/${this.tournamentUUID}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -1800,7 +1836,7 @@ export default {
       })
     },
     openTournament () {
-      fetch('http://' + this.local + '/tournament/open/' + this.tournamentUUID + '?pinCode=' + this.code, {
+      fetch(`http://${this.local}/tournament/open/${this.tournamentUUID}?pinCode=${this.code}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -1832,7 +1868,7 @@ export default {
       })
     },
     deleteTournament () {
-      fetch('http://' + this.local + '/tournament/delete/' + this.tournamentUUID + '?pinCode=' + this.code, {
+      fetch(`http://${this.local}/tournament/delete/${this.tournamentUUID}?pinCode=${this.code}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json'
@@ -1863,7 +1899,7 @@ export default {
       if (pageNumber < 0) {
         this.pageNumber = 0
       }
-      fetch('http://' + this.local + '/tournament/closedList?page=' + pageNumber + '&size=15', {
+      fetch(`http://${this.local}/tournament/closedList?page=${pageNumber}&size=15`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -2059,7 +2095,7 @@ export default {
       })
     },
     deleteListFromTournament () {
-      fetch('http://' + this.local + '/competitionMembersList/delete?tournamentUUID=' + this.tournamentUUID + '&competitionUUID=' + this.competitionListUUID, {
+      fetch(`http://${this.local}/competitionMembersList/delete?tournamentUUID=${this.tournamentUUID}&competitionUUID=${this.competitionListUUID}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json'
@@ -2144,14 +2180,14 @@ export default {
     getAnnouncementFromCompetition () {
       this.showloading()
       axios({
-        url: 'http://' + this.local + '/files/downloadAnnouncementFromCompetition/' + this.tournamentUUID,
+        url: `http://${this.local}/files/downloadAnnouncementFromCompetition/${this.tournamentUUID}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
-        fileLink.setAttribute('download', 'rezultatyDZIESIĄTKA' + this.date.replaceAll('-', '') + '.pdf')
+        fileLink.setAttribute('download', `rezultaty${this.shootingPlace === 'prod' ? 'DZIESIĄTKA' : 'RSCPANASZEW'} ${this.date.replaceAll('-', '')}.pdf`)
         document.body.appendChild(fileLink)
         fileLink.click()
         this.listDownload = true
@@ -2161,14 +2197,14 @@ export default {
     getAnnouncementFromCompetitionXLSX () {
       this.showloading()
       axios({
-        url: 'http://' + this.local + '/files/downloadAnnouncementFromCompetitionXLSX/' + this.tournamentUUID,
+        url: `http://${this.local}/files/downloadAnnouncementFromCompetitionXLSX/${this.tournamentUUID}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
-        fileLink.setAttribute('download', 'rezultatyDZIESIĄTKA' + this.date.replaceAll('-', '') + '.xlsx')
+        fileLink.setAttribute('download', `rezultaty${this.shootingPlace === 'prod' ? 'DZIESIĄTKA' : 'RSCPANASZEW'} ${this.date.replaceAll('-', '')}.xlsx`)
         document.body.appendChild(fileLink)
         fileLink.click()
         this.listDownload = true
@@ -2177,14 +2213,14 @@ export default {
     },
     getJudgeFromTournament (uuid, name, date) {
       axios({
-        url: 'http://' + this.local + '/files/downloadJudge/' + uuid,
+        url: `http://${this.local}/files/downloadJudge/${uuid}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
-        fileLink.setAttribute('download', 'Lista_sędziów_na_zawodach_' + name + '_' + date + '.pdf')
+        fileLink.setAttribute('download', `Lista sędziów na zawodach ${name} ${date}.pdf`)
         document.body.appendChild(fileLink)
         fileLink.click()
         this.listDownload = true
@@ -2207,7 +2243,7 @@ export default {
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
-        fileLink.setAttribute('download', 'metryki_' + name + '_' + date + '.pdf')
+        fileLink.setAttribute('download', `metryki ${name} ${date}.pdf`)
         document.body.appendChild(fileLink)
         fileLink.click()
         this.listDownload = true
@@ -2215,7 +2251,7 @@ export default {
       })
     },
     getAllClubsToTournament () {
-      fetch('http://' + this.local + '/club/tournament', {
+      fetch(`http://${this.local}/club/tournament`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -2223,7 +2259,7 @@ export default {
         })
     },
     addGunToTournament (barcode) {
-      fetch('http://' + this.local + '/tournament/addGunToTournament?barcode=' + barcode + '&tournamentUUID=' + this.tournamentUUID, {
+      fetch(`http://${this.local}/tournament/addGunToTournament?barcode=${barcode}&tournamentUUID=${this.tournamentUUID}`, {
         method: 'POST'
       }).then(response => {
         if (response.status === 200) {
@@ -2247,6 +2283,7 @@ export default {
       })
     },
     autoClose () {
+      this.visible = false
       setTimeout(() => {
         this.gunAdded = false
         this.listDownload = false

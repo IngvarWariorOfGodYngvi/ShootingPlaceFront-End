@@ -219,9 +219,7 @@ export default {
       }).then(response => response.json())
         .then(response => {
           this.list = response
-          setTimeout(() => {
-            this.visible = false
-          }, 2000)
+          this.visible = false
         })
     },
     convertDate (date) {

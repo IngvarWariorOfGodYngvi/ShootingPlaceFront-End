@@ -16,7 +16,7 @@
         unelevated
         to="/"
         label="Powrót do strony głównej"
-        no-caps
+        no-caps @click="count()"
       />
     </div>
   </div>
@@ -29,6 +29,15 @@ export default {
   data () {
     return {
       local: App.host
+    }
+  },
+  methods: {
+    count () {
+      this.compList = []
+      if (window.localStorage.getItem('counter') !== null) {
+        let counter = parseInt(window.localStorage.getItem('counter'))
+        window.localStorage.setItem('counter', ++counter)
+      }
     }
   }
 }

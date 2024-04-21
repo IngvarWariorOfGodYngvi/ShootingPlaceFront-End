@@ -34,77 +34,6 @@
                 <q-btn @click="createMotherClub ()" label="Dodaj" color="secondary"/>
               </q-item>
             </q-card-section>
-            <!-- <q-card-section class="col-6 bg-dark">
-              <q-item id="club" v-if="clubMessage!=null">
-                <div class="full-width text-bold text-center text-positive">{{ clubMessage }}</div>
-              </q-item>
-            </q-card-section>
-          </q-card>
-          <div class="q-pa-md text-bold text-center text-h6 text-positive">ADRES KWP WPA</div>
-          <q-card class="row">
-            <q-card-section class="bg-grey-2 col-3">
-              <div class="col">
-                <q-select v-if="!policeAddressError" class="q-pa-md" filled v-model="city" :options="cities"
-                          label="Miasto Wojewódzkie" @input="inputPoliceAddress(city)"/>
-                <q-checkbox
-                  @input="city = 'BRAK WYNIKÓW';policeCity=null;policeZipCode=null;policeStreet=null;policeStreetNumber=null"
-                  class="q-pa-md" v-model="policeAddressError" label="Brak mojego WPA lub błędny adres"></q-checkbox>
-              </div>
-            </q-card-section>
-            <q-card-section v-if="!policeAddressError" class="bg-grey-2 col-9">
-              <q-item class="q-pa-md">
-                <q-field class="full-width" standout label="Adres WPA" stack-label>
-                  <template v-slot:control>
-                    <div class="self-center full-width no-outline">Komendant Wojewódzki Policji {{ policeCity }}</div>
-                    <div class="self-center full-width no-outline">Wydział Postępowań Administracyjnych</div>
-                    <div class="self-center full-width no-outline">{{ policeZipCode }}, {{ ul_al }} {{ policeStreet }}
-                      {{ policeStreetNumber }}
-                    </div>
-                  </template>
-                </q-field>
-              </q-item>
-            </q-card-section>
-            <q-card-section v-else class="bg-grey-2 col-9">
-              <q-item>
-                <q-field class="full-width text-center" standout="bg-accent text-black" stack-label>
-                  <template v-slot:control>
-                    <div class="self-center full-width no-outline text-black text-center text-bold text-h6">Wprowadź
-                      adres WPA
-                    </div>
-                  </template>
-                </q-field>
-              </q-item>
-              <q-item>
-                <q-field class="full-width" standout label="Nowy Adres WPA" stack-label>
-                  <template v-slot:control>
-                    <div class="self-center full-width no-outline">Komendant Wojewódzki Policji w {{ policeCity }}</div>
-                    <div class="self-center full-width no-outline">Wydział Postępowań Administracyjnych</div>
-                    <div class="self-center full-width no-outline">{{ policeZipCode }}, {{ ul_al }} {{ policeStreet }}
-                      {{ policeStreetNumber }}
-                    </div>
-                  </template>
-                </q-field>
-              </q-item>
-              <div>
-                <q-item>
-                  <q-input class="full-width" filled v-model="policeCity" label="Miasto"/>
-                </q-item>
-                <q-item>
-                  <q-input class="full-width" filled v-model="policeZipCode" placeholder="00-000" label="Kod Pocztowy"
-                           mask="##-###"/>
-                </q-item>
-                <q-item>
-                  <q-select label="Prefix" filled v-model="ul_al" :options="ulAl" class="col-2 bg-grey-5"></q-select>
-                  <q-input class="full-width col" filled v-model="policeStreet" label="Ulica"/>
-                </q-item>
-                <q-item>
-                  <q-input class="full-width" filled v-model="policeStreetNumber" label="Numer Ulicy"/>
-                </q-item>
-                <q-item>
-                  <q-btn label="Dodaj" color="secondary"/>
-                </q-item>
-              </div>
-            </q-card-section> -->
           </q-card>
     </div>
   </q-page>
@@ -112,11 +41,9 @@
 
 <script>
 
-// import axios from 'axios'
 import App from 'src/App.vue'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox'
-// import { isWindows } from 'mobile-device-detect'
 export default {
   components: {
     Users: lazyLoadComponent({
@@ -170,7 +97,7 @@ export default {
       }, 1000)
     },
     getAllClubs () {
-      fetch('http://' + this.local + '/club/', {
+      fetch(`http://${this.local}/club/`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -190,7 +117,7 @@ export default {
           address: this.clubAddress,
           url: this.clubURL
         }
-        fetch('http://' + this.local + '/settings/createMotherClub', {
+        fetch(`http://${this.local}/settings/createMotherClub`, {
           method: 'POST',
           body: JSON.stringify(data),
           headers: {
