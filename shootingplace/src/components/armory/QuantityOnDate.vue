@@ -2,7 +2,6 @@
   <div>
     <div class="text-center">
       <q-circular-progress v-if="q=='przeliczanie'" color="primary" indeterminate/>
-      <!-- <q-linear-progress v-if="q=='przeliczanie'" indeterminate color="primary" size="2px"/> -->
       <div v-else>{{ q }}</div>
     </div>
   </div>
@@ -55,7 +54,7 @@ export default {
   methods: {
     getCaliberQuantityOnDate (caliberUUID, date) {
       this.q = 'przeliczanie'
-      fetch(`http://${this.local}/armory/caliberQuantity?uuid=${caliberUUID}&date=${date}`, {
+      fetch(`${this.local}/armory/caliberQuantity?uuid=${caliberUUID}&date=${date}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'

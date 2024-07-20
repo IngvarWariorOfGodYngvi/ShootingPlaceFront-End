@@ -123,7 +123,7 @@ export default {
   methods: {
     getJudgingList (firstDate, secondDate) {
       if (firstDate != null && secondDate != null) {
-        fetch('http://' + this.local + '/tournament/getJudgingList?firstDate=' + firstDate.replace(/\//gi, '-') + '&secondDate=' + secondDate.replace(/\//gi, '-'), {
+        fetch(`${this.local}/tournament/getJudgingList?firstDate=${firstDate.replace(/\//gi, '-')}&secondDate=${secondDate.replace(/\//gi, '-')}`, {
           method: 'GET'
         }).then(response => {
           response.json().then(response => {
@@ -150,7 +150,7 @@ export default {
     getJudgingReport (firstDate, secondDate) {
       if (firstDate != null && secondDate != null) {
         axios({
-          url: 'http://' + this.local + '/files/downloadJudgingReport?firstDate=' + firstDate + '&secondDate=' + secondDate,
+          url: `${this.local}/files/downloadJudgingReport?firstDate=${firstDate}&secondDate=${secondDate}`,
           method: 'GET',
           responseType: 'blob'
         }).then(response => {

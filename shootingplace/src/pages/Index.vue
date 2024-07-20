@@ -22,13 +22,12 @@ export default {
   data () {
     return {
       shootingPlace: App.shootingPlace,
-      mobile: App.mobile,
-      app: 'http://' + App.prod
+      mobile: App.mobile
     }
   },
   components: {
     MainList: lazyLoadComponent({
-      componentFactory: () => import('components/MainList.vue'),
+      componentFactory: () => import('src/components/MainList.vue'),
       loading: SkeletonBox
     })
   },

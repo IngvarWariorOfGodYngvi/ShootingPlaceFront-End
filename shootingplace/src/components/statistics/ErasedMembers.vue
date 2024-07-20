@@ -132,7 +132,7 @@ export default {
       return date.getFullYear() + '/' + month + '/' + day
     },
     getSumErased () {
-      fetch('http://' + this.local + '/statistics/erasedSum?firstDate=' + this.firstDateErased.replace(/\//gi, '-') + '&secondDate=' + this.secondDateErased.replace(/\//gi, '-'), {
+      fetch(`${this.local}/statistics/erasedSum?firstDate=${this.firstDateErased.replace(/\//gi, '-')}&secondDate=${this.secondDateErased.replace(/\//gi, '-')}`, {
         method: 'GET'
       }).then(response => {
         response.json().then(response => {
@@ -142,7 +142,7 @@ export default {
     },
     getSumErasedXLSXFile () {
       axios({
-        url: 'http://' + this.local + '/files/erasedSum?firstDate=' + this.firstDateErased.replace(/\//gi, '-') + '&secondDate=' + this.secondDateErased.replace(/\//gi, '-'),
+        url: `${this.local}/files/erasedSum?firstDate=${this.firstDateErased.replace(/\//gi, '-')}&secondDate=${this.secondDateErased.replace(/\//gi, '-')}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {

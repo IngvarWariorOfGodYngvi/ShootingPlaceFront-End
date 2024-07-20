@@ -104,7 +104,7 @@ export default {
   methods: {
     getApplicationForFirearmsLicense (thirdName, birthPlace, fatherName, motherName, motherMaidenName, issuingAuthority, IDDate, licenseDate, city) {
       axios({
-        url: `http://${this.local}/files/ApplicationForFirearmsLicense/${this.uuid}`,
+        url: `${this.local}/files/ApplicationForFirearmsLicense/${this.uuid}`,
         method: 'GET',
         params: {
           thirdName: thirdName,

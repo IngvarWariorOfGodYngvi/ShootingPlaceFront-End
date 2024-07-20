@@ -5,7 +5,7 @@ const licenseEnd = {
 }
 getLicence()
 function getLicence () {
-  fetch(`http://${App.host}/settings/termsAndLicense`, {
+  fetch(`${App.host}/settings/termsAndLicense`, {
     method: 'GET'
   }).then(response => {
     response.json().then(response => {
@@ -93,6 +93,7 @@ if (App.main) {
           },
           {
             path: '/licenseend',
+            name: 'koniec licencji',
             component: () => import(/* webpackChunkName: "Koniec Licencji" */'pages/licenseEnd.vue')
           },
           {

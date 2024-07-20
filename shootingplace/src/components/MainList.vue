@@ -92,14 +92,6 @@
             </div>
         </q-item>
       </div>
-      <div v-if="main" @click="showloading();changeTitle ('Ustawienia')" class="q-pa-xs">
-        <q-item class="q-pa-none xyz2" clickable tag="a" target="_self" :href="app + 'settings'" width="max">
-            <div class="row text-grey-7 text-left">
-              <q-icon class="q-pa-md text-h5" name="settings"/>
-            <div class="self-center text-black">Ustawienia</div>
-            </div>
-        </q-item>
-      </div>
       <div v-if="(main||!main)&&main!=null" @click="showloading();changeTitle ('Panel Sędziego')" class="q-pa-xs">
         <q-item class="q-pa-none xyz2" clickable tag="a" target="_self" :href="app + 'juryPanel'" width="max">
             <div class="row text-grey-7 text-left">
@@ -108,14 +100,6 @@
             </div>
         </q-item>
       </div>
-      <!-- <div @click="showloading()" class="q-pa-xs">
-        <q-item class="q-pa-none xyz2" clickable tag="a" target="_self" :href="friend" width="max">
-            <div class="row text-grey-7 text-left">
-              <q-icon class="q-pa-md text-h5" name="settings"/>
-            <div class="self-center text-black">Faktury STRONA GŁÓWNA</div>
-            </div>
-        </q-item>
-      </div> -->
     </div>
 </template>
 <style src="../style/style.scss" lang="scss">
@@ -128,8 +112,7 @@ export default {
   name: 'MainList',
   data () {
     return {
-      app: 'http://' + App.prod,
-      friend: 'http://' + App.friend,
+      app: App.prod,
       color: 'primary',
       tournamentCheck: false,
       mobile: App.mobile,
@@ -150,10 +133,11 @@ export default {
       }, 500)
     },
     changeTitle (title) {
+      document.title = 'Strzelnica - ' + title
       window.localStorage.setItem('SiteName', title)
     },
     checkAnyOpenAmmoList () {
-      fetch('http://' + this.local + '/ammoEvidence/checkAnyOpenEvidence', {
+      fetch(`${this.local}/ammoEvidence/checkAnyOpenEvidence`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -164,7 +148,7 @@ export default {
         })
     },
     checkTournament () {
-      fetch('http://' + this.local + '/tournament/check', {
+      fetch(`${this.local}/tournament/check`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'

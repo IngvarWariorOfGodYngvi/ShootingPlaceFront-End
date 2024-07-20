@@ -65,7 +65,7 @@ export default {
   methods: {
     getContributionPDF () {
       axios({
-        url: `http://${this.local}/files/downloadContribution/${this.uuid}?contributionUUID=null&a5rotate=${this.a5rotate}`,
+        url: `${this.local}/files/downloadContribution/${this.uuid}?contributionUUID=null&a5rotate=${this.a5rotate}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {

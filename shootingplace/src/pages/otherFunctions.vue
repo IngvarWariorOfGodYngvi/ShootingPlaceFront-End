@@ -118,42 +118,68 @@
           </div>
           <div v-if=" choose === chooseSelect[3] " class="row">
             <div class="row full-width">
-              <div class="q-pa-md col-6"><q-btn class="full-width" color="primary" label="wyświetl listę osób"
-                  @click=" showloading(); getMembersErased() " /></div>
-              <div class="q-pa-md col"><q-btn class="full-width" color="primary"  label="pobierz listę .pdf"
-                  @click=" showloading(); getErasedMembers() " /></div>
-            </div>
-            <div class="row full-width">
-              <div v-if=" erasedList.length > 0 " class="col-8">
-                <div class="row full-width">
-                  <div class="col-1">Lp</div>
-                  <div class="col-6">Nazwisko i Imię</div>
-                  <div class="col text-center">Numer legitymacji</div>
-                  <div class="col text-center">Data Usunięcia</div>
-                  <div class="col text-center">Przyczyna</div>
-                </div>
-                <q-virtual-scroll :items=" erasedList " visible class="full-width q-pa-none">
-                  <template v-slot=" { item, index } ">
-                    <div :key=" index " class="row">
-                      <div class="col-1">{{index+1}}</div>
-                      <div class="col-6">{{item.secondName}} {{item.firstName}}</div>
-                      <div class="col text-center">{{item.legitimationNumber}}</div>
-                      <div class="col text-center">{{item.erasedEntity.date}}</div>
-                      <div class="col text-center">{{item.erasedEntity.erasedType}}</div>
+              <q-card-section>
+              <q-item class="col">
+          <q-input class="full-width" color="positive" input-class="text-positive" label-color="positive" dense filled v-model="firstDate" mask="####-##-##" label="Data początkowa">
+            <template v-slot:append>
+              <q-icon name="event" color="positive" class="cursor-pointer">
+                <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                  <q-date v-model="firstDate" mask="YYYY-MM-DD" class="bg-dark text-positive">
+                    <div class="row items-center justify-end">
+                      <q-btn v-close-popup label="Zamknij" color="primary"/>
                     </div>
-                  </template>
-                </q-virtual-scroll>
-              </div>
-              <div v-if=" erasedList.length > 0 " class="col-4">
-                <div class="row full-width">
-                  <div class="col-1"></div>
-                  <div class="col">Dodatkowy Opis</div>
+                  </q-date>
+                </q-popup-proxy>
+              </q-icon>
+            </template>
+          </q-input>
+        </q-item>
+        <q-item class="col">
+          <q-input class="full-width" color="positive" input-class="text-positive" label-color="positive" dense filled v-model="secondDate" mask="####-##-##" label="Data końcowa">
+            <template v-slot:append>
+              <q-icon name="event" color="positive" class="cursor-pointer">
+                <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                  <q-date v-model="secondDate" mask="YYYY-MM-DD" class="bg-dark text-positive">
+                    <div class="row items-center justify-end">
+                      <q-btn v-close-popup label="Zamknij" color="primary"/>
+                    </div>
+                  </q-date>
+                </q-popup-proxy>
+              </q-icon>
+            </template>
+          </q-input>
+        </q-item>
+      </q-card-section>
+              <div class="q-pa-md col-6"><q-btn class="full-width" color="primary" label="wyświetl listę osób"
+                  @click=" showloading(); getMembersErased(firstDate, secondDate) " /></div>
+              <div class="q-pa-md col"><q-btn class="full-width" color="primary"  label="pobierz listę .pdf"
+                  @click=" showloading(); getErasedMembers(firstDate, secondDate) " /></div>
+              <div class="q-pa-md col"><q-btn class="full-width" color="green"  label="pobierz listę .xlsx"
+                  @click=" showloading(); getErasedMembersXlsx(firstDate, secondDate) " /></div>
+                </div>
+            <div class="row full-width">
+              <div v-if=" erasedList.length > 0 " class="col">
+                <div class="row full-width" style="border:1px solid">
+                  <div class="col-1">Lp</div>
+                  <div class="col">Nazwisko i Imię</div>
+                  <div class="col">Numer legitymacji</div>
+                  <div class="col">Data Usunięcia</div>
+                  <div class="col">Data Wykonania</div>
+                  <div class="col">Przyczyna</div>
+                  <div v-if=" erasedList.length > 0 " class="col-4">
+                    <div class="col">Dodatkowy Opis</div>
+                  </div>
                 </div>
                 <q-virtual-scroll :items=" erasedList " visible class="full-width q-pa-none">
                   <template v-slot=" { item, index } ">
-                    <div :key=" index " class="row">
-                      <div class="col-1"></div>
-                      <div class="col">{{item.erasedEntity.additionalDescription}}</div>
+                    <div :key=" index " class="row" style="border:1px solid">
+                      <div class="col-1">{{index+1}}</div>
+                      <div class="col">{{item.secondName}} {{item.firstName}}</div>
+                      <div class="col text-center">{{item.legitimationNumber}}</div>
+                      <div class="col">{{item.erasedEntity.date}}</div>
+                      <div class="col">{{item.erasedEntity.inputDate}}</div>
+                      <div class="col">{{item.erasedEntity.erasedType}}</div>
+                      <div class="col-4">{{item.erasedEntity.additionalDescription}}</div>
                     </div>
                   </template>
                 </q-virtual-scroll>
@@ -229,7 +255,7 @@ import App from 'src/App.vue'
 export default {
   components: {
     OtherList: lazyLoadComponent({
-      componentFactory: () => import('components/otherFunctions/OthersList.vue'),
+      componentFactory: () => import('src/components/otherPerson/OthersList.vue'),
       loading: SkeletonBox
     }),
     Clubs: lazyLoadComponent({
@@ -263,6 +289,8 @@ export default {
       legitimationNumber: null,
       dateEvidence: this.createTodayDate(),
       code: null,
+      firstDate: null,
+      secondDate: this.createTodayDate(),
       toEraseList: [],
       erasedList: [],
       choose: null,
@@ -310,7 +338,7 @@ export default {
       return date.getFullYear() + '-' + month + '-' + day
     },
     getAccess (accessCode) {
-      fetch(`http://${this.local}/users/getAccess?pinCode=${accessCode}`, {
+      fetch(`${this.local}/users/getAccess?pinCode=${accessCode}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -335,7 +363,7 @@ export default {
       )
     },
     getMembersToReportToThePolice () {
-      fetch('http://' + this.local + '/member/getMembersToReportToThePolice', {
+      fetch(`${this.local}/member/getMembersToReportToThePolice`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -343,15 +371,15 @@ export default {
         })
     },
     getMembersToErase () {
-      fetch('http://' + this.local + '/member/getMembersToErase', {
+      fetch(`${this.local}/member/getMembersToErase`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
           this.toEraseList = response
         })
     },
-    getMembersErased () {
-      fetch('http://' + this.local + '/member/erased', {
+    getMembersErased (firstDate, secondDate) {
+      fetch(`${this.local}/member/erased?firstDate=${firstDate.replace(/\//gi, '-')}&secondDate=${secondDate.replace(/\//gi, '-')}`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -360,14 +388,14 @@ export default {
     },
     getAllMembersList () {
       axios({
-        url: 'http://' + this.local + '/files/downloadAllMembers/?condition=' + this.tableCondition,
+        url: `${this.local}/files/downloadAllMembers/?condition=${this.tableCondition}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
-        fileLink.setAttribute('download', 'Lista_klubowiczów_na_dzień ' + this.nowDate + '.pdf')
+        fileLink.setAttribute('download', `Lista_klubowiczów_na_dzień ${this.nowDate}.pdf`)
         document.body.appendChild(fileLink)
         fileLink.click()
         this.listDownload = true
@@ -376,14 +404,14 @@ export default {
     },
     getAllMembersListXLSXFile () {
       axios({
-        url: 'http://' + this.local + '/files/downloadAllMembersXLSXFile/?condition=' + this.tableCondition,
+        url: `${this.local}/files/downloadAllMembersXLSXFile/?condition=${this.tableCondition}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
-        fileLink.setAttribute('download', 'Lista_klubowiczów_na_dzień ' + this.nowDate + '.xlsx')
+        fileLink.setAttribute('download', `Lista_klubowiczów_na_dzień ${this.nowDate}.xlsx`)
         document.body.appendChild(fileLink)
         fileLink.click()
         this.listDownload = true
@@ -392,7 +420,7 @@ export default {
     },
     getAllMembersListToElection () {
       axios({
-        url: 'http://' + this.local + '/files/downloadAllMembersToElection',
+        url: `${this.local}/files/downloadAllMembersToElection`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
@@ -408,7 +436,7 @@ export default {
     },
     generateListOfMembersToReportToPolice () {
       axios({
-        url: 'http://' + this.local + '/files/generateListOfMembersToReportToPolice',
+        url: `${this.local}/files/generateListOfMembersToReportToPolice`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
@@ -424,14 +452,14 @@ export default {
     },
     getAllMembersWithLicenseValidAndContributionNotValid () {
       axios({
-        url: 'http://' + this.local + '/files/downloadAllMembersWithValidLicenseNoContribution/',
+        url: `${this.local}/files/downloadAllMembersWithValidLicenseNoContribution/`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
-        fileLink.setAttribute('download', 'Lista_klubowiczów_z_licencją_bez_składek_' + this.nowDate + '.pdf')
+        fileLink.setAttribute('download', `Lista_klubowiczów_z_licencją_bez_składek_${this.nowDate}.pdf`)
         document.body.appendChild(fileLink)
         fileLink.click()
         this.listDownload = true
@@ -440,14 +468,14 @@ export default {
     },
     getAllMembersToErase () {
       axios({
-        url: 'http://' + this.local + '/files/downloadAllMembersToErased/',
+        url: `${this.local}/files/downloadAllMembersToErased/`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
-        fileLink.setAttribute('download', 'Lista_klubowiczów_do_skreślenia_' + this.nowDate + '.pdf')
+        fileLink.setAttribute('download', `Lista_klubowiczów_do_skreślenia_${this.nowDate}.pdf`)
         document.body.appendChild(fileLink)
         fileLink.click()
         this.listDownload = true
@@ -456,14 +484,30 @@ export default {
     },
     getErasedMembers () {
       axios({
-        url: 'http://' + this.local + '/files/downloadAllErasedMembers',
+        url: `${this.local}/files/downloadAllErasedMembers?firstDate=${this.firstDate.replace(/\//gi, '-')}&secondDate=${this.secondDate.replace(/\//gi, '-')}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
-        fileLink.setAttribute('download', 'Lista_klubowiczów_skreślonych_' + this.nowDate + '.pdf')
+        fileLink.setAttribute('download', `Lista_klubowiczów_skreślonych_${this.nowDate}.pdf`)
+        document.body.appendChild(fileLink)
+        fileLink.click()
+        this.listDownload = true
+        this.autoClose()
+      })
+    },
+    getErasedMembersXlsx () {
+      axios({
+        url: `${this.local}/files/downloadAllErasedMembersXlsx?firstDate=${this.firstDate.replace(/\//gi, '-')}&secondDate=${this.secondDate.replace(/\//gi, '-')}`,
+        method: 'GET',
+        responseType: 'blob'
+      }).then(response => {
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        const fileLink = document.createElement('a')
+        fileLink.href = fileURL
+        fileLink.setAttribute('download', `Lista_klubowiczów_skreślonych_${this.nowDate}.xlsx`)
         document.body.appendChild(fileLink)
         fileLink.click()
         this.listDownload = true

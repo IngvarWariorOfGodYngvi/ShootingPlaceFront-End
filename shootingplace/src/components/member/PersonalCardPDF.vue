@@ -50,7 +50,7 @@ export default {
   methods: {
     getPersonalCardPDF () {
       axios({
-        url: `http://${this.local}/files/downloadPersonalCard/${this.uuid}`,
+        url: `${this.local}/files/downloadPersonalCard/${this.uuid}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {

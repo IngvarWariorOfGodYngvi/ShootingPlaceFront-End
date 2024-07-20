@@ -65,7 +65,7 @@
                 license.canProlong&&license.paid?prolongLicenseConfirm=true:noDomesticStarts=true"/>
       </div>
       <q-btn v-if="(((license.paid===false&&clubID===1)))&&main&&!mobile&&active" class="full-width round"
-             label="opłać licencję" color="secondary" text-color="white" @click="licensePayment=true"/>
+             label="opłać licencję" color="secondary" text-color="white" @click="licensePayment=true" :loading="loading[0]"/>
       <q-expansion-item dense default-opened class="bg-dark text-center text-positive"
                         v-if="licensePaymentHistory.length>0" label="Daty Opłacenia Licencji">
         <q-virtual-scroll class="full-width q-pa-none" :style="(!shootingPatent.pistolPermission
@@ -116,9 +116,12 @@
     </q-card-section>
     <q-dialog v-model="editLicense" @keypress.esc="editLicense=false">
       <q-card class="bg-dark text-positive">
+        <q-card-actions align="right" class="q-pa-xs q-ma-xs">
+            <div class="text-h5 text-bold text-center col">Edytuj Licencję</div>
+            <q-btn icon="close" color="primary" round dense v-close-popup @click="editLicensePaid=null"/>
+        </q-card-actions>
+        <div class="text-h6 text-center">Uwaga! Wprowadzając zmiany bądź pewny tego co robisz</div>
         <q-card-section class="col">
-          <div class="text-h5 text-bold text-center">Edytuj Licencje</div>
-          <div class="text-h6">Uwaga! Wprowadzając zmiany bądź pewny tego co robisz</div>
           <div class="row bg-dark">
             <div class="q-pa-md col-6">
               <q-input dense filled color="positive" input-class="text-positive" onkeypress="return (event.charCode > 47 && event.charCode < 58)" label-color="positive" stack-label v-model="editLicenseNumber"
@@ -150,10 +153,6 @@
                    @click="editLicenseCode=true"/>
           </div>
         </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn text-color="white" label="zamknij" color="primary" v-close-popup @click="editLicensePaid=null"/>
-        </q-card-actions>
       </q-card>
     </q-dialog>
     <q-dialog v-model="updateLicenseConfirm">
@@ -259,7 +258,7 @@
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
           <div>
-            <q-input @keypress.enter="licensePaymentCode=false;addLicenseHistoryPayment (memberUUID, code)" autofocus
+            <q-input @keypress.enter="licensePaymentCode=false;simulateProgress(0)" autofocus
                      type="password" v-model="code" filled
                      color="Yellow" class="bg-yellow text-bold" mask="####"></q-input>
           </div>
@@ -268,14 +267,17 @@
         <q-card-actions align="right">
           <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
           <q-btn label="OK" color="black" v-close-popup
-                 @click="licensePaymentCode=false;addLicenseHistoryPayment (memberUUID, code)"/>
+                 @click="licensePaymentCode=false;simulateProgress(0)"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
     <q-dialog v-model="editLicensePayment" @keypress.esc="editLicensePayment=false">
       <q-card class="bg-dark text-positive">
+        <q-card-actions align="right">
+        <div class="text-h5 text-bold text-center col">Edytuj Opłatę za Licencję</div>
+        <q-btn icon="close" color="primary" round dense v-close-popup/>
+      </q-card-actions>
         <q-card-section>
-          <div class="text-h5 text-bold text-center">Edytuj Opłatę za Licencję</div>
           <div class="text-h6 text-center">Uwaga! Wprowadzając zmiany bądź pewny tego co robisz</div>
           <div class="row bg-dark">
               <q-input dense class="col-6" color="positive" input-class="text-positive" label-color="positive" filled v-model="editLicensePaymentDate" mask="####-##-##" label="Data Opłacenia Licencji">
@@ -305,10 +307,6 @@
             </div>
           </div>
         </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn label="zamknij" color="primary" v-close-popup/>
-        </q-card-actions>
       </q-card>
     </q-dialog>
     <q-dialog v-model="togglePaymentAlert" persistent>
@@ -411,13 +409,12 @@
     </q-dialog>
   </div>
 </template>
-
 <script>
 import App from 'src/App'
 // import { isWindows } from 'mobile-device-detect'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox.vue'
-
+import { ref } from 'vue'
 export default {
   name: 'MemberLicense.vue',
   components: {
@@ -426,10 +423,30 @@ export default {
       loading: SkeletonBox
     })
   },
+  setup () {
+    const loading = ref([
+      false
+    ])
+    const progress = ref(false)
+
+    function simulateProgress (number) {
+      loading.value[number] = true
+      this.addLicenseHistoryPayment(this.memberUUID, this.code)
+      setTimeout(() => {
+        loading.value[number] = false
+      }, 0)
+    }
+    return {
+      loading,
+      progress,
+      simulateProgress
+    }
+  },
   data () {
     return {
       mobile: App.mobile,
       main: App.main,
+      load: false,
       license: '',
       licensePaymentHistory: [],
       code: null,
@@ -524,7 +541,7 @@ export default {
     },
     async getLicense (licenseUUID) {
       this.visible = true
-      await fetch(`http://${this.local}/license/getLicense?licenseUUID=${licenseUUID}`, {
+      await fetch(`${this.local}/license/getLicense?licenseUUID=${licenseUUID}`, {
         method: 'GET'
       }).then(response => {
         response.json().then(
@@ -534,7 +551,7 @@ export default {
       })
     },
     async getLicensePaymentHistory (memberUUID) {
-      await fetch(`http://${this.local}/license/getLicensePaymentHistory?memberUUID=${memberUUID}`, {
+      await fetch(`${this.local}/license/getLicensePaymentHistory?memberUUID=${memberUUID}`, {
         method: 'GET'
       }).then(response => {
         response.json().then(
@@ -550,7 +567,7 @@ export default {
         riflePermission: licenseRiflePermission,
         shotgunPermission: licenseShotgunPermission
       }
-      fetch(`http://${this.local}/license/${this.memberUUID}`, {
+      fetch(`${this.local}/license/${this.memberUUID}`, {
         method: 'PUT',
         body: JSON.stringify(data1),
         headers: {
@@ -587,7 +604,7 @@ export default {
         riflePermission: licenseRiflePermission,
         shotgunPermission: licenseShotgunPermission
       }
-      fetch(`http://${this.local}/license/${uuid}`, {
+      fetch(`${this.local}/license/${uuid}`, {
         method: 'PATCH',
         body: JSON.stringify(data),
         headers: {
@@ -619,7 +636,7 @@ export default {
       })
     },
     editLicenseHistoryPayment () {
-      fetch(`http://${this.local}/license/editPayment?memberUUID=${this.memberUUID}&paymentUUID=${this.paymentUUID}&paymentDate=${this.editLicensePaymentDate.replace(/\//gi, '-')}&year=${this.editLicensePaymentYear}&pinCode=${this.code}`, {
+      fetch(`${this.local}/license/editPayment?memberUUID=${this.memberUUID}&paymentUUID=${this.paymentUUID}&paymentDate=${this.editLicensePaymentDate.replace(/\//gi, '-')}&year=${this.editLicensePaymentYear}&pinCode=${this.code}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -647,7 +664,7 @@ export default {
       })
     },
     deleteLicenseHistoryPayment (uuid) {
-      fetch(`http://${this.local}/license/removePayment?paymentUUID=${uuid}&pinCode=${this.code}`, {
+      fetch(`${this.local}/license/removePayment?paymentUUID=${uuid}&pinCode=${this.code}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json'
@@ -675,7 +692,7 @@ export default {
       })
     },
     addLicenseHistoryPayment (uuid, code) {
-      fetch(`http://${this.local}/license/history/${uuid}?pinCode=${code}`, {
+      fetch(`${this.local}/license/history/${uuid}?pinCode=${code}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -701,7 +718,7 @@ export default {
       })
     },
     changeHistoryPayment (uuid, condition) {
-      fetch(`http://${this.local}/license/paymentChange?paymentUUID=${uuid}&pinCode=${this.code}&condition=${condition}`, {
+      fetch(`${this.local}/license/paymentChange?paymentUUID=${uuid}&pinCode=${this.code}&condition=${condition}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -728,7 +745,7 @@ export default {
       })
     },
     forceUpdateLicence (uuid, number, date, paid) {
-      fetch(`http://${this.local}/license/forceUpdate?memberUUID=${uuid}&number=${number}&date=${date.replace(/\//gi, '-')}&isPaid=${paid}&pinCode=${this.code}`, {
+      fetch(`${this.local}/license/forceUpdate?memberUUID=${uuid}&number=${number}&date=${date.replace(/\//gi, '-')}&isPaid=${paid}&pinCode=${this.code}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'

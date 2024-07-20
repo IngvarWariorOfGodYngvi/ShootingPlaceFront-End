@@ -140,7 +140,7 @@ export default {
   },
   methods: {
     getAllClubs () {
-      fetch('http://' + this.local + '/club/', {
+      fetch(`${this.local}/club/`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -157,7 +157,7 @@ export default {
         address: this.clubAddress,
         url: this.clubURL
       }
-      fetch('http://' + this.local + '/club/' + this.clubID, {
+      fetch(`${this.local}/club/${this.clubID}`, {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {
@@ -198,7 +198,7 @@ export default {
         address: this.clubAddress,
         url: this.clubURL
       }
-      fetch('http://' + this.local + '/club/create', {
+      fetch(`${this.local}/club/create`, {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {

@@ -268,7 +268,7 @@ export default {
   },
   methods: {
     getAllUsers () {
-      fetch('http://' + this.local + '/users/userList/', {
+      fetch(`${this.local}/users/userList/`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -279,7 +279,7 @@ export default {
       return JSON.parse(window.localStorage.getItem('BackgroundDark'))
     },
     getUserActions (uuid) {
-      fetch('http://' + this.local + '/users/userActions?uuid=' + uuid, {
+      fetch(`${this.local}/users/userActions?uuid=${uuid}`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -291,7 +291,7 @@ export default {
         this.message = 'Coś poszło nie tak'
         this.failure = true
       } else {
-        fetch(`http://${this.local}/users/createUser?firstName=${this.userFirstName}&secondName=${this.userSecondName}&subType=${this.userSubTypeSelect}&pinCode=${this.userCode}&superPinCode=${this.code}&memberUUID=${this.memberUUID}&otherID=${this.otherID}`, {
+        fetch(`${this.local}/users/createUser?firstName=${this.userFirstName}&secondName=${this.userSecondName}&subType=${this.userSubTypeSelect}&pinCode=${this.userCode}&superPinCode=${this.code}&memberUUID=${this.memberUUID}&otherID=${this.otherID}`, {
           method: 'POST'
         }).then(response => {
           if (response.status === 201) {
@@ -319,7 +319,7 @@ export default {
         this.message = 'Coś poszło nie tak'
         this.failure = true
       } else {
-        fetch(`http://${this.local}/users/editUser?firstName=${this.userFirstName1}&secondName=${this.userSecondName1}&subType=${this.userSubTypeSelect1}&pinCode=${this.userCode1}&superPinCode=${this.code}&memberUUID=${this.memberUUID1}&otherID=${this.otherID1}&userUUID=${this.uuid}`, {
+        fetch(`${this.local}/users/editUser?firstName=${this.userFirstName1}&secondName=${this.userSecondName1}&subType=${this.userSubTypeSelect1}&pinCode=${this.userCode1}&superPinCode=${this.code}&memberUUID=${this.memberUUID1}&otherID=${this.otherID1}&userUUID=${this.uuid}`, {
           method: 'POST'
         }).then(response => {
           if (response.status === 200) {
@@ -349,7 +349,7 @@ export default {
       }
     },
     setSuperUser (uuid, code) {
-      fetch('http://' + this.local + '/users/setSuperUser?uuid=' + uuid + '&pinCode=' + code, {
+      fetch(`${this.local}/users/setSuperUser?uuid=${uuid}&pinCode=${code}`, {
         method: 'PUT'
       }).then(response => {
         if (response.status === 200) {
@@ -373,7 +373,7 @@ export default {
     },
     checkPinCode (code) {
       if (code.length > 3) {
-        fetch('http://' + this.local + '/users/checkPinCode?pinCode=' + code, {
+        fetch(`${this.local}/users/checkPinCode?pinCode=${code}`, {
           method: 'GET'
         }).then(response => response.json())
           .then(response => {
@@ -396,7 +396,7 @@ export default {
           isMaster: this.master
         }
         if (this.accept) {
-          fetch('http://' + this.local + '/barCode/', {
+          fetch(`${this.local}/barCode/`, {
             method: 'POST',
             body: JSON.stringify(data),
             headers: { 'Content-Type': 'Application/json' }
@@ -427,7 +427,7 @@ export default {
     },
     getMasterCardCheck (code) {
       if (code.length > 3) {
-        fetch('http://' + this.local + '/barCode/?code=' + code, {
+        fetch(`${this.local}/barCode/?code=${code}`, {
           method: 'GET'
         }).then(response => response.json())
           .then(response => {

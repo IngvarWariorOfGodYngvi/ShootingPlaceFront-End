@@ -146,7 +146,7 @@ export default {
       return date.getFullYear() + '/' + month + '/' + day
     },
     getSumJoinDate () {
-      fetch('http://' + this.local + '/statistics/joinDateSum?firstDate=' + this.firstDateJoinDate.replace(/\//gi, '-') + '&secondDate=' + this.secondDateJoinDate.replace(/\//gi, '-'), {
+      fetch(`${this.local}/statistics/joinDateSum?firstDate=${this.firstDateJoinDate.replace(/\//gi, '-')}&secondDate=${this.secondDateJoinDate.replace(/\//gi, '-')}`, {
         method: 'GET'
       }).then(response => {
         response.json().then(response => {
@@ -159,7 +159,7 @@ export default {
     getSumJoinDateXLSXFile () {
       this.loading = 'pobieranie'
       axios({
-        url: `http://${this.local}/files/joinDateSum?firstDate=${this.firstDateJoinDate.replace(/\//gi, '-')}&secondDate=${this.secondDateJoinDate.replace(/\//gi, '-')}`,
+        url: `${this.local}/files/joinDateSum?firstDate=${this.firstDateJoinDate.replace(/\//gi, '-')}&secondDate=${this.secondDateJoinDate.replace(/\//gi, '-')}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {

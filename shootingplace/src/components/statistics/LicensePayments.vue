@@ -180,7 +180,7 @@ export default {
       return date.getFullYear() + '/' + month + '/' + day
     },
     getSumLicensed () {
-      fetch('http://' + this.local + '/statistics/licenseSum?firstDate=' + this.firstDateLicense.replace(/\//gi, '-') + '&secondDate=' + this.secondDateLicense.replace(/\//gi, '-'), {
+      fetch(`${this.local}/statistics/licenseSum?firstDate=${this.firstDateLicense.replace(/\//gi, '-')}&secondDate=${this.secondDateLicense.replace(/\//gi, '-')}`, {
         method: 'GET'
       }).then(response => {
         response.json().then(response => {
@@ -210,7 +210,7 @@ export default {
       this.quantitySumLicenseRearrangeTable = arr1
     },
     toggleHistoryPayment () {
-      fetch('http://' + this.local + '/license/paymentToggleArray?paymentUUIDs=' + this.licenseArray + '&pinCode=' + this.code, {
+      fetch(`${this.local}/license/paymentToggleArray?paymentUUIDs=${this.licenseArray}&pinCode=${this.code}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'

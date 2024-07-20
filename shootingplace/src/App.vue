@@ -39,7 +39,8 @@ export default {
     },
     getEnv () {
       import('src/App.vue').then(App => {
-        fetch(`http://${App.default.host}/conf/env`, {
+        const local = App.default.host
+        fetch(`${local}/conf/env`, {
           method: 'GET'
         }).then(response => {
           if (response.status === 200) {
@@ -57,12 +58,12 @@ export default {
   // mobile: isMobile(),
   main: JSON.parse(window.localStorage.getItem('main')), // dev //
   // prod: '192.168.1.30:8080/strzelnica/#/', // test //
-  prod: `${location.hostname}:8081/#/`, // dev //
-  host: `${location.hostname}:8080/` // test + dev //
+  prod: `http://${location.hostname}:8081/#/`, // dev //
+  host: `http://${location.hostname}:8080/` // test + dev //
   // prod: '192.168.1.30:8080/strzelnica/#/', // prod dom //
-  // prod: '192.168.100.2:8080/strzelnica/#/', // prod //
-  // prod: '192.168.1.150:8080/strzelnica/#/', // rcs //
-  // host: `${location.hostname}:8080/shootingplace-1.0/` // test + prod + dev + rcs //
+  // prod: 'http://192.168.100.2:8080/strzelnica/#/', // prod //
+  // prod: '192.168.1.35:8080/strzelnica/#/', // rcs //
+  // host: `http://${location.hostname}:8080/shootingplace-1.0/` // test + prod + dev + rcs //
 
 }
 

@@ -138,7 +138,7 @@ export default {
       return date.getFullYear() + '/' + month + '/' + day
     },
     otherAmmoTakesInTime () {
-      fetch('http://' + this.local + '/statistics/otherAmmoTakesInTime?firstDate=' + this.firstDateAmmo.replace(/\//gi, '-') + '&secondDate=' + this.secondDateAmmo.replace(/\//gi, '-'), {
+      fetch(`${this.local}/statistics/otherAmmoTakesInTime?firstDate=${this.firstDateAmmo.replace(/\//gi, '-')}&secondDate=${this.secondDateAmmo.replace(/\//gi, '-')}`, {
         method: 'GET'
       }).then(response => {
         response.json().then(response => {

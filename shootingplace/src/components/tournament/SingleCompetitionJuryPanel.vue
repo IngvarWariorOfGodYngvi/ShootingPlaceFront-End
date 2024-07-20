@@ -1,14 +1,10 @@
 <template>
   <div v-if="competition!=null" class="col">
-    <div v-if="!juryPanelCompetitionInExpansionItem"
+    <div v-if="juryPanelCompetitionInExpansionItem"
       class="full-width text-h5 text-bold text-center q-pa-none q-ma-none text-positive">{{
         competition.countingMethod === 'NORMAL' ? competition.name : competition.name + ' ' + competition.countingMethod
       }}
     </div>
-    <!-- normal
-        comstock
-        czas
-        ipsc -->
     <div class="row q-pa-none q-ma-none">
       <div class="row fit q-pa-sm self-center text-center text-positive">
         <div class="col-3">Zawodnik</div>
@@ -570,7 +566,7 @@ export default {
   },
   methods: {
     getCompetitionByID (uuid) {
-      fetch(`http://${this.local}/competitionMembersList/getByID/?uuid=${uuid}`, {
+      fetch(`${this.local}/competitionMembersList/getByID/?uuid=${uuid}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -702,7 +698,7 @@ export default {
       this.setScore(scoreUUID, this.scoreLabel, this.innerTen, this.outerTen, this.alfa, this.charlie, this.delta, this.procedures, this.miss, this.series)
     },
     getListCalibers () {
-      fetch(`http://${this.local}/armory/calibers`, {
+      fetch(`${this.local}/armory/calibers`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -749,7 +745,7 @@ export default {
       delta = delta.toString().replaceAll(/,/gi, '.')
       procedures = procedures.toString().replaceAll(/,/gi, '.')
       miss = miss.toString().replaceAll(/,/gi, '.')
-      fetch(`http://${this.local}/competition/score/set?scoreUUID=${scoreUUID}&score=${score}&innerTen=${innerTen}&outerTen=${outerTen}&alfa=${alfa}&charlie=${charlie}&delta=${delta}&procedures=${procedures}&miss=${miss}&series=${series}`, {
+      fetch(`${this.local}/competition/score/set?scoreUUID=${scoreUUID}&score=${score}&innerTen=${innerTen}&outerTen=${outerTen}&alfa=${alfa}&charlie=${charlie}&delta=${delta}&procedures=${procedures}&miss=${miss}&series=${series}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -789,7 +785,7 @@ export default {
       })
     },
     toggleDnfScore () {
-      fetch(`http://${this.local}/competition/score/dnf?scoreUUID=${this.scoreUUID}`, {
+      fetch(`${this.local}/competition/score/dnf?scoreUUID=${this.scoreUUID}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -820,7 +816,7 @@ export default {
       })
     },
     toggleDsqScore () {
-      fetch(`http://${this.local}/competition/score/dsq?scoreUUID=${this.scoreUUID}`, {
+      fetch(`${this.local}/competition/score/dsq?scoreUUID=${this.scoreUUID}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -851,7 +847,7 @@ export default {
       })
     },
     togglePkScore () {
-      fetch(`http://${this.local}/competition/score/pk?scoreUUID=${this.scoreUUID}`, {
+      fetch(`${this.local}/competition/score/pk?scoreUUID=${this.scoreUUID}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'

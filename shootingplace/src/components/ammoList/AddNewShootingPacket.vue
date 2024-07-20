@@ -1,8 +1,11 @@
 <template>
   <div  style="min-width: 50%;">
     <q-card class="bg-dark">
+      <q-card-actions align="right" class="q-pa-xs q-ma-xs">
+        <div class="text-h5 text-bold text-center col">Stwórz nowy pakiet strzelecki</div>
+        <q-btn icon="close" color="primary" round dense v-close-popup @click=" code = null "/>
+      </q-card-actions>
       <q-card-section class="flex-center text-positive">
-        <div class=" text-h6">Stwórz nowy pakiet strzelecki</div>
         <div>
           <q-item>
             <q-input v-model="packetName" label="Nazwa Pakietu" class="col" label-color="positive"
@@ -11,7 +14,7 @@
           input-class="text-positive" dense filled suffix="zł"/>
           </q-item>
           <q-item dense v-for="(item, uuid) in calibers" :key="uuid" :val="item.uuid" style="">
-            <div><q-checkbox v-model="item.active"></q-checkbox></div>
+            <div><q-checkbox v-model="item.active" class="text-white" color="primary" keep-color></q-checkbox></div>
             <div class="text-positive text-center col" style="display: flex;justify-content: center;align-content: center;flex-direction: column;">{{ item.name }}</div>
             <q-input :disable="!item.active" v-model="item.counter" class="col" color="positive" label-color="positive"
           input-class="text-positive" dense filled label="ilość amunicji w pakiecie"
@@ -20,8 +23,8 @@
         </div>
       </q-card-section>
       <q-card-actions align="right">
-        <q-btn text-color="white" label="zapisz" color="primary" @click="code = null;addNewPacketCode=true" />
-        <q-btn text-color="white" label="zamknij" color="secondary" v-close-popup @click="code = null" />
+        <q-btn :disable="packetName==''||price==''" text-color="white" label="zapisz" color="primary" @click="code = null;addNewPacketCode=true" />
+        <q-btn text-color="white" label="anuluj" color="secondary" v-close-popup @click="code = null" />
       </q-card-actions>
     </q-card>
     <q-dialog v-model=" addNewPacketCode " persistent>
@@ -80,7 +83,7 @@ export default {
   },
   methods: {
     getListCalibers () {
-      fetch(`http://${this.local}/armory/calibers`, {
+      fetch(`${this.local}/armory/calibers`, {
         method: 'GET'
       }).then((response) => {
         response.json().then((response) => {
@@ -110,7 +113,7 @@ export default {
       return map
     },
     addNewPacket (name, map, price, code) {
-      fetch(`http://${this.local}/armory/addShootingPacket?name=${name}&price=${price}&pinCode=${code}`, {
+      fetch(`${this.local}/armory/addShootingPacket?name=${name}&price=${price}&pinCode=${code}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

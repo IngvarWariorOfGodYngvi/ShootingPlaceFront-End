@@ -1,12 +1,6 @@
 <template>
   <q-page padding>
-    <div>
       <q-page-sticky v-if="mailingList.length > 0" position="top-right" expand :offset="[6, 6]" style="z-index: 10;">
-        <q-tooltip anchor="center start" :hide-delay="200" class="bg-primary" content-class="bg-primary">
-          <div class="text-h6 text-center">
-            LISTA MAILINGOWA
-          </div>
-        </q-tooltip>
         <q-fab v-model="mailing" label-position="bottom" color="secondary" icon="email" direction="down"
           style="border: 2px solid white;">
           <div v-if="mailingList.length > 0" class="bg-secondary text-white"
@@ -26,10 +20,14 @@
           </div>
         </q-fab>
       </q-page-sticky>
-    </div>
+      <q-page-sticky position="top-right" :offset="[0, 0]" style="z-index: 11;" v-if="visible">
+        <div style="min-height: 10vh;" @click="visible=false">
+          <q-img :src="url" spinner-color="white" contain height="20vh" width="15vw"/>
+        </div>
+      </q-page-sticky>
     <q-card :class="mobile ? 'col bg-dark' : 'row bg-dark'" flat>
       <div class="col-4">
-        <q-select label="Wybierz osobę" color="white" input-class="text-white" label-color="white"
+        <q-select label="Wybierz osobę" color="primary" input-class="text-white" label-color="white"
           popup-content-class="bg-dark text-positive"
           :option-value="opt => opt !== '' ? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber).toString() : ''"
           :option-label="opt => opt !== '' ? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber).toString() : ''"
@@ -40,7 +38,7 @@
             <q-item class="rounded" dense style="padding: 0; margin: 0;" v-bind="option['itemProps']"
               v-on="option.itemEvents">
               <q-item-section style="padding: 0.5em; margin: 0;" :class="option.opt.active ? '' : 'bg-warning rounded'"
-                @click="allMember = false;memberName = option.opt.secondName + ' ' + option.opt.firstName + ' ' + option.opt.legitimationNumber; temp = option.opt.legitimationNumber">
+              @click="allMember = false;memberName = option.opt.secondName + ' ' + option.opt.firstName + ' ' + option.opt.legitimationNumber; temp = option.opt.legitimationNumber">
                 <div class="container">
                   <div class="background text-caption text-right">{{ !option.opt.declarationLOK && shootingPlace==='prod'?'Brak Podpisanej Deklaracji LOK':'' }}</div>
                   {{ option.opt.secondName }} {{ option.opt.firstName }}
@@ -60,22 +58,23 @@
         </q-select>
       </div>
       <div v-if="!mobile" class=" col-8">
-        <q-card class="bg-accent q-pa-xs col">
-          <div class="col full-width">
+        <q-card class="bg-accent q-pa-xs row">
+          <div class="col">
+          <div class="col">
               <q-checkbox dense
                 @input="memberName = ''; temp = null; adult = null; active = null; erase = false; getMembersNames(); getAllMemberDTO()"
                 v-model="allMember" label="Wyświetl wszystkich" />
-                <q-radio @input="member = null; allMember = false; getMembersNames(); rearrangeMemberDTO()" color="green"
+                <!-- <q-radio @input="member = null; allMember = false; getMembersNames(); rearrangeMemberDTO()" color="green"
                   v-model="adult" :val="true" label="Grupa Ogólna" />
                 <q-radio @input="member = null; allMember = false; getMembersNames(); rearrangeMemberDTO()"
                   color="warning" v-model="adult" :val="false" label="Grupa Młodzieżowa" />
                 <q-radio @input="member = null; allMember = false; erase = false; getMembersNames(); rearrangeMemberDTO()"
                   color="green" v-model="active" :val="true" label="Aktywni" />
                 <q-radio @input="member = null; allMember = false; getMembersNames(); rearrangeMemberDTO()"
-                  color="warning" v-model="active" :val="false" label="Nieaktywni" />
+                  color="warning" v-model="active" :val="false" label="Nieaktywni" /> -->
             </div>
             <q-checkbox dense
-              @input="memberName = ''; temp = null; allMember = !erase; active = false; getMembersNames(); getAllMemberDTOWithArgs(); erasedType = erasedTypes[0]"
+              @input="memberDTOArgRearrangeTable=[];memberName = ''; temp = null; allMember = !erase; active = false; getMembersNames(); getAllMemberDTOWithArgs(); erasedType = erasedTypes[0]"
               color="red" v-model="erase" :val="false" label="Skreśleni" />
           <div class="row text-bold text-center text-caption">
             <q-item dense v-if="allMember || allMember == null">
@@ -117,6 +116,9 @@
             <q-item dense v-if="!adult && erase">
               Skreśleni Gr. Młodzieżowa : {{ quantities[7] }}
             </q-item>
+          </div>
+        </div>
+          <div class="col reverse row">
           </div>
         </q-card>
       </div>
@@ -169,9 +171,11 @@
         </template>
         <template v-slot="{ item, index }">
           <tr v-if="!item.erased" :key="index" class="rounded bg-dark text-positive" style="cursor:pointer"
+            @mouseenter="item.image!=null?getUrl (item.image):''"
             @click.ctrl="pushOrRemoveEmailToList(item.legitimationNumber)"
             @click.exact="showloading(), allMember = false; memberName = item; temp = item.legitimationNumber;">
-            <td style="width:25%;" :class="item.club.id === 1 && (!item.declarationLOK && shootingPlace==='prod')? 'xyz bg-warning' : item.club.id === 1 && (item.declarationLOK && shootingPlace==='prod')? 'xyz' : 'xyz bg-secondary text-white'">
+            <td style="width:25%;" :class="item.club.id === 1 && (!item.declarationLOK && shootingPlace==='prod')? 'xyz bg-warning' : item.club.id === 1 && (item.declarationLOK && shootingPlace==='prod')? 'xyz' : item.club.id != 1? 'xyz bg-secondary':'xyz text-positive'">
+            <!-- <td style="width:25%;" :class="item.club.id === 1 && (!item.declarationLOK && shootingPlace==='prod')? 'xyz bg-warning' : item.club.id === 1 && (item.declarationLOK && shootingPlace==='prod')? 'xyz' : 'xyz text-white'"> -->
               <b>{{ index + 1 + ' ' }}</b>{{ item.club.id === 1 ? item.secondName + ' ' + item.firstName : item.secondName + ' ' + item.firstName + ' ' + item.club.name }} {{ !item.declarationLOK && shootingPlace === 'prod'? ' - Brak Deklaracji LOK' : ''}}
             </td>
             <td style="width:10%;" class="text-center">
@@ -183,12 +187,12 @@
             </td>
             <td style="width:5%;"
               :class="item.image != null ? 'bg-green-3 text-center text-black' : 'text-center text-black'">
-              <q-tooltip v-if="item.image != null" :delay="750" @hide="url = ''"
+              <!-- <q-tooltip v-if="item.image != null" :delay="750" @hide="url = ''"
                          @before-show="getUrl (item.image)" anchor="top middle" self="center middle"
                          transition-show="scale"
                          transition-hide="scale" content-style="width: auto; height: auto">
                 <img v-if="item.image != null" :src="url" spinner-color="white" style="height: 100%; width: 100%"/>
-              </q-tooltip>
+              </q-tooltip> -->
               <q-icon :name="item.image != null ? 'done' : 'cancel'" :color="item.image != null ? '' : 'primary'"
                 size="1rem" />
             </td>
@@ -300,6 +304,7 @@ export default {
   data () {
     return {
       mailing: true,
+      visible: false,
       url: '',
       mailingList: JSON.parse(window.localStorage.getItem('mailingList')),
       mobile: App.mobile,
@@ -347,12 +352,12 @@ export default {
     },
     getUrl (uuid) {
       axios({
-        url: 'http://' + this.local + '/files/getFile?uuid=' + uuid,
+        url: `${this.local}/files/getFile?uuid=${uuid}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
         this.url = window.URL.createObjectURL(new Blob([response.data]))
-        return window.URL.createObjectURL(new Blob([response.data]))
+        this.visible = true
       })
     },
     showloading () {
@@ -363,7 +368,7 @@ export default {
       }, 1000)
     },
     pushOrRemoveEmailToList (number) {
-      fetch('http://' + this.local + '/member/getMemberEmail?number=' + number, {
+      fetch(`${this.local}/member/getMemberEmail?number=${number}`, {
         method: 'GET'
       }).then(response => response.text())
         .then(response => {
@@ -382,19 +387,6 @@ export default {
     clearMailingList () {
       window.localStorage.setItem('mailingList', JSON.stringify([]))
       this.mailingList = []
-    },
-    copyClipboard (arr) {
-      let s = arr[0]
-      if (arr.length > 1) {
-        for (let i = 1; i < arr.length; i++) {
-          s = s + ';' + arr[i]
-        }
-      }
-      window.isSecureContext = false
-      navigator.clipboard.writeText(s)
-      this.message = 'Skopiowano listę do schowka'
-      this.success = true
-      this.autoClose()
     },
     unsecuredCopyToClipboard (arr) {
       const textArea = document.createElement('textarea')
@@ -431,7 +423,7 @@ export default {
       return day + '-' + (month) + '-' + current.getFullYear()
     },
     getMembersQuantity () {
-      fetch('http://' + this.local + '/member/membersQuantity', {
+      fetch(`${this.local}/statistics/membersQuantity`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -442,7 +434,7 @@ export default {
         })
     },
     getMembersNames () {
-      fetch(`http://${this.local}/member/getAllNames`, {
+      fetch(`${this.local}/member/getAllNames`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -453,7 +445,7 @@ export default {
       const active = this.active
       const adult = this.adult
       const erase = this.erase
-      fetch('http://' + this.local + '/member/getAllMemberDTOWithArgs?active=' + active + '&adult=' + adult + '&erase=' + erase, {
+      fetch(`${this.local}/member/getAllMemberDTOWithArgs?active=${active}&adult=${adult}&erase=${erase}`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -462,7 +454,7 @@ export default {
         })
     },
     getAllMemberDTO () {
-      fetch('http://' + this.local + '/member/getAllMemberDTO', {
+      fetch(`${this.local}/member/getAllMemberDTO`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -471,7 +463,7 @@ export default {
         })
     },
     // findMemberByBarCode () {
-    //   fetch('http://' + this.local + '/member/findByBarCode?barcode=' + this.barcode, {
+    //   fetch('this.local + '/member/findByBarCode?barcode=' + this.barcode, {
     //     method: 'GET'
     //   }).then(response => {
     //     if (response.status === 200) {

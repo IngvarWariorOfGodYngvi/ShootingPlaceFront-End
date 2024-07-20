@@ -2,8 +2,8 @@
   <q-layout class="bg-none" view="lHh Lpr lFf" :class="[funRotate?'fun2':'', this.funRotateCLicks > 8 ? 'fun': '']" >
     <q-header elevated>
       <q-page-sticky v-if="mobile" position="top-right" :offset="[5, -50]" style="z-index: 100">
-           <q-icon class="fun" name="wifi" :color="networkStatusvar!=null?networkStatusvar?'green':'red':''"/>
-           </q-page-sticky>
+        <q-icon class="fun" name="wifi" :color="networkStatusvar!=null?networkStatusvar?'green':'red':''"/>
+      </q-page-sticky>
       <q-toolbar class="full-width row">
         <q-btn
           flat
@@ -19,12 +19,23 @@
         <q-toggle v-model="backgroundDark" :val="true" :value="true" color="dark" keep-color
                   @input="changeColor()" class="fun"><q-tooltip content-class="bg-secondary text-body2">{{backgroundDark?'Wyłącz': 'Włącz' }} ciemny motyw</q-tooltip></q-toggle>
                   <div :class="`text-center text-h5 text-bold ${networkStatusvar!=null && networkStatusvar?'':'bg-warning'}`">{{siteNameChange()}} {{ networkStatusvar!=null && networkStatusvar?'':'&nbsp; Brak Połączenia Z Bazą' }}</div>
-         <div v-if="main" class="row reverse col">
+         <div class="col row reverse">
+          <div class="row">
+        <q-avatar text-color="white" size="3.5em" color="secondary" rounded
+          style="border: solid 1px white; border-radius: 50%" class="lighterbtn rotating"
+          icon="settings" @click="openSettings=!openSettings" >
+          <q-tooltip class="bg-primary" content-class="bg-primary text-h6 text-center">Ustawienia</q-tooltip>
+          <q-popup-edit v-model="openSettings" :offset="[0,0]" content-class="bg-primary text-white" :cover="false" :content-style="mobile?'':'width:20vw'">
+            <Experimental></Experimental>
+          </q-popup-edit>
+        </q-avatar>
+      </div>
+        <div v-if="main" class="row reverse">
           <q-icon class="fun" name="wifi" :color="networkStatusvar?'green':'red'" @click="funRotateCLicksIncrease()"></q-icon>
           <div v-if="shootingPlace === 'prod'">
           <q-tooltip content-class="bg-primary text-h6">Kalendarz</q-tooltip>
             <q-btn-dropdown class="fit" icon="calendar_month" rounded color="secondary" style="border: 1px solid white">
-              <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&bgcolor=%23ffffff&ctz=Europe%2FWarsaw&src=MTA0MjM0ZTI5MTEyZThiYTk0MzBmZWZmNDk5MjRhNmU0YzI4NzJlMzA3ODdhMzhjZjdmZmE2ZTE2MGEyNmNkNkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=OTcwNXUwMTRuZXNicW05NGdiMWdkc3JvOGdAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ&color=%23F09300&color=%234285F4" style="border:solid 1px #777" width="800" height="600" frameborder="0" scrolling="no"></iframe>            </q-btn-dropdown>
+              <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&bgcolor=%23ffffff&ctz=Europe%2FWarsaw&src=MTA0MjM0ZTI5MTEyZThiYTk0MzBmZWZmNDk5MjRhNmU0YzI4NzJlMzA3ODdhMzhjZjdmZmE2ZTE2MGEyNmNkNkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=OTcwNXUwMTRuZXNicW05NGdiMWdkc3JvOGdAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ&color=%23F09300&color=%234285F4" style="border:solid 1px #777" width="800" height="600" frameborder="0" scrolling="no"></iframe></q-btn-dropdown>
           </div>
           <div>
             <q-tooltip content-class="bg-primary text-h6">Lista pobytu na strzelnicy</q-tooltip>
@@ -44,7 +55,7 @@
           </div>
           <div v-if="topTenTabExp">
           <q-avatar text-color="white" color="secondary" size="3.5em" rounded
-                    style="border: solid 1px white; border-radius: 50%" class="reverse"
+                    style="border: solid 1px white; border-radius: 50%" class="reverse pulsing"
                     icon="scoreboard">
             <q-tooltip @show="getTop10CompetitionPoints()" class="bg-primary" content-class="bg-primary">
               <div class="text-h6 text-center">TOP 10 PUNKTY {{ new Date().getFullYear() }}</div>
@@ -59,7 +70,7 @@
             </q-tooltip>
           </q-avatar>
           <q-avatar text-color="white" color="secondary" size="3.5em" rounded
-                    style="border: solid 1px white; border-radius: 50%" class="reverse"
+                    style="border: solid 1px white; border-radius: 50%" class="reverse pulsing"
                     icon="person">
             <q-tooltip @show="getTop10Competitors()" class="bg-primary" content-class="bg-primary">
               <div class="text-h6 text-center">TOP 10 STARTY {{ new Date().getFullYear() }}</div>
@@ -74,7 +85,7 @@
             </q-tooltip>
           </q-avatar>
           <q-avatar text-color="white" color="secondary" size="3.5em" rounded
-                    style="border: solid 1px white; border-radius: 50%" class="reverse"
+                    style="border: solid 1px white; border-radius: 50%" class="reverse pulsing"
                     icon="payments">
             <q-tooltip @show="getTop10MembersWithTheMostMembershipContributions()" class="bg-primary"
                        content-class="bg-primary">
@@ -90,7 +101,7 @@
             </q-tooltip>
           </q-avatar>
           <q-avatar text-color="white" color="secondary" size="3.5em" rounded
-                    style="border: solid 1px white; border-radius: 50%" class="reverse"
+                    style="border: solid 1px white; border-radius: 50%" class="reverse pulsing"
                     icon="analytics">
             <q-tooltip @show="getHighStarts()" class="bg-primary" content-class="bg-primary">
               <div class="text-h6 text-center">TOP 10 ZAWODÓW</div>
@@ -106,6 +117,7 @@
           </q-avatar>
         </div>
       </div>
+    </div>
       </q-toolbar>
     </q-header>
     <q-drawer
@@ -114,13 +126,13 @@
       class="bg-secondary"
       @hide="setDrawer(false)"
     >
-      <div class="bg-secondary full-height">
+      <div class="bg-secondary">
         <q-list>
-          <q-item @click="showloading();changeTitle ('STRONA GŁÓWNA')" class="flex flex-center q-pa-md bg-primary text-white xyz1" clickable tag="a"
+          <q-item @click="showloading();changeTitle ('STRONA GŁÓWNA')" class="flex flex-center q-pa-md bg-primary text-white" clickable tag="a"
                   target="_self" :href="hrefTarget" width="max">
             <div class="text-h6 text-bold text-center">
               <div>PROGRAM</div>
-              STRONA GŁÓWNA
+              <div>STRONA GŁÓWNA</div>
             </div>
           </q-item>
           <div @click="showloading()">
@@ -132,11 +144,13 @@
               :visible="link.visible"
             />
           </div>
+          <MembersQuantities v-if="(main || !main) && main != null" class="bg-secondary">
+          </MembersQuantities>
+          <WeekBirthdayList>
+          </WeekBirthdayList>
+          <WorkTimeList v-if="!mobile&&main" style="margin: auto;height:auto">
+          </WorkTimeList>
         </q-list>
-        <members-quantities v-if="(main || !main) && main != null" class="bg-secondary">
-        </members-quantities>
-        <WorkTimeList v-if="!mobile&&main" style="margin: auto;height:auto">
-        </WorkTimeList>
       </div>
     </q-drawer>
 
@@ -152,19 +166,35 @@
 
 <script>
 import { colors } from 'quasar'
-import EssentialLink from 'components/EssentialLink.vue'
-import membersQuantities from 'components/MembersQuantities.vue'
-import WorkTimeList from 'components/WorkTimeList.vue'
 import App from 'src/App.vue'
 import { reactive } from 'vue'
 import { useNetwork } from '@vueuse/core'
+import lazyLoadComponent from 'src/utils/lazyLoadComponent'
+import SkeletonBox from 'src/utils/SkeletonBox'
 export default {
   name: 'MainLayout',
   visible2: false,
   components: {
-    EssentialLink,
-    membersQuantities,
-    WorkTimeList
+    EssentialLink: lazyLoadComponent({
+      componentFactory: () => import('components/leftDrawer/EssentialLink.vue'),
+      loading: SkeletonBox
+    }),
+    MembersQuantities: lazyLoadComponent({
+      componentFactory: () => import('components/leftDrawer/MembersQuantities.vue'),
+      loading: SkeletonBox
+    }),
+    WeekBirthdayList: lazyLoadComponent({
+      componentFactory: () => import('components/leftDrawer/WeekBirthdayList.vue'),
+      loading: SkeletonBox
+    }),
+    WorkTimeList: lazyLoadComponent({
+      componentFactory: () => import('components/leftDrawer/WorkTimeList.vue'),
+      loading: SkeletonBox
+    }),
+    Experimental: lazyLoadComponent({
+      componentFactory: () => import('components/settings/Experimental.vue'),
+      loading: SkeletonBox
+    })
   },
   beforeMount () {
     this.getEnv()
@@ -185,6 +215,7 @@ export default {
   data () {
     return {
       title: '',
+      openSettings: false,
       siteName: 'Strona Główna',
       zero: 1,
       arbiter: window.localStorage.getItem('arbiter'),
@@ -208,86 +239,86 @@ export default {
       contributors: [],
       competitionPoints: [],
       quantities: [],
-      hrefTarget: 'http://' + App.prod,
+      hrefTarget: App.prod,
       local: App.host,
       shootingPlace: App.shootingPlace,
       essentialLinks: [
         {
           title: 'Rejestr Pobytu na Strzelnicy',
           icon: 'person',
-          link: 'http://' + App.prod + 'evidenceBook',
+          link: App.prod + 'evidenceBook',
           visible: true
         },
         {
           title: 'Lista Klubowiczów',
           icon: 'person',
-          link: 'http://' + App.prod + 'member',
+          link: App.prod + 'member',
           visible: (App.main || !App.main) && App.main != null
         },
         {
           title: 'Licencje',
           icon: 'person',
-          link: 'http://' + App.prod + 'license',
+          link: App.prod + 'license',
           visible: App.main
         },
         {
           title: 'Dodaj Nowego Klubowicza',
           icon: 'person_add',
-          link: 'http://' + App.prod + 'member/adding',
+          link: App.prod + 'member/adding',
           visible: App.main
         },
         {
           title: 'Lista Amunicyjna',
           icon: 'list_alt',
-          link: 'http://' + App.prod + 'ammolist',
+          link: App.prod + 'ammolist',
           visible: (App.main || !App.main) && App.main != null
         },
         {
           title: 'Zawody',
           icon: 'book',
-          link: 'http://' + App.prod + 'competition',
+          link: App.prod + 'competition',
           visible: App.main
         },
         // {
         //   title: 'Lista Osób z Uprawnieniami',
         //   icon: 'book',
-        //   link: 'http://' + App.prod + 'memberwithpermission',
+        //   link: App.prod + 'memberwithpermission',
         //   visible: App.main
         // },
         {
           title: 'Zbrojownia',
           icon: 'storage',
-          link: 'http://' + App.prod + 'armory',
+          link: App.prod + 'armory',
           visible: (App.main || !App.main) && App.main != null
         },
         {
           title: 'Statystyki',
           icon: 'bar_chart',
-          link: 'http://' + App.prod + 'statistics',
+          link: App.prod + 'statistics',
           visible: App.main
         },
         {
           title: 'Pozostałe Funkcje',
           icon: 'menu',
-          link: 'http://' + App.prod + 'otherFunctions',
+          link: App.prod + 'otherFunctions',
           visible: App.main
         },
-        {
-          title: 'Ustawienia',
-          icon: 'settings',
-          link: 'http://' + App.prod + 'settings',
-          visible: true
-        },
+        // {
+        //   title: 'Ustawienia',
+        //   icon: 'settings',
+        //   link: App.prod + 'settings',
+        //   visible: true
+        // },
         {
           title: 'Pliki',
           icon: 'download',
-          link: 'http://' + App.prod + 'files',
+          link: App.prod + 'files',
           visible: App.main
         },
         {
           title: 'Panel Sędziego',
           icon: 'done',
-          link: 'http://' + App.prod + 'juryPanel',
+          link: App.prod + 'juryPanel',
           visible: (App.main || !App.main) && App.main != null
         }
       ],
@@ -304,7 +335,7 @@ export default {
       }, 500)
     },
     getRecordsFromBook (firstDate, secondDate) {
-      fetch(`http://${this.local}/evidence/?firstDate=${firstDate}&secondDate=${secondDate}`, {
+      fetch(`${this.local}/evidence/?firstDate=${firstDate}&secondDate=${secondDate}`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -329,7 +360,8 @@ export default {
     },
     getEnv () {
       import('src/App.vue').then(App => {
-        fetch(`http://${App.default.host}/conf/env`, {
+        const local = App.default.host
+        fetch(`${local}/conf/env`, {
           method: 'GET'
         }).then(response => {
           if (response.status === 200) {
@@ -359,7 +391,7 @@ export default {
       }, 100000)
     },
     networkStatusFunction () {
-      fetch(`http://${this.local}/conf/ping`, {
+      fetch(`${this.local}/conf/ping`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -381,6 +413,7 @@ export default {
       return window.localStorage.getItem('SiteName')
     },
     changeTitle (title) {
+      document.title = 'Strzelnica - ' + title
       window.localStorage.setItem('SiteName', title)
     },
     reset () {
@@ -394,7 +427,7 @@ export default {
     },
     getHighStarts () {
       if (this.starts.length < 1) {
-        fetch(`http://${this.local}/statistics/highStarts`, {
+        fetch(`${this.local}/statistics/highStarts`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -407,7 +440,7 @@ export default {
     },
     getTop10Competitors () {
       if (this.competitors.length < 1) {
-        fetch(`http://${this.local}/statistics/highStartsCompetitors`, {
+        fetch(`${this.local}/statistics/highStartsCompetitors`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -420,7 +453,7 @@ export default {
     },
     getTop10MembersWithTheMostMembershipContributions () {
       if (this.contributors.length < 1) {
-        fetch(`http://${this.local}/statistics/highContributions`, {
+        fetch(`${this.local}/statistics/highContributions`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -433,7 +466,7 @@ export default {
     },
     getTop10CompetitionPoints () {
       if (this.competitionPoints.length < 1) {
-        fetch(`http://${this.local}/statistics/highCompetitionPoints`, {
+        fetch(`${this.local}/statistics/highCompetitionPoints`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'

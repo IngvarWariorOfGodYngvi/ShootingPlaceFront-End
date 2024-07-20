@@ -158,7 +158,7 @@ export default {
     },
     getSum () {
       this.visible = true
-      fetch(`http://${this.local}/statistics/contributionSum?firstDate=${this.firstDate.replace(/\//gi, '-')}&secondDate=${this.secondDate.replace(/\//gi, '-')}`, {
+      fetch(`${this.local}/statistics/contributionSum?firstDate=${this.firstDate.replace(/\//gi, '-')}&secondDate=${this.secondDate.replace(/\//gi, '-')}`, {
         method: 'GET'
       }).then(response => {
         response.json().then(response => {
@@ -173,7 +173,7 @@ export default {
     getXlsFile () {
       this.loading = 'pobieranie'
       axios({
-        url: `http://${this.local}/files/contributions?firstDate=${this.firstDate.replace(/\//gi, '-')}&secondDate=${this.secondDate.replace(/\//gi, '-')}`,
+        url: `${this.local}/files/contributions?firstDate=${this.firstDate.replace(/\//gi, '-')}&secondDate=${this.secondDate.replace(/\//gi, '-')}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {

@@ -1,6 +1,10 @@
 <template>
   <div class="bg-dark text-positive">
-        <div class="row">
+    <q-card-actions align="right" class="q-pa-xs q-ma-xs">
+      <div class="text-h5 text-bold text-center col">Wydaj Pakiet</div>
+<q-btn icon="close" color="primary" round dense v-close-popup @click="memberName = ''; otherName = ''"/>
+</q-card-actions>
+        <div class="row col">
           <q-select label="Wybierz osobę z Klubu" popup-content-class="bg-dark text-positive"
             :option-value="opt => opt !== '' ? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber).toString() : ''"
             :option-label="opt => opt !== '' ? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber).toString() : ''"
@@ -50,7 +54,7 @@
             <q-item>
               <div class=" col">
                 <q-btn class="full-width" @click="dis=true; singlePacket = item; simulateProgress(0)" :disable="dis" :loading="loading[0]" color="primary" :label="item.name">
-                  <q-tooltip v-if="!mobile" anchor="top middle" content-class="bg-secondary text-body1" transition-hide="none" content-style="opacity: 95%;">
+                  <q-tooltip v-if="!mobile" content-class="bg-secondary text-body1" transition-hide="none" content-style="opacity: 95%;">
                     <div v-for="(item1,index) in item.calibers" :key="index" class="row" style="min-width: 30vw">
                       <div class="col text-right q-pa-xs">{{ item1.caliberName }}</div>
                       <div class="col text-left  q-pa-xs">{{ item1.quantity }} sztuk</div>
@@ -61,12 +65,6 @@
               </div>
             </q-item>
           </div>
-          <q-card-actions class="row" align="right">
-            <q-item>
-              <q-btn class="full-width col" color="primary" icon="close" @click="memberName = ''; otherName = ''"
-                v-close-popup></q-btn>
-            </q-item>
-          </q-card-actions>
         </div>
     <q-dialog position="top" v-model="success">
       <q-card>
@@ -111,7 +109,7 @@ export default {
   },
   components: {
     AddNewOtherPerson: lazyLoadComponent({
-      componentFactory: () => import('components/AddNewOtherPerson.vue'),
+      componentFactory: () => import('src/components/otherPerson/AddNewOtherPerson.vue'),
       loading: SkeletonBox
     })
   },
@@ -165,7 +163,7 @@ export default {
   },
   methods: {
     getPacketList () {
-      fetch(`http://${this.local}/armory/getAllShootingPacket`, {
+      fetch(`${this.local}/armory/getAllShootingPacket`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -173,7 +171,7 @@ export default {
         })
     },
     getMembersNames () {
-      fetch('http://' + this.local + '/member/getAllNames', {
+      fetch(`${this.local}/member/getAllNames`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -181,7 +179,7 @@ export default {
         })
     },
     getOther () {
-      fetch('http://' + this.local + '/other/', {
+      fetch(`${this.local}/other/`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -208,7 +206,7 @@ export default {
       const otherNameWord = this.otherName.split(' ')
       const idNumber = otherNameWord.length
       const otherNameID = otherNameWord[idNumber - 1]
-      fetch(`http://${this.local}/ammoEvidence/listOfAmmo?legitimationNumber=${memberNameUUID}&otherID=${otherNameID}`, {
+      fetch(`${this.local}/ammoEvidence/listOfAmmo?legitimationNumber=${memberNameUUID}&otherID=${otherNameID}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

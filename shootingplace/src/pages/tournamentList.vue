@@ -13,9 +13,6 @@
           <q-card-section v-if="tournaments == null">
             <q-btn color="primary" label="dodaj zawody" @click="addNewTournament = true"/>
           </q-card-section>
-          <!-- <q-card-section>
-            <q-btn color="secondary" label="Kreator konkurencji" @click="getCountingMethods ();createNewCompetiton = true"/>
-          </q-card-section> -->
           <CompetitonCreator v-on:createCompetition="getCompetitions" class="q-pa-md"></CompetitonCreator>
         </div>
         <div v-if="tournaments == null" class="text-center text-h6 text-positive full-width">{{resp}}</div>
@@ -348,209 +345,6 @@
         </div>
       </q-card>
     </div>
-    <q-dialog v-model="createNewCompetiton">
-      <q-card class="bg-dark">
-        <q-card-section class="row items-center">
-          <q-item-section v-if="!notUsed">
-            <q-item-label class="text-h4 text-bold text-positive">Kreator Konkurencji</q-item-label>
-            <q-item-label class="text-positive">Utworzenie nowej konkurencji da możliwość wybrania jej podczas zawodów
-            </q-item-label>
-            <div class="row bg-grey-1">
-              <q-radio class="col" color="orange" @input="meters = false" v-model="choice" :val="'10'"
-                label="10m"></q-radio>
-              <q-radio class="col" color="orange" @input="meters = false" v-model="choice" :val="'25'"
-                label="25m"></q-radio>
-              <q-radio class="col" color="orange" @input="meters = false" v-model="choice" :val="'50'"
-                label="50m"></q-radio>
-              <q-checkbox class="col" color="orange" @input="choice = ''" v-model="meters" :val="false"
-                label="inne"></q-checkbox>
-              <q-item class="col">
-                <q-input onkeypress="return (event.charCode > 44 && event.charCode < 58)" class="bg-grey-4 center justify"
-                  filled v-if="meters" style="width: 100px" v-model="choice" stack-label label="ilość metrów"></q-input>
-              </q-item>
-            </div>
-            <div class="row bg-grey-2">
-              <q-checkbox v-model="dynamic" label="konkurencja dynamiczna"></q-checkbox>
-              <div v-if="!dynamic">
-                <q-radio class="col" color="orange"
-                  @input="choice2 = ''; choice3 = ''; choice4 = ''; choice5 = ''; choice6 = ''; choice7 = ''; choice8 = ''; choice9 = '' "
-                  v-model="choice1" :val="'Pistolet'" label="Pistolet"></q-radio>
-                <q-radio class="col" color="orange"
-                  @input="choice2 = ''; choice3 = ''; choice4 = ''; choice5 = ''; choice6 = ''; choice7 = ''; choice8 = ''; choice9 = '' "
-                  v-model="choice1" :val="'Karabin'" label="Karabin"></q-radio>
-                <q-radio class="col" color="orange"
-                  @input="choice2 = ''; choice3 = ''; choice4 = ''; choice5 = ''; choice6 = ''; choice7 = ''; choice8 = ''; choice9 = ''; meters = false; choice = '' "
-                  v-model="choice1" :val="'Strzelba'" label="Strzelba"></q-radio>
-              </div>
-              <div v-else>
-                <q-checkbox class="col" color="orange"
-                  @input="choice2 = ''; choice3 = ''; choice4 = ''; choice5 = ''; choice6 = ''; choice7 = ''; choice8 = ''; choice9 = '' "
-                  v-model="dynamicChoice" :val="'Pistolet'" label="Pistolet"></q-checkbox>
-                <q-checkbox class="col" color="orange"
-                  @input="choice2 = ''; choice3 = ''; choice4 = ''; choice5 = ''; choice6 = ''; choice7 = ''; choice8 = ''; choice9 = '' "
-                  v-model="dynamicChoice" :val="'Karabin'" label="Karabin"></q-checkbox>
-                <q-checkbox class="col" color="orange"
-                  @input="choice2 = ''; choice3 = ''; choice4 = ''; choice5 = ''; choice6 = ''; choice7 = ''; choice8 = ''; choice9 = ''; meters = false; choice = '' "
-                  v-model="dynamicChoice" :val="'Strzelba'" label="Strzelba"></q-checkbox>
-              </div>
-            </div>
-            <div class="col bg-grey-2">
-              <q-checkbox class="row" v-if="choice1 === 'Strzelba'" :val="''" true-value=" maszynowa" false-value=""
-                color="orange" v-model="choice2" label="maszynowa"></q-checkbox>
-              <q-checkbox class="row" v-else :val="''" true-value=" maszynowy" false-value="" color="orange"
-                v-model="choice2" label="maszynowy"></q-checkbox>
-              <q-checkbox class="row" v-if="choice1 === 'Strzelba'" :val="''" true-value=" dynamiczna" false-value=""
-                color="orange" v-model="choice3" label="dynamiczna"></q-checkbox>
-              <q-checkbox class="row" v-else :val="''" true-value=" dynamiczny" false-value="" color="orange"
-                v-model="choice3" label="dynamiczny"></q-checkbox>
-              <q-checkbox class="row" @input="choice9 = ''" v-if="choice1 === 'Strzelba'" :val="''"
-                true-value=" sportowa" false-value="" color="orange" v-model="choice5" label="sportowa"></q-checkbox>
-              <q-checkbox class="row" @input="choice9 = ''" v-else :val="''" true-value=" sportowy" false-value=""
-                color="orange" v-model="choice5" label="sportowy"></q-checkbox>
-              <q-checkbox class="row" v-if="choice1 === 'Strzelba'" :val="''" true-value=" dowolna" false-value=""
-                color="orange" v-model="choice6" label="dowolna"></q-checkbox>
-              <q-checkbox class="row" v-else :val="''" true-value=" dowolny" false-value="" color="orange"
-                v-model="choice6" label="dowolny"></q-checkbox>
-              <q-checkbox class="row" @input="choice9 = ''" v-if="choice1 === 'Strzelba'" :val="''"
-                true-value=" pneumatyczna" false-value="" color="orange" v-model="choice7"
-                label="pneumatyczna"></q-checkbox>
-              <q-checkbox class="row" @input="choice9 = ''" v-else :val="''" true-value=" pneumatyczny" false-value=""
-                color="orange" v-model="choice7" label="pneumatyczny"></q-checkbox>
-              <q-checkbox class="row" v-if="choice1 === 'Strzelba'" :val="''" true-value=" statyczna" false-value=""
-                color="orange" v-model="choice8" label="statyczna"></q-checkbox>
-              <q-checkbox class="row" v-else :val="''" true-value=" statyczny" false-value="" color="orange"
-                v-model="choice8" label="statyczny"></q-checkbox>
-            </div>
-            <div class="row bg-grey-3">
-              <q-radio class="col" v-if="!choice7 && choice1 !== 'Strzelba' && !choice5" color="orange" v-model="choice9"
-                :val="' centralnego zapłonu'" label="centralnego zapłonu"></q-radio>
-              <q-radio class="col" v-if="!choice7 && choice1 !== 'Strzelba'" color="orange" v-model="choice9"
-                :val="' bocznego zapłonu'" label="bocznego zapłonu"></q-radio>
-            </div>
-            <div class="row bg-grey-4">
-              <div class="q-pa-xs">Strzały oceniane</div>
-              <div>
-              <q-radio class="row" color="orange" @input="quantity = false" v-model="choice10" :val="'5'"
-                label="5 strzałów"></q-radio>
-              <q-radio class="row" color="orange" @input="quantity = false" v-model="choice10" :val="'7'"
-                label="7 strzałów"></q-radio>
-              <q-radio class="row" color="orange" @input="quantity = false" v-model="choice10" :val="'10'"
-                label="10 strzałów"></q-radio>
-              <q-radio class="row" color="orange" @input="quantity = false" v-model="choice10" :val="'15'"
-                label="15 strzałów"></q-radio>
-              <q-radio class="row" color="orange" @input="quantity = false" v-model="choice10" :val="'20'"
-                label="20 strzałów"></q-radio>
-              <q-checkbox class="row" color="orange" @input="choice10 = []" v-model="quantity" :val="false"
-                label="inne"></q-checkbox>
-                <q-input @focus="choice10 = []" onkeypress="return (event.charCode > 44 && event.charCode < 58)"
-                  class="full-width bg-grey-4 center justify" filled v-if="quantity" style="width: 100px"
-                  v-model="choice10" stack-label label="Ilość strzałów"></q-input>
-              </div>
-            </div>
-            <div class="row bg-grey-5">
-              <q-radio color="orange" v-model="choice11" :val="' OPEN'" label="OPEN"></q-radio>
-              <q-radio color="orange" v-model="choice11" :val="' Młodzieżowa'" label="Młodzieżowa"></q-radio>
-            </div>
-            <div class="row bg-grey-6">
-              <q-item class="items-center">Metoda Liczenia :</q-item>
-              <q-radio v-for="(item,index) in countingMethods" v-model="choice12" :key="index" :val="item" :label="item"></q-radio>
-              <!-- <q-radio class="col" color="primary" v-model="choice12" :val="'NORMAL'" label="Normalnie"></q-radio>
-              <q-radio class="col" color="primary" v-model="choice12" :val="'COMSTOCK'" label="Comstock"></q-radio> -->
-            </div>
-            <div class="row bg-grey-7">
-              <q-item dense class="row justify-around">Kaliber :</q-item>
-              <q-radio dense class="row justify-around q-pl-md" v-model="choice13" v-for="(calibers, uuid) in calibers"
-                :key="uuid" :val="calibers.uuid" :label="calibers.name">
-              </q-radio>
-            </div>
-            <div class="row bg-grey-8">
-              <q-item class="items-center">Ilość Strzałów próbnych :</q-item>
-              <q-input onkeypress="return (event.charCode > 44 && event.charCode < 58)"
-                class="full-width col center justify" filled v-model="choice14" stack-label></q-input>
-            </div>
-            <div class="row text-h6 text-positive">
-              <q-item-label>Nazwa konkurencji :</q-item-label>
-              <q-item-label v-if="choice"> {{ choice + 'm' }} {{ ' ' + choice1 }} {{ ' ' + choice2 }}
-                {{ ' ' + choice3 }} {{ ' ' + choice4 }} {{ ' ' + choice5 }} {{ ' ' + choice6 }} {{ ' ' + choice7 }}
-                {{ ' ' + choice8 }} {{ ' ' + choice9 }} {{ ' ' + choice10 + ' strzałów' }} {{ ' ' + choice11 }}
-              </q-item-label>
-              <q-item-label v-else> {{ choice }} {{ ' ' + choice1 }} {{ ' ' + choice2 }}
-                {{ ' ' + choice3 }}
-                {{ ' ' + choice4 }} {{ ' ' + choice5 }} {{ ' ' + choice6 }} {{ ' ' + choice7 }} {{ ' ' + choice8 }}
-                {{ ' ' + choice9 }} {{ ' ' + choice10 + ' strzałów' }} {{ ' ' + choice11 }}
-              </q-item-label>
-            </div>
-          </q-item-section>
-          <q-item-section v-if="notUsed">
-            <q-item>
-              <q-item-label class="text-h6 text-bold text-justify text-positive">Można nadać własną nazwę zawodów bez używania
-                kreatora
-              </q-item-label>
-            </q-item>
-            <div class="col bg-grey-2">
-              <q-checkbox v-model="dynamic" @input="choice12 = 'COMSTOCK'" label="konkurencja dynamiczna"></q-checkbox>
-              <div v-if="!dynamic">
-                <q-radio class="col" color="orange"
-                  @input="choice2 = ''; choice3 = ''; choice4 = ''; choice5 = ''; choice6 = ''; choice7 = ''; choice8 = ''; choice9 = '' "
-                  v-model="choice1" :val="'Pistolet'" label="Pistolet"></q-radio>
-                <q-radio class="col" color="orange"
-                  @input="choice2 = ''; choice3 = ''; choice4 = ''; choice5 = ''; choice6 = ''; choice7 = ''; choice8 = ''; choice9 = '' "
-                  v-model="choice1" :val="'Karabin'" label="Karabin"></q-radio>
-                <q-radio class="col" color="orange"
-                  @input="choice2 = ''; choice3 = ''; choice4 = ''; choice5 = ''; choice6 = ''; choice7 = ''; choice8 = ''; choice9 = ''; meters = false; choice = '' "
-                  v-model="choice1" :val="'Strzelba'" label="Strzelba"></q-radio>
-              </div>
-              <div v-else class="row bg-grey-3">
-                <q-checkbox class="col" color="orange"
-                  @input="choice2 = ''; choice3 = ''; choice4 = ''; choice5 = ''; choice6 = ''; choice7 = ''; choice8 = ''; choice9 = '' "
-                  v-model="dynamicChoice" :val="'Pistolet'" label="Pistolet"></q-checkbox>
-                <q-checkbox class="col" color="orange"
-                  @input="choice2 = ''; choice3 = ''; choice4 = ''; choice5 = ''; choice6 = ''; choice7 = ''; choice8 = ''; choice9 = '' "
-                  v-model="dynamicChoice" :val="'Karabin'" label="Karabin"></q-checkbox>
-                <q-checkbox class="col" color="orange"
-                  @input="choice2 = ''; choice3 = ''; choice4 = ''; choice5 = ''; choice6 = ''; choice7 = ''; choice8 = ''; choice9 = ''; meters = false; choice = '' "
-                  v-model="dynamicChoice" :val="'Strzelba'" label="Strzelba"></q-checkbox>
-              </div>
-              <div v-if="dynamic" class="row">
-                <q-input v-if="dynamicChoice.includes('Pistolet')"
-                  onkeypress="return (event.charCode > 44 && event.charCode < 58)" class="full-width col center justify"
-                  filled v-model="dynamicChoice1" stack-label label="Ilość strzałów pistolet"></q-input>
-                <q-input v-if="dynamicChoice.includes('Karabin')"
-                  onkeypress="return (event.charCode > 44 && event.charCode < 58)" class="full-width col center justify"
-                  filled v-model="dynamicChoice2" stack-label label="Ilość strzałów karabin"></q-input>
-                <q-input v-if="dynamicChoice.includes('Strzelba')"
-                  onkeypress="return (event.charCode > 44 && event.charCode < 58)" class="full-width col center justify"
-                  filled v-model="dynamicChoice3" stack-label label="Ilość strzałów strzelba"></q-input>
-                {{ dynamicChoice1 }}
-                {{ dynamicChoice2 }}
-                {{ dynamicChoice3 }}
-              </div>
-              <q-input v-if="!dynamic" @focus="choice10 = []"
-                onkeypress="return (event.charCode > 44 && event.charCode < 58)" class="full-width col center justify"
-                filled style="width: 100px" v-model="choice10" stack-label label="Ilość strzałów z próbnymi"></q-input>
-            </div>
-            <div class="row bg-grey-3">
-              <q-item class="items-center">Metoda Liczenia :</q-item>
-              <q-radio v-if="!dynamic" class="col" color="black" v-model="choice12" :val="'NORMAL'"
-                label="Normalnie"></q-radio>
-              <q-radio class="col" color="black" v-model="choice12" :val="'COMSTOCK'" label="Comstock"></q-radio>
-            </div>
-            <q-input class="full-width bg-grey-4 center justify" filled v-model="competitionName" stack-label
-              label="wprowadź własną nazwę"></q-input>
-          </q-item-section>
-        </q-card-section>
-        <div class="row">
-          <q-card-actions class="col" align="left">
-            <q-checkbox @input="competitionName = null" class="row text-dark" keep-color color="dark"
-              v-model="notUsed" :val="false" label="nie używaj kreatora"></q-checkbox>
-          </q-card-actions>
-          <q-card-actions class="row" align="right">
-            <q-btn label="zamknij" color="secondary" v-close-popup />
-            <q-btn label="utwórz" color="primary" v-close-popup @click="createCompetition()" />
-          </q-card-actions>
-        </div>
-      </q-card>
-    </q-dialog>
     <q-dialog v-model="tournamentUpdateConfirm">
       <q-card style="width: 40vw" class="bg-dark text-positive">
         <q-card-section class="col items-center">
@@ -936,8 +730,11 @@
     </q-dialog>
     <q-dialog v-model="statistics">
       <q-card class="bg-dark text-positive">
+        <q-card-actions align="right" class="q-pa-xs q-ma-xs">
+          <div class="text-h5 text-bold text-center col">STATYSTYKI ZAWODÓW</div>
+          <q-btn icon="close" color="primary" round dense v-close-popup/>
+        </q-card-actions>
         <q-card-section class="col items-center">
-          <span class="q-ml-sm text-h6 text-bold">STATYSTYKI ZAWODÓW</span>
           <div class="text-bold">
             <div>ilość konkurencji : {{ statistic[0] }}</div>
             <div>ilość zawodników : {{ statistic[1] }}</div>
@@ -946,31 +743,31 @@
             <div>ile razy była pobrana broń : {{ statistic[4] }}</div>
           </div>
         </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn label="zamknij" color="primary" v-close-popup />
-        </q-card-actions>
       </q-card>
     </q-dialog>
     <q-dialog v-model="competitionsInfo">
       <q-card class="bg-dark text-positive" style="min-width:60vw;" v-if="usersInWork.length>0">
+        <q-card-actions align="right" class="q-pa-xs q-ma-xs">
+          <div class="text-h5 text-bold text-center col">DODAWANIE KONKURENCJI</div>
+          <q-btn icon="close" color="primary" round dense v-close-popup/>
+        </q-card-actions>
+        <div class="q-ml-sm text-h6 text-center text-bold">{{ name }}</div>
         <q-card-section>
           <div class="col">
-            <div class="text-h6 text-bold text-center">DODAWANIE KONKURENCJI {{name}}</div>
             <div class="text-center row"><div class="col">Konkurencje</div><div class="col">Amunicja</div></div>
           <div v-for="(item, index) in options2" :key="index">
             <div class="row text-left">
-              <q-checkbox class="col hover1" dense v-model="listOfCompetitions" :val="item.uuid" :label="item.name" @input="checkAtTap(item.uuid);listOfCompetitions.length===options2.length?addAllCompetition=true:addAllCompetition=false"></q-checkbox>
+              <q-checkbox class="col hover1" dense color="primary" keep-color v-model="listOfCompetitions" :val="item.uuid" :label="item.name" @input="checkAtTap(item.uuid);listOfCompetitions.length===options2.length?addAllCompetition=true:addAllCompetition=false"></q-checkbox>
               <div class="col-1"></div>
-              <q-checkbox v-if="item.caliberUUID != null" :disable="!listOfCompetitions.includes(item.uuid)" class="col hover1" dense v-model="listOfAddAmmo" :val="item.uuid" :label="item.name + ' ' + item.numberOfShots + ' strzałów ' + '(' + (item.practiceShots!=null?item.practiceShots:'0') +' próbnych)'" @input="listOfAddAmmo.length===options2.length?addAllAmmo=true:addAllAmmo=false"/>
+              <q-checkbox v-if="item.caliberUUID != null" color="secondary" keep-color :disable="!listOfCompetitions.includes(item.uuid)" class="col hover1" dense v-model="listOfAddAmmo" :val="item.uuid" :label="item.name + ' ' + item.numberOfShots + ' strzałów ' + '(' + (item.practiceShots!=null?item.practiceShots:'0') +' próbnych)'" @input="listOfAddAmmo.length===options2.length?addAllAmmo=true:addAllAmmo=false"/>
               <div v-else class="col">Brak przypisanej amunicji</div>
             </div>
           </div>
           <p></p>
           <div class="row">
-            <q-checkbox color="secondary" class="col hover1" dense v-model="addAllCompetition" :val="false" :value="false" @input="selectAllToAddToCompetition()" label ="zaznacz wszystko" />
+            <q-checkbox color="primary" class="col hover1" dense keep-color v-model="addAllCompetition" :val="false" :value="false" @input="selectAllToAddToCompetition()" label ="zaznacz wszystko" />
             <div class="col-1"></div>
-            <q-checkbox color="secondary" class="col hover1" dense v-model="addAllAmmo" :disable="listOfCompetitions.length === 0" :val="false" :value="false" @input="selectAllToAddAmmunition()" label ="zaznacz wszystko" />
+            <q-checkbox color="secondary" class="col hover1" dense keep-color v-model="addAllAmmo" :disable="listOfCompetitions.length === 0" :val="false" :value="false" @input="selectAllToAddAmmunition()" label ="zaznacz wszystko" />
           </div>
       </div>
           <div class="row q-pa-md">
@@ -987,9 +784,6 @@
             </div>
           </div>
         </q-card-section>
-        <q-card-actions align="right">
-          <q-btn label="zamknij" color="primary" v-close-popup />
-        </q-card-actions>
       </q-card>
       <q-card v-else class="text-h1 text-bold bg-warning text-center">
         <q-card-section>
@@ -999,16 +793,21 @@
     </q-dialog>
     <q-dialog v-model="metricsInfo">
       <q-card @hook:destroyed="infoScore = []; infoScore1 = []" class="bg-dark text-positive">
-        <q-card-section class="col">
+        <q-card-actions align="right" class="q-pa-xs q-ma-xs">
           <div class="q-ml-sm text-h6 text-center text-bold">POBIERZ METRYKI STARTOWE ZAWODNIKA</div>
-          <div class="q-ml-sm text-h6 text-center text-bold">{{ name }}</div>
+          <q-btn icon="close" color="primary" round dense v-close-popup @click="compName = '';infoScore = []; infoScore1 = []; compList = []"/>
+        </q-card-actions>
+        <div class="q-ml-sm text-h6 text-center text-bold">{{ name }}</div>
+        <q-card-section class="col">
+          <!-- <div class="q-ml-sm text-h6 text-center text-bold">POBIERZ METRYKI STARTOWE ZAWODNIKA</div>
+          <div class="q-ml-sm text-h6 text-center text-bold">{{ name }}</div> -->
           <ol class="col">
             <li class="row hover1" v-for="(item,index) in infoScore" :key="index">
-              <q-checkbox color="secondary" class="col" v-model="compList" :val="infoScore1[index]" @input="compList.length===infoScore.length?printAll=true:printAll=false" :label="item" />
+              <q-checkbox color="secondary" dense keep-color class="col" v-model="compList" :val="infoScore1[index]" @input="compList.length===infoScore.length?printAll=true:printAll=false" :label="item" />
             </li>
           </ol>
           <div class="full-width">
-            <q-checkbox class="hover1" v-model="a5rotate" :value="a5rotate" label="rozmiar A5"></q-checkbox>
+            <q-checkbox class="hover1" color="primary" keep-color v-model="a5rotate" :value="a5rotate" label="rozmiar A5"></q-checkbox>
           </div>
           <div class="row q-pa-xs">
             <q-btn v-if="memberExist" dense @click="memberDial=true, memberLeg = memberName.legitimationNumber" class="col q-pa-xs" color="primary">
@@ -1024,10 +823,6 @@
             </q-btn>
           </div>
         </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn @click="compName = '';infoScore = []; infoScore1 = []; compList = []" label="zamknij" color="primary" v-close-popup />
-        </q-card-actions>
       </q-card>
     </q-dialog>
     <q-dialog v-model="closedTournamentInfo">
@@ -1060,6 +855,11 @@
               <q-btn @click="getJudgeFromTournament(tournamentUUID,tournamentClosedName,date)" class="full-width" color="primary">pobierz listę sędziów</q-btn>
             </q-item>
           </div>
+          <div>
+            <q-item>
+              <q-btn @click="getScores (tournamentUUID)" class="full-width" color="primary">zobacz wyniki</q-btn>
+            </q-item>
+          </div>
           <div v-if="tournaments == null">
             <q-item>
               <q-btn @click="openList = true" class="full-width" color="primary">otwórz zawody</q-btn>
@@ -1077,6 +877,52 @@
         <q-card-section>
           <div class="text-h6">Pobrano Dokument</div>
         </q-card-section>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model=" showCompetition ">
+      <q-card class="text-center bg-dark text-positive" style="min-width: 60vw">
+        <q-card-section class="row text-center">
+          <div class="text-h5 text-bold text-center full-width">Starty zawodnika w {{tournamentClosedName}} z {{date}}</div>
+          <div v-for="(item, index) in test" :key="index" class="full-width">
+          <div class="text-h6 text-bold">{{item.name}}</div>
+          <div v-for="(item1, index1) in item.scoreList" :key="index1" class="text-left row full-width">
+            <div class="full-width row" v-if="item1.member != null">
+              <div class="col-1 text-center">
+                {{index1 + 1}}
+              </div>
+              <div class="col">
+                {{ item1.member.secondName + ' ' + item1.member.firstName }}
+              </div>
+              <div class="col">
+                {{ item1.member.club.name }}
+              </div>
+              <div class="col text-right" v-if="item1.dnf">DNF</div>
+              <div class="col text-right" v-if="item1.dsq">DSQ</div>
+              <div class="col text-right" v-if="item1.dnf">PK</div>
+              <div class="col text-right" v-else>{{item1.score}}</div>
+            </div>
+            <div class="full-width row" v-if="item1.otherPersonEntity != null">
+              <div class="col-1 text-center">
+                {{index1 + 1}}
+              </div>
+              <div class="col">
+                {{ item1.otherPersonEntity.secondName + ' ' + item1.otherPersonEntity.firstName }}
+              </div>
+              <div class="col">
+                {{ item1.otherPersonEntity.club.name }}
+              </div>
+              <div class="col text-right" v-if="item1.dnf">DNF</div>
+              <div class="col text-right" v-if="item1.dsq">DSQ</div>
+              <div class="col text-right" v-if="item1.dnf">PK</div>
+              <div class="col text-right" v-else>{{item1.score}}</div>
+            </div>
+          </div>
+          </div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn label="zamknij" color="primary" v-close-popup />
+        </q-card-actions>
       </q-card>
     </q-dialog>
     <q-dialog v-model="openList" persistent>
@@ -1141,7 +987,7 @@ export default {
       loading: SkeletonBox
     }),
     AddNewOtherPerson: lazyLoadComponent({
-      componentFactory: () => import('components/AddNewOtherPerson.vue'),
+      componentFactory: () => import('src/components/otherPerson/AddNewOtherPerson.vue'),
       loading: SkeletonBox
     }),
     Member: lazyLoadComponent({
@@ -1194,6 +1040,8 @@ export default {
         shotgun: true,
         other: true
       },
+      test: [],
+      showCompetition: false,
       dis: false,
       usersInWork: [],
       icon: 'menu',
@@ -1226,7 +1074,6 @@ export default {
       addCompetitionConfirmbtn: false,
       addArbitersConfirmbtn: false,
       addCompetitionConfirm: false,
-      createNewCompetiton: false,
       competitionName: null,
       countingMethods: [],
       failure: false,
@@ -1341,6 +1188,19 @@ export default {
         })
       }
     },
+    getScores (tournamentUUID) {
+      fetch(`${this.local}/competitionMembersList/tournamentScores?tournamentUUID=${tournamentUUID}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => response.json())
+        .then(response => {
+          this.showloading()
+          this.test = response
+          this.showCompetition = true
+        })
+    },
     selectAllToAddToCompetition () {
       this.listOfCompetitions = []
       if (this.addAllCompetition) {
@@ -1376,7 +1236,7 @@ export default {
       }
     },
     getCountingMethods () {
-      fetch(`http://${this.local}/competition/getCountingMethods`, {
+      fetch(`${this.local}/competition/getCountingMethods`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -1384,7 +1244,7 @@ export default {
         })
     },
     getAllUsersInWork () {
-      fetch(`http://${this.local}/work/`, {
+      fetch(`${this.local}/work/`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -1393,7 +1253,7 @@ export default {
     },
     getListTournaments () {
       this.getMembersNames()
-      fetch(`http://${this.local}/tournament/openTournament`, {
+      fetch(`${this.local}/tournament/openTournament`, {
         method: 'GET'
       }).then(response => {
         if (response.status === 200) {
@@ -1407,7 +1267,7 @@ export default {
       })
     },
     getCompetitions () {
-      fetch(`http://${this.local}/competition/`, {
+      fetch(`${this.local}/competition/`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -1415,7 +1275,7 @@ export default {
         })
     },
     getListCalibers () {
-      fetch(`http://${this.local}/armory/calibers`, {
+      fetch(`${this.local}/armory/calibers`, {
         method: 'GET'
       }).then(response => response.json())
         .then(calibers => {
@@ -1435,7 +1295,7 @@ export default {
       }, time)
     },
     getMembersNames () {
-      fetch(`http://${this.local}/member/getAllNames`, {
+      fetch(`${this.local}/member/getAllNames`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -1443,7 +1303,7 @@ export default {
         })
     },
     getOther () {
-      fetch(`http://${this.local}/other/all`, {
+      fetch(`${this.local}/other/all`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -1451,7 +1311,7 @@ export default {
         })
     },
     getCompetitionsInTournament () {
-      fetch(`http://${this.local}/tournament/competitions?tournamentUUID=${this.tournamentUUID}`, {
+      fetch(`${this.local}/tournament/competitions?tournamentUUID=${this.tournamentUUID}`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -1459,7 +1319,7 @@ export default {
         })
     },
     getStatistics () {
-      fetch(`http://${this.local}/tournament/stat?tournamentUUID=${this.tournamentUUID}`, {
+      fetch(`${this.local}/tournament/stat?tournamentUUID=${this.tournamentUUID}`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -1468,7 +1328,7 @@ export default {
     },
     getMemberUUIDFromLegitimationNumber () {
       const memberlegNumber = this.memberName.legitimationNumber
-      fetch(`http://${this.local}/member/ID/${memberlegNumber}`, {
+      fetch(`${this.local}/member/ID/${memberlegNumber}`, {
         method: 'GET'
       }).then(response => response.text())
         .then(response => {
@@ -1491,7 +1351,7 @@ export default {
       } else {
         const memberlegNumber = this.memberName.legitimationNumber
         const otherNameID = this.otherName.id
-        fetch(`http://${this.local}/competitionMembersList/getMemberStartsByLegitimation?tournamentUUID=${this.tournamentUUID}&legNumber=${memberlegNumber}&otherID=${otherNameID}`, {
+        fetch(`${this.local}/competitionMembersList/getMemberStartsByLegitimation?tournamentUUID=${this.tournamentUUID}&legNumber=${memberlegNumber}&otherID=${otherNameID}`, {
           method: 'GET'
         }).then(response => response.json())
           .then(response => {
@@ -1512,7 +1372,7 @@ export default {
       } else {
         const memberlegNumber = this.memberName.legitimationNumber
         const otherNameID = this.otherName.id
-        fetch(`http://${this.local}/competitionMembersList/getMetricNumber?tournamentUUID=${this.tournamentUUID}&legNumber=${memberlegNumber}&otherID=${otherNameID}`, {
+        fetch(`${this.local}/competitionMembersList/getMetricNumber?tournamentUUID=${this.tournamentUUID}&legNumber=${memberlegNumber}&otherID=${otherNameID}`, {
           method: 'GET'
         }).then(response => {
           if (response.status === 200) {
@@ -1532,7 +1392,7 @@ export default {
       }
     },
     getArbiters () {
-      fetch(`http://${this.local}/member/getArbiters`, {
+      fetch(`${this.local}/member/getArbiters`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -1540,7 +1400,7 @@ export default {
         })
     },
     getOtherArbiters () {
-      fetch(`http://${this.local}/other/arbiters`, {
+      fetch(`${this.local}/other/arbiters`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -1548,7 +1408,7 @@ export default {
         })
     },
     getGunInTournament () {
-      fetch(`http://${this.local}/tournament/getGunInTournament?tournamentUUID=${this.tournamentUUID}`, {
+      fetch(`${this.local}/tournament/getGunInTournament?tournamentUUID=${this.tournamentUUID}`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -1562,7 +1422,7 @@ export default {
         open: true,
         wzss: this.wzss
       }
-      fetch(`http://${this.local}/tournament/`, {
+      fetch(`${this.local}/tournament/`, {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
@@ -1624,7 +1484,7 @@ export default {
         caliberUUID: this.choice13,
         practiceShots: this.choice14
       }
-      fetch(`http://${this.local}/competition`, {
+      fetch(`${this.local}/competition`, {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
@@ -1671,7 +1531,7 @@ export default {
         date: this.tournamentDate.replace(/\//gi, '-')
       }
       try {
-        const response = fetch(`http://${this.local}/tournament/${this.tournamentUUID}`, {
+        const response = fetch(`${this.local}/tournament/${this.tournamentUUID}`, {
           method: 'PUT',
           body: JSON.stringify(data),
           headers: {
@@ -1705,7 +1565,7 @@ export default {
       const memberlegNumber = this.memberName.legitimationNumber
       const otherNameID = this.otherName.id
       const competitionUUIDList = listOfCompetitions.map(name => name.replaceAll(',', '.'))
-      const url = `http://${local}/competitionMembersList/addMember?competitionUUIDList=${competitionUUIDList}&addAmmoList=${listOfAddAmmo}&legitimationNumber=${memberlegNumber}&otherPerson=${otherNameID}`
+      const url = `${local}/competitionMembersList/addMember?competitionUUIDList=${competitionUUIDList}&addAmmoList=${listOfAddAmmo}&legitimationNumber=${memberlegNumber}&otherPerson=${otherNameID}`
       fetch(url, {
         method: 'PUT',
         headers: {
@@ -1721,6 +1581,10 @@ export default {
                 this.showloading()
                 this.getListTournaments()
                 this.autoClose()
+                setTimeout(() => {
+                  this.getMemberUUIDFromLegitimationNumber()
+                  this.getMetricNumber()
+                }, 1000)
               }
             )
           } else {
@@ -1746,7 +1610,7 @@ export default {
       for (let i = 0; i < this.listOfCompetitions.length; i++) {
         list.push(this.listOfCompetitions[i].replaceAll(',', '.'))
       }
-      fetch(`http://${this.local}/competitionMembersList/removeMember?competitionNameList=${list}&legitimationNumber=${memberlegNumber}&otherPerson=${otherNameID}`, {
+      fetch(`${this.local}/competitionMembersList/removeMember?competitionNameList=${list}&legitimationNumber=${memberlegNumber}&otherPerson=${otherNameID}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -1775,7 +1639,7 @@ export default {
       })
     },
     addCompetitionToTournament () {
-      fetch(`http://${this.local}/tournament/addCompetition/${this.tournamentUUID}?competitionsUUID=${this.competitionAddToTournamentList}`, {
+      fetch(`${this.local}/tournament/addCompetition/${this.tournamentUUID}?competitionsUUID=${this.competitionAddToTournamentList}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -1804,7 +1668,7 @@ export default {
       })
     },
     closeTournament () {
-      fetch(`http://${this.local}/tournament/${this.tournamentUUID}`, {
+      fetch(`${this.local}/tournament/${this.tournamentUUID}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -1836,7 +1700,7 @@ export default {
       })
     },
     openTournament () {
-      fetch(`http://${this.local}/tournament/open/${this.tournamentUUID}?pinCode=${this.code}`, {
+      fetch(`${this.local}/tournament/open/${this.tournamentUUID}?pinCode=${this.code}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -1868,7 +1732,7 @@ export default {
       })
     },
     deleteTournament () {
-      fetch(`http://${this.local}/tournament/delete/${this.tournamentUUID}?pinCode=${this.code}`, {
+      fetch(`${this.local}/tournament/delete/${this.tournamentUUID}?pinCode=${this.code}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json'
@@ -1899,17 +1763,18 @@ export default {
       if (pageNumber < 0) {
         this.pageNumber = 0
       }
-      fetch(`http://${this.local}/tournament/closedList?page=${pageNumber}&size=15`, {
+      fetch(`${this.local}/tournament/closedList?page=${pageNumber}&size=15`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
           this.tournamentsClosed = response
+          this.visible = false
         })
     },
     removeArbiter (member) {
       const memberUUID = member.uuid
       const otherId = member.id
-      fetch(`http://${this.local}/tournament/removeArbiter/${this.tournamentUUID}?memberUUID=${memberUUID}&id=${otherId}`, {
+      fetch(`${this.local}/tournament/removeArbiter/${this.tournamentUUID}?memberUUID=${memberUUID}&id=${otherId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -1939,7 +1804,7 @@ export default {
     removeRTSArbiter (member) {
       const memberUUID = member.uuid
       const otherId = member.id
-      fetch(`http://${this.local}/tournament/removeRTSArbiter/${this.tournamentUUID}?memberUUID=${memberUUID}&id=${otherId}`, {
+      fetch(`${this.local}/tournament/removeRTSArbiter/${this.tournamentUUID}?memberUUID=${memberUUID}&id=${otherId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -1969,7 +1834,7 @@ export default {
     addMainArbiterToTournament (member) {
       const memberUUID = member.uuid
       const otherId = member.id
-      fetch(`http://${this.local}/tournament/addMainArbiter/${this.tournamentUUID}?memberUUID=${memberUUID}&id=${otherId}`, {
+      fetch(`${this.local}/tournament/addMainArbiter/${this.tournamentUUID}?memberUUID=${memberUUID}&id=${otherId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -2001,7 +1866,7 @@ export default {
     addRTSArbiterToTournament (member) {
       const memberUUID = member.uuid
       const otherId = member.id
-      fetch(`http://${this.local}/tournament/addRTSArbiter/${this.tournamentUUID}?memberUUID=${memberUUID}&id=${otherId}`, {
+      fetch(`${this.local}/tournament/addRTSArbiter/${this.tournamentUUID}?memberUUID=${memberUUID}&id=${otherId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -2033,7 +1898,7 @@ export default {
     addOtherArbiterToTournament (member) {
       const memberUUID = member.uuid
       const otherId = member.id
-      fetch(`http://${this.local}/tournament/addOthersArbiters/${this.tournamentUUID}?memberUUID=${memberUUID}&id=${otherId}`, {
+      fetch(`${this.local}/tournament/addOthersArbiters/${this.tournamentUUID}?memberUUID=${memberUUID}&id=${otherId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -2065,7 +1930,7 @@ export default {
     addOtherRTSArbiterToTournament (member) {
       const memberUUID = member.uuid
       const otherId = member.id
-      fetch(`http://${this.local}/tournament/addOthersRTSArbiters/${this.tournamentUUID}?memberUUID=${memberUUID}&id=${otherId}`, {
+      fetch(`${this.local}/tournament/addOthersRTSArbiters/${this.tournamentUUID}?memberUUID=${memberUUID}&id=${otherId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -2095,7 +1960,7 @@ export default {
       })
     },
     deleteListFromTournament () {
-      fetch(`http://${this.local}/competitionMembersList/delete?tournamentUUID=${this.tournamentUUID}&competitionUUID=${this.competitionListUUID}`, {
+      fetch(`${this.local}/competitionMembersList/delete?tournamentUUID=${this.tournamentUUID}&competitionUUID=${this.competitionListUUID}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json'
@@ -2180,7 +2045,7 @@ export default {
     getAnnouncementFromCompetition () {
       this.showloading()
       axios({
-        url: `http://${this.local}/files/downloadAnnouncementFromCompetition/${this.tournamentUUID}`,
+        url: `${this.local}/files/downloadAnnouncementFromCompetition/${this.tournamentUUID}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
@@ -2197,7 +2062,7 @@ export default {
     getAnnouncementFromCompetitionXLSX () {
       this.showloading()
       axios({
-        url: `http://${this.local}/files/downloadAnnouncementFromCompetitionXLSX/${this.tournamentUUID}`,
+        url: `${this.local}/files/downloadAnnouncementFromCompetitionXLSX/${this.tournamentUUID}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
@@ -2213,7 +2078,7 @@ export default {
     },
     getJudgeFromTournament (uuid, name, date) {
       axios({
-        url: `http://${this.local}/files/downloadJudge/${uuid}`,
+        url: `${this.local}/files/downloadJudge/${uuid}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
@@ -2236,7 +2101,7 @@ export default {
       }
       const { local, tournamentUUID, otherID, memberUUID, name, date } = this
       axios({
-        url: `http://${local}/files/downloadMetric/${tournamentUUID}?otherID=${otherID}&memberUUID=${memberUUID}&competitions=${info}&startNumber=${this.startNumber}&a5rotate=${this.a5rotate}`,
+        url: `${local}/files/downloadMetric/${tournamentUUID}?otherID=${otherID}&memberUUID=${memberUUID}&competitions=${info}&startNumber=${this.startNumber}&a5rotate=${this.a5rotate}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
@@ -2251,7 +2116,7 @@ export default {
       })
     },
     getAllClubsToTournament () {
-      fetch(`http://${this.local}/club/tournament`, {
+      fetch(`${this.local}/club/tournament`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -2259,7 +2124,7 @@ export default {
         })
     },
     addGunToTournament (barcode) {
-      fetch(`http://${this.local}/tournament/addGunToTournament?barcode=${barcode}&tournamentUUID=${this.tournamentUUID}`, {
+      fetch(`${this.local}/tournament/addGunToTournament?barcode=${barcode}&tournamentUUID=${this.tournamentUUID}`, {
         method: 'POST'
       }).then(response => {
         if (response.status === 200) {

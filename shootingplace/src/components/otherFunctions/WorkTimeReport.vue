@@ -251,7 +251,7 @@ export default {
       return JSON.parse(window.localStorage.getItem('BackgroundDark'))
     },
     getAllWorkingTimeEvidenceInMonth (year, month, workType) {
-      fetch('http://' + this.local + '/work/month?year=' + year + '&month=' + month + '&workType=' + workType, {
+      fetch(`${this.local}/work/month?year=${year}&month=${month}&workType=${workType}`, {
         method: 'GET'
       }).then(response => {
         if (response.status === 200) {
@@ -272,7 +272,7 @@ export default {
       })
     },
     getAllWorkingTypeInMonthAndYear (year, month) {
-      fetch('http://' + this.local + '/work/getAllWorkingTypeInMonthAndYear?year=' + year + '&month=' + month, {
+      fetch(`${this.local}/work/getAllWorkingTypeInMonthAndYear?year=${year}&month=${month}`, {
         method: 'GET'
       }).then(response => {
         if (response.status === 200) {
@@ -294,7 +294,7 @@ export default {
       })
     },
     getAllWorkingYear () {
-      fetch('http://' + this.local + '/work/getAllWorkingYear', {
+      fetch(`${this.local}/work/getAllWorkingYear`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -302,7 +302,7 @@ export default {
         })
     },
     getAllWorkingMonthInYear (year) {
-      fetch('http://' + this.local + '/work/getAllWorkingMonthInYear?year=' + year, {
+      fetch(`${this.local}/work/getAllWorkingMonthInYear?year=${year}`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -312,7 +312,7 @@ export default {
     getWorkTimeReport (year, month, workType, detailed) {
       if (month !== null) {
         axios({
-          url: 'http://' + this.local + '/files/downloadWorkReport?year=' + year + '&month=' + month + '&workType=' + workType + '&detailed=' + Boolean(detailed),
+          url: `${this.local}/files/downloadWorkReport?year=${year}&month=${month}&workType=${workType}&detailed=${Boolean(detailed)}`,
           method: 'GET',
           responseType: 'blob'
         }).then(response => {
@@ -327,7 +327,7 @@ export default {
       }
     },
     getAllUsers (type) {
-      fetch('http://' + this.local + '/users/allUsers?type=' + type, {
+      fetch(`${this.local}/users/allUsers?type=${type}`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -344,7 +344,7 @@ export default {
       this.autoClose()
     },
     acceptWorkingTime (acceptedList, pinCode) {
-      fetch('http://' + this.local + '/work/accept?uuidList=' + acceptedList + '&pinCode=' + pinCode, {
+      fetch(`${this.local}/work/accept?uuidList=${acceptedList}&pinCode=${pinCode}`, {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {
@@ -369,7 +369,7 @@ export default {
       })
     },
     inputChangesToWorkTIme (list, code) {
-      fetch('http://' + this.local + '/work/?list=' + list + '&pinCode=' + code, {
+      fetch(`${this.local}/work/?list=${list}&pinCode=${code}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -381,7 +381,6 @@ export default {
             response => {
               this.success = true
               this.message = response
-              // this.workTimeChangeArray = []
               this.getAllWorkingTimeEvidenceInMonth(this.yearSelect1, this.monthSelect1, this.workTypeSelect1)
               this.autoClose()
             }

@@ -86,7 +86,7 @@ export default {
   methods: {
     getDownloadCertificateOfClubMembership () {
       axios({
-        url: `http://${this.local}/files/downloadCertificateOfClubMembership/${this.uuid}?reason=${this.certificateChoice.label}&city=${this.city}&enlargement=${this.toggleEnlargement}`,
+        url: `${this.local}/files/downloadCertificateOfClubMembership/${this.uuid}?reason=${this.certificateChoice.label}&city=${this.city}&enlargement=${this.toggleEnlargement}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {

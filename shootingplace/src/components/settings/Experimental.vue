@@ -32,7 +32,7 @@
           </q-toggle>
         </div>
       </q-expansion-item>
-      <q-expansion-item dense v-if="!mobile" label="Zwody" class="q-pa-xs text-positive bg-dark">
+      <q-expansion-item dense v-if="!mobile" label="Zawody" class="q-pa-xs text-positive bg-dark">
         <div class="q-pa-xs">
         <q-toggle dense v-model="ClosedCompetitionTab" @input="toggleClosedCompetitionTab()">
           <div class="text-positive">{{ !ClosedCompetitionTab ? 'włącz' : 'wyłącz'}} listę zamkniętych zawodów</div>
@@ -40,10 +40,9 @@
       </div>
       </q-expansion-item>
       <q-expansion-item dense label="Panel sędziego" class="q-pa-xs text-positive bg-dark">
-        <div class="q-pa-xs">
-        <q-toggle dense v-model="JuryPanelCompetitionInExpansionItem" @input="toggleJuryPanelCompetitionInExpansionItem()">
-          <div class="text-positive">{{ !JuryPanelCompetitionInExpansionItem ? 'włącz' : 'wyłącz'}} zawody jako rozwijane list</div>
-        </q-toggle>
+        <div class="q-pa-xs row">
+          <q-radio v-model="JuryPanelCompetitionInExpansionItem" @input="toggleJuryPanelCompetitionInExpansionItem()" :val="false" label="rozwijane listy"></q-radio>
+          <q-radio v-model="JuryPanelCompetitionInExpansionItem" @input="toggleJuryPanelCompetitionInExpansionItem()" :val="true" label="Kafelki"></q-radio>
       </div>
       </q-expansion-item>
     </div>

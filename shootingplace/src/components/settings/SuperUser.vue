@@ -217,7 +217,7 @@ export default {
   },
   methods: {
     getAllSuperUsers () {
-      fetch('http://' + this.local + '/users/superUserList/', {
+      fetch(`${this.local}/users/superUserList/`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -232,7 +232,7 @@ export default {
         this.message = 'Coś poszło nie tak'
         this.failure = true
       } else {
-        fetch(`http://${this.local}/users/createSuperUser?firstName=${this.userFirstName}&secondName=${this.userSecondName}&subType=${this.userSubTypeSelect}&pinCode=${this.userCode}&superPinCode=${this.code}&memberUUID=${this.memberUUID}&otherID=${this.otherID}`, {
+        fetch(`${this.local}/users/createSuperUser?firstName=${this.userFirstName}&secondName=${this.userSecondName}&subType=${this.userSubTypeSelect}&pinCode=${this.userCode}&superPinCode=${this.code}&memberUUID=${this.memberUUID}&otherID=${this.otherID}`, {
           method: 'POST'
         }).then(response => {
           if (response.status === 201) {
@@ -256,7 +256,7 @@ export default {
       }
     },
     getUserActions (uuid) {
-      fetch('http://' + this.local + '/users/userActions?uuid=' + uuid, {
+      fetch(`${this.local}/users/userActions?uuid=${uuid}`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -265,7 +265,7 @@ export default {
     },
     getMasterCardCheck (code) {
       if (code.length > 3) {
-        fetch('http://' + this.local + '/barCode/?code=' + code, {
+        fetch(`${this.local}/barCode/?code=${code}`, {
           method: 'GET'
         }).then(response => response.json())
           .then(response => {
@@ -275,7 +275,7 @@ export default {
     },
     checkPinCode (code) {
       if (code.length > 3) {
-        fetch('http://' + this.local + '/users/checkPinCode?pinCode=' + code, {
+        fetch(`${this.local}/users/checkPinCode?pinCode=${code}`, {
           method: 'GET'
         }).then(response => response.json())
           .then(response => {
@@ -299,7 +299,7 @@ export default {
         }
         console.log(this.accept)
         if (this.accept) {
-          fetch('http://' + this.local + '/barCode/', {
+          fetch(`${this.local}/barCode/`, {
             method: 'POST',
             body: JSON.stringify(data),
             headers: { 'Content-Type': 'Application/json' }

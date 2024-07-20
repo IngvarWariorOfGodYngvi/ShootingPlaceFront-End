@@ -15,7 +15,11 @@
                       group="list">
       <AllLicensePayment></AllLicensePayment>
     </q-expansion-item>
-    <!-- <Canva v-touch-pan.prevent class="fex-center" style="width: 100%;height:100%;"></Canva> -->
+    <p></p>
+    <q-expansion-item label="Osoby z opłatą i bez licencji" dense class="text-left text-h6 text-bold bg-dark text-positive round"
+                      group="list">
+      <NotLicenseWithPayment></NotLicenseWithPayment>
+    </q-expansion-item>
   </q-page>
 </template>
 
@@ -42,11 +46,11 @@ export default {
     AllLicensePayment: lazyLoadComponent({
       componentFactory: () => import('components/license/AllLicensePayment.vue'),
       loading: SkeletonBox
+    }),
+    NotLicenseWithPayment: lazyLoadComponent({
+      componentFactory: () => import('components/license/NotLicenseWithPayment.vue'),
+      loading: SkeletonBox
     })
-    // Canva: lazyLoadComponent({
-    //   componentFactory: () => import('components/signature/canvas.vue'),
-    //   loading: SkeletonBox
-    // })
   },
   data () {
     return {

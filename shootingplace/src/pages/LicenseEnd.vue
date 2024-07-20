@@ -35,8 +35,8 @@ export default {
     count () {
       this.compList = []
       if (window.localStorage.getItem('counter') !== null) {
-        let counter = parseInt(window.localStorage.getItem('counter'))
-        window.localStorage.setItem('counter', ++counter)
+        let i = parseInt(window.localStorage.getItem('counter'))
+        window.localStorage.setItem('counter', ++i)
       }
     }
   }

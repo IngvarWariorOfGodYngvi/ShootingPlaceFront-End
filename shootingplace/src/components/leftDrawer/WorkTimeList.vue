@@ -61,7 +61,7 @@ export default {
   methods: {
     goToWork (number) {
       this.visible = true
-      fetch(`http://${this.local}/work/?number=${number}`, {
+      fetch(`${this.local}/work/?number=${number}`, {
         method: 'POST'
       }).then(response => {
         if (response.status === 200) {
@@ -98,7 +98,7 @@ export default {
       })
     },
     getAllUsersInWork () {
-      fetch(`http://${this.local}/work/`, {
+      fetch(`${this.local}/work/`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {

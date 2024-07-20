@@ -65,14 +65,14 @@ export default {
     },
     getAmmoListPDF (uuid, date) {
       axios({
-        url: 'http://' + this.local + '/files/downloadAmmunitionList/' + uuid,
+        url: `${this.local}/files/downloadAmmunitionList/${uuid}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
-        fileLink.setAttribute('download', 'Lista_Rozliczenia_Amunicji_' + date + '.pdf')
+        fileLink.setAttribute('download', `Lista_Rozliczenia_Amunicji_${date}.pdf`)
         document.body.appendChild(fileLink)
         fileLink.click()
         this.download = true

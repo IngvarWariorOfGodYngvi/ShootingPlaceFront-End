@@ -16,6 +16,10 @@
           <q-btn color="primary" label="resetuj" @click="reset()"></q-btn>
         </div>
         <div v-if="member!=null && !nonMember" class="row round" :class="member.active?'bg-green':'bg-red'">
+          <div style="min-height: 10vh;" @click="visible=false" class="col-3" v-if="member.image!=null">
+            <q-img contain fit=none style="max-height: 40vh; border-radius: 5px" class="text-body1" alt="zdjęcie profilowe"
+          :src="(`${local}/files/getFile?uuid=${member.image}`)" />
+          </div>
           <div class="col" :class="member.active?'col':'col-6'">
             <div dense class="q-mt-xs q-pl-md" >Imię i Nazwisko: {{ member.firstName }} {{ member.secondName }}</div>
             <div dense class="q-mt-xs q-pl-md" >Numer Legitymacji: {{ member.legitimationNumber }}</div>
@@ -25,7 +29,7 @@
             <div dense class="q-mt-xs q-pl-md" v-if="member.weaponPermission.number!=null">Licencja numer: {{ member.weaponPermission.number }}</div>
             <div dense class="q-mt-xs q-pl-md" >Ilość startów: Pistolet: {{ member.history.pistolCounter }} Karabin: {{ member.history.rifleCounter }} Strzelba: {{ member.history.shotgunCounter }}</div>
           </div>
-          <div v-if="member!=null" class="self-center" :class="member.active?'':'col-6'">
+          <div v-if="member!=null" class="self-center" :class="member.active?'':'col-3'">
             <div v-if="!member.active" class="text-bold text-h6" style="display: flex; justify-content: center;">Ureguluj Swoje Składki Członkowskie !</div>
           </div>
         </div>
@@ -165,7 +169,7 @@ export default {
   },
   methods: {
     getMemberByPesel (PESEL) {
-      fetch(`http://${this.local}/member/PESEL/${PESEL}`, {
+      fetch(`${this.local}/member/PESEL/${PESEL}`, {
         method: 'GET'
       }).then(response => {
         if (response.status === 200) {
@@ -203,7 +207,7 @@ export default {
       this.permission = false
     },
     getOtherbyPhone (phone) {
-      fetch(`http://${this.local}/other/getOhterByPhone/${phone}`, {
+      fetch(`${this.local}/other/getOhterByPhone/${phone}`, {
         method: 'GET'
       }).then(response => {
         if (response.status === 200) {
@@ -221,7 +225,7 @@ export default {
       })
     },
     getAllClubsToTournament () {
-      fetch(`http://${this.local}/club/tournament`, {
+      fetch(`${this.local}/club/tournament`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -283,7 +287,7 @@ export default {
         imageString: data
       }
       if (!isEmpty) {
-        fetch(`http://${this.local}/evidence/?pesel=${this.pesel}`, {
+        fetch(`${this.local}/evidence/?pesel=${this.pesel}`, {
           method: 'POST',
           body: JSON.stringify(dat)
         }).then(response => {
@@ -331,7 +335,7 @@ export default {
         other: other
       }
       if (!isEmpty) {
-        fetch(`http://${this.local}/evidence/other?phone=${this.phone}&club=${this.nonMemberClubName}&rememberMe=${this.rememberMe}`, {
+        fetch(`${this.local}/evidence/other?phone=${this.phone}&club=${this.nonMemberClubName}&rememberMe=${this.rememberMe}`, {
           method: 'POST',
           body: JSON.stringify(dat),
           headers: {

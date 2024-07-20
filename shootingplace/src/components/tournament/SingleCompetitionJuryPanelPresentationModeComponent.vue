@@ -213,11 +213,11 @@
                 </div>
                 <div v-if="competition.countingMethod === 'COMSTOCK'"
                      class="col-1 self-center text-center "
-                     :class="index%2===0?'text-black':'text-positive'">{{ item.outerTen !== 0 && item.innerTen !== 0 ? item.procedures: '' }}
-                </div>
-                <div class="col-1 self-center text-center "
                      :class="index%2===0?'text-black':'text-positive'">{{ item.outerTen !== 0 ? item.outerTen: '' }}
-                </div>
+                    </div>
+                    <div class="col-1 self-center text-center "
+                    :class="index%2===0?'text-black':'text-positive'">{{ item.outerTen !== 0 && item.innerTen !== 0 ? item.procedures: '' }}
+                  </div>
                 <div v-if="competition.countingMethod === 'COMSTOCK'" class="col"></div>
                 <div class="col-2 self-center text-center">
                   <div v-if="item.dnf||item.dsq||item.pk" :class="index%2===0?'text-black':'text-positive'"
@@ -398,7 +398,8 @@
 
 <script>
 import App from 'src/App'
-
+import { scroll } from 'quasar'
+const { setVerticalScrollPosition } = scroll
 export default {
   name: 'SingleCompetitionJuryPanelPresentationModeComponent.vue',
   props: {
@@ -409,16 +410,14 @@ export default {
   },
   created () {
     this.getCompetitionByID(this.uuid)
-    this.scrollToElement(window.frameElement.scroll)
   },
   watch: {
     uuid (newValue, oldValue) {
       if (newValue !== oldValue) {
-        console.log('zmiana')
+        setVerticalScrollPosition(document.documentElement, 0, 0)
         this.getCompetitionByID(this.uuid)
       }
       if (newValue === oldValue) {
-        console.log('bez zmian')
         this.getCompetitionByID(this.uuid)
       }
     }
@@ -431,7 +430,7 @@ export default {
   },
   methods: {
     getCompetitionByID (uuid) {
-      fetch(`http://${App.host}/competitionMembersList/getByID/?uuid=${uuid}`, {
+      fetch(`${this.local}/competitionMembersList/getByID/?uuid=${uuid}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'

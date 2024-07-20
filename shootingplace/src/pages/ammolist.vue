@@ -134,7 +134,7 @@
                 transition-hide="scale">
                 <div style="height: 100%; width: 100%;opacity: 0.92;">
                   <q-img spinner-color="white" ratio="1" contain style="height: 100%; width: 100%;"
-                    :src="('http://' + local + '/files/getGunImg?gunUUID=' + item.gunUUID)" />
+                    :src="(local + '/files/getGunImg?gunUUID=' + item.gunUUID)" />
                 </div>
               </q-tooltip>
               <div class="col q-pa-none q-ma-none">
@@ -420,7 +420,7 @@
                 background-position: center;
                 background-attachment: fixed;">
           <q-img v-if="gunUUID != null" spinner-color="white" ratio="1" contain style="height: 100%; width: 100%; opacity: 0.92;"
-            :src="('http://' + local + '/files/getGunImg?gunUUID=' + this.gunUUID)" />
+            :src="('local + '/files/getGunImg?gunUUID=' + this.gunUUID)" />
         </q-card-section> -->
       <q-card class="bg-dark" style="min-width: 80vw">
         <q-card-section class="flex-center">
@@ -527,7 +527,7 @@ export default {
       loading: SkeletonBox
     }),
     AddNewOtherPerson: lazyLoadComponent({
-      componentFactory: () => import('components/AddNewOtherPerson.vue'),
+      componentFactory: () => import('src/components/otherPerson/AddNewOtherPerson.vue'),
       loading: SkeletonBox
     }),
     Gun: lazyLoadComponent({
@@ -636,7 +636,7 @@ export default {
       return count
     },
     check (count) {
-      fetch(`http://${this.local}/ammoEvidence/isEvidenceIsClosed?quantity=${count}`, {
+      fetch(`${this.local}/ammoEvidence/isEvidenceIsClosed?quantity=${count}`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -658,7 +658,7 @@ export default {
       return day + '-' + (month) + '-' + current.getFullYear()
     },
     getPersonalAmmoFromList (legitimationNumber, IDNumber, evidenceUUID) {
-      fetch(`http://${this.local}/ammoEvidence/personalAmmoFromList?legitimationNumber=${legitimationNumber}&IDNumber=${IDNumber}&evidenceUUID=${evidenceUUID}`, {
+      fetch(`${this.local}/ammoEvidence/personalAmmoFromList?legitimationNumber=${legitimationNumber}&IDNumber=${IDNumber}&evidenceUUID=${evidenceUUID}`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -666,7 +666,7 @@ export default {
         })
     },
     getAmmoData () {
-      fetch(`http://${this.local}/ammoEvidence/evidence`, {
+      fetch(`${this.local}/ammoEvidence/evidence`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -676,7 +676,7 @@ export default {
     },
     getGunInAmmoEvidenceList () {
       if (this.GunListExp) {
-        fetch('http://' + this.local + '/armory/getGunInAmmoEvidenceList', {
+        fetch(`${this.local}/armory/getGunInAmmoEvidenceList`, {
           method: 'GET'
         }).then(response => response.json())
           .then(response => {
@@ -685,7 +685,7 @@ export default {
       }
     },
     getClosedEvidence (pageNumber) {
-      fetch(`http://${this.local}/ammoEvidence/closedEvidences?page=${pageNumber}&size=25`, {
+      fetch(`${this.local}/ammoEvidence/closedEvidences?page=${pageNumber}&size=25`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -693,7 +693,7 @@ export default {
         })
     },
     getEvidence () {
-      fetch(`http://${this.local}/ammoEvidence/oneEvidence?uuid=${this.uuid}`, {
+      fetch(`${this.local}/ammoEvidence/oneEvidence?uuid=${this.uuid}`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -701,7 +701,7 @@ export default {
         })
     },
     closeEvidence () {
-      fetch('http://' + this.local + '/ammoEvidence/ammo?evidenceUUID=' + this.uuid, {
+      fetch(`${this.local}/ammoEvidence/ammo?evidenceUUID=${this.uuid}`, {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {
@@ -727,7 +727,7 @@ export default {
       })
     },
     openEvidence () {
-      fetch('http://' + this.local + '/ammoEvidence/ammoOpen?evidenceUUID=' + this.uuid + '&pinCode=' + this.code, {
+      fetch(`${this.local}/ammoEvidence/ammoOpen?evidenceUUID=${this.uuid}&pinCode=${this.code}`, {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {
@@ -751,7 +751,7 @@ export default {
       })
     },
     getMembersNames () {
-      fetch('http://' + this.local + '/member/getAllNames', {
+      fetch(`${this.local}/member/getAllNames`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -765,7 +765,7 @@ export default {
       const otherNameWord = this.otherName.split(' ')
       const idNumber = otherNameWord.length
       const otherNameID = otherNameWord[idNumber - 1]
-      fetch('http://' + this.local + '/ammoEvidence/ammo?caliberUUID=' + this.caliberUUID + '&legitimationNumber=' + memberNameUUID + '&counter=' + this.ammoQuantity + '&otherID=' + otherNameID, {
+      fetch(`${this.local}/ammoEvidence/ammo?caliberUUID=${this.caliberUUID}&legitimationNumber=${memberNameUUID}&counter=${this.ammoQuantity}&otherID=${otherNameID}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -801,7 +801,7 @@ export default {
       if (evidenceUUID === 'undefined') {
         evidenceUUID = null
       }
-      fetch('http://' + this.local + '/armory/addGunToList?evidenceUUID=' + evidenceUUID + '&barcode=' + barcode + '&legitimationNumber=' + memberNameUUID + '&IDNumber=' + otherNameID, {
+      fetch(`${this.local}/armory/addGunToList?evidenceUUID=${evidenceUUID}&barcode=${barcode}&legitimationNumber=${memberNameUUID}&IDNumber=${otherNameID}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -827,7 +827,7 @@ export default {
     },
     returnToStore (gunUUID) {
       const list = [gunUUID]
-      fetch('http://' + this.local + '/armory/returnToStore?gunsUUID=' + list, {
+      fetch(`${this.local}/armory/returnToStore?gunsUUID=${list}`, {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {
@@ -854,7 +854,7 @@ export default {
       return list
     },
     getListCalibers () {
-      fetch('http://' + this.local + '/armory/calibers', {
+      fetch(`${this.local}/armory/calibers`, {
         method: 'GET'
       }).then(response => response.json())
         .then(calibers => {
@@ -862,7 +862,7 @@ export default {
         })
     },
     getOther () {
-      fetch('http://' + this.local + '/other/', {
+      fetch(`${this.local}/other/`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {

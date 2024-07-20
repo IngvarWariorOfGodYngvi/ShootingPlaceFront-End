@@ -214,7 +214,7 @@ export default {
   },
   methods: {
     getMembersWithLicense () {
-      fetch('http://' + this.local + '/license/membersWithValidLicense', {
+      fetch(`${this.local}/license/membersWithValidLicense`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -240,7 +240,7 @@ export default {
         riflePermission: licenseRiflePermission,
         shotgunPermission: licenseShotgunPermission
       }
-      fetch('http://' + this.local + '/license/' + uuid, {
+      fetch(`${this.local}/license/${uuid}`, {
         method: 'PATCH',
         body: JSON.stringify(data),
         headers: {
@@ -271,7 +271,7 @@ export default {
       })
     },
     prolongLicenseList (pinCode) {
-      fetch('http://' + this.local + '/license/prolongAll?licenseList=' + this.licenseList + '&pinCode=' + pinCode, {
+      fetch(`${this.local}/license/prolongAll?licenseList=${this.licenseList}&pinCode=${pinCode}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -302,7 +302,7 @@ export default {
       })
     },
     addLicenseHistoryPayment (uuid, pinCode) {
-      fetch('http://' + this.local + '/license/history/' + uuid + '?pinCode=' + pinCode, {
+      fetch(`${this.local}/license/history/${uuid}?pinCode=${pinCode}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'

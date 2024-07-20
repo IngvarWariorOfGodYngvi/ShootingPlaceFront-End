@@ -72,7 +72,7 @@
                   transition-hide="scale">
                   <div style="height: 100%; width: 100%;opacity: 0.92;">
                     <q-img spinner-color="white" ratio="1" contain style="height: 100%; width: 100%;"
-                      :src="('http://' + local + '/files/getGunImg?gunUUID=' + item.uuid)" />
+                      :src="(local + '/files/getGunImg?gunUUID=' + item.uuid)" />
                   </div>
                 </q-tooltip>
                 <q-tooltip v-if="!mobile && shootingPlace === 'prod' && item.imgUUID != null" :delay="500" content-style="width: 50%; height: 70%;
@@ -83,7 +83,7 @@
                   transition-hide="scale">
                   <div style="height: 100%; width: 100%;opacity: 0.92;">
                     <q-img spinner-color="white" ratio="1" contain style="height: 100%; width: 100%;"
-                      :src="('http://' + local + '/files/getGunImg?gunUUID=' + item.uuid)" />
+                      :src="(local + '/files/getGunImg?gunUUID=' + item.uuid)" />
                   </div>
                 </q-tooltip>
                 <q-checkbox dense class="q-pr-xs" v-if="transportCertificate" color="primary" v-model="selection"
@@ -148,10 +148,10 @@
                 <QuantityOnDate :uuid="item.uuid" :date="quantityOnDate" :refresh="refresh" class="col"></QuantityOnDate>
               </div>
             </div>
-            <q-btn color="primary" dense @click=" caliberUUID = item.uuid; addCaliberDialog = true"
-              class="col-2"><div class="col"><div>wprowadź na stan</div><div>{{item.name}}</div></div></q-btn>
-            <q-btn color="secondary" dense
-              @click=" caliberUUID = item.uuid; caliberHistory = true; getCaliberHistory()" class="col-2"><div class="col"><div>sprawdź</div><div>historię</div></div></q-btn>
+            <q-btn color="primary" no-caps dense @click=" caliberUUID = item.uuid; addCaliberDialog = true"
+              class="col-2 hover1 round q-ma-xs text-caption"><div class="col"><div>Wprowadź na stan</div><div>{{item.name}}</div></div></q-btn>
+            <q-btn color="secondary" dense no-caps
+            class="col-2 hover1 round q-ma-xs text-caption" @click=" caliberUUID = item.uuid; caliberHistory = true; getCaliberHistory()"><div class="col"><div>Sprawdź</div><div>historię</div></div></q-btn>
           </div>
         </q-card-section>
       </q-card>
@@ -333,7 +333,7 @@
       <q-card style="width: 100%;height: 70%;" id="layout" class="bg-dark text-positive">
         <q-card-section>
           <q-img v-if="gunUUID != null" spinner-color="white" ratio="1" contain style="height: 100%; width: 100%;"
-            :src="('http://' + local + '/files/getGunImg?gunUUID=' + gunUUID)" />
+            :src="(local + '/files/getGunImg?gunUUID=' + gunUUID)" />
         </q-card-section>
         <q-card-section>
           <q-btn color="primary" label="zamknij" class="full-width" @click="gunUUID = null" v-close-popup></q-btn>
@@ -615,7 +615,7 @@ export default {
       }
     },
     changeCaliberUnitPrice (caliberUUID, price, pinCode) {
-      fetch(`http://${this.local}/armory/changeCaliberUnitPrice?caliberUUID=${caliberUUID}&price=${price}&pinCode=${pinCode}`, {
+      fetch(`${this.local}/armory/changeCaliberUnitPrice?caliberUUID=${caliberUUID}&price=${price}&pinCode=${pinCode}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -638,7 +638,7 @@ export default {
       })
     },
     changeCaliberUnitPriceForNotMember (caliberUUID, price, pinCode) {
-      fetch(`http://${this.local}/armory/changeCaliberUnitPriceForNotMember?caliberUUID=${caliberUUID}&price=${price}&pinCode=${pinCode}`, {
+      fetch(`${this.local}/armory/changeCaliberUnitPriceForNotMember?caliberUUID=${caliberUUID}&price=${price}&pinCode=${pinCode}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -679,7 +679,7 @@ export default {
         basisForPurchaseOrAssignment: this.gunBasisForPurchaseOrAssignment,
         addedDate: this.gunDate
       }
-      fetch('http://' + this.local + '/armory/addGun', {
+      fetch(`${this.local}/armory/addGun`, {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
@@ -708,7 +708,7 @@ export default {
       })
     },
     removeGun () {
-      fetch('http://' + this.local + '/armory/remove?gunUUID=' + this.gunUUID + '&pinCode=' + this.code, {
+      fetch(`${this.local}/armory/remove?gunUUID=${this.gunUUID}&pinCode=${this.code}`, {
         method: 'PUT'
       }).then(response => {
         if (response.status === 200) {
@@ -733,7 +733,7 @@ export default {
       })
     },
     removeGunImage (gunUUID) {
-      fetch('http://' + this.local + '/files/removeImg?gunUUID=' + gunUUID, {
+      fetch(`${this.local}/files/removeImg?gunUUID=${gunUUID}`, {
         method: 'DELETE'
       }).then(response => {
         if (response.status === 200) {
@@ -752,7 +752,7 @@ export default {
       })
     },
     createNewGunTYpe () {
-      fetch('http://' + this.local + '/armory/newGunTypeName?nameType=' + this.newGunTypeName, {
+      fetch(`${this.local}/armory/newGunTypeName?nameType=${this.newGunTypeName}`, {
         method: 'POST'
       }).then(response => {
         if (response.status === 200) {
@@ -767,7 +767,7 @@ export default {
       })
     },
     getGunTypes () {
-      fetch('http://' + this.local + '/armory/gunType', {
+      fetch(`${this.local}/armory/gunType`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -775,7 +775,7 @@ export default {
         })
     },
     getAllGuns () {
-      fetch(`http://${this.local}/armory/getGuns`, {
+      fetch(`${this.local}/armory/getGuns`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -783,7 +783,7 @@ export default {
         })
     },
     getListCalibers () {
-      fetch(`http://${this.local}/armory/calibers`, {
+      fetch(`${this.local}/armory/calibers`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -791,7 +791,7 @@ export default {
         })
     },
     getCaliberHistory () {
-      fetch('http://' + this.local + '/armory/getHistory?caliberUUID=' + this.caliberUUID, {
+      fetch(`${this.local}/armory/getHistory?caliberUUID=${this.caliberUUID}`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -799,7 +799,7 @@ export default {
         })
     },
     addAmmoToCaliber () {
-      fetch('http://' + this.local + '/armory/addAmmo?caliberUUID=' + this.caliberUUID + '&date=' + this.ammoDate.replace(/\//gi, '-') + '&count=' + this.ammoQuantity + '&description=' + this.ammoDescription, {
+      fetch(`${this.local}/armory/addAmmo?caliberUUID=${this.caliberUUID}&date=${this.ammoDate.replace(/\//gi, '-')}&count=${this.ammoQuantity}&description=${this.ammoDescription}`, {
         method: 'PUT'
       }).then(response => {
         if (response.status === 200) {
@@ -818,7 +818,7 @@ export default {
       })
     },
     addUsedHistoryToGun (barcode) {
-      fetch('http://' + this.local + '/armory/addUsedHistoryToGun?barcode=' + barcode, {
+      fetch(`${this.local}/armory/addUsedHistoryToGun?barcode=${barcode}`, {
         method: 'PUT'
       }).then(response => {
         if (response.status === 200) {
@@ -843,7 +843,7 @@ export default {
       })
     },
     addImageToGun (gunUUID, uuid) {
-      fetch('http://' + this.local + '/armory/addImageToGun?gunUUID=' + gunUUID + '&fileUUID=' + uuid, {
+      fetch(`${this.local}/armory/addImageToGun?gunUUID=${gunUUID}&fileUUID=${uuid}`, {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {
@@ -857,7 +857,7 @@ export default {
       })
     },
     addNewCaliber () {
-      fetch('http://' + this.local + '/armory/calibers?caliber=' + this.caliberName + '&pinCode=' + this.code, {
+      fetch(`${this.local}/armory/calibers?caliber=${this.caliberName}&pinCode=${this.code}`, {
         method: 'POST'
       }).then(response => {
         if (response.status === 200) {
@@ -883,7 +883,7 @@ export default {
       })
     },
     getListCalibersSelect () {
-      fetch('http://' + this.local + '/armory/calibersList', {
+      fetch(`${this.local}/armory/calibersList`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -892,7 +892,7 @@ export default {
     },
     getGunRegistryPdf () {
       axios({
-        url: 'http://' + this.local + '/files/downloadGunRegistry/?guns=' + this.gunListSelect,
+        url: `${this.local}/files/downloadGunRegistry/?guns=${this.gunListSelect}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
@@ -909,7 +909,7 @@ export default {
     },
     getGunRegistryXlsx () {
       axios({
-        url: 'http://' + this.local + '/files/downloadGunRegistryXlsx/?guns=' + this.gunListSelect,
+        url: `${this.local}/files/downloadGunRegistryXlsx/?guns=${this.gunListSelect}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
@@ -926,7 +926,7 @@ export default {
     },
     getGunTransportCertificate () {
       axios({
-        url: 'http://' + this.local + '/files/downloadGunTransportCertificate/?guns=' + this.selection + '&date=' + this.date.replace(/\//gi, '-') + '&date1=' + this.date1.replace(/\//gi, '-'),
+        url: `${this.local}/files/downloadGunTransportCertificate/?guns=${this.selection}&date=${this.date.replace(/\//gi, '-')}&date1=${this.date1.replace(/\//gi, '-')}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {

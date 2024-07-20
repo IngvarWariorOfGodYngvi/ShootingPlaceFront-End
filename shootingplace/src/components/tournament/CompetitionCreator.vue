@@ -191,7 +191,7 @@ export default {
       this.getCompetitionTypes()
     },
     getCountingMethods () {
-      fetch(`http://${this.local}/competition/getCountingMethods`, {
+      fetch(`${this.local}/competition/getCountingMethods`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -200,7 +200,7 @@ export default {
         })
     },
     getDisciplines () {
-      fetch(`http://${this.local}/competition/getDisciplines`, {
+      fetch(`${this.local}/competition/getDisciplines`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -208,7 +208,7 @@ export default {
         })
     },
     getCompetitionTypes () {
-      fetch(`http://${this.local}/competition/getCompetitionTypes`, {
+      fetch(`${this.local}/competition/getCompetitionTypes`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -216,7 +216,7 @@ export default {
         })
     },
     getListCalibers () {
-      fetch(`http://${this.local}/armory/calibers`, {
+      fetch(`${this.local}/armory/calibers`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -263,7 +263,7 @@ export default {
         numberOfManyShots: null,
         caliberUUID: this.caliber
       }
-      fetch(`http://${this.local}/competition`, {
+      fetch(`${this.local}/competition`, {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {

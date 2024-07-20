@@ -21,7 +21,7 @@ export default {
   methods: {
     download () {
       axios({
-        url: 'http://' + this.local + '/files/downloadAllMembersWithLicense',
+        url: `${this.local}/files/downloadAllMembersWithLicense`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
@@ -37,7 +37,7 @@ export default {
     },
     download1 () {
       axios({
-        url: 'http://' + this.local + '/files/simpleDocx',
+        url: `${this.local}/files/simpleDocx`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {

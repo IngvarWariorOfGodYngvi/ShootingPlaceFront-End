@@ -1,14 +1,17 @@
 <template>
   <div v-if="member != null" class="full-width">
+    <q-card-actions align="right" class="q-pa-xs q-ma-xs">
+      <q-btn icon="close" color="primary" round dense v-close-popup />
+    </q-card-actions>
     <div class="text-h6 text-center bg-warning" v-if="shootingPlace==='prod' && !member.declarationLOK">Brak Podpisanej Deklaracji LOK</div>
     <q-card bordered class="container round" :class="`row bg-${member.active ?'green' : 'red'}-3`" :style="`rotate: -${rotateFun}deg; height: ${mobile? '30vh' : ''}`" @dblclick="rotateFun+=0.25" @click.ctrl="rotateFun=0" @click.shift.left="rotateFun+=25">
       <q-card-section v-if="member.imageUUID != null" avatar :class="mobile ? 'col-3 q-pa-none q-ma-none' : 'col-3'">
-        <q-img fit=none style="max-height: 40vh; border-radius: 5px" class="text-body1" alt="zdjęcie profilowe"
-          :src="(`http://${local}/files/getFile?uuid=${member.imageUUID}`)" />
+        <q-img contain fit=none style="max-height: 40vh; border-radius: 5px" class="text-body1" alt="zdjęcie profilowe"
+          :src="(`${local}/files/getFile?uuid=${member.imageUUID}`)" />
       </q-card-section>
       <q-card-section v-else avatar class="col-4">
         <q-uploader class="fit" method="POST"
-          :url="(`http://${local}/files/member/${member.uuid}`)" label="Dodaj zdjęcie"
+          :url="(`${local}/files/member/${member.uuid}`)" label="Dodaj zdjęcie"
           max-file-size="40960000" accept=".jpg, image/*" @rejected="onRejected" field-name="file"
           @uploaded="getMemberByUUID(member.uuid)" />
       </q-card-section>
@@ -28,7 +31,7 @@
           <q-btn color="primary" label="zmień zdjęcie">
             <q-popup-edit value="" content-class="bg-dark text-positive" >
               <q-uploader style="width:100%;height:100%" method="POST"
-                :url="(`http://${local}/files/member/${member.uuid}`)" label="Dodaj zdjęcie"
+                :url="(`${local}/files/member/${member.uuid}`)" label="Dodaj zdjęcie"
                 max-file-size="40960000" accept=".jpg, image/*" @rejected="onRejected" field-name="file"
                 @uploaded="getMemberByUUID(member.uuid)" />
             </q-popup-edit>
@@ -69,7 +72,7 @@
         <div v-if="!member.erased && main && !mobile">
           <div>
             <q-btn class="full-width round" color="green" label="Przedłuż składkę" :disable="contributionCount==0&&shootingPlace==='prod'"
-              @click="memberUUID = member.uuid; name = member.secondName + ' ' + member.firstName; contribution = true; rotateFun+=0.125" />
+              @click="memberUUID = member.uuid; name = member.secondName + ' ' + member.firstName; contribution = true; rotateFun+=0.125" :loading="loading[0]" />
           </div>
         </div>
         <q-expansion-item dense default-opened class="bg-dark full-width q-pa-none text-center text-positive"
@@ -237,10 +240,10 @@
         </q-expansion-item>
         <q-expansion-item icon dense v-if=" !member.erased && main && !mobile " :header-class="!headerColorChange?'':'bg-grey-3 text-black round'" @hide="headerColorChange=!headerColorChange" @show="headerColorChange=!headerColorChange" label="Opcje Dodatkowe" group="right-card" class="bg-dark text-positive">
           <template v-slot:header>
-            <q-item-section v-if="(!member.pzss && member.club.id == 1) || !member.declarationLOK" class="text-left col-4">
-              <q-icon v-if="(!member.pzss && member.club.id == 1) || !member.declarationLOK" name="warning" color="warning" size="5vh" class="pulse"/>
+            <q-item-section v-if="(!member.pzss && member.club.id == 1) || (!member.declarationLOK && shootingPlace === 'prod')" class="text-left col-4">
+              <q-icon name="warning" color="warning" size="5vh" class="pulse"/>
             </q-item-section>
-            <q-item-section v-if="(!member.pzss && member.club.id == 1) || !member.declarationLOK" class="col text-left">
+            <q-item-section v-if="(!member.pzss && member.club.id == 1) || (!member.declarationLOK && shootingPlace === 'prod')" class="col text-left">
               Opcje Dodatkowe
             </q-item-section>
             <q-item-section v-else class="col text-center">
@@ -359,7 +362,7 @@
                 <q-item v-if=" member.memberPermissions.arbiterNumber !== null " class="full-width row">
                   <q-input dense outlined filled class="full-width col"
                     v-if=" member.memberPermissions.arbiterNumber != null " v-model=" permissionsArbiterNumber "
-                    label="Numer Uprawnień" bg-color="grey-3" />
+                    label="Numer Uprawnień"/>
                   <q-btn dense class="full-width col round" v-if=" member.memberPermissions.arbiterNumber != null "
                     label="Nadaj Nowy Numer" color="primary" @click=" memberUUID = member.uuid; arbiterConfirm = true " />
                 </q-item>
@@ -386,6 +389,7 @@
               </q-item-section>
             </template>
             <div class="row">
+              <q-tooltip content-class="bg-dark text-positive" anchor="top middle" :delay="750">kliknij aby edytować</q-tooltip>
               <q-btn dense class="col q-ma-md" text-color="black" @click=" main && !mobile ? (memberUUID = member.uuid, pzssPortal = true) : '' " :color="!member.pzss?'red-3':'green-3'" :label="!member.pzss?'Nie Wprowadzony do Portalu':'Wprowadzony do portalu'"/>
             </div>
             <q-item dense v-if=" main && !mobile " class="q-pa-md">
@@ -494,7 +498,7 @@
             </q-item>
             <q-item class="bg-red-2 text-black">
               <q-select color="black" options-cover filled stack-label class="full-width" v-model=" erasedReasonType "
-                :options=" erasedTypes " label="wybierz przyczynę" @show="getListErasedType()"></q-select>
+                :options=" erasedTypes " label="wybierz przyczynę" @show="getListErasedType()"/>
               <q-input class="col-5" color="black" outlined filled v-model=" erasedDate " mask="####-##-##" label="w dniu:">
                 <template v-slot:append>
                   <q-icon name="event" class="cursor-pointer">
@@ -777,13 +781,13 @@
       <q-card class="bg-green-5 text-center">
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
-          <q-input @keypress.enter=" prolongContribution(memberUUID); contributionCode = false " autofocus type="password"
+          <q-input @keypress.enter=" simulateProgress(0); contributionCode = false " autofocus type="password"
             v-model=" code " filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input>
         </q-card-section>
 
         <q-card-actions align="right">
           <q-btn label="anuluj" color="black" v-close-popup @click=" code = null " />
-          <q-btn label="Przedłuż" color="black" v-close-popup @click=" prolongContribution(memberUUID); code = null " />
+          <q-btn label="Przedłuż" color="black" v-close-popup @click=" simulateProgress(0); code = null " />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -1350,8 +1354,11 @@
     </q-dialog>
     <q-dialog v-model=" editContribution " @keypress.esc=" editContribution = false ">
       <q-card class="bg-dark text-positive">
+        <q-card-actions align="right" class="q-pa-xs q-ma-xs row">
+          <div class="text-h5 text-bold text-center col">Edytuj Składkę</div>
+          <q-btn icon="close" color="primary" round dense v-close-popup @click="memberName = ''; otherName = ''"/>
+        </q-card-actions>
         <q-card-section>
-          <div class="text-h5 text-bold text-center">Edytuj Składkę</div>
           <div class="row">
               <q-input class="col-6" dense v-model=" editContributionPaymentDate " input-class="text-positive" label-color="positive" filled standout="bg-accent text-black" stack-label
                 mask="####-##-##" label="Data Opłacenia Składki">
@@ -1397,10 +1404,6 @@
               @click=" uuid = member.uuid;contributionDownloadConfirm = true " />
           </div>
         </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn label="zamknij" color="primary" v-close-popup />
-        </q-card-actions>
       </q-card>
     </q-dialog>
     <q-dialog v-model=" editContributionCode " persistent>
@@ -1439,11 +1442,13 @@
 import axios from 'axios'
 import App from 'src/App.vue'
 import Print from 'print-js'
+import { ref } from 'vue'
 import MemberLicense from 'components/member/MemberLicense.vue'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox.vue'
 import Vue from 'vue'
 import SmoothScrollbar from 'vue-smooth-scrollbar'
+import Tooltip2clickTip from 'src/utils/Tooltip2clickTip.vue'
 Vue.use(SmoothScrollbar)
 export default {
   name: 'Member',
@@ -1484,7 +1489,8 @@ export default {
     Tooltip2clickToShow: lazyLoadComponent({
       componentFactory: () => import('src/utils/Tooltip2clickToShow.vue'),
       loading: SkeletonBox
-    })
+    }),
+    Tooltip2clickTip
   },
   data () {
     return {
@@ -1626,6 +1632,25 @@ export default {
     this.getMemberByLegitimationNumber(this.memberNumberLegitimation)
     this.getListCalibers()
   },
+  setup () {
+    const loading = ref([
+      false
+    ])
+    const progress = ref(false)
+
+    function simulateProgress (number) {
+      loading.value[number] = true
+      this.prolongContribution(this.memberUUID)
+      setTimeout(() => {
+        loading.value[number] = false
+      }, 0)
+    }
+    return {
+      loading,
+      progress,
+      simulateProgress
+    }
+  },
   methods: {
     showloading () {
       this.$q.loading.show({ message: 'Dzieje się coś ważnego... Poczekaj' })
@@ -1673,7 +1698,7 @@ export default {
       }, 2000)
     },
     getMemberScores (competitionMemberListUUID) {
-      fetch(`http://${this.local}/competitionMembersList/memberScores?competitionMemberListUUID=${competitionMemberListUUID}`, {
+      fetch(`${this.local}/competitionMembersList/memberScores?competitionMemberListUUID=${competitionMemberListUUID}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -1686,7 +1711,7 @@ export default {
         })
     },
     getMemberByLegitimationNumber (number) {
-      fetch(`http://${this.local}/member/${number}`, {
+      fetch(`${this.local}/member/${number}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -1707,7 +1732,7 @@ export default {
       this.visible = false
     },
     getPersonalStatistics (uuid) {
-      fetch('http://' + this.local + '/statistics/personal?uuid=' + uuid, {
+      fetch(`${this.local}/statistics/personal?uuid=${uuid}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -1718,7 +1743,7 @@ export default {
         })
     },
     getAllMemberFiles (uuid) {
-      fetch('http://' + this.local + '/files/getAllMemberFiles?uuid=' + uuid, {
+      fetch(`${this.local}/files/getAllMemberFiles?uuid=${uuid}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -1745,7 +1770,7 @@ export default {
       return day + '-' + (month) + '-' + current.getFullYear()
     },
     addHistoryContributionRecord (uuid, date) {
-      fetch('http://' + this.local + '/contribution/history/' + uuid + '?date=' + date.replace(/\//gi, '-') + '&pinCode=' + this.code, {
+      fetch(`${this.local}/contribution/history/${uuid}?date=${date.replace(/\//gi, '-')}&pinCode=${this.code}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -1773,7 +1798,7 @@ export default {
       })
     },
     getMemberByUUID (uuid) {
-      fetch('http://' + this.local + '/member/uuid/' + uuid, {
+      fetch(`${this.local}/member/uuid/${uuid}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -1787,7 +1812,7 @@ export default {
       })
     },
     editContributionRecord () {
-      fetch('http://' + this.local + '/contribution/edit?memberUUID=' + this.memberUUID + '&contributionUUID=' + this.contributionUUID + '&paymentDay=' + this.editContributionPaymentDate.replace(/\//gi, '-') + '&validThru=' + this.editContributionValidThruDate.replace(/\//gi, '-') + '&pinCode=' + this.code, {
+      fetch(`${this.local}/contribution/edit?memberUUID=${this.memberUUID}&contributionUUID=${this.contributionUUID}&paymentDay=${this.editContributionPaymentDate.replace(/\//gi, '-')}&validThru=${this.editContributionValidThruDate.replace(/\//gi, '-')}&pinCode=${this.code}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -1815,7 +1840,7 @@ export default {
       })
     },
     removeContributionRecord () {
-      fetch('http://' + this.local + '/contribution/remove/' + this.memberUUID + '?contributionUUID=' + this.contributionUUID + '&pinCode=' + this.code, {
+      fetch(`${this.local}/contribution/remove/${this.memberUUID}?contributionUUID=${this.contributionUUID}&pinCode=${this.code}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -1843,7 +1868,7 @@ export default {
       })
     },
     prolongContribution (uuid) {
-      fetch(`http://${this.local}/contribution/${uuid}?pinCode=${this.code}&contributionCount=${this.contributionCount}`, {
+      fetch(`${this.local}/contribution/${uuid}?pinCode=${this.code}&contributionCount=${this.contributionCount}`, {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {
@@ -1872,7 +1897,7 @@ export default {
     },
     getContributionPDF () {
       axios({
-        url: `http://${this.local}/files/downloadContribution/${this.memberUUID}?contributionUUID=${this.contributionUUID}&a5rotate=${this.a5rotate}`,
+        url: `${this.local}/files/downloadContribution/${this.memberUUID}?contributionUUID=${this.contributionUUID}&a5rotate=${this.a5rotate}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
@@ -1894,7 +1919,7 @@ export default {
         email: email,
         phoneNumber: phone.replace('+48', '')
       }
-      fetch(`http://${this.local}/member/${uuid}?pinCode=${code}`, {
+      fetch(`${this.local}/member/${uuid}?pinCode=${code}`, {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {
@@ -1928,7 +1953,7 @@ export default {
         firstName: firstName,
         secondName: secondName
       }
-      fetch(`http://${this.local}/member/${uuid}?pinCode=${code}`, {
+      fetch(`${this.local}/member/${uuid}?pinCode=${code}`, {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {
@@ -1965,7 +1990,7 @@ export default {
         streetNumber: memberStreetNumber,
         flatNumber: memberFlatNumber
       }
-      fetch('http://' + this.local + '/address/' + uuid + '?pinCode=' + code, {
+      fetch(`${this.local}/address/${uuid}?pinCode=${code}`, {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {
@@ -1997,7 +2022,7 @@ export default {
       })
     },
     getListCalibers () {
-      fetch('http://' + this.local + '/armory/calibers', {
+      fetch(`${this.local}/armory/calibers`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -2005,7 +2030,7 @@ export default {
         })
     },
     getListErasedType () {
-      fetch('http://' + this.local + '/member/erasedType', {
+      fetch(`${this.local}/member/erasedType`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -2013,7 +2038,7 @@ export default {
         })
     },
     addMemberAndAmmoToCaliber () {
-      fetch('http://' + this.local + '/ammoEvidence/ammo?caliberUUID=' + this.caliberUUID + '&legitimationNumber=' + this.legNumber + '&counter=' + this.quantity + '&otherID=0', {
+      fetch(`${this.local}/ammoEvidence/ammo?caliberUUID=${this.caliberUUID}&legitimationNumber=${this.legNumber}&counter=${this.quantity}&otherID=0`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -2060,7 +2085,7 @@ export default {
         shotgunPermission: patentShotgunPermission,
         dateOfPosting: patentDate.replace(this.dateVar, '-')
       }
-      fetch(`http://${this.local}/patent/${uuid}`, {
+      fetch(`${this.local}/patent/${uuid}`, {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {
@@ -2100,7 +2125,7 @@ export default {
         number: weaponPermissionNumber,
         exist: isExist
       }
-      fetch('http://' + this.local + '/weapon/weapon/' + uuid, {
+      fetch(`${this.local}/weapon/weapon/${uuid}`, {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {
@@ -2132,7 +2157,7 @@ export default {
         admissionToPossessAWeapon: admissionToPossess,
         admissionToPossessAWeaponIsExist: admissionToPossessIsExist
       }
-      fetch('http://' + this.local + '/weapon/weapon/' + uuid, {
+      fetch(`${this.local}/weapon/weapon/${uuid}`, {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {
@@ -2160,7 +2185,7 @@ export default {
       })
     },
     removeWeaponPermissionOrAdmission () {
-      fetch('http://' + this.local + '/weapon/weapon/' + this.memberUUID + '?admission=' + this.admission + '&permission=' + this.permission, {
+      fetch(`${this.local}/weapon/weapon/${this.memberUUID}?admission=${this.admission}&permission=${this.permission}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -2188,7 +2213,7 @@ export default {
       })
     },
     changeActive (uuid) {
-      fetch('http://' + this.local + '/member/' + uuid + '?pinCode=' + this.code, {
+      fetch(`${this.local}/member/${uuid}?pinCode=${this.code}`, {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {
@@ -2218,7 +2243,7 @@ export default {
         arbiterNumber: this.permissionsArbiterNumber,
         arbiterPermissionValidThru: this.permissionsArbiterPermissionValidThru.replace(this.dateVar, '-')
       }
-      fetch('http://' + this.local + '/permissions/' + uuid + '?ordinal=' + this.ordinal, {
+      fetch(`${this.local}/permissions/${uuid}?ordinal=${this.ordinal}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -2250,7 +2275,7 @@ export default {
       })
     },
     updateMemberArbiterClass (uuid) {
-      fetch('http://' + this.local + '/permissions/arbiter/' + uuid, {
+      fetch(`${this.local}/permissions/arbiter/${uuid}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -2276,7 +2301,7 @@ export default {
       })
     },
     eraseMember (uuid) {
-      fetch('http://' + this.local + '/member/erase/' + uuid + '?additionalDescription=' + this.reason + '&erasedDate=' + this.erasedDate.replace(/\//gi, '-') + '&erasedType=' + this.erasedReasonType + '&pinCode=' + this.code, {
+      fetch(`${this.local}/member/erase/${uuid}?additionalDescription=${this.reason}&erasedDate=${this.erasedDate.replace(/\//gi, '-')}&erasedType=${this.erasedReasonType}&pinCode=${this.code}`, {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {
@@ -2302,7 +2327,7 @@ export default {
       })
     },
     changeAdult (uuid) {
-      fetch('http://' + this.local + '/member/adult/' + uuid + '?pinCode=' + this.code, {
+      fetch(`${this.local}/member/adult/${uuid}?pinCode=${this.code}`, {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {
@@ -2327,7 +2352,7 @@ export default {
       })
     },
     togglePzss (uuid, state) {
-      fetch(`http://${this.local}/member/togglePzss/${uuid}?isSignedTo=${state}`, {
+      fetch(`${this.local}/member/togglePzss/${uuid}?isSignedTo=${state}`, {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {
@@ -2352,7 +2377,7 @@ export default {
       })
     },
     toggleDeclarationLOK (uuid, state) {
-      fetch(`http://${this.local}/member/toggleDeclaration/${uuid}?isSigned=${state}`, {
+      fetch(`${this.local}/member/toggleDeclaration/${uuid}?isSigned=${state}`, {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {
@@ -2377,7 +2402,7 @@ export default {
       })
     },
     changeClub (uuid, clubID) {
-      fetch(`http://${this.local}/member/changeClub/${uuid}?clubID=${clubID}`, {
+      fetch(`${this.local}/member/changeClub/${uuid}?clubID=${clubID}`, {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {
@@ -2402,7 +2427,7 @@ export default {
       })
     },
     getAllClubs () {
-      fetch(`http://${this.local}/club/member`, {
+      fetch(`${this.local}/club/member`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -2414,7 +2439,7 @@ export default {
     },
     getFile (uuid, name) {
       axios({
-        url: 'http://' + this.local + '/files/getFile?uuid=' + uuid,
+        url: `${this.local}/files/getFile?uuid=${uuid}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
@@ -2431,7 +2456,7 @@ export default {
         barCode: barcode,
         belongsTo: uuid
       }
-      fetch('http://' + this.local + '/barCode/', {
+      fetch(`${this.local}/barCode/`, {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {

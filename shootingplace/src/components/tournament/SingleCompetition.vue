@@ -353,10 +353,12 @@
       </div>
     <q-dialog v-model="toggleDSQDNF">
       <q-card class="bg-dark text-positive">
+        <q-card-actions align="right" class="q-pa-xs q-ma-xs">
+          <div class="text-h5 text-bold text-center col">Kary dla zawodnika</div>
+          <q-btn icon="close" color="primary" round dense v-close-popup/>
+        </q-card-actions>
+        <div class="text-h6 text-center">Numer startowy {{metric}}</div>
         <q-card-section>
-          <div>
-            <div class="text-h5 text-bold text-center">Kary dla zawodnika z numerem {{ metric }}</div>
-          </div>
           <div class="col q-pa-md">
             <q-btn color="primary" class="full-width q-pa-md" @click="toggleDnfScore()">przyznaj DNF</q-btn>
             <p></p>
@@ -365,10 +367,6 @@
             <q-btn color="primary" class="full-width q-pa-md" @click="togglePkScore()">przyznaj PK</q-btn>
           </div>
         </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn label="Anuluj" color="primary" v-close-popup/>
-        </q-card-actions>
       </q-card>
     </q-dialog>
     <q-dialog v-model="addAmmo">
@@ -632,7 +630,7 @@ export default {
       }
     },
     getCompetitionByID (uuid) {
-      fetch(`http://${this.local}/competitionMembersList/getByID/?uuid=${uuid}`, {
+      fetch(`${this.local}/competitionMembersList/getByID/?uuid=${uuid}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -648,7 +646,7 @@ export default {
       this.setScore(scoreUUID, this.scoreLabel, this.innerTen, this.outerTen, this.alfa, this.charlie, this.delta, this.procedures, this.miss, this.series)
     },
     getListCalibers () {
-      fetch(`http://${this.local}/armory/calibers`, {
+      fetch(`${this.local}/armory/calibers`, {
         method: 'GET'
       }).then(response => response.json())
         .then(calibers => {
@@ -663,7 +661,7 @@ export default {
       }, 1000)
     },
     getScoreInfo () {
-      fetch(`http://${this.local}/competitionMembersList/getMemberStarts?tournamentUUID=${this.competition.attachedToTournament}&memberUUID=${this.memberUUID}&otherID=${this.otherID}`, {
+      fetch(`${this.local}/competitionMembersList/getMemberStarts?tournamentUUID=${this.competition.attachedToTournament}&memberUUID=${this.memberUUID}&otherID=${this.otherID}`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -675,7 +673,7 @@ export default {
     },
     addMemberAndAmmoToCaliber () {
       const quantity = this.ammoQuantity
-      fetch(`http://${this.local}/ammoEvidence/ammo?caliberUUID=${this.caliberUUID}&legitimationNumber=${this.memberLeg}&counter=${this.ammoQuantity}&otherID=${this.otherID}`, {
+      fetch(`${this.local}/ammoEvidence/ammo?caliberUUID=${this.caliberUUID}&legitimationNumber=${this.memberLeg}&counter=${this.ammoQuantity}&otherID=${this.otherID}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -737,7 +735,7 @@ export default {
       delta = delta.toString().replaceAll(/,/gi, '.')
       procedures = procedures.toString().replaceAll(/,/gi, '.')
       miss = miss.toString().replaceAll(/,/gi, '.')
-      fetch(`http://${this.local}/competition/score/set?scoreUUID=${scoreUUID}&score=${score}&innerTen=${innerTen}&outerTen=${outerTen}&alfa=${alfa}&charlie=${charlie}&delta=${delta}&procedures=${procedures}&miss=${miss}&series=${series}`, {
+      fetch(`${this.local}/competition/score/set?scoreUUID=${scoreUUID}&score=${score}&innerTen=${innerTen}&outerTen=${outerTen}&alfa=${alfa}&charlie=${charlie}&delta=${delta}&procedures=${procedures}&miss=${miss}&series=${series}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -777,7 +775,7 @@ export default {
       })
     },
     toggleAmmunitionInScore (scoreUUID) {
-      fetch(`http://${this.local}/competition/score/ammo?scoreUUID=${scoreUUID}`, {
+      fetch(`${this.local}/competition/score/ammo?scoreUUID=${scoreUUID}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -804,7 +802,7 @@ export default {
       })
     },
     toggleGunInScore () {
-      fetch(`http://${this.local}/competition/score/gun?scoreUUID=${this.scoreUUID}`, {
+      fetch(`${this.local}/competition/score/gun?scoreUUID=${this.scoreUUID}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -833,7 +831,7 @@ export default {
       })
     },
     toggleDnfScore () {
-      fetch(`http://${this.local}/competition/score/dnf?scoreUUID=${this.scoreUUID}`, {
+      fetch(`${this.local}/competition/score/dnf?scoreUUID=${this.scoreUUID}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -860,7 +858,7 @@ export default {
       })
     },
     toggleDsqScore () {
-      fetch(`http://${this.local}/competition/score/dsq?scoreUUID=${this.scoreUUID}`, {
+      fetch(`${this.local}/competition/score/dsq?scoreUUID=${this.scoreUUID}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -887,7 +885,7 @@ export default {
       })
     },
     togglePkScore () {
-      fetch(`http://${this.local}/competition/score/pk?scoreUUID=${this.scoreUUID}`, {
+      fetch(`${this.local}/competition/score/pk?scoreUUID=${this.scoreUUID}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -922,7 +920,7 @@ export default {
       }
       const { local, otherID, memberUUID, name, date } = this
       axios({
-        url: `http://${local}/files/downloadMetric/${this.competition.attachedToTournament}?otherID=${otherID}&memberUUID=${memberUUID}&competitions=${info}&startNumber=${this.startNumber}&a5rotate=${this.a5rotate}`,
+        url: `${local}/files/downloadMetric/${this.competition.attachedToTournament}?otherID=${otherID}&memberUUID=${memberUUID}&competitions=${info}&startNumber=${this.startNumber}&a5rotate=${this.a5rotate}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {

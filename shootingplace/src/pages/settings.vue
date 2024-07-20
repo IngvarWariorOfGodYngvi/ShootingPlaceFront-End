@@ -97,7 +97,7 @@ export default {
       }, 1000)
     },
     getAllClubs () {
-      fetch(`http://${this.local}/club/`, {
+      fetch(`${this.local}/club/`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -117,7 +117,7 @@ export default {
           address: this.clubAddress,
           url: this.clubURL
         }
-        fetch(`http://${this.local}/settings/createMotherClub`, {
+        fetch(`${this.local}/settings/createMotherClub`, {
           method: 'POST',
           body: JSON.stringify(data),
           headers: {

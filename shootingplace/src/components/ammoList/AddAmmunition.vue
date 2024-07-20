@@ -122,7 +122,7 @@ export default {
   },
   components: {
     AddNewOtherPerson: lazyLoadComponent({
-      componentFactory: () => import('components/AddNewOtherPerson.vue'),
+      componentFactory: () => import('src/components/otherPerson/AddNewOtherPerson.vue'),
       loading: SkeletonBox
     })
   },
@@ -197,7 +197,7 @@ export default {
       return sum
     },
     getMembersNames () {
-      fetch(`http://${this.local}/member/getAllNames`, {
+      fetch(`${this.local}/member/getAllNames`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -205,7 +205,7 @@ export default {
         })
     },
     getOther () {
-      fetch(`http://${this.local}/other/all`, {
+      fetch(`${this.local}/other/all`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -213,7 +213,7 @@ export default {
         })
     },
     getListCalibers () {
-      fetch(`http://${this.local}/armory/calibers`, {
+      fetch(`${this.local}/armory/calibers`, {
         method: 'GET'
       }).then((response) => {
         response.json().then((response) => {
@@ -259,7 +259,7 @@ export default {
       return map
     },
     addMemberAndAmmoToCaliber (map, memberNumberLegitimation, otherID) {
-      fetch(`http://${this.local}/ammoEvidence/listOfAmmo?legitimationNumber=${memberNumberLegitimation}&otherID=${otherID}`, {
+      fetch(`${this.local}/ammoEvidence/listOfAmmo?legitimationNumber=${memberNumberLegitimation}&otherID=${otherID}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

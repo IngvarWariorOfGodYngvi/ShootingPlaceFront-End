@@ -58,7 +58,7 @@
               <div class="col-1 text-center">{{ item.dataProcessingAgreement ? 'tak' : 'nie' }}</div>
               <div class="col-1 text-center">{{ item.statementOnReadingTheShootingPlaceRegulations ? 'tak' : 'nie' }}</div>
               <div class="col bg-white"><q-img contain height="8vh" spinner-color="white" class="flex-center"
-              :src="(`http://${local}/files/getFile?uuid=${item.imageUUID}`)" /></div>
+              :src="(`${local}/files/getFile?uuid=${item.imageUUID}`)" /></div>
             </div>
           </template>
         </q-virtual-scroll>
@@ -84,7 +84,7 @@ export default {
   },
   methods: {
     getRecordsFromBook (firstDate, secondDate) {
-      fetch(`http://${this.local}/evidence/?firstDate=${firstDate}&secondDate=${secondDate}`, {
+      fetch(`${this.local}/evidence/?firstDate=${firstDate}&secondDate=${secondDate}`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -94,7 +94,7 @@ export default {
     getJudgingReport (firstDate, secondDate) {
       if (firstDate != null && secondDate != null) {
         axios({
-          url: `http://${this.local}/files/downloadEvidenceBook?firstDate=${firstDate}&secondDate=${secondDate}`,
+          url: `${this.local}/files/downloadEvidenceBook?firstDate=${firstDate}&secondDate=${secondDate}`,
           method: 'GET',
           responseType: 'blob'
         }).then(response => {

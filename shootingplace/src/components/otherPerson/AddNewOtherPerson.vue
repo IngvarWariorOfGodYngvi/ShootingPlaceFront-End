@@ -13,7 +13,7 @@
             v-model="otherSecondName" label="Nazwisko *" />
             <div class="self-center full-width">poniżej można zostawić puste</div>
           <div class="row"><q-checkbox left-label color="primary" false-value="" true-value="BRAK" v-model="clubName" :val="'BRAK'"
-              label="Brak Klubu"></q-checkbox>
+              label="Brak Klubu"/>
             <q-select stack-label dense options-dense popup-content-class="bg-dark text-positive" class="col" input-class="text-positive" label-color="positive" v-if="clubName !== 'BRAK'" @new-value="createValue" hide-selected use-chips
               filled v-model="clubName" use-input fill-input input-debounce="0" :options="filterOptions"
               @filter="filterFna" label="Wybierz Klub">
@@ -38,6 +38,7 @@
           <div>
             <q-input filled v-model="nonMemberWeaponPermissionNumber" @input="nonMemberWeaponPermissionNumber.length===0?nonMemberWeaponPermissionNumber=null:''" label="Numer pozwolenia na Broń" dense input-class="text-positive" label-color="positive"/>
           </div>
+          <q-input dense class="full-width" input-class="text-positive" label-color="positive" v-model="permissionsOtherArbiterNumber" label="Numer uprawnień" />
           <div class="row">
             <q-item dense>
               <q-radio dense v-model="ordinal" :val="1" label="Klasa 3" color="secondary" />
@@ -55,7 +56,6 @@
               <q-radio dense v-model="ordinal" :val="5" label="Klasa Międzynarodowa" color="secondary" />
             </q-item>
           </div>
-          <q-input dense class="full-width" input-class="text-positive" label-color="positive" v-model="permissionsOtherArbiterNumber" label="Numer uprawnień" />
           <q-input dense class="full-width" input-class="text-positive" label-color="positive" filled v-model="permissionsOtherArbiterPermissionValidThru" mask="####/12/31"
             label="Ważne do:">
             <template v-slot:append>
@@ -150,7 +150,7 @@ export default {
           flatNumber: this.nonMemberFlatNumbenr
         }
       }
-      fetch('http://' + this.local + '/other?club=' + clubName + '&arbiterClass=' + ordinal + '&arbiterNumber=' + permissionsOtherArbiterNumber + '&arbiterPermissionValidThru=' + permissionsOtherArbiterPermissionValidThru.replace(/\//gi, '-'), {
+      fetch(`${this.local}/other?club=${clubName}&arbiterClass=${ordinal}&arbiterNumber=${permissionsOtherArbiterNumber}&arbiterPermissionValidThru=${permissionsOtherArbiterPermissionValidThru.replace(/\//gi, '-')}`, {
         method: 'POST',
         body: JSON.stringify(person),
         headers: {
@@ -178,7 +178,7 @@ export default {
       })
     },
     getAllClubsToTournament () {
-      fetch(`http://${this.local}/club/tournament`, {
+      fetch(`${this.local}/club/tournament`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {

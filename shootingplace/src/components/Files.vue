@@ -8,7 +8,7 @@
     </div>
     <div v-if="access">
       <div class="q-pa-md">
-        <q-uploader multiple style="max-width: 400px" method="POST" :url="('http://' + local + '/files/upload')"
+        <q-uploader multiple style="max-width: 400px" method="POST" :url="(`${local}/files/upload`)"
                     label="Dodaj plik" accept=".jpg, image/*" @rejected="onRejected" field-name="file"
                     @added="file_selected"/>
       </div>
@@ -131,7 +131,7 @@ export default {
       }, time)
     },
     countPages () {
-      fetch('http://' + this.local + '/files/countPages', {
+      fetch(`${this.local}/files/countPages`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -139,7 +139,7 @@ export default {
         })
     },
     getAccess (accessCode) {
-      fetch('http://' + this.local + '/users/getAccess?pinCode=' + accessCode, {
+      fetch(`${this.local}/users/getAccess?pinCode=${accessCode}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -168,7 +168,7 @@ export default {
       if (pageNumber < 0) {
         this.pageNumber = 0
       }
-      fetch('http://' + this.local + '/files/getAllFiles?page=' + pageNumber + '&size=50', {
+      fetch(`${this.local}/files/getAllFiles?page=${pageNumber}&size=50`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -178,7 +178,7 @@ export default {
     },
     getFile (uuid) {
       axios({
-        url: 'http://' + this.local + '/files/getFile?uuid=' + uuid,
+        url: `${this.local}/files/getFile?uuid=${uuid}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
@@ -191,7 +191,7 @@ export default {
       })
     },
     deleteFile (uuid) {
-      fetch('http://' + this.local + '/files/deleteFile?uuid=' + uuid, {
+      fetch(`${this.local}/files/deleteFile?uuid=${uuid}`, {
         method: 'DELETE'
       }).then(response => {
         if (response.status === 200) {
@@ -216,7 +216,7 @@ export default {
     },
     getUrl (uuid) {
       axios({
-        url: 'http://' + this.local + '/files/getFile?uuid=' + uuid,
+        url: `${this.local}/files/getFile?uuid=${uuid}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {

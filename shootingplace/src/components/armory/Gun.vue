@@ -4,11 +4,11 @@
         <div :class="!mobile ? 'col' : 'col'" >
           <q-card-section v-if="gun.imgUUID != null" id="layout" style="display: flex; justify-content: center;">
             <q-img spinner-color="white" style="max-height: 50%; max-width: 50%;opacity:0.92" class="flex-center"
-              :src="('http://' + local + '/files/getGunImg?gunUUID=' + gun.uuid)" />
+              :src="(local + '/files/getGunImg?gunUUID=' + gun.uuid)" />
           </q-card-section>
           <q-card-section v-if="gun.imgUUID == null && mobile" avatar :class="mobile ? 'col-4' : 'col-2'">
             <q-uploader style="width:100%;height:100%" method="POST" max-file-size="10240000"
-              :url="('http://' + local + '/files/addImageToGun?gunUUID=' + gun.uuid)" label="Dodaj zdjęcie"
+              :url="(local + '/files/addImageToGun?gunUUID=' + gun.uuid)" label="Dodaj zdjęcie"
               accept=".jpg, image/*" @rejected="onRejected" field-name="file" @uploaded="getGun(gun.uuid)" />
           </q-card-section>
           <q-card-section :class="!mobile ? 'row full-width' : 'col'" class="text-positive">
@@ -267,7 +267,7 @@ export default {
       return date.getFullYear() + '-' + month + '-' + day
     },
     getGun (gunUUID) {
-      fetch(`http://${this.local}/armory/getGun?gunUUID=${gunUUID}`, {
+      fetch(`${this.local}/armory/getGun?gunUUID=${gunUUID}`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -275,7 +275,7 @@ export default {
         })
     },
     getListCalibersSelect () {
-      fetch(`http://${this.local}/armory/calibersList`, {
+      fetch(`${this.local}/armory/calibersList`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -283,7 +283,7 @@ export default {
         })
     },
     getGunTypes () {
-      fetch(`http://${this.local}/armory/gunType`, {
+      fetch(`${this.local}/armory/gunType`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -296,7 +296,7 @@ export default {
       this.autoClose()
     },
     removeGun () {
-      fetch(`http://${this.local}/armory/remove?gunUUID=${this.gunUUID}&pinCode=${this.code}`, {
+      fetch(`${this.local}/armory/remove?gunUUID=${this.gunUUID}&pinCode=${this.code}`, {
         method: 'PUT'
       }).then(response => {
         if (response.status === 200) {
@@ -339,7 +339,7 @@ export default {
         basisForPurchaseOrAssignment: this.gunBasisForPurchaseOrAssignment,
         addedDate: this.gunDate
       }
-      fetch(`http://${this.local}/armory/editGun`, {
+      fetch(`${this.local}/armory/editGun`, {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
@@ -383,7 +383,7 @@ export default {
     },
     returnToStore (gunUUID) {
       const list = [gunUUID]
-      fetch(`http://${this.local}armory/returnToStore?gunsUUID=${list}`, {
+      fetch(`${this.local}armory/returnToStore?gunsUUID=${list}`, {
         method: 'PATCH'
       }).then(response => {
         if (response.status === 200) {
@@ -403,7 +403,7 @@ export default {
       })
     },
     addGunToRepair (gunUUID) {
-      fetch(`http://${this.local}/armory/addGunToRepair?gunUUID=${gunUUID}`, {
+      fetch(`${this.local}/armory/addGunToRepair?gunUUID=${gunUUID}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'

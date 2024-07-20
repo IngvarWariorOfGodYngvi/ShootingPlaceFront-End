@@ -5,7 +5,7 @@
     :href="link"
     dense
     @click="refresh()"
-    class="bg-secondary text-white xyz"
+    class="bg-secondary text-white xyz1"
   >
     <q-item-section
       v-if="icon"
@@ -53,6 +53,7 @@ export default {
   },
   methods: {
     refresh () {
+      document.title = 'Strzelnica - ' + this.title
       window.localStorage.setItem('SiteName', this.title)
       if (window.location.href === this.link) {
         window.location.reload()

@@ -61,7 +61,7 @@ export default {
     membershipDeclarationLOKPDF () {
       console.log(this.uuid)
       axios({
-        url: `http://${this.local}/files/membershipDeclarationLOK?uuid=${this.uuid}`,
+        url: `${this.local}/files/membershipDeclarationLOK?uuid=${this.uuid}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {

@@ -36,8 +36,8 @@ export default {
       // Either use the given fixed width or
       // a random width between the given min
       // and max values
-      return '100%'
-      // return this.width || `${Math.floor((Math.random() * (this.maxWidth - this.minWidth)) + this.minWidth)}%`
+      // return '100%'
+      return this.width || `${Math.floor((Math.random() * (this.maxWidth - this.minWidth)) + this.minWidth)}%`
     }
   }
 }
@@ -47,6 +47,6 @@ export default {
 .SkeletonBox {
   display: inline-block;
   vertical-align: middle;
-  background-color: #DDDBDD;
+  background-color: $primary;
 }
 </style>
