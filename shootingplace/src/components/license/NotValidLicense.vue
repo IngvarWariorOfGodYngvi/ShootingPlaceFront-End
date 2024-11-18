@@ -83,7 +83,7 @@
           </div>
           <q-inner-loading
               :showing="visible"
-              label="Przetwarzanie..."
+              label="Ładowanie..."
               color="primary"/>
       </q-scroll-area>
     </q-card>

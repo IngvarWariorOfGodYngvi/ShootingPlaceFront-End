@@ -23,7 +23,7 @@
     "keycloak-js": "^12.0.4",
     "mobile-device-detect": "^0.4.3",
     "print-js": "^1.6.0",
-    "quasar": "^1.19.5",
+    "quasar": "^1.22.10",
     "signature_pad": "^3.0.0-beta.4",
     "sockjs-client": "^1.6.1",
     "vue-mobile-detection": "^2.0.1",

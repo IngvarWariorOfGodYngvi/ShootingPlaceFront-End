@@ -13,9 +13,8 @@
       <div v-else>
         <div v-if="JuryPanelCompetitionInExpansionItem">
           <div class="row" v-if="!open">
-            <!-- poprawić przed 16 maja -->
             <div v-for="(comp, index) in tournament.competitionsList" :key="index" class="col-4 q-pa-md">
-              <q-btn :color="comp.discipline=='Karabin'?'secondary':comp.discipline=='Pistolet'?'primary':comp.discipline=='Strzelba'?'accent':comp.disciplineList!=null&&comp.disciplineList.length>1?'yellow':''" class="full-width"  :style="mobile?'height: 20vh;':'height: 15vh;'" no-caps glossy
+              <q-btn :color="comp.discipline=='Karabin'?'secondary':comp.discipline=='Pistolet'?'primary':comp.discipline=='Strzelba'?'accent':comp.disciplineList!=null&&comp.disciplineList.length>1?'yellow':''" class="full-width" :class="comp.discipline=='Strzelba'?'text-black' : ''"  :style="mobile?'height: 20vh;':'height: 15vh;'" no-caps glossy
               @click="uuid=comp.uuid;size=comp.scoreListSize;compName=comp.name;open=true">{{comp.name}}</q-btn>
             </div>
           </div>

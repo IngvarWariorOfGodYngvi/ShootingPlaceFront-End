@@ -219,7 +219,7 @@
           <q-card class="full-width bg-dark" flat>
             <div class="row">
               <div class="text-h6 col-6 text-center text-bold self-center">Dodawanie zawodników</div>
-              <div class="text-h6 col-6 text-center text-bold self-center">{{name}}</div>
+              <div class="text-h6 col-6 text-center text-bold self-center"></div>
             </div>
             <div class="row">
               <q-card-section class="row full-width q-pl-md q-mr-md q-pb-none">
@@ -264,8 +264,11 @@
                     <q-tooltip :delay="4000" content-class="text-subtitle2" anchor="top middle" self="bottom middle"
                       :offset="[12, 12]">NO WYBIERZ
                     </q-tooltip>
-                    <q-tooltip :delay="8000" content-class="bg-red text-h2 text-bold" anchor="top middle"
+                    <q-tooltip :delay="6000" content-class="bg-red text-h2 text-bold" anchor="top middle"
                       self="bottom middle" :offset="[12, 12]">WYBIERAJ!!!
+                    </q-tooltip>
+                    <q-tooltip :delay="8000" content-class="bg-Warnign text-h1 text-bold rotate fun" anchor="top middle"
+                      self="bottom middle" :offset="[12, 12]"><div class="rotate" style="width: 50vw;height: 50vh">AAAAAAAAAAAAAAAA!!!</div>
                     </q-tooltip>
                   </q-btn>
                   <q-btn v-else
@@ -336,7 +339,7 @@
             <div v-for="(item, index) in tournamentsClosed" :key="index">
                 <q-btn class="full-width q-mb-xs" text-color="white" color="primary"
                   :label="'#' + ((index + 1) + (pageNumber * 15)) + ' ' + item.date"
-                  @click="tournamentClosedName = item.name; tournamentUUID = item.tournamentUUID; name = item.name; date = item.date; closedTournamentInfo = true; getStatistics()"><q-tooltip
+                  @click="tournamentClosedName = item.name; tournamentUUID = item.tournamentUUID; date = item.date; closedTournamentInfo = true; getStatistics()"><q-tooltip
                     content-class="bg-primary text-h6 text-bold" anchor="top middle">
                     <div>{{ item.name }}</div>
                   </q-tooltip></q-btn>
@@ -2069,7 +2072,7 @@ export default {
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
-        fileLink.setAttribute('download', `rezultaty${this.shootingPlace === 'prod' ? 'DZIESIĄTKA' : 'RSCPANASZEW'} ${this.date.replaceAll('-', '')}.xlsx`)
+        fileLink.setAttribute('download', `rezultaty${this.shootingPlace === 'prod' ? 'DZIESIĄTKA' : 'RSCPANASZEW'}${this.date.replaceAll('-', '')}.xlsx`)
         document.body.appendChild(fileLink)
         fileLink.click()
         this.listDownload = true

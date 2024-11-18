@@ -95,6 +95,7 @@ export default {
         window.localStorage.setItem('AddShootingPacket', 'true')
       }
       window.localStorage.setItem('AddShootingPacket', !JSON.parse(window.localStorage.getItem('AddShootingPacket')))
+      window.location.reload()
     },
     toggleAddGroupAmmo () {
       if (JSON.parse(window.localStorage.getItem('AddGroupAmmo')) == null) {
@@ -104,36 +105,42 @@ export default {
       if (JSON.parse(window.localStorage.getItem('AddSingleAmmo')) === 'false') {
         window.localStorage.setItem('AddSingleAmmo', 'true')
       }
+      window.location.reload()
     },
     toggleAddSingleAmmo () {
       if (JSON.parse(window.localStorage.getItem('AddSingleAmmo')) == null) {
         window.localStorage.setItem('AddSingleAmmo', 'true')
       }
       window.localStorage.setItem('AddSingleAmmo', !JSON.parse(window.localStorage.getItem('AddSingleAmmo')))
+      window.location.reload()
     },
     toggleGunList () {
       if (JSON.parse(window.localStorage.getItem('GunList')) == null) {
         window.localStorage.setItem('GunList', 'true')
       }
       window.localStorage.setItem('GunList', !JSON.parse(window.localStorage.getItem('GunList')))
+      window.location.reload()
     },
     toggleTopTenTab () {
       if (JSON.parse(window.localStorage.getItem('TopTenTab')) == null) {
         window.localStorage.setItem('TopTenTab', 'true')
       }
       window.localStorage.setItem('TopTenTab', !JSON.parse(window.localStorage.getItem('TopTenTab')))
+      window.location.reload()
     },
     toggleClosedCompetitionTab () {
       if (JSON.parse(window.localStorage.getItem('ClosedCompetitionTab')) == null) {
         window.localStorage.setItem('ClosedCompetitionTab', 'true')
       }
       window.localStorage.setItem('ClosedCompetitionTab', !JSON.parse(window.localStorage.getItem('ClosedCompetitionTab')))
+      window.location.reload()
     },
     toggleJuryPanelCompetitionInExpansionItem () {
       if (JSON.parse(window.localStorage.getItem('JuryPanelCompetitionInExpansionItem')) == null) {
         window.localStorage.setItem('JuryPanelCompetitionInExpansionItem', 'true')
       }
       window.localStorage.setItem('JuryPanelCompetitionInExpansionItem', !JSON.parse(window.localStorage.getItem('JuryPanelCompetitionInExpansionItem')))
+      window.location.reload()
     }
   }
 }

@@ -38,7 +38,7 @@
             <q-item class="rounded" dense style="padding: 0; margin: 0;" v-bind="option['itemProps']"
               v-on="option.itemEvents">
               <q-item-section style="padding: 0.5em; margin: 0;" :class="option.opt.active ? '' : 'bg-warning rounded'"
-              @click="allMember = false;memberName = option.opt.secondName + ' ' + option.opt.firstName + ' ' + option.opt.legitimationNumber; temp = option.opt.legitimationNumber">
+              @click="allMember = false;memberName = option.opt.secondName + ' ' + option.opt.firstName + ' ' + option.opt.legitimationNumber; temp = option.opt.legitimationNumber;visible = false">
                 <div class="container">
                   <div class="background text-caption text-right">{{ !option.opt.declarationLOK && shootingPlace==='prod'?'Brak Podpisanej Deklaracji LOK':'' }}</div>
                   {{ option.opt.secondName }} {{ option.opt.firstName }}
@@ -173,7 +173,7 @@
           <tr v-if="!item.erased" :key="index" class="rounded bg-dark text-positive" style="cursor:pointer"
             @mouseenter="item.image!=null?getUrl (item.image):''"
             @click.ctrl="pushOrRemoveEmailToList(item.legitimationNumber)"
-            @click.exact="showloading(), allMember = false; memberName = item; temp = item.legitimationNumber;">
+            @click.exact="showloading(), allMember = false; memberName = item; temp = item.legitimationNumber;visible = false">
             <td style="width:25%;" :class="item.club.id === 1 && (!item.declarationLOK && shootingPlace==='prod')? 'xyz bg-warning' : item.club.id === 1 && (item.declarationLOK && shootingPlace==='prod')? 'xyz' : item.club.id != 1? 'xyz bg-secondary':'xyz text-positive'">
             <!-- <td style="width:25%;" :class="item.club.id === 1 && (!item.declarationLOK && shootingPlace==='prod')? 'xyz bg-warning' : item.club.id === 1 && (item.declarationLOK && shootingPlace==='prod')? 'xyz' : 'xyz text-white'"> -->
               <b>{{ index + 1 + ' ' }}</b>{{ item.club.id === 1 ? item.secondName + ' ' + item.firstName : item.secondName + ' ' + item.firstName + ' ' + item.club.name }} {{ !item.declarationLOK && shootingPlace === 'prod'? ' - Brak Deklaracji LOK' : ''}}

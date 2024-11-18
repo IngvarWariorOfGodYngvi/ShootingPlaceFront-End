@@ -9,37 +9,37 @@
               <div class="full-width">
                 <q-item><q-input class="full-width" :input-class="member.firstName.length == 0?'text-positive':''"
                     @input="memberFirstNameC = member.firstName.length === 0 ? '' : memberFirstNameC = member.firstName.length < 3 ? 'red-2' : 'green-2'"
-                    dense :bg-color="memberFirstNameC" label-color="positive" v-model="member.firstName" label="Imię *"
+                    dense :bg-color="memberFirstNameC" :label-color="member.firstName.length == 0?'positive':'black'" v-model="member.firstName" label="Imię *"
                     onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode === 32"
                     filled /></q-item>
                 <q-item><q-input class="full-width" :input-class="member.secondName.length == 0?'text-positive':''"
                     @input="memberSecondNameC = member.secondName.length === 0 ? '' : memberSecondNameC = member.secondName.length < 3 ? 'red-2' : 'green-2'"
-                    dense :bg-color="memberSecondNameC" label-color="positive" v-model="member.secondName"
+                    dense :bg-color="memberSecondNameC" :label-color="member.secondName.length == 0?'positive':'black'" v-model="member.secondName"
                     label="Nazwisko *"
                     onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode === 45"
                     filled /></q-item>
                 <q-item><q-input class="full-width" :input-class="member.IDCard.length == 0?'text-positive':''"
                     @input="memberIDCardC = member.IDCard.length === 0 ? '' : checkIDCard(member.IDCard)" dense
-                    :bg-color="memberIDCardC" v-model="member.IDCard" :suffix="memberIDCardS" label-color="positive"
+                    :bg-color="memberIDCardC" v-model="member.IDCard" :suffix="memberIDCardS" :label-color="member.IDCard.length == 0?'positive':'black'"
                     label="Numer Dokumentu *" filled /></q-item>
                 <q-item><q-input class="full-width" :input-class="member.pesel.length == 0?'text-positive':''"
                     @input="memberPeselC = member.pesel.length === 0 ? '' : checkPESEL(member.pesel)" dense
-                    :bg-color="memberPeselC" v-model="member.pesel" :suffix="memberPeselS" label-color="positive"
+                    :bg-color="memberPeselC" v-model="member.pesel" :suffix="memberPeselS" :label-color="member.pesel.length == 0?'positive':'black'"
                     placeholder="tylko cyfry" label="Pesel *" mask="###########" filled /></q-item>
                 <q-item><q-input class="full-width" :input-class="member.phone.length == 0?'text-positive':''"
                     @input="memberPhoneC = member.phone.length === 0 ? '' : member.phone.length < 11 ? 'red-2' : 'green-2'" dense
-                    :bg-color="memberPhoneC" type="tel" v-model="member.phone" :label-color="member.phone.length == 0?'positive':''"
+                    :bg-color="memberPhoneC" type="tel" v-model="member.phone" :label-color="member.phone.length == 0?'positive':'black'"
                     placeholder="tylko cyfry" prefix="+48 " label="Numer telefonu *" mask="### ### ###" filled
                     onkeypress="return (event.charCode > 47 && event.charCode < 58)" /></q-item>
                 <q-item><q-input class="full-width" :input-class="member.email.length == 0?'text-positive':''"
                     @input="memberEmailC = member.email.length === 0 ? '' : checkEmail(member.email)" :bg-color="memberEmailC"
-                    dense filled type="email" v-model="member.email" :label-color="member.email.length == 0?'positive':''" :suffix="memberEmailS"
+                    dense filled type="email" v-model="member.email" :label-color="member.email.length == 0?'positive':'black'" :suffix="memberEmailS"
                     label="e-mail *" /></q-item>
                 <q-item><q-input class="full-width" dense filled color="green" v-model="memberLegitimation"
-                    :input-class="memberLegitimation.length == 0?'text-positive':''" label-color="positive" label="Numer Legitymacji"
+                    :input-class="memberLegitimation.length == 0?'':'text-positive'" label-color="positive" label="Numer Legitymacji"
                     onkeypress="return (event.charCode > 47 && event.charCode < 58)" /></q-item>
                 <q-item><q-input class="full-width" dense filled color="green" v-model="memberJoinDate"
-                    :input-class="memberJoinDate.length == 0?'text-positive':''" label-color="positive" mask="####-##-##" label="Data dołączenia do Klubu">
+                    :input-class="memberJoinDate.length == 0?'':'text-positive'" label-color="positive" mask="####-##-##" label="Data dołączenia do Klubu">
                     <template v-slot:append>
                       <q-icon name="event" class="cursor-pointer" color="positive">
                         <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -66,16 +66,16 @@
               <div class="fit col">
                 <div class="fit">
                   <q-item><q-input class="full-width" dense filled color="primary" label-color="positive"
-                      :input-class="address.postOfficeCity.length == 0?'text-positive':''" v-model="address.postOfficeCity" label="Miasto *" /></q-item>
+                      input-class="text-positive" v-model="address.postOfficeCity" label="Miasto *" /></q-item>
                   <q-item><q-input class="full-width" dense filled color="primary" label-color="positive"
-                      :input-class="address.zipCode.length == 0?'text-positive':''" v-model="address.zipCode" placeholder="00-000" label="Kod Pocztowy *"
+                    input-class="text-positive" v-model="address.zipCode" placeholder="00-000" label="Kod Pocztowy *"
                       mask="##-###" /></q-item>
                   <q-item><q-input class="full-width" dense filled color="primary" label-color="positive"
-                      :input-class="address.street.length == 0?'text-positive':''" v-model="address.street" label="Ulica *" /></q-item>
+                    input-class="text-positive" v-model="address.street" label="Ulica *" /></q-item>
                   <q-item><q-input class="full-width" dense filled color="primary" label-color="positive"
-                      :input-class="address.streetNumber.length == 0?'text-positive':''" v-model="address.streetNumber" label="Numer Ulicy *" /></q-item>
+                    input-class="text-positive" v-model="address.streetNumber" label="Numer Ulicy *" /></q-item>
                   <q-item><q-input class="full-width" dense filled color="primary" label-color="positive"
-                      :input-class="address.flatNumber.length == 0?'text-positive':''" v-model="address.flatNumber" label="Numer Mieszkania" /></q-item>
+                    input-class="text-positive" v-model="address.flatNumber" label="Numer Mieszkania" /></q-item>
                   <q-item v-if="member.firstName.length >= 3
                     && member.secondName.length >= 3
                     && member.IDCard.length >= 3
@@ -106,13 +106,13 @@
             <q-card-section class="col-6">
               <div>
                 <div class="row full-width">
-                <q-input dense v-model="patentNumber" label-color="positive" :input-class="patentNumber.length == 0?'text-positive':''" mask="#######"
+                <q-input dense v-model="patentNumber" label-color="positive" input-class="text-positive" mask="#######"
                     label="Numer Patentu" class="col" filled />
                     <div class="col-1 self-center text-possitive">/PAT/</div>
-                <q-input dense v-model="patentNumber1" label-color="positive" :input-class="patentNumber1.length == 0?'text-positive':''" mask="##/####"
+                <q-input dense v-model="patentNumber1" label-color="positive" input-class="text-positive" mask="##/####"
                     label="miesiąc i rok" class="col" filled />
                   </div>
-                <q-input class="full-width" dense filled v-model="patentDate" label-color="positive" :input-class="patentDate.length == 0?'text-positive':''" mask="####-##-##"
+                <q-input class="full-width" dense filled v-model="patentDate" label-color="positive" input-class="text-positive" mask="####-##-##"
                     label="Data Wydania Patentu">
                     <template v-slot:append>
                       <q-icon name="event" class="cursor-pointer" color="positive">
@@ -172,9 +172,9 @@
           <q-card class="row bg-dark">
             <q-card-section class="col-6">
               <div>
-                <q-item><q-input class="full-width" label-color="positive" :input-class="licenseNumber.length == 0?'text-positive':''" dense v-model=" licenseNumber " placeholder="tylko cyfry" mask="########"
+                <q-item><q-input class="full-width" label-color="positive" :input-class="licenseNumber.length == 0?'':'text-positive'" dense v-model=" licenseNumber " placeholder="tylko cyfry" mask="########"
                     label="Numer Licencji" filled /></q-item>
-                <q-item><q-input class="full-width" label-color="positive" :input-class="licenseDate.length == 0?'text-positive':''" dense filled v-model=" licenseDate " mask="####-12-31"
+                <q-item><q-input class="full-width" label-color="positive" :input-class="licenseDate.length == 0?'':'text-positive'" dense filled v-model=" licenseDate " mask="####-12-31"
                     label="Ważna do">
                     <template v-slot:append>
                       <q-icon name="event" class="cursor-pointer" color="positive">

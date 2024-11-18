@@ -62,7 +62,7 @@ export default {
   host: `http://${location.hostname}:8080/` // test + dev //
   // prod: '192.168.1.30:8080/strzelnica/#/', // prod dom //
   // prod: 'http://192.168.100.2:8080/strzelnica/#/', // prod //
-  // prod: '192.168.1.35:8080/strzelnica/#/', // rcs //
+  // prod: 'http://192.168.50.222:8080/strzelnica/#/', // rcs //
   // host: `http://${location.hostname}:8080/shootingplace-1.0/` // test + prod + dev + rcs //
 
 }

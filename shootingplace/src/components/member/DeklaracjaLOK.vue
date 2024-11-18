@@ -2,7 +2,8 @@
   <div class="full-width">
     <q-btn class="full-width round" :disable="disable" @click="dialog=true" color="secondary" label="Pobierz deklarację członkowską LOK">
       &nbsp;&nbsp;<q-avatar>
-        <img src="~assets/logo_LOK.png">
+        <div v-if="loading " class="text-center"><q-circular-progress color="white" indeterminate><img src="~assets/logo_LOK.png"></q-circular-progress></div>
+        <img v-else src="~assets/logo_LOK.png">
       </q-avatar></q-btn>
     <q-dialog v-model="dialog" @keypress.enter="dialog=false;membershipDeclarationLOKPDF()">
       <q-card class="bg-dark text-positive">
@@ -12,7 +13,7 @@
 
         <q-card-actions align="right">
           <q-btn text-color="white" label="anuluj" color="secondary" v-close-popup />
-          <q-btn text-color="white" label="Pobierz" color="primary" v-close-popup @click="membershipDeclarationLOKPDF()" />
+          <q-btn text-color="white" label="Pobierz" color="primary" v-close-popup @click="loading=true;membershipDeclarationLOKPDF()" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -39,6 +40,7 @@ export default {
       failure: false,
       success: false,
       message: null,
+      loading: false,
       local: App.host
     }
   },
@@ -79,6 +81,7 @@ export default {
     autoClose () {
       setTimeout(() => {
         this.download = false
+        this.loading = false
       }, 2000)
     }
   }

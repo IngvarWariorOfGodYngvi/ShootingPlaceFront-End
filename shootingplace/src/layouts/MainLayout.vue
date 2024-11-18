@@ -54,67 +54,10 @@
             </q-btn-dropdown>
           </div>
           <div v-if="topTenTabExp">
-          <q-avatar text-color="white" color="secondary" size="3.5em" rounded
-                    style="border: solid 1px white; border-radius: 50%" class="reverse pulsing"
-                    icon="scoreboard">
-            <q-tooltip @show="getTop10CompetitionPoints()" class="bg-primary" content-class="bg-primary">
-              <div class="text-h6 text-center">TOP 10 PUNKTY {{ new Date().getFullYear() }}</div>
-              <div v-for="(item,id,index) in competitionPoints" :key="index" class="bg-secondary" style="width: 25vw">
-                <div class="row full-width q-pa-xs"
-                     :class="index===0?'bg-amber-9':index===1?'bg-grey-6':index===2?'bg-brown':''">
-                  <div class="col-1 text-center">{{ index + 1 }}</div>
-                  <div class="col-8">{{ id }}</div>
-                  <div class="col-3 text-right">{{ item }} punktów</div>
-                </div>
-              </div>
-            </q-tooltip>
-          </q-avatar>
-          <q-avatar text-color="white" color="secondary" size="3.5em" rounded
-                    style="border: solid 1px white; border-radius: 50%" class="reverse pulsing"
-                    icon="person">
-            <q-tooltip @show="getTop10Competitors()" class="bg-primary" content-class="bg-primary">
-              <div class="text-h6 text-center">TOP 10 STARTY {{ new Date().getFullYear() }}</div>
-              <div v-for="(item,id,index) in competitors" :key="index" class="bg-secondary" style="width: 25vw">
-                <div class="row full-width q-pa-xs"
-                     :class="index===0?'bg-amber-9':index===1?'bg-grey-6':index===2?'bg-brown':''">
-                  <div class="col-1 text-center">{{ index + 1 }}</div>
-                  <div class="col-8">{{ id }}</div>
-                  <div class="col-3 text-right">{{ item }} starty</div>
-                </div>
-              </div>
-            </q-tooltip>
-          </q-avatar>
-          <q-avatar text-color="white" color="secondary" size="3.5em" rounded
-                    style="border: solid 1px white; border-radius: 50%" class="reverse pulsing"
-                    icon="payments">
-            <q-tooltip @show="getTop10MembersWithTheMostMembershipContributions()" class="bg-primary"
-                       content-class="bg-primary">
-              <div class="text-h6 text-center">TOP 10 ILOŚCI SKŁADEK {{ new Date().getFullYear() }}</div>
-              <div v-for="(item,id,index) in contributors" :key="index" class="bg-secondary" style="width: 25vw">
-                <div class="row full-width q-pa-xs"
-                     :class="index===0?'bg-amber-9':index===1?'bg-grey-6':index===2?'bg-brown':''">
-                  <div class="col-1 text-center">{{ index + 1 }}</div>
-                  <div class="col-8">{{ id }}</div>
-                  <div class="col-3 text-right">{{ item }} składki</div>
-                </div>
-              </div>
-            </q-tooltip>
-          </q-avatar>
-          <q-avatar text-color="white" color="secondary" size="3.5em" rounded
-                    style="border: solid 1px white; border-radius: 50%" class="reverse pulsing"
-                    icon="analytics">
-            <q-tooltip @show="getHighStarts()" class="bg-primary" content-class="bg-primary">
-              <div class="text-h6 text-center">TOP 10 ZAWODÓW</div>
-              <div v-for="(item,id,index) in starts" :key="id" class="bg-secondary" style="width: 25vw">
-                <div class="row full-width q-pa-xs"
-                     :class="index===0?'bg-amber-9':index===1?'bg-grey-6':index===2?'bg-brown':''">
-                  <div class="col-1 text-center">{{ index + 1 }}</div>
-                  <div class="col-8">{{ id }}</div>
-                  <div class="col-3 text-right">{{ item }} osobostartów</div>
-                </div>
-              </div>
-            </q-tooltip>
-          </q-avatar>
+          <Top10CompetitionPoints></Top10CompetitionPoints>
+          <Top10Competitors></Top10Competitors>
+          <Top10Contributions></Top10Contributions>
+          <Top10Competition></Top10Competition>
         </div>
       </div>
     </div>
@@ -146,9 +89,9 @@
           </div>
           <MembersQuantities v-if="(main || !main) && main != null" class="bg-secondary">
           </MembersQuantities>
-          <WeekBirthdayList>
+          <WeekBirthdayList class="bg-secondary">
           </WeekBirthdayList>
-          <WorkTimeList v-if="!mobile&&main" style="margin: auto;height:auto">
+          <WorkTimeList v-if="!mobile&&main" style="margin: auto;height:auto" class="bg-secondary">
           </WorkTimeList>
         </q-list>
       </div>
@@ -175,6 +118,22 @@ export default {
   name: 'MainLayout',
   visible2: false,
   components: {
+    Top10CompetitionPoints: lazyLoadComponent({
+      componentFactory: () => import('components/header/Top10CompetitionPoints.vue'),
+      loading: SkeletonBox
+    }),
+    Top10Contributions: lazyLoadComponent({
+      componentFactory: () => import('components/header/Top10Contributions.vue'),
+      loading: SkeletonBox
+    }),
+    Top10Competitors: lazyLoadComponent({
+      componentFactory: () => import('components/header/Top10Competitors.vue'),
+      loading: SkeletonBox
+    }),
+    Top10Competition: lazyLoadComponent({
+      componentFactory: () => import('src/components/header/Top10Competitions.vue'),
+      loading: SkeletonBox
+    }),
     EssentialLink: lazyLoadComponent({
       componentFactory: () => import('components/leftDrawer/EssentialLink.vue'),
       loading: SkeletonBox
@@ -234,9 +193,6 @@ export default {
       funRotate: false,
       evidenceBookList: [],
       today: new Date(),
-      starts: [],
-      competitors: [],
-      contributors: [],
       competitionPoints: [],
       quantities: [],
       hrefTarget: App.prod,
@@ -424,45 +380,6 @@ export default {
       const b = String(condition)
       window.localStorage.setItem('drawer', b)
       this.leftDrawerOpen = JSON.parse(window.localStorage.getItem('drawer'))
-    },
-    getHighStarts () {
-      if (this.starts.length < 1) {
-        fetch(`${this.local}/statistics/highStarts`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }).then(response => response.json())
-          .then(response => {
-            this.starts = response
-          })
-      }
-    },
-    getTop10Competitors () {
-      if (this.competitors.length < 1) {
-        fetch(`${this.local}/statistics/highStartsCompetitors`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }).then(response => response.json())
-          .then(response => {
-            this.competitors = response
-          })
-      }
-    },
-    getTop10MembersWithTheMostMembershipContributions () {
-      if (this.contributors.length < 1) {
-        fetch(`${this.local}/statistics/highContributions`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }).then(response => response.json())
-          .then(response => {
-            this.contributors = response
-          })
-      }
     },
     getTop10CompetitionPoints () {
       if (this.competitionPoints.length < 1) {

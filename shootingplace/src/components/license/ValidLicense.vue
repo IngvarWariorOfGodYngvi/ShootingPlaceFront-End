@@ -57,7 +57,7 @@
         </div>
             <q-inner-loading
               :showing="visible"
-              label="Przetwarzanie..."
+              label="Ładowanie..."
               color="primary"/>
       </q-scroll-area>
     </q-card>
@@ -193,6 +193,7 @@ export default {
       prolongLicenseAlertAll: false,
       paymentLicenseAlert: false,
       pinPaymentLicense: false,
+      search: null,
       success: false,
       failure: false,
       message: null,
@@ -221,6 +222,9 @@ export default {
           this.list = response
           this.visible = false
         })
+    },
+    searchText (text) {
+      console.log(text)
     },
     convertDate (date) {
       const current = new Date(date)

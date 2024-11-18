@@ -61,10 +61,12 @@
                   @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
                   stack-label label="ilość 10 wewnętrzne" label-color="positive"
                   onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                <q-input v-for="(item,index) in item.series" :key="index"
-                  @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)"
+                <q-input v-for="(item1,index) in item.series" :key="index"
+                  @focus="scoreUUID = item1.uuid"
+                  @input="replaceComa(series[index], index)"
                   onkeypress="return (event.charCode > 47 && event.charCode < 58) || event.charCode === 44  || event.charCode === 46"
-                  @focus="scoreUUID = item.uuid" v-model="series[index]" stack-label label-color="positive"
+                  v-model="series[index]" stack-label label-color="positive"
+                  @keypress.enter="scoreUUID = item.uuid; onEnter(item.uuid)"
                   :label="'Seria ' + (index + 1)" input-class="text-center text-positive"/>
                 <div class="q-pa-xs text-center">
                   <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
@@ -604,6 +606,10 @@ export default {
     }
   },
   methods: {
+    replaceComa (val, index) {
+      const v = val.replaceAll(/,/g, '.')
+      this.series[index] = v
+    },
     setSeriesValues (arr) {
       const series = new Array(arr)
       for (let i = 0; i < arr.length; i++) {

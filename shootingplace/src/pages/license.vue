@@ -16,7 +16,7 @@
       <AllLicensePayment></AllLicensePayment>
     </q-expansion-item>
     <p></p>
-    <q-expansion-item label="Osoby z opłatą i bez licencji" dense class="text-left text-h6 text-bold bg-dark text-positive round"
+    <q-expansion-item label="Osoby z opłatą i bez licencji (nowe)" dense class="text-left text-h6 text-bold bg-dark text-positive round"
                       group="list">
       <NotLicenseWithPayment></NotLicenseWithPayment>
     </q-expansion-item>

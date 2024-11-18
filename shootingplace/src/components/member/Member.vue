@@ -1,6 +1,6 @@
 <template>
   <div v-if="member != null" class="full-width">
-    <q-card-actions align="right" class="q-pa-xs q-ma-xs">
+    <q-card-actions align="right" class="q-pa-xs q-ma-xs" v-if="siteName!='Lista Klubowiczów'">
       <q-btn icon="close" color="primary" round dense v-close-popup />
     </q-card-actions>
     <div class="text-h6 text-center bg-warning" v-if="shootingPlace==='prod' && !member.declarationLOK">Brak Podpisanej Deklaracji LOK</div>
@@ -171,25 +171,25 @@
                 </div>
             </div>
             <div v-if=" member.weaponPermission.number != null && member.weaponPermission.exist " class="col q-pl-xs text-left">
-              <label class="">Numer pozwolenia na broń</label>
+              <label>Numer Pozwolenia na Broń</label>
               <div>
                 {{ member.weaponPermission.number }}
               </div>
             </div>
             <div v-if=" member.weaponPermission.admissionToPossessAWeapon != null && member.weaponPermission.admissionToPossessAWeaponIsExist " class="col text-left q-pl-xs">
-              <label class="">Numer dopuszczenia do posiadania broni</label>
+              <label>Numer Dopuszczenia do Posiadania Broni</label>
               <div>
                 {{ member.weaponPermission.admissionToPossessAWeapon }}
               </div>
             </div>
             <div v-if=" (member.memberPermissions.shootingLeaderNumber != null && member.memberPermissions.shootingLeaderNumber !== '') " class="col text-left q-pl-xs">
-              <label class="">Numer Legitymacji Prowadzącego Strzelanie</label>
+              <label>Numer Legitymacji Prowadzącego Strzelanie</label>
                 <div>
                   {{ member.memberPermissions.shootingLeaderNumber }}
                 </div>
             </div>
             <div v-if=" (member.memberPermissions.instructorNumber != null && member.memberPermissions.instructorNumber !== '') " class="col text-left q-pl-xs">
-              <label class="">Numer Legitymacji instruktora</label>
+              <label>Numer Legitymacji Instruktora</label>
                 <div>
                   {{ member.memberPermissions.instructorNumber }}
                 </div>
@@ -204,7 +204,7 @@
                 <div>Kaliber</div>
               </div>
               <div class="col text-center self-center q-pa-xs">
-                <div>Ilość wydanej amunicji</div>
+                <div>Ilość Wydanej Amunicji (historycznie)</div>
               </div>
             </div>
             <q-card flat class="row bg-dark">
@@ -390,18 +390,18 @@
             </template>
             <div class="row">
               <q-tooltip content-class="bg-dark text-positive" anchor="top middle" :delay="750">kliknij aby edytować</q-tooltip>
-              <q-btn dense class="col q-ma-md" text-color="black" @click=" main && !mobile ? (memberUUID = member.uuid, pzssPortal = true) : '' " :color="!member.pzss?'red-3':'green-3'" :label="!member.pzss?'Nie Wprowadzony do Portalu':'Wprowadzony do portalu'"/>
+              <q-btn dense class="col q-ma-md round" text-color="black" @click=" main && !mobile ? (memberUUID = member.uuid, pzssPortal = true) : '' " :color="!member.pzss?'red-3':'green-3'" :label="!member.pzss?'Nie Wprowadzony do Portalu':'Wprowadzony do portalu'"/>
             </div>
             <q-item dense v-if=" main && !mobile " class="q-pa-md">
               <CSVFile :uuid=" member.uuid " :name=" (member.secondName + ' ' + member.firstName) "></CSVFile>
             </q-item>
             <q-item dense v-if=" member.pzss " class="rounded">
               <q-btn class="full-width q-pa-none" type="a" href="https://portal.pzss.org.pl/CLub/Player" target="_blank"
-                label="Przejdź do portalu" color="primary" />
+                label="Przejdź do portalu PZSS" color="primary" />
             </q-item>
             <q-item dense v-if=" !member.pzss " class="rounded">
               <q-btn class="full-width q-pa-none" type="a" href="https://portal.pzss.org.pl/CLub/Player" target="_blank"
-                label="Przejdź do portalu" color="primary" @click=" memberUUID = member.uuid; pzssPortal = true " />
+                label="Przejdź do portalu PZSS" color="primary" @click=" memberUUID = member.uuid; pzssPortal = true " />
             </q-item>
           </q-expansion-item>
           <q-expansion-item dense v-if=" !member.erased && shootingPlace === 'prod'" label="Deklaracja LOK" group="right-right-card">
@@ -660,19 +660,21 @@
       <q-card bordered :class=" mobile ? 'col bg-dark text-positive' : 'row full-width bg-dark text-positive' ">
         <q-card-section :class="`col-${main && !mobile ?'3':'6'}`" style="height:100%;">
           <div class="full-height text-positive">
-            <q-item-label>
-              <q-icon name="person_search" size="1.5rem" />
-              Dane Podstawowe
-            </q-item-label>
-            <q-item-label class="text-positive" caption lines="2">Identyfikator:</q-item-label>
-            <q-item-label class="text-positive" caption lines="2">{{ member.uuid }}</q-item-label>
-            <q-item-label class="text-positive" caption lines="2">Imię: {{ member.firstName }}</q-item-label>
-            <q-item-label class="text-positive" caption lines="2">Nazwisko: {{ member.secondName }}</q-item-label>
-            <q-item-label class="text-positive" caption lines="2">Data Zapisu do Klubu: {{ convertDate(member.joinDate)
-              }}</q-item-label>
-            <q-item-label class="text-positive" caption lines="2">Pesel: {{ member.pesel }}</q-item-label>
-            <q-item-label class="text-positive" caption lines="2">Numer Dowodu: {{ member.idcard }}</q-item-label>
-            <p></p>
+            <div style="height: 55%">
+              <q-item-label class="text-center">
+                <q-icon name="person_search" size="1.5rem" />
+                Dane Podstawowe
+              </q-item-label>
+              <q-item-label class="text-positive" caption lines="2">Identyfikator:</q-item-label>
+              <q-item-label class="text-positive" caption lines="2">{{ member.uuid }}</q-item-label>
+              <q-item-label class="text-positive" caption lines="2">Imię: {{ member.firstName }}</q-item-label>
+              <q-item-label class="text-positive" caption lines="2">Nazwisko: {{ member.secondName }}</q-item-label>
+              <q-item-label class="text-positive" caption lines="2">Data Zapisu do Klubu: {{ convertDate(member.joinDate)
+                }}</q-item-label>
+              <q-item-label class="text-positive" caption lines="2">Pesel: {{ member.pesel }}</q-item-label>
+              <q-item-label class="text-positive" caption lines="2">Numer Dowodu: {{ member.idcard }}</q-item-label>
+              <p></p>
+            </div>
             <div class="rounded">
               <q-btn class="full-width" square v-if=" !member.erased && !mobile" label="Zmień Dane Podstawowe" color="secondary"
               @click=" memberUUID = member.uuid; memberIdCard = member.idcard; memberFirstName = member.firstName; memberSecondName = member.secondName; basicDataConfirm = true "/>
@@ -680,39 +682,41 @@
           </div>
         </q-card-section>
         <q-card-section :class="`col-${main && !mobile ?'4':'6'}`">
-          <q-item-section>
-            <q-item-label>
-              <q-icon name="contact_mail" size="1.5rem" />
-              Dane Kontaktowe
-            </q-item-label>
-            <q-item-label class="text-positive" caption lines="2">e-mail: {{ member.email }}</q-item-label>
-            <q-item-label class="text-positive" caption lines="2">Numer Telefonu:
-              {{ member.phoneNumber.toString().substring(0, 3) + ' ' + member.phoneNumber.toString().substring(3, 6) + ' '
-              + member.phoneNumber.toString().substring(6, 9) + ' ' + member.phoneNumber.substring(9, 12) }}
-            </q-item-label>
-            <q-item-label>
-              <q-icon name="location_city" size="1.5rem" />
-              Adres
-            </q-item-label>
-            <q-item-label v-if=" member.address.postOfficeCity != null " class="text-positive" caption lines="2">Miasto:
-              {{ member.address.postOfficeCity }}
-            </q-item-label>
-            <q-item-label v-if=" member.address.zipCode != null " class="text-positive" caption lines="2">Kod Pocztowy:
-              {{ member.address.zipCode }}
-            </q-item-label>
-            <q-item-label v-if=" member.address.street != null " class="text-positive" caption lines="2">Ulica: {{
-              member.address.street }}
-              {{ member.address.streetNumber }}
-            </q-item-label>
-            <q-item-label v-if=" member.address.flatNumber != null " class="text-positive" caption lines="2">Numer mieszkania:
-              {{ member.address.flatNumber }}
-            </q-item-label>
-            <p></p>
+          <div class="full-height text-positive">
+            <div style="height: 55%">
+              <q-item-label class="text-center">
+                <q-icon name="contact_mail" size="1.5rem" />
+                Dane Kontaktowe
+              </q-item-label>
+              <q-item-label class="text-positive" caption lines="2">e-mail: {{ member.email }}</q-item-label>
+              <q-item-label class="text-positive" caption lines="2">Numer Telefonu:
+                {{ member.phoneNumber.toString().substring(0, 3) + ' ' + member.phoneNumber.toString().substring(3, 6) + ' '
+                + member.phoneNumber.toString().substring(6, 9) + ' ' + member.phoneNumber.substring(9, 12) }}
+              </q-item-label>
+              <q-item-label class="text-positive text-center">
+                <q-icon name="location_city" size="1.5rem" />
+                Adres Zamieszkania
+              </q-item-label>
+              <q-item-label v-if=" member.address.postOfficeCity != null " class="text-positive" caption lines="2">Miasto:
+                {{ member.address.postOfficeCity }}
+              </q-item-label>
+              <q-item-label v-if=" member.address.zipCode != null " class="text-positive" caption lines="2">Kod Pocztowy:
+                {{ member.address.zipCode }}
+              </q-item-label>
+              <q-item-label v-if=" member.address.street != null " class="text-positive" caption lines="2">Ulica: {{
+                member.address.street }}
+                {{ member.address.streetNumber }}
+              </q-item-label>
+              <q-item-label v-if=" member.address.flatNumber != null " class="text-positive" caption lines="2">Numer mieszkania:
+                {{ member.address.flatNumber }}
+              </q-item-label>
+              <p></p>
+            </div>
             <div class="rounded">
               <q-btn v-if=" !member.erased && !mobile" class="full-width" label="Zmień Dane Kontaktowe" color="secondary"
               @click=" memberUUID = member.uuid; memberEmail = member.email; memberPhoneNumber = member.phoneNumber; memberPostOfficeCity = member.address.postOfficeCity; memberZipCode = member.address.zipCode; memberStreet = member.address.street; memberStreetNumber = member.address.streetNumber; memberFlatNumber = member.address.flatNumber; addressConfirm = true "/>
             </div>
-          </q-item-section>
+          </div>
         </q-card-section>
         <q-card-section v-if=" !member.erased && main && !mobile " class="col-5">
           <q-item-section class="col full-width">
@@ -765,8 +769,8 @@
         </q-card-section>
       </q-card>
     </q-card>
-    <q-dialog v-model=" contribution " persistent>
-      <q-card class="bg-dark text-positive">
+    <q-dialog v-model=" contribution ">
+      <q-card class="bg-dark text-positive" >
         <q-card-section class="row items-center">
           <span class="q-ml-sm text-h6">Czy przedłużyć składkę?</span>
         </q-card-section>
@@ -842,7 +846,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model=" addressConfirm1 " persistent>
+    <q-dialog v-model=" addressConfirm1 ">
       <q-card class="bg-dark text-positive">
         <q-card-section class="row text-center text-h6">
           <span class="q-ml-sm">Czy na pewno zmienić dane adresowe?</span>
@@ -920,7 +924,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model=" basicDataConfirm1 " persistent>
+    <q-dialog v-model=" basicDataConfirm1 ">
       <q-card class="bg-dark text-positive">
         <q-card-section class="row text-center text-h6">
           <span class="q-ml-sm">Czy na pewno zmienić dane podstawowe?</span>
@@ -933,7 +937,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model=" deactivate " persistent>
+    <q-dialog v-model=" deactivate ">
       <q-card class="bg-dark text-positive">
         <q-card-section class="row text-h6 text-bold text-center">
           <span class="q-ml-sm">Czy na pewno przenieść do nieaktywnych?</span>
@@ -945,7 +949,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model=" backConfirm " persistent>
+    <q-dialog v-model=" backConfirm ">
       <q-card class="bg-dark text-positive">
         <q-card-section class="row text-h6 text-bold text-center">
           <span class="q-ml-sm">Czy na pewno chcesz przywrócić Klubowicza?</span>
@@ -971,7 +975,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model=" eraseWeapon " persistent>
+    <q-dialog v-model=" eraseWeapon ">
       <q-card>
         <q-card-section class="row text-center text-h6">
           <span class="q-ml-sm">Czy na pewno usunąć pozwolenie?</span>
@@ -983,7 +987,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model=" eraseAssest " persistent>
+    <q-dialog v-model=" eraseAssest ">
       <q-card>
         <q-card-section class="row text-center text-h6">
           <span class="q-ml-sm">Czy na pewno usunąć dopuszczenie?</span>
@@ -995,7 +999,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model=" instructorConfirm " persistent @keypress.esc=" instructorConfirm = false "
+    <q-dialog v-model=" instructorConfirm " @keypress.esc=" instructorConfirm = false "
       @keypress.enter=" updateMemberPermissions(memberUUID, permissionsInstructorNumber); instructorConfirm = false; value = true ">
       <q-card>
         <q-card-section class="row text-center text-h6">
@@ -1009,7 +1013,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model=" shootingLeaderConfirm " persistent @keypress.esc=" shootingLeaderConfirm = false "
+    <q-dialog v-model=" shootingLeaderConfirm " @keypress.esc=" shootingLeaderConfirm = false "
       @keypress.enter=" updateMemberPermissions(memberUUID, permissionsShootingLeaderNumber); shootingLeaderConfirm = false; value1 = true ">
       <q-card>
         <q-card-section class="row text-center text-h6">
@@ -1023,7 +1027,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model=" arbiterConfirm " persistent @keypress.esc=" arbiterConfirm = false "
+    <q-dialog v-model=" arbiterConfirm " @keypress.esc=" arbiterConfirm = false "
       @keypress.enter=" updateMemberPermissions(memberUUID, permissionsArbiterNumber, permissionsArbiterPermissionValidThru); arbiterConfirm = false; value2 = true ">
       <q-card>
         <q-card-section class="row text-center text-h6">
@@ -1037,7 +1041,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model=" arbiterProlongConfirm " persistent
+    <q-dialog v-model=" arbiterProlongConfirm "
       @keypress.enter=" updateMemberPermissions(memberUUID, permissionsArbiterPermissionValidThru); value3 = true; arbiterUpdateClassConfirm = false ">
       <q-card>
         <q-card-section class="row text-center text-h6">
@@ -1051,7 +1055,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model=" arbiterUpdateClassConfirm " persistent
+    <q-dialog v-model=" arbiterUpdateClassConfirm "
       @keypress.enter=" updateMemberArbiterClass(memberUUID); arbiterUpdateClassConfirm = false ">
       <q-card>
         <q-card-section class="row text-center text-h6">
@@ -1064,7 +1068,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model=" eraseConfirm " persistent @keypress.enter=" eraseCode = true; eraseConfirm = false ">
+    <q-dialog v-model=" eraseConfirm " @keypress.enter=" eraseCode = true; eraseConfirm = false ">
       <q-card class="bg-warning">
         <q-card-section class="row">
           <span class="q-ml-sm text-h6 text-bold text-center">Czy na pewno chcesz usunąć Klubowicza <br/>z listy członków klubu?</span>
@@ -1131,7 +1135,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model=" addAmmoConfirm " persistent @keypress.enter=" addMemberAndAmmoToCaliber(); addAmmoConfirm = false ">
+    <q-dialog v-model=" addAmmoConfirm " @keypress.enter=" addMemberAndAmmoToCaliber(); addAmmoConfirm = false ">
       <q-card class="bg-dark text-positive">
         <q-card-section class="row text-center text-h6">
           <span class="q-ml-sm">Czy na pewno chcesz wydać amunicję?</span>
@@ -1143,7 +1147,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model=" patentConfirm " persistent>
+    <q-dialog v-model=" patentConfirm ">
       <q-card class="bg-dark text-positive">
         <q-card-section>
           <div class="q-pa-xs text-h5 text-center text-bold">Dodawanie Patentu</div>
@@ -1240,7 +1244,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model=" patentConfirm1 " persistent
+    <q-dialog v-model=" patentConfirm1 "
       @keypress.enter=" addPatent(memberUUID, (patentNumber + '/PAT/' + patentNumber1), patentPistolPermission, patentRiflePermission, patentShotgunPermission, patentDate); patentConfirm1 = false ">
       <q-card class="bg-dark text-positive">
         <q-card-section class="row text-center text-h6">
@@ -1261,7 +1265,7 @@
         </q-card-section>
       </q-card>
     </q-dialog>
-    <q-dialog v-model=" contributionRemoveRecordQuery " persistent
+    <q-dialog v-model=" contributionRemoveRecordQuery "
       @keypress.enter=" contributionRemoveRecordQuery = false; contributionRemoveRecordQueryCode = true ">
       <q-card class="bg-red-5 text-center">
         <q-card-section class="row text-center text-h6">
@@ -1498,6 +1502,7 @@ export default {
         name: '',
         date: ''
       },
+      siteName: window.localStorage.getItem('SiteName'),
       rotateFun: 0,
       showCompetition: false,
       a5rotate: true,

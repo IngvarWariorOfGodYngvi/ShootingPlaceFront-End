@@ -1,6 +1,7 @@
 <template>
   <div class="full-width rounded">
     <q-btn class="full-width" @click="dialog=true" color="secondary">Pobierz kartę Członkowską Klubu
+      <div v-if="loading " class="text-center"><q-circular-progress color="white" indeterminate/></div>
     </q-btn>
     <q-dialog v-model="dialog" @keypress.enter="dialog=false;getPersonalCardPDF()">
       <q-card class="bg-dark text-positive">
@@ -10,7 +11,7 @@
 
         <q-card-actions align="right">
           <q-btn text-color="white" label="anuluj" color="secondary" v-close-popup />
-          <q-btn text-color="white" label="Pobierz" color="primary" v-close-popup @click="getPersonalCardPDF()" />
+          <q-btn text-color="white" label="Pobierz" color="primary" v-close-popup @click="loading=true;getPersonalCardPDF()" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -33,6 +34,7 @@ export default {
   data () {
     return {
       download: false,
+      loading: false,
       dialog: false,
       local: App.host
     }
@@ -67,6 +69,7 @@ export default {
     autoClose () {
       setTimeout(() => {
         this.download = false
+        this.loading = false
       }, 2000)
     }
   }

@@ -64,7 +64,7 @@
           </div>
           <q-inner-loading
               :showing="visible"
-              label="Przetwarzanie..."
+              label="Ładowanie..."
               color="primary"/>
       </q-scroll-area>
     </q-card>
@@ -209,7 +209,7 @@ export default {
     },
     convertDate (date) {
       const current = new Date(date)
-      let month = current.getMonth() + 1
+      let month = current.getMonth()
       let day = current.getDate()
       if (day < 10) {
         day = '0' + day

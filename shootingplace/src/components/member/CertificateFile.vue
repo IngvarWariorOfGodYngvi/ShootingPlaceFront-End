@@ -1,6 +1,7 @@
 <template>
   <div class="full-width rounded">
     <q-btn class="full-width" @click="dialog=true" color="secondary">Pobierz Zaświadczenie o przynależności
+      <div v-if="loading " class="text-center"><q-circular-progress color="white" indeterminate/></div>
     </q-btn>
     <q-dialog v-model="dialog">
       <q-card style="width: 400px;" class="bg-dark text-positive">
@@ -29,7 +30,7 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model="certificateDownload"
-              @keypress.enter="getDownloadCertificateOfClubMembership();certificateDownload=false">
+              @keypress.enter="loading=true;getDownloadCertificateOfClubMembership();certificateDownload=false">
       <q-card class="bg-dark text-positive">
         <q-card-section class="col items-center">
           <p class="q-ml-sm text-h6 text-bold">Pobrać zaświadczenie dla Klubowicza?</p>
@@ -39,7 +40,7 @@
         <q-card-actions align="right">
           <q-btn text-color="white" label="anuluj" color="primary" v-close-popup @click="certificateChoice = null"/>
           <q-btn text-color="white" label="Pobierz" color="primary" v-close-popup
-                 @click="getDownloadCertificateOfClubMembership();dialog=false"/>
+                 @click="loading=true;getDownloadCertificateOfClubMembership();dialog=false"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -62,6 +63,7 @@ export default {
   data () {
     return {
       download: false,
+      loading: false,
       dialog: false,
       shootingPlace: App.shootingPlace,
       certificateDownload: false,
@@ -108,6 +110,7 @@ export default {
     autoClose () {
       setTimeout(() => {
         this.download = false
+        this.loading = false
       }, 2000)
     }
   }

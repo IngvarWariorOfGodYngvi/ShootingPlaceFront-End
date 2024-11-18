@@ -147,7 +147,7 @@
       </template>
     </q-virtual-scroll>
     <q-dialog v-model="setScorePlayer">
-      <q-card style="min-width: 95vw;min-height: 90vh; margin-bottom: 10vh" class="bg-dark">
+      <q-card style="min-width: 95vw;min-height: 90vh; margin-bottom: 10vh" class="bg-dark" id="1">
         <q-card-section class="full-width">
           <div>
             <div class="text-h5 text-positive text-bold text-center">{{ temp.secondName }} {{ temp.firstName }} nr
@@ -178,24 +178,27 @@
                      onkeypress="return (event.charCode > 47 && event.charCode < 58) || event.charCode === 44  || event.charCode === 46"
                      v-model="series[index]" stack-label label-color="positive" type="number" min="0"
                      :label="'Seria ' + (index + 1)" input-class="text-center text-h6 text-positive">
-            <q-popup-edit value="" content-class="bg-dark text-positive" anchor="center middle" self="center middle"
-                            style="opacity: 0.1"
-                            @before-show="tempSeries = series[index];series[index] = '';series = setSeriesValues(series)"
+            <q-popup-edit value="" content-class="bg-grey text-black" anchor="center middle" self="center middle"
+                            style="opacity: 0.15"
+                            @before-hide="removeClass()"
+                            @before-show="tempSeries = series[index];series[index] = '';series = setSeriesValues(series); addClass()"
                             @hide="innerTenSeries=0;outerTenSeries=0;manuallyClosed?'':(series[index]=tempSeries, series = setSeriesValues(series));manuallyClosed=false">
-              <div class="text-h6 text-positive row" color="positive" label-color="positive">
+              <div class="text-h6 text-black row" color="positive" label-color="positive">
                     <div class="col">
-                      <div class="text-h5 text-positive text-bold text-center">{{ temp.secondName }} {{ temp.firstName }} nr
+                      <div class="text-h5 text-bold text-center">{{ temp.secondName }} {{ temp.firstName }} nr
                         {{ startNumber }}
                       </div>
+                      <div class="text-h5 text-bold text-center">Seria: {{ index+1 }}
+                      </div>
                       <div>
-                        <div class="text-h5 text-positive text-bold text-center">{{ competitionTemp.name }}</div>
+                        <div class="text-h5 text-bold text-center">{{ competitionTemp.name }}</div>
                       </div>
                       <div class="full-width">|{{ series[index] }}|</div>
                       <div class="full-width">
                         <div :class="series[index]!=null?tableLength(series[index])>(competitionTemp.numberOfShots>10?10:competitionTemp.numberOfShots)?'text-h4 text-red':'':series[index] = 0">Ilość strzałów:
                           {{ tableLength(series[index]) }}
                         </div>
-                        <div>10/: {{ outerTenSeries }} 10X: {{ innerTenSeries }} suma: {{ series[index].length > 0? sum(series[index]): '0'}}</div>
+                        <div>10/: {{ outerTenSeries }} 10X: {{ innerTenSeries }} suma: {{ series[index].length > 0? sum(series[index]).toFixed(1): '0'}}</div>
                       </div>
                     </div>
                   </div>
@@ -203,58 +206,62 @@
                     <div class="col-9">
                       <div class="row">
                         <q-btn color="primary"
-                               @click="series[index].length<1? series[index] = series[index]+'7':series[index] = series[index]+'+7';series=setSeriesValues(series)"
+                               @click="series[index].length<1? series[index] = series[index]+'7': series[index].endsWith('.')?series[index] = series[index]+'7':series[index] = series[index]+'+7';innerTenSeriesCounter(series[index]);series=setSeriesValues(series)"
                                class="q-pa-xs text-h6 col-4" style="border: 2px solid">7
                         </q-btn>
                         <q-btn color="primary"
-                               @click="series[index].length<1? series[index] = series[index]+'8':series[index] = series[index]+'+8';series=setSeriesValues(series)"
-                               class="q-pa-xs text-h6 col-4" style="border: 2px solid">8
+                        @click="series[index].length<1? series[index] = series[index]+'8': series[index].endsWith('.')?series[index] = series[index]+'8':series[index] = series[index]+'+8';innerTenSeriesCounter(series[index]);series=setSeriesValues(series)"
+                        class="q-pa-xs text-h6 col-4" style="border: 2px solid">8
                         </q-btn>
                         <q-btn color="primary"
-                               @click="series[index].length<1? series[index] = series[index]+'9':series[index] = series[index]+'+9';series=setSeriesValues(series)"
-                               class="q-pa-xs text-h6 col-4" style="border: 2px solid">9
-                        </q-btn>
-                      </div>
-                      <div class="row">
-                        <q-btn color="primary"
-                               @click="series[index].length<1? series[index] = series[index]+'4':series[index] = series[index]+'+4';series=setSeriesValues(series)"
-                               class="q-pa-xs text-h6 col-4" style="border: 2px solid">4
-                        </q-btn>
-                        <q-btn color="primary"
-                               @click="series[index].length<1? series[index] = series[index]+'5':series[index] = series[index]+'+5';series=setSeriesValues(series)"
-                               class="q-pa-xs text-h6 col-4" style="border: 2px solid">5
-                        </q-btn>
-                        <q-btn color="primary"
-                               @click="series[index].length<1? series[index] = series[index]+'6':series[index] = series[index]+'+6';series=setSeriesValues(series)"
-                               class="q-pa-xs text-h6 col-4" style="border: 2px solid">6
+                        @click="series[index].length<1? series[index] = series[index]+'9': series[index].endsWith('.')?series[index] = series[index]+'9':series[index] = series[index]+'+9';innerTenSeriesCounter(series[index]);series=setSeriesValues(series)"
+                        class="q-pa-xs text-h6 col-4" style="border: 2px solid">9
                         </q-btn>
                       </div>
                       <div class="row">
                         <q-btn color="primary"
-                               @click="series[index].length<1? series[index] = series[index]+'1':series[index] = series[index]+'+1';series=setSeriesValues(series)"
-                               class="q-pa-xs text-h6 col-4" style="border: 2px solid">1
+                        @click="series[index].length<1? series[index] = series[index]+'4': series[index].endsWith('.')?series[index] = series[index]+'4':series[index] = series[index]+'+4';innerTenSeriesCounter(series[index]);series=setSeriesValues(series)"
+                        class="q-pa-xs text-h6 col-4" style="border: 2px solid">4
                         </q-btn>
                         <q-btn color="primary"
-                               @click="series[index].length<1? series[index] = series[index]+'2':series[index] = series[index]+'+2';series=setSeriesValues(series)"
-                               class="q-pa-xs text-h6 col-4" style="border: 2px solid">2
+                        @click="series[index].length<1? series[index] = series[index]+'5': series[index].endsWith('.')?series[index] = series[index]+'5':series[index] = series[index]+'+5';innerTenSeriesCounter(series[index]);series=setSeriesValues(series)"
+                        class="q-pa-xs text-h6 col-4" style="border: 2px solid">5
                         </q-btn>
                         <q-btn color="primary"
-                               @click="series[index].length<1? series[index] = series[index]+'3':series[index] = series[index]+'+3';series=setSeriesValues(series)"
-                               class="q-pa-xs text-h6 col-4" style="border: 2px solid">3
+                        @click="series[index].length<1? series[index] = series[index]+'6': series[index].endsWith('.')?series[index] = series[index]+'6':series[index] = series[index]+'+6';innerTenSeriesCounter(series[index]);series=setSeriesValues(series)"
+                        class="q-pa-xs text-h6 col-4" style="border: 2px solid">6
                         </q-btn>
                       </div>
                       <div class="row">
                         <q-btn color="primary"
-                               @click="series[index].length<1? series[index] = series[index]+'0':series[index] = series[index]+'+0';innerTenSeriesCounter(series[index]);series=setSeriesValues(series)"
-                               class="q-pa-xs text-h6 col-4" style="border: 2px solid">0
+                        @click="series[index].length<1? series[index] = series[index]+'1': series[index].endsWith('.')?series[index] = series[index]+'1':series[index] = series[index]+'+1';innerTenSeriesCounter(series[index]);series=setSeriesValues(series)"
+                        class="q-pa-xs text-h6 col-4" style="border: 2px solid">1
+                        </q-btn>
+                        <q-btn color="primary"
+                        @click="series[index].length<1? series[index] = series[index]+'2': series[index].endsWith('.')?series[index] = series[index]+'2':series[index] = series[index]+'+2';innerTenSeriesCounter(series[index]);series=setSeriesValues(series)"
+                        class="q-pa-xs text-h6 col-4" style="border: 2px solid">2
+                        </q-btn>
+                        <q-btn color="primary"
+                        @click="series[index].length<1? series[index] = series[index]+'3': series[index].endsWith('.')?series[index] = series[index]+'3':series[index] = series[index]+'+3';innerTenSeriesCounter(series[index]);series=setSeriesValues(series)"
+                        class="q-pa-xs text-h6 col-4" style="border: 2px solid">3
+                        </q-btn>
+                      </div>
+                      <div class="row">
+                        <q-btn color="primary"
+                               @click="series[index].length<1? series[index] = series[index]+'.':series[index] = series[index]+'.';innerTenSeriesCounter(series[index]);series=setSeriesValues(series)"
+                               class="q-pa-xs text-h6 col-3" style="border: 2px solid">.
+                        </q-btn>
+                        <q-btn color="primary"
+                        @click="series[index].length<1? series[index] = series[index]+'0': series[index].endsWith('.')?series[index] = series[index]+'0':series[index] = series[index]+'+0';innerTenSeriesCounter(series[index]);series=setSeriesValues(series)"
+                               class="q-pa-xs text-h6 col-3" style="border: 2px solid">0
                         </q-btn>
                         <q-btn color="primary"
                                @click="series[index].length<1? series[index] = series[index]+'10X':series[index] = series[index]+'+10X';innerTenSeriesCounter(series[index]);series=setSeriesValues(series)"
-                               class="q-pa-xs text-h6 col-4" style="border: 2px solid">10X
+                               class="q-pa-xs text-h6 col-3" style="border: 2px solid">10X
                         </q-btn>
                         <q-btn color="primary"
                                @click="series[index].length<1? series[index] = series[index]+'10/':series[index] = series[index]+'+10/';outerTenSeriesCounter(series[index]);series=setSeriesValues(series)"
-                               class="q-pa-xs text-h6 col-4" style="border: 2px solid">10/
+                               class="q-pa-xs text-h6 col-3" style="border: 2px solid">10/
                         </q-btn>
                       </div>
                     </div>
@@ -266,7 +273,7 @@
                              @click="series[index] = '';innerTenSeries=0;outerTenSeries=0;series = setSeriesValues(series);manuallyClosed=true"/>
                       <q-btn class="q-pa-xs full-width text-h6" style="border: 2px solid" color="primary" label="sumuj"
                              v-close-popup
-                             @click="series[index] ==null?series[index] ='':'';series[index] = sumByClick(series[index]);series = setSeriesValues(series);manuallyClosed=true"/>
+                             @click="series[index] ==null?series[index] ='':'';series[index] = sumByClick(series[index]).toFixed(1);series = setSeriesValues(series);manuallyClosed=true"/>
                       <q-btn class="q-pa-xs full-width text-h6" style="border: 2px solid" color="primary"
                              text-color="white" label="Anuluj"
                              @click="series[index]=tempSeries;manuallyClosed=true;series = setSeriesValues(series)"
@@ -285,21 +292,29 @@
               <q-input v-if="(alfa === '' || alfa === 0) && (charlie === '' || charlie === 0) && (delta === '' || delta === 0)" type="number" min="0"
                         input-class="text-center text-positive text-h6" v-model="outerTen" class="col-3"
                         @keypress.enter=" onEnter(scoreUUID)"
+                        @focus="temp=outerTen; outerTen=''"
+                        @blur="outerTen===''?outerTen=temp:''"
                         stack-label label="trafienia" label-color="positive"
                         onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
               <q-input
                  @keypress.enter=" onEnter(scoreUUID)" type="number" min="0"
                  input-class="text-center text-positive text-h6" v-model="alfa" class="col" stack-label label="Alfa"
+                 @focus="temp=alfa; alfa=''"
+                 @blur="alfa===''?alfa=temp:''"
                  label-color="positive"
                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
               <q-input
                  @keypress.enter=" onEnter(scoreUUID)" type="number" min="0"
                  input-class="text-center text-positive text-h6" v-model="charlie" class="col" stack-label
+                 @focus="temp=charlie; charlie=''"
+                 @blur="charlie===''?charlie=temp:''"
                  label="Charlie" label-color="positive"
                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
               <q-input
                   @keypress.enter=" onEnter(scoreUUID)" type="number" min="0"
                   input-class="text-center text-positive text-h6" v-model="delta" class="col" stack-label label="Delta"
+                  @focus="temp=delta; delta=''"
+                  @blur="delta===''?delta=temp:''"
                   label-color="positive"
                   onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
               <div class="col-3 text-center self-center text-positive" style="border-top: 2px solid white;border-right: 2px solid white;border-left: 2px solid white;">
@@ -311,9 +326,13 @@
               <q-input input-class="text-center text-positive text-h6" v-model="innerTen" type="number" min="0"
                        @keypress.enter=" onEnter(scoreUUID)" class="col"
                        stack-label label="czas" label-color="positive"
+                       @focus="temp=innerTen; innerTen=''"
+                       @blur="innerTen===''?innerTen=temp:''"
                        onkeypress="return (event.charCode > 47 && event.charCode < 58) || event.charCode > 44 || event.charCode < 46"/>
               <q-input input-class="text-center text-positive text-h6" v-model="procedures" type="number" min="0"
                        @keypress.enter="onEnter(scoreUUID)" class="col"
+                       @focus="temp=procedures; procedures=''"
+                       @blur="procedures===''?procedures=temp:''"
                        stack-label :label="`procedury + ${shootingPlace == 'prod'?'3':'5'} sek`" label-color="positive"
                        onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
               <div class="col-6 text-center self-center text-positive row">
@@ -334,12 +353,14 @@
           <div v-if="competitionTemp.countingMethod === 'CZAS'" class="col">
             <q-input input-class="text-center text-positive text-h6" v-model="scoreLabel" type="number"
               @keypress.enter=" onEnter(scoreUUID)"
-              @focus="innerTen = ''"
+              @focus="temp=scoreLabel; scoreLabel=''"
+              @blur="scoreLabel===''?scoreLabel=temp:''"
               stack-label label="czas" label-color="positive"
               onkeypress="return (event.charCode > 47 && event.charCode < 58) || event.charCode > 44 || event.charCode < 46"/>
             <q-input input-class="text-center text-positive text-h6" v-model="procedures" type="number"
               @keypress.enter="onEnter(scoreUUID)"
-              @focus="procedures = ''"
+              @focus="temp=procedures; procedures=''"
+              @blur="procedures===''?procedures=temp:''"
               stack-label :label="`procedury + ${shootingPlace == 'prod'?'3':'5'} sek`" label-color="positive"
               onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
           </div>
@@ -348,22 +369,30 @@
           <div v-if="competitionTemp.countingMethod === 'IPSC'" class="col">
             <q-input input-class="text-center text-positive text-h6" v-model="innerTen" type="number"
                 @keypress.enter=" onEnter(scoreUUID)"
+                @focus="temp=innerTen; innerTen=''"
+                @blur="innerTen===''?innerTen=temp:''"
                 stack-label label="czas" label-color="positive"
                 onkeypress="return (event.charCode > 47 && event.charCode < 58) || event.charCode > 44 || event.charCode < 46"/>
               <div class="row full-width">
                 <q-input
                     @keypress.enter=" onEnter(scoreUUID)" type="number"
                     input-class="text-center text-positive text-h6" v-model="alfa" class="col-3" stack-label label="Alfa"
+                    @focus="temp=alfa; alfa=''"
+                    @blur="alfa===''?alfa=temp:''"
                     label-color="positive"
                     onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                 <q-input
                     @keypress.enter=" onEnter(scoreUUID)" type="number"
                     input-class="text-center text-positive text-h6" v-model="charlie" class="col-3" stack-label
                     label="Charlie" label-color="positive"
+                    @focus="temp=charlie; charlie=''"
+                    @blur="charlie===''?charlie=temp:''"
                     onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                 <q-input
                     @keypress.enter=" onEnter(scoreUUID)" type="number"
                     input-class="text-center text-positive text-h6" v-model="delta" class="col-3" stack-label label="Delta"
+                    @focus="temp=delta; delta=''"
+                    @blur="delta===''?delta=temp:''"
                     label-color="positive"
                     onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                 <div class="col-3 text-center self-center text-positive"  style="border-top: 2px solid white; border-left: 2px solid white; border-right: 2px solid white ">
@@ -374,10 +403,14 @@
               <div class="row full-width">
                 <q-input input-class="text-center text-positive text-h6" v-model="miss" type="number"
                     @keypress.enter=" onEnter(scoreUUID)" class="col"
+                    @focus="temp=miss; miss=''"
+                    @blur="miss===''?miss=temp:''"
                     stack-label label="miss" label-color="positive"
                     onkeypress="return (event.charCode > 47 && event.charCode < 58) || event.charCode > 44 || event.charCode < 46"/>
                 <q-input input-class="text-center text-positive text-h6" v-model="procedures" type="number"
                     @keypress.enter="onEnter(scoreUUID)" class="col-4"
+                    @focus="temp=procedures; procedures=''"
+                    @blur="procedures===''?procedures=temp:''"
                     stack-label :label="`procedury`" label-color="positive"
                     onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                 <div class="col-6 text-center self-center text-positive row">
@@ -397,21 +430,29 @@
           <div v-if="competitionTemp.countingMethod === 'Dynamika Dziesiątka'" class="col">
             <q-input input-class="text-center text-positive text-h6" v-model="innerTen" type="number"
                 @keypress.enter=" onEnter(scoreUUID)"
+                @focus="temp=innerTen; innerTen=''"
+                @blur="innerTen===''?innerTen=temp:''"
                 stack-label label="czas" label-color="positive"
                 onkeypress="return (event.charCode > 47 && event.charCode < 58) || event.charCode > 44 || event.charCode < 46"/>
               <div class="row full-width">
                 <q-input
                     @keypress.enter=" onEnter(scoreUUID)" type="number"
+                    @focus="temp=alfa; alfa=''"
+                    @blur="alfa===''?alfa=temp:''"
                     input-class="text-center text-positive text-h6" v-model="alfa" class="col-3" stack-label label="Alfa"
                     label-color="positive"
                     onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                 <q-input
                     @keypress.enter=" onEnter(scoreUUID)" type="number"
+                    @focus="temp=charlie; charlie=''"
+                    @blur="charlie===''?charlie=temp:''"
                     input-class="text-center text-positive text-h6" v-model="charlie" class="col-3" stack-label
                     label="Charlie" label-color="positive"
                     onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                 <q-input
                     @keypress.enter=" onEnter(scoreUUID)" type="number"
+                    @focus="temp=delta; delta=''"
+                    @blur="delta===''?delta=temp:''"
                     input-class="text-center text-positive text-h6" v-model="delta" class="col-3" stack-label label="Delta"
                     label-color="positive"
                     onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
@@ -423,10 +464,14 @@
               <div class="row full-width">
                 <q-input input-class="text-center text-positive text-h6" v-model="miss" type="number"
                     @keypress.enter=" onEnter(scoreUUID)" class="col"
+                    @focus="temp=miss; miss=''"
+                    @blur="miss===''?miss=temp:''"
                     stack-label label="miss" label-color="positive"
                     onkeypress="return (event.charCode > 47 && event.charCode < 58) || event.charCode > 44 || event.charCode < 46"/>
                 <q-input input-class="text-center text-positive text-h6" v-model="procedures" type="number"
                     @keypress.enter="onEnter(scoreUUID)" class="col-4"
+                    @focus="temp=procedures; procedures=''"
+                    @blur="procedures===''?procedures=temp:''"
                     stack-label :label="`procedury`" label-color="positive"
                     onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
                 <div class="col-6 text-center self-center text-positive row">
@@ -565,6 +610,12 @@ export default {
     }
   },
   methods: {
+    addClass () {
+      document.getElementById('1').classList.add('blind')
+    },
+    removeClass () {
+      document.getElementById('1').classList.remove('blind')
+    },
     getCompetitionByID (uuid) {
       fetch(`${this.local}/competitionMembersList/getByID/?uuid=${uuid}`, {
         method: 'GET',
