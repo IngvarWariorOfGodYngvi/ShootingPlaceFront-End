@@ -27,12 +27,12 @@
       </q-page-sticky>
     <q-card :class="mobile ? 'col bg-dark' : 'row bg-dark'" flat>
       <div class="col-4">
-        <q-select label="Wybierz osobę" color="primary" input-class="text-white" label-color="white"
-          popup-content-class="bg-dark text-positive"
+        <q-select v-if="!erase" label="Wybierz osobę" color="primary" input-class="text-white" label-color="white"
+          popup-content-class="bg-dark text-positive" rounded standout=""
           :option-value="opt => opt !== '' ? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber).toString() : ''"
           :option-label="opt => opt !== '' ? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber).toString() : ''"
           emit-value map-options options-dense options-selected-class="bg-negative text-positive" v-model="memberName"
-          bg-color="primary" filled dense use-input hide-selected fill-input :options="options" @filter="filter"
+          bg-color="primary" dense use-input hide-selected fill-input :options="options" @filter="filter"
           @input="allMember = false">
           <template v-slot:option="option">
             <q-item class="rounded" dense style="padding: 0; margin: 0;" v-bind="option['itemProps']"
@@ -56,6 +56,34 @@
             </q-item>
           </template>
         </q-select>
+        <q-select v-if="erase" label="Wybierz osobę ze skreślonych" color="primary" input-class="text-white" label-color="white"
+          popup-content-class="bg-dark text-positive" rounded standout=""
+          :option-value="opt => opt !== '' ? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber).toString() : ''"
+          :option-label="opt => opt !== '' ? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber).toString() : ''"
+          emit-value map-options options-dense options-selected-class="bg-negative text-positive" v-model="memberName"
+          bg-color="primary" dense use-input hide-selected fill-input :options="options" @filter="filterErased"
+          @input="allMember = false">
+          <template v-slot:option="option">
+            <q-item class="rounded bg-red-5" dense style="padding: 0; margin: 0;" v-bind="option['itemProps']"
+              v-on="option.itemEvents">
+              <q-item-section style="padding: 0.5em; margin: 0;"
+              @click="allMember = false;memberName = option.opt.secondName + ' ' + option.opt.firstName + ' ' + option.opt.legitimationNumber; temp = option.opt.legitimationNumber;visible = false">
+                <div>
+                  {{ option.opt.secondName }} {{ option.opt.firstName }}
+                  {{ option.opt.legitimationNumber }} {{ option.opt.adult ? 'Ogólna' : 'Młodzież' }}
+                </div>
+              </q-item-section>
+            </q-item>
+          </template>
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">
+                Brak wyników - sprawdź w skreślonych
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
+        <q-checkbox class="text-positive" v-model="advancedSearch" dense keep-color color="primary">szukanie niestandardowe</q-checkbox>
       </div>
       <div v-if="!mobile" class=" col-8">
         <q-card class="bg-accent q-pa-xs row">
@@ -63,7 +91,7 @@
           <div class="col">
               <q-checkbox dense
                 @input="memberName = ''; temp = null; adult = null; active = null; erase = false; getMembersNames(); getAllMemberDTO()"
-                v-model="allMember" label="Wyświetl wszystkich" />
+                v-model="allMember" label="Zapisani" />
                 <!-- <q-radio @input="member = null; allMember = false; getMembersNames(); rearrangeMemberDTO()" color="green"
                   v-model="adult" :val="true" label="Grupa Ogólna" />
                 <q-radio @input="member = null; allMember = false; getMembersNames(); rearrangeMemberDTO()"
@@ -77,51 +105,49 @@
               @input="memberDTOArgRearrangeTable=[];memberName = ''; temp = null; allMember = !erase; active = false; getMembersNames(); getAllMemberDTOWithArgs(); erasedType = erasedTypes[0]"
               color="red" v-model="erase" :val="false" label="Skreśleni" />
           <div class="row text-bold text-center text-caption">
-            <q-item dense v-if="allMember || allMember == null">
-              Ogółem : {{ quantities[0] + quantities[3] }}
-              ({{ quantities[0] }} + {{ quantities[3] }})
+            <q-item dense v-if="!erase">
+              Zapisani Ogółem : {{ quantities[0] + quantities[3] }}
             </q-item>
-            <q-item dense v-if="allMember || allMember == null">
+            <q-item dense v-if="!erase">
               Aktywni : {{ quantities[10] + quantities[4] }}
               ({{ quantities[10] }} + {{ quantities[4] }})
             </q-item>
-            <q-item dense v-if="allMember || allMember == null">
+            <q-item dense v-if="!erase">
               Nieaktywni : {{ quantities[11] + quantities[5] }}
               ({{ quantities[11] }} + {{ quantities[5] }})
-            </q-item>
-            <q-item dense v-if="(adult != null && adult) && !erase">
-              Gr. Ogólna ogółem : {{ quantities[0] }}
-            </q-item>
-            <q-item dense v-if="(adult != null && adult) && !erase">
-              Aktywni : {{ quantities[10] }}
-            </q-item>
-            <q-item dense v-if="(adult != null && adult) && !erase">
-              Nieaktywni : {{ quantities[11] }}
-            </q-item>
-            <q-item dense v-if="(adult != null && !adult) && !erase">
-              Gr. Młodzieżowa ogółem : {{ quantities[3] }}
-            </q-item>
-            <q-item dense v-if="(adult != null && !adult) && !erase">
-              Aktywni : {{ quantities[4] }}
-            </q-item>
-            <q-item dense v-if="(adult != null && !adult) && !erase">
-              Nieaktywni : {{ quantities[5] }}
             </q-item>
             <q-item dense v-if="erase">
               Skreśleni ogółem : {{ quantities[6] + quantities[7] }}
             </q-item>
-            <q-item dense v-if="adult && erase">
+            <q-item dense v-if="erase">
               Skreśleni Gr. Ogólna : {{ quantities[6] }}
             </q-item>
-            <q-item dense v-if="!adult && erase">
+            <q-item dense v-if="erase">
               Skreśleni Gr. Młodzieżowa : {{ quantities[7] }}
             </q-item>
           </div>
         </div>
-          <div class="col reverse row">
-          </div>
-        </q-card>
+      </q-card>
+    </div>
+    <q-card v-if="advancedSearch" class="bg-dark row full-width text-positive items-center">
+      <div class="col flex">
+        <q-radio class="col" dense v-model="advancedSearchChoice" :val="advancedSearchRadio[0]" color="primary" keep-color label="numer telefonu"></q-radio>
+        <q-radio class="col" dense v-model="advancedSearchChoice" :val="advancedSearchRadio[1]" color="primary" keep-color label="numer licencji"></q-radio>
+        <q-radio class="col" dense v-model="advancedSearchChoice" :val="advancedSearchRadio[2]" color="primary" keep-color label="e-mail"></q-radio>
+        <q-radio class="col" dense v-model="advancedSearchChoice" :val="advancedSearchRadio[3]" color="primary" keep-color label="PESEL"></q-radio>
+        <q-radio class="col" dense v-model="advancedSearchChoice" :val="advancedSearchRadio[4]" color="primary" keep-color label="numer dokumentu"></q-radio>
       </div>
+      <div class="col-4 q-pa-xs">
+        <q-input debounce="1000" v-model="advancedSearchInput"
+        @keypress.enter="getAdvancedSearch(erase, advancedSearchChoice, advancedSearchInput)"
+        @input="getAdvancedSearch(erase, advancedSearchChoice, advancedSearchInput)" label="wyszukaj" color="white" bg-color="primary" input-class="text-white" label-color="white" dense rounded standout="">
+          <template v-slot:append>
+            <q-icon v-if="advancedSearchInput != ''" name="close" @click="advancedSearchInput = ''" class="cursor-pointer text-white" />
+            <q-icon name="search" class="text-white" @click="getAdvancedSearch(erase, advancedSearchChoice, advancedSearchInput)" />
+        </template>
+        </q-input>
+      </div>
+    </q-card>
     </q-card>
     <Member v-if="temp!=null" :member-number-legitimation="temp"></Member>
     <div v-if="temp === null" class="full-width">
@@ -130,7 +156,7 @@
       </div>
       <q-virtual-scroll :virtual-scroll-item-size="48" :virtual-scroll-sticky-size-start="48"
         :virtual-scroll-sticky-size-end="32" dense :items="memberDTOArgRearrangeTable" type="table"
-        class="row full-width q-pa-none bg-dark text-positive" style="height: 90vh;">
+        class="row full-width q-pa-none bg-dark text-positive" style="height: 90vh;" @mouseleave="visible=false">
         <template v-slot:before>
           <thead class="thead-sticky text-left">
             <tr class="bg-primary text-white">
@@ -304,6 +330,10 @@ export default {
   data () {
     return {
       mailing: true,
+      advancedSearch: false,
+      advancedSearchChoice: false,
+      advancedSearchInput: '',
+      advancedSearchRadio: [1, 2, 3, 4, 5],
       visible: false,
       url: '',
       mailingList: JSON.parse(window.localStorage.getItem('mailingList')),
@@ -318,6 +348,7 @@ export default {
       sortActive: false,
       sortImage: false,
       filters: [],
+      filtersErased: [],
       options: [],
       erasedTypes: [],
       active: null,
@@ -339,6 +370,7 @@ export default {
     this.getMembersQuantity()
     this.getAllMemberDTO()
     this.getMembersNames()
+    this.getMembersNamesErased()
   },
   components: {
     Member: lazyLoadComponent({
@@ -422,6 +454,14 @@ export default {
       }
       return day + '-' + (month) + '-' + current.getFullYear()
     },
+    getAdvancedSearch (isErased, searchType, inputText) {
+      fetch(`${this.local}/member/getAdvancedSearch?isErased=${isErased}&searchType=${searchType}&inputText=${inputText}`, {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.memberDTOArgRearrangeTable = response
+        })
+    },
     getMembersQuantity () {
       fetch(`${this.local}/statistics/membersQuantity`, {
         method: 'GET',
@@ -439,6 +479,14 @@ export default {
       }).then(response => response.json())
         .then(response => {
           this.filters = response
+        })
+    },
+    getMembersNamesErased () {
+      fetch(`${this.local}/member/getAllNamesErased`, {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          this.filtersErased = response
         })
     },
     getAllMemberDTOWithArgs () {
@@ -497,6 +545,19 @@ export default {
       update(() => {
         const needle = val.toLowerCase()
         this.options = this.filters.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
+      })
+    },
+    filterErased (val, update) {
+      if (val === '') {
+        update(() => {
+          const needle = val.toLowerCase()
+          this.options = this.filtersErased.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
+        })
+        return
+      }
+      update(() => {
+        const needle = val.toLowerCase()
+        this.options = this.filtersErased.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
       })
     },
     reload () {

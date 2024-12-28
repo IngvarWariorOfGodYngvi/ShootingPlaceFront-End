@@ -7,7 +7,7 @@
             :class="memberName.secondName!=='0'?'bg-primary':'bg-secondary'" style="transition: 0.6s ease-in-out;"
             emit-value map-options options-dense color="positive" input-class="text-white" label-color="white"
             v-model="memberName" fill-input filled dense use-input hide-selected input-debounce="0" :options="options"
-            @input="otherName = Object({secondName:'0', firstName: '0',id: '0'})"  @filter="filterFn" class="col">
+            @input="otherName = Object({secondName:'0', firstName: '0',id: '0'})"  @filter="filterFn" class="col q-ma-xs">
             <template v-slot:option="option">
               <q-item class="rounded bg-dark text-positive" dense style="padding: 0; margin: 0;" v-bind="option.itemProps"
                 v-on="option.itemEvents">
@@ -32,13 +32,13 @@
               </q-item>
             </template>
           </q-select>
-          <q-select @popup-show="getOther()" @popup-hide="getOther()" options-dense class="col" dense filled
+          <q-select @popup-show="getOther()" @popup-hide="getOther()" options-dense class="col q-ma-xs" dense filled
             v-model="otherName" use-input hide-selected fill-input input-debounce="0" color="positive"
             input-class="text-white" label-color="white" popup-content-class="bg-dark text-positive"
             :option-label="opt => opt.secondName !== '0' ? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.id).toString() : ''"
             emit-value map-options
             :class="otherName.secondName!=='0'?'bg-primary':'bg-secondary'"
-            :options="options1" @input="memberName = Object({secondName:'0', firstName: '0',legitimationNumber: '0'})" @filter="filterOther" label="Dodaj osobę spoza klubu">
+            :options="options1" @input="memberName = Object({secondName:'0', firstName: '0',legitimationNumber: '0'})" @filter="filterOther" label="Wybierz osobę spoza klubu">
             <template v-slot:no-option>
               <div class="bg-dark text-center text-bold text-positive">
                 <div class="q-pa-md bg-dark text-center text-bold text-positive">Brak wyników - możesz dodać nową
@@ -166,6 +166,7 @@ export default {
         secondName: '0',
         legitimationNumber: 0
       },
+      otherName1: '',
       otherName: {
         firstName: '0',
         secondName: '0',

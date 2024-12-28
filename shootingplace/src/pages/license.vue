@@ -20,6 +20,11 @@
                       group="list">
       <NotLicenseWithPayment></NotLicenseWithPayment>
     </q-expansion-item>
+    <p></p>
+    <q-expansion-item label="Osoby kwalifikujące się do przedłużenia licencji" dense class="text-left text-h6 text-bold bg-dark text-positive round"
+                      group="list">
+      <LicensesQualifyingToProlong></LicensesQualifyingToProlong>
+    </q-expansion-item>
   </q-page>
 </template>
 
@@ -49,6 +54,10 @@ export default {
     }),
     NotLicenseWithPayment: lazyLoadComponent({
       componentFactory: () => import('components/license/NotLicenseWithPayment.vue'),
+      loading: SkeletonBox
+    }),
+    LicensesQualifyingToProlong: lazyLoadComponent({
+      componentFactory: () => import('components/license/LicensesQualifyingToProlong.vue'),
       loading: SkeletonBox
     })
   },

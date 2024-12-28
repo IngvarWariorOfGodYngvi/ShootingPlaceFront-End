@@ -1,8 +1,8 @@
 <template>
-  <div  style="min-width: 50%;">
+  <div style="min-width: 50vw;">
     <q-card class="bg-dark">
       <q-card-actions align="right" class="q-pa-xs q-ma-xs">
-        <div class="text-h5 text-bold text-center col">Stwórz nowy pakiet strzelecki</div>
+        <div class="text-h5 text-bold text-center col text-positive">Stwórz nowy pakiet strzelecki</div>
         <q-btn icon="close" color="primary" round dense v-close-popup @click=" code = null "/>
       </q-card-actions>
       <q-card-section class="flex-center text-positive">
@@ -16,7 +16,7 @@
           <q-item dense v-for="(item, uuid) in calibers" :key="uuid" :val="item.uuid" style="">
             <div><q-checkbox v-model="item.active" class="text-white" color="primary" keep-color></q-checkbox></div>
             <div class="text-positive text-center col" style="display: flex;justify-content: center;align-content: center;flex-direction: column;">{{ item.name }}</div>
-            <q-input :disable="!item.active" v-model="item.counter" class="col" color="positive" label-color="positive"
+            <q-input :disable="!item.active" v-model="item.counter" class="col" label-color="positive"
           input-class="text-positive" dense filled label="ilość amunicji w pakiecie"
           onkeypress="return (event.charCode > 44 && event.charCode < 58)" type="number" :max="item.quantity"/>
           </q-item>

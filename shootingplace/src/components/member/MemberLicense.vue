@@ -83,6 +83,7 @@
               <div class="col row hover1"
               @dblclick="main&&!mobile?(paymentUUID=item.uuid,editLicensePaymentDate = item.date,editLicensePaymentYear = item.validForYear,editLicensePayment=true):''">
                 <Tooltip2clickTip></Tooltip2clickTip>
+                <label v-if="item.acceptedBy!=null" class="q-pa-xs">{{(item.edited?'Edytowano':'Zaakceptowano')}} przez: {{ item.acceptedBy }}</label>
                 <div class="col-6">
                 <div class="text-left">
                   <label>Opłacona Dnia:</label>
@@ -101,11 +102,11 @@
                 </div>
               </div>
             </div>
-              <div class="col-2 hover rounded" @dblclick="main&&!mobile?(paymentUUID=item.uuid,togglePaymentAlert = true):''">
-                <Tooltip2clickTip></Tooltip2clickTip>
-                <div :class="item.payInPZSSPortal?'':'bg-red'">
-                  <label>PZSS</label>
-                  <q-icon class="full-width text-center " :name="item.payInPZSSPortal?'done':'cancel'"></q-icon>
+            <div class="col-2 hover rounded self-center" @dblclick="main&&!mobile?(paymentUUID=item.uuid,togglePaymentAlert = true):''">
+              <Tooltip2clickTip></Tooltip2clickTip>
+              <div :class="item.payInPZSSPortal?'':'bg-red'">
+                <label>PZSS</label>
+                <q-icon class="full-width text-center " :name="item.payInPZSSPortal?'done':'cancel'"></q-icon>
                 </div>
               </div>
             </div>

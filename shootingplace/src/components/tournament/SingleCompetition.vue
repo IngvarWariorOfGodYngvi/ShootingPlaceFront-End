@@ -9,357 +9,326 @@
       </div>
     </div>
     <div v-for="(item, index) in competition.scoreList" :key="index" class="full-width q-pa-none ghover">
-          <div class="row text-body2 full-width">
-            <!-- button -->
-            <div class="row col-1">
-              <q-btn dense glossy class="full-width" :icon="item.ammunition === false && item.gun === false? 'book' : item.ammunition === true && item.gun === false?'done book':item.ammunition === false && item.gun === true?'book done':item.ammunition === true && item.gun === true?'done':'book'"
-              @click="scoreUUID = item.uuid;temp=item.member!=null?item.member:item.otherPersonEntity.secondName;item.member!=null?(memberLeg = item.member.legitimationNumber,otherID = 0):(otherID = item.otherPersonEntity.id,memberLeg = 0); getListCalibers();caliberUUID = competition.caliberUUID;ammoQuantity = competition.practiceShots + competition.numberOfShots;addAmmo=true">
-              <q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">{{ item.ammunition === false && item.gun === false?'Wydaj broń lub amunicję':item.ammunition === true && item.gun === false?'Amunicja wydana':item.ammunition === false && item.gun === true?'Broń wydana':'Broń i Amunicja Wydane' }}
-              </q-tooltip>
-            </q-btn>
-          </div>
-            <!-- name & club -->
-            <div class="col-5"
-                 @dblclick="item.member!=null && item.member.uuid?memberExist=true:memberExist=false;item.member!=null?
-                 (memberUUID=item.member.uuid,otherID = 0,temp=item.member,memberLeg = item.member.legitimationNumber,name = item.member.secondName + ' ' + item.member.firstName + ' ' + item.member.legitimationNumber)
-                 :
-                 (memberUUID='0',otherID = item.otherPersonEntity.id,temp=item.otherPersonEntity,name = item.otherPersonEntity.secondName + ' ' + item.otherPersonEntity.firstName + ' ' + item.otherPersonEntity.id);
-                 date = competition.date;startNumber=item.metricNumber;getScoreInfo();metricsInfo=true">
-              <div dense standout="bg-accent text-positive row" class="row fit text-positive">
-                <q-tooltip v-if="item.member!=null &&!item.member.active" content-class="bg-red text-subtitle2"
-                           anchor="top middle">UREGULUJ SKŁADKI
-                </q-tooltip>
-                <div class="self-center row full-width text-caption">
-                  <div class="text-positive">&nbsp;{{ index + 1 }}.</div>
-                  <div class="col text-positive">
-                    {{ item.member != null ? temp = item.member.secondName : temp = item.otherPersonEntity.secondName }}
-                    {{ item.member != null ? temp = item.member.firstName : temp = item.otherPersonEntity.firstName }}
-                  </div>
-                  <div class="self-center col-5 no-outline text-positive"
-                  >
-                    {{ item.member != null ? temp = item.member.club.name : temp = item.otherPersonEntity.club.name }}
-                  </div>
-                </div>
+      <div class="row text-body2 full-width">
+        <!-- button -->
+        <div class="row col-1">
+          <q-btn dense glossy class="full-width"
+            :icon="item.ammunition === false && item.gun === false ? 'book' : item.ammunition === true && item.gun === false ? 'done book' : item.ammunition === false && item.gun === true ? 'book done' : item.ammunition === true && item.gun === true ? 'done' : 'book'"
+            @click="scoreUUID = item.uuid; temp = item.member != null ? item.member : item.otherPersonEntity.secondName; item.member != null ? (memberLeg = item.member.legitimationNumber, otherID = 0) : (otherID = item.otherPersonEntity.id, memberLeg = 0); getListCalibers(); caliberUUID = competition.caliberUUID; ammoQuantity = competition.practiceShots + competition.numberOfShots; member = item.member; other = item.otherPersonEntity; addAmmo = true">
+            <q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">{{ item.ammunition === false &&
+              item.gun === false ? 'Wydaj broń lub amunicję' : item.ammunition === true && item.gun === false ? 'Amunicja              wydana':item.ammunition === false && item.gun === true?'Broń wydana':'Broń i Amunicja Wydane' }}
+            </q-tooltip>
+          </q-btn>
+        </div>
+        <!-- name & club -->
+        <div class="col-5" @dblclick="item.member != null && item.member.uuid ? memberExist = true : memberExist = false; item.member != null ?
+          (memberUUID = item.member.uuid, otherID = 0, temp = item.member, memberLeg = item.member.legitimationNumber, name = item.member.secondName + ' ' + item.member.firstName + ' ' + item.member.legitimationNumber)
+          :
+          (memberUUID = '0', otherID = item.otherPersonEntity.id, temp = item.otherPersonEntity, name = item.otherPersonEntity.secondName + ' ' + item.otherPersonEntity.firstName + ' ' + item.otherPersonEntity.id);
+        date = competition.date; startNumber = item.metricNumber; getScoreInfo(); metricsInfo = true">
+          <div dense standout="bg-accent text-positive row" class="row fit text-positive">
+            <q-tooltip v-if="item.member != null && !item.member.active" content-class="bg-red text-subtitle2"
+              anchor="top middle">UREGULUJ SKŁADKI
+            </q-tooltip>
+            <div class="self-center row full-width text-caption">
+              <div class="text-positive">&nbsp;{{ index + 1 }}.</div>
+              <div class="col text-positive">
+                {{ item.member != null ? temp = item.member.secondName : temp = item.otherPersonEntity.secondName }}
+                {{ item.member != null ? temp = item.member.firstName : temp = item.otherPersonEntity.firstName }}
               </div>
-            </div>
-            <!-- metric -->
-            <div class="col-1 text-positive" @dblclick="scoreUUID = item.uuid;metric = item.metricNumber; toggleDSQDNF=true">
-              <div class="text-center">
-                <label style="font-size: 10px">metryka</label>
-                <div class="self-center text-center text-positive text-caption">
-                  {{ item.metricNumber }}
-                </div>
-              </div>
-            </div>
-            <div v-if="competition.countingMethod === 'NORMAL'" class="row col box">
-              <q-popup-edit @before-show="setVariables(item);series = setSeriesValues (item.series)" value="" content-class="bg-dark text-positive">
-                <q-input @focus="scoreUUID = item.uuid" input-class="text-center text-positive" v-model="outerTen"
-                  @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
-                  stack-label label="ilość 10 zwykłe" label-color="positive"
-                   onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                <q-input @focus="scoreUUID = item.uuid" input-class="text-center text-positive" v-model="innerTen"
-                  @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
-                  stack-label label="ilość 10 wewnętrzne" label-color="positive"
-                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                <q-input v-for="(item1,index) in item.series" :key="index"
-                  @focus="scoreUUID = item1.uuid"
-                  @input="replaceComa(series[index], index)"
-                  onkeypress="return (event.charCode > 47 && event.charCode < 58) || event.charCode === 44  || event.charCode === 46"
-                  v-model="series[index]" stack-label label-color="positive"
-                  @keypress.enter="scoreUUID = item.uuid; onEnter(item.uuid)"
-                  :label="'Seria ' + (index + 1)" input-class="text-center text-positive"/>
-                <div class="q-pa-xs text-center">
-                  <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
-                  <q-btn color="primary" label="Zapisz" v-close-popup
-                         @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures,miss,series)"></q-btn>
-                </div>
-                </q-popup-edit>
-              <div class="text-center col">
-                <label class="text-positive" style="font-size: 10px;">10 wew.</label>
-                <div class="self-center col text-center text-positive text-caption">
-                {{ item.innerTen }}
-                </div>
-              </div>
-              <div class="text-center col">
-                <label class="text-positive" style="font-size: 10px;">10 zw.</label>
-                <div class="self-center col text-center text-positive text-caption">
-                {{ item.outerTen }}
-                </div>
-              </div>
-              <div class="text-center col">
-                <label class="text-positive" style="font-size: 10px;">Wynik</label>
-                <div v-if="item.dnf||item.dsq||item.pk"
-                     class="self-center col text-center text-positive text-caption">
-                  <div v-if="item.dnf">DNF ({{ item.score }})</div>
-                  <div v-if="item.dsq">DSQ ({{ item.score }})</div>
-                  <div v-if="item.pk">PK ({{ item.score }})</div>
-                </div>
-                <div v-else :class="`self-center full-width col text-center text-positive text-caption ${item.edited ? '': 'bg-warning round1'}`">
-                {{ item.score }}
-                </div>
-              </div>
-            </div>
-            <div v-if="competition.countingMethod === 'COMSTOCK'" class="row col box">
-              <q-popup-edit @before-show="setVariables(item);series = setSeriesValues (item.series)" value="" content-class="bg-dark text-positive">
-                <q-input type="number" min="0"
-                  input-class="text-center text-positive text-h6" v-model="outerTen" class="col-3"
-                  @keypress.enter=" onEnter(scoreUUID)"
-                  stack-label label="trafienia" label-color="positive"
-                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                <q-input
-                  @keypress.enter=" onEnter(scoreUUID)" type="number" min="0"
-                  input-class="text-center text-positive text-h6" v-model="alfa" class="col" stack-label label="Alfa"
-                  label-color="positive"
-                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                <q-input
-                  @keypress.enter=" onEnter(scoreUUID)" type="number" min="0"
-                  input-class="text-center text-positive text-h6" v-model="charlie" class="col" stack-label
-                  label="Charlie" label-color="positive"
-                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                <q-input
-                  @keypress.enter=" onEnter(scoreUUID)" type="number" min="0"
-                  input-class="text-center text-positive text-h6" v-model="delta" class="col" stack-label label="Delta"
-                  label-color="positive"
-                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                <q-input
-                  @keypress.enter=" onEnter(scoreUUID)"
-                  input-class="text-center text-positive text-h6" v-model="innerTen" class="col" stack-label label="czas"
-                  label-color="positive"
-                  onkeypress="return (event.charCode > 47 && event.charCode < 58 || event.charCode > 44 || event.charCode < 46)"/>
-                <q-input
-                  @keypress.enter=" onEnter(scoreUUID)" type="number" min="0"
-                  input-class="text-center text-positive text-h6" v-model="procedures" class="col" stack-label label="procedury"
-                  label-color="positive"
-                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                <div class="q-pa-xs text-center">
-                  <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
-                  <q-btn color="primary" label="Zapisz" v-close-popup
-                         @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures,miss,series)"></q-btn>
-                </div>
-                </q-popup-edit>
-              <div class="text-center col">
-                <label class="text-positive" style="font-size: 10px;">tr.</label>
-                <div class="self-center col text-center text-positive text-caption">
-                {{ item.outerTen }}
-                </div>
-              </div>
-              <div class="text-center col">
-                <label class="text-positive" style="font-size: 10px;">czas</label>
-                <div class="self-center col text-center text-positive text-caption">
-                {{ item.innerTen }}
-                </div>
-              </div>
-              <div class="text-center col">
-                <label class="text-positive" style="font-size: 10px;">proc.</label>
-                <div class="self-center col text-center text-positive text-caption">
-                {{ item.procedures }}
-                </div>
-              </div>
-              <div class="text-center col-3">
-                <label class="text-positive" style="font-size: 10px;">Wynik / HF</label>
-                <div v-if="item.dnf||item.dsq||item.pk"
-                     class="self-center col text-center text-positive text-caption">
-                  <div v-if="item.dnf">DNF ({{ item.score }})</div>
-                  <div v-if="item.dsq">DSQ ({{ item.score }})</div>
-                  <div v-if="item.pk">PK ({{ item.score }})</div>
-                </div>
-                <div v-else :class="`self-center full-width col text-center text-positive text-caption ${item.edited ? '': 'bg-warning round1'}`">
-                {{ item.score }} / {{ item.hf }}
-                </div>
-              </div>
-            </div>
-            <div v-if="competition.countingMethod === 'CZAS'" class="row col box">
-              <q-popup-edit @before-show="setVariables(item);series = setSeriesValues (item.series)" value="" content-class="bg-dark text-positive">
-                <q-input @focus="scoreUUID = item.uuid" input-class="text-center text-positive" v-model="scoreLabel"
-                  @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
-                  stack-label label="czas" label-color="positive"
-                  onkeypress="return (event.charCode > 47 && event.charCode < 58 || event.charCode > 44 || event.charCode < 46)"/>
-                <q-input @focus="scoreUUID = item.uuid" input-class="text-center text-positive" v-model="procedures"
-                  @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus
-                  stack-label label="procedury" label-color="positive"
-                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                <div class="q-pa-xs text-center">
-                  <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
-                  <q-btn color="primary" label="Zapisz" v-close-popup
-                         @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures,miss,series)"></q-btn>
-                </div>
-              </q-popup-edit>
-              <div class="text-center col">
-                <label class="text-positive" style="font-size: 10px;">proc.</label>
-                <div class="self-center col text-center text-positive text-caption">
-                {{ item.procedures }}
-                </div>
-              </div>
-              <div class="text-center col">
-                <label class="text-positive" style="font-size: 10px;">czas</label>
-                <div class="self-center col text-center text-positive text-caption">
-                {{ item.score }}
-                </div>
-              </div>
-            </div>
-            <div v-if="competition.countingMethod === 'IPSC'" class="row col box">
-              <q-popup-edit @before-show="setVariables(item);series = setSeriesValues (item.series)" value="" content-class="bg-dark text-positive">
-                <q-input
-                  @keypress.enter=" onEnter(scoreUUID)"
-                  input-class="text-center text-positive text-h6" v-model="alfa" class="col" stack-label label="Alfa"
-                  label-color="positive"
-                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                <q-input
-                  @keypress.enter=" onEnter(scoreUUID)"
-                  input-class="text-center text-positive text-h6" v-model="charlie" class="col" stack-label
-                  label="Charlie" label-color="positive"
-                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                <q-input
-                  @keypress.enter=" onEnter(scoreUUID)"
-                  input-class="text-center text-positive text-h6" v-model="delta" class="col" stack-label label="Delta"
-                  label-color="positive"
-                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                <q-input
-                  @keypress.enter=" onEnter(scoreUUID)"
-                  input-class="text-center text-positive text-h6" v-model="innerTen" class="col" stack-label label="czas"
-                  label-color="positive"
-                  onkeypress="return (event.charCode > 47 && event.charCode < 58 || event.charCode > 44 || event.charCode < 46)"/>
-                <q-input
-                  @keypress.enter=" onEnter(scoreUUID)"
-                  input-class="text-center text-positive text-h6" v-model="procedures" class="col" stack-label label="procedury"
-                  label-color="positive"
-                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                <q-input
-                  @keypress.enter=" onEnter(scoreUUID)"
-                  input-class="text-center text-positive text-h6" v-model="miss" class="col" stack-label label="miss"
-                  label-color="positive"
-                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                <div class="q-pa-xs text-center">
-                  <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
-                  <q-btn color="primary" label="Zapisz" v-close-popup
-                         @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures,miss,series)"></q-btn>
-                </div>
-              </q-popup-edit>
-              <div class="text-center row col">
-                <div class="col">
-                  <label class="text-positive" style="font-size: 10px;">alfa</label>
-                  <div class="self-center col text-center text-positive text-caption">
-                    {{ item.alfa }}
-                  </div>
-                </div>
-                <div class="col">
-                  <label class="text-positive" style="font-size: 10px;">charlie</label>
-                  <div class="self-center col text-center text-positive text-caption">
-                    {{ item.charlie }}
-                  </div>
-                </div>
-                <div class="col">
-                  <label class="text-positive" style="font-size: 10px;">delta</label>
-                  <div class="self-center col text-center text-positive text-caption">
-                    {{ item.delta }}
-                  </div>
-                </div>
-              </div>
-              <div class="text-center col-1">
-                <label class="text-positive" style="font-size: 10px;">miss</label>
-                <div class="self-center col text-center text-positive text-caption">
-                {{ item.miss }}
-                </div>
-              </div>
-              <div class="text-center col-1">
-                <label class="text-positive" style="font-size: 10px;">czas</label>
-                <div class="self-center col text-center text-positive text-caption">
-                {{ item.innerTen }}
-                </div>
-              </div>
-              <div class="text-center col">
-                <label class="text-positive" style="font-size: 10px;">Wynik / HF</label>
-                <div class="self-center col text-center text-positive text-caption">
-                {{ item.score }} / {{ item.hf.toFixed(4) }}
-                </div>
-              </div>
-            </div>
-            <div v-if="competition.countingMethod === 'Dynamika Dziesiątka'" class="row col box">
-              <q-popup-edit @before-show="setVariables(item);series = setSeriesValues (item.series)" value="" content-class="bg-dark text-positive">
-                <q-input
-                  @keypress.enter=" onEnter(scoreUUID)"
-                  input-class="text-center text-positive text-h6" v-model="alfa" class="col" stack-label label="Alfa"
-                  label-color="positive"
-                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                <q-input
-                  @keypress.enter=" onEnter(scoreUUID)"
-                  input-class="text-center text-positive text-h6" v-model="charlie" class="col" stack-label
-                  label="Charlie" label-color="positive"
-                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                <q-input
-                  @keypress.enter=" onEnter(scoreUUID)"
-                  input-class="text-center text-positive text-h6" v-model="delta" class="col" stack-label label="Delta"
-                  label-color="positive"
-                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                <q-input
-                  @keypress.enter=" onEnter(scoreUUID)"
-                  input-class="text-center text-positive text-h6" v-model="innerTen" class="col" stack-label label="czas"
-                  label-color="positive"
-                  onkeypress="return (event.charCode > 47 && event.charCode < 58 || event.charCode > 44 || event.charCode < 46)"/>
-                <q-input
-                  @keypress.enter=" onEnter(scoreUUID)"
-                  input-class="text-center text-positive text-h6" v-model="procedures" class="col" stack-label label="procedury"
-                  label-color="positive"
-                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                <q-input
-                  @keypress.enter=" onEnter(scoreUUID)"
-                  input-class="text-center text-positive text-h6" v-model="miss" class="col" stack-label label="miss"
-                  label-color="positive"
-                  onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-                <div class="q-pa-xs text-center">
-                  <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
-                  <q-btn color="primary" label="Zapisz" v-close-popup
-                         @click="scoreUUID = item.uuid; setScore(item.uuid,scoreLabel,innerTen,outerTen,alfa, charlie, delta,procedures,miss,series)"></q-btn>
-                </div>
-              </q-popup-edit>
-              <div class="text-center row col">
-                <div class="col">
-                  <label class="text-positive" style="font-size: 10px;">alfa</label>
-                  <div class="self-center col text-center text-positive text-caption">
-                    {{ item.alfa }}
-                  </div>
-                </div>
-                <div class="col">
-                  <label class="text-positive" style="font-size: 10px;">charlie</label>
-                  <div class="self-center col text-center text-positive text-caption">
-                    {{ item.charlie }}
-                  </div>
-                </div>
-                <div class="col">
-                  <label class="text-positive" style="font-size: 10px;">delta</label>
-                  <div class="self-center col text-center text-positive text-caption">
-                    {{ item.delta }}
-                  </div>
-                </div>
-              </div>
-              <div class="text-center col-1">
-                <label class="text-positive" style="font-size: 10px;">miss</label>
-                <div class="self-center col text-center text-positive text-caption">
-                {{ item.miss }}
-                </div>
-              </div>
-              <div class="text-center col-1">
-                <label class="text-positive" style="font-size: 10px;">czas</label>
-                <div class="self-center col text-center text-positive text-caption">
-                {{ item.innerTen }}
-                </div>
-              </div>
-              <div class="text-center col">
-                <label class="text-positive" style="font-size: 10px;">Wynik / HF</label>
-                <div class="self-center col text-center text-positive text-caption">
-                {{ item.score }} / {{ item.hf.toFixed(4) }}
-                </div>
+              <div class="self-center col-5 no-outline text-positive">
+                {{ item.member != null ? temp = item.member.club.name : temp = item.otherPersonEntity.club.name }}
               </div>
             </div>
           </div>
+        </div>
+        <!-- metric -->
+        <div class="col-1 text-positive"
+          @dblclick="scoreUUID = item.uuid; metric = item.metricNumber; toggleDSQDNF = true">
+          <div class="text-center">
+            <label style="font-size: 10px">metryka</label>
+            <div class="self-center text-center text-positive text-caption">
+              {{ item.metricNumber }}
+            </div>
+          </div>
+        </div>
+        <div v-if="competition.countingMethod === 'NORMAL'" class="row col box">
+          <q-popup-edit @before-show="setVariables(item); series = setSeriesValues(item.series)" value=""
+            content-class="bg-dark text-positive">
+            <q-input @focus="scoreUUID = item.uuid" input-class="text-center text-positive" v-model="outerTen"
+              @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus stack-label
+              label="ilość 10 zwykłe" label-color="positive"
+              onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+            <q-input @focus="scoreUUID = item.uuid" input-class="text-center text-positive" v-model="innerTen"
+              @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus stack-label
+              label="ilość 10 wewnętrzne" label-color="positive"
+              onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+            <q-input v-for="(item1, index) in item.series" :key="index" @focus="scoreUUID = item1.uuid"
+              @input="replaceComa(series[index], index)"
+              onkeypress="return (event.charCode > 47 && event.charCode < 58) || event.charCode === 44  || event.charCode === 46"
+              v-model="series[index]" stack-label label-color="positive"
+              @keypress.enter="scoreUUID = item.uuid; onEnter(item.uuid)" :label="'Seria ' + (index + 1)"
+              input-class="text-center text-positive" />
+            <div class="q-pa-xs text-center">
+              <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
+              <q-btn color="primary" label="Zapisz" v-close-popup
+                @click="scoreUUID = item.uuid; setScore(item.uuid, scoreLabel, innerTen, outerTen, alfa, charlie, delta, procedures, miss, series)"></q-btn>
+            </div>
+          </q-popup-edit>
+          <div class="text-center col">
+            <label class="text-positive" style="font-size: 10px;">10 wew.</label>
+            <div class="self-center col text-center text-positive text-caption">
+              {{ item.innerTen }}
+            </div>
+          </div>
+          <div class="text-center col">
+            <label class="text-positive" style="font-size: 10px;">10 zw.</label>
+            <div class="self-center col text-center text-positive text-caption">
+              {{ item.outerTen }}
+            </div>
+          </div>
+          <div class="text-center col">
+            <label class="text-positive" style="font-size: 10px;">Wynik</label>
+            <div v-if="item.dnf || item.dsq || item.pk" class="self-center col text-center text-positive text-caption">
+              <div v-if="item.dnf">DNF ({{ item.score }})</div>
+              <div v-if="item.dsq">DSQ ({{ item.score }})</div>
+              <div v-if="item.pk">PK ({{ item.score }})</div>
+            </div>
+            <div v-else
+              :class="`self-center full-width col text-center text-positive text-caption ${item.edited ? '' : 'bg-warning round1'}`">
+              {{ item.score }}
+            </div>
+          </div>
+        </div>
+        <div v-if="competition.countingMethod === 'COMSTOCK'" class="row col box">
+          <q-popup-edit @before-show="setVariables(item); series = setSeriesValues(item.series)" value=""
+            content-class="bg-dark text-positive">
+            <q-input type="number" min="0" input-class="text-center text-positive text-h6" v-model="outerTen"
+              class="col-3" @keypress.enter=" onEnter(scoreUUID)" stack-label label="trafienia" label-color="positive"
+              onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+            <q-input @keypress.enter=" onEnter(scoreUUID)" type="number" min="0"
+              input-class="text-center text-positive text-h6" v-model="alfa" class="col" stack-label label="Alfa"
+              label-color="positive" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+            <q-input @keypress.enter=" onEnter(scoreUUID)" type="number" min="0"
+              input-class="text-center text-positive text-h6" v-model="charlie" class="col" stack-label label="Charlie"
+              label-color="positive" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+            <q-input @keypress.enter=" onEnter(scoreUUID)" type="number" min="0"
+              input-class="text-center text-positive text-h6" v-model="delta" class="col" stack-label label="Delta"
+              label-color="positive" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+            <q-input @keypress.enter=" onEnter(scoreUUID)" input-class="text-center text-positive text-h6"
+              v-model="innerTen" class="col" stack-label label="czas" label-color="positive"
+              onkeypress="return (event.charCode > 47 && event.charCode < 58 || event.charCode > 44 || event.charCode < 46)" />
+            <q-input @keypress.enter=" onEnter(scoreUUID)" type="number" min="0"
+              input-class="text-center text-positive text-h6" v-model="procedures" class="col" stack-label
+              label="procedury" label-color="positive"
+              onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+            <div class="q-pa-xs text-center">
+              <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
+              <q-btn color="primary" label="Zapisz" v-close-popup
+                @click="scoreUUID = item.uuid; setScore(item.uuid, scoreLabel, innerTen, outerTen, alfa, charlie, delta, procedures, miss, series)"></q-btn>
+            </div>
+          </q-popup-edit>
+          <div class="text-center col">
+            <label class="text-positive" style="font-size: 10px;">tr.</label>
+            <div class="self-center col text-center text-positive text-caption">
+              {{ item.outerTen }}
+            </div>
+          </div>
+          <div class="text-center col">
+            <label class="text-positive" style="font-size: 10px;">czas</label>
+            <div class="self-center col text-center text-positive text-caption">
+              {{ item.innerTen }}
+            </div>
+          </div>
+          <div class="text-center col">
+            <label class="text-positive" style="font-size: 10px;">proc.</label>
+            <div class="self-center col text-center text-positive text-caption">
+              {{ item.procedures }}
+            </div>
+          </div>
+          <div class="text-center col-3">
+            <label class="text-positive" style="font-size: 10px;">Wynik / HF</label>
+            <div v-if="item.dnf || item.dsq || item.pk" class="self-center col text-center text-positive text-caption">
+              <div v-if="item.dnf">DNF ({{ item.score }})</div>
+              <div v-if="item.dsq">DSQ ({{ item.score }})</div>
+              <div v-if="item.pk">PK ({{ item.score }})</div>
+            </div>
+            <div v-else
+              :class="`self-center full-width col text-center text-positive text-caption ${item.edited ? '' : 'bg-warning round1'}`">
+              {{ item.score }} / {{ item.hf }}
+            </div>
+          </div>
+        </div>
+        <div v-if="competition.countingMethod === 'CZAS'" class="row col box">
+          <q-popup-edit @before-show="setVariables(item); series = setSeriesValues(item.series)" value=""
+            content-class="bg-dark text-positive">
+            <q-input @focus="scoreUUID = item.uuid" input-class="text-center text-positive" v-model="scoreLabel"
+              @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus stack-label label="czas"
+              label-color="positive"
+              onkeypress="return (event.charCode > 47 && event.charCode < 58 || event.charCode > 44 || event.charCode < 46)" />
+            <q-input @focus="scoreUUID = item.uuid" input-class="text-center text-positive" v-model="procedures"
+              @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus stack-label label="procedury"
+              label-color="positive" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+            <div class="q-pa-xs text-center">
+              <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
+              <q-btn color="primary" label="Zapisz" v-close-popup
+                @click="scoreUUID = item.uuid; setScore(item.uuid, scoreLabel, innerTen, outerTen, alfa, charlie, delta, procedures, miss, series)"></q-btn>
+            </div>
+          </q-popup-edit>
+          <div class="text-center col">
+            <label class="text-positive" style="font-size: 10px;">proc.</label>
+            <div class="self-center col text-center text-positive text-caption">
+              {{ item.procedures }}
+            </div>
+          </div>
+          <div class="text-center col">
+            <label class="text-positive" style="font-size: 10px;">czas</label>
+            <div class="self-center col text-center text-positive text-caption">
+              {{ item.score }}
+            </div>
+          </div>
+        </div>
+        <div v-if="competition.countingMethod === 'IPSC'" class="row col box">
+          <q-popup-edit @before-show="setVariables(item); series = setSeriesValues(item.series)" value=""
+            content-class="bg-dark text-positive">
+            <q-input @keypress.enter=" onEnter(scoreUUID)" input-class="text-center text-positive text-h6"
+              v-model="alfa" class="col" stack-label label="Alfa" label-color="positive"
+              onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+            <q-input @keypress.enter=" onEnter(scoreUUID)" input-class="text-center text-positive text-h6"
+              v-model="charlie" class="col" stack-label label="Charlie" label-color="positive"
+              onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+            <q-input @keypress.enter=" onEnter(scoreUUID)" input-class="text-center text-positive text-h6"
+              v-model="delta" class="col" stack-label label="Delta" label-color="positive"
+              onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+            <q-input @keypress.enter=" onEnter(scoreUUID)" input-class="text-center text-positive text-h6"
+              v-model="innerTen" class="col" stack-label label="czas" label-color="positive"
+              onkeypress="return (event.charCode > 47 && event.charCode < 58 || event.charCode > 44 || event.charCode < 46)" />
+            <q-input @keypress.enter=" onEnter(scoreUUID)" input-class="text-center text-positive text-h6"
+              v-model="procedures" class="col" stack-label label="procedury" label-color="positive"
+              onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+            <q-input @keypress.enter=" onEnter(scoreUUID)" input-class="text-center text-positive text-h6"
+              v-model="miss" class="col" stack-label label="miss" label-color="positive"
+              onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+            <div class="q-pa-xs text-center">
+              <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
+              <q-btn color="primary" label="Zapisz" v-close-popup
+                @click="scoreUUID = item.uuid; setScore(item.uuid, scoreLabel, innerTen, outerTen, alfa, charlie, delta, procedures, miss, series)"></q-btn>
+            </div>
+          </q-popup-edit>
+          <div class="text-center row col">
+            <div class="col">
+              <label class="text-positive" style="font-size: 10px;">alfa</label>
+              <div class="self-center col text-center text-positive text-caption">
+                {{ item.alfa }}
+              </div>
+            </div>
+            <div class="col">
+              <label class="text-positive" style="font-size: 10px;">charlie</label>
+              <div class="self-center col text-center text-positive text-caption">
+                {{ item.charlie }}
+              </div>
+            </div>
+            <div class="col">
+              <label class="text-positive" style="font-size: 10px;">delta</label>
+              <div class="self-center col text-center text-positive text-caption">
+                {{ item.delta }}
+              </div>
+            </div>
+          </div>
+          <div class="text-center col-1">
+            <label class="text-positive" style="font-size: 10px;">miss</label>
+            <div class="self-center col text-center text-positive text-caption">
+              {{ item.miss }}
+            </div>
+          </div>
+          <div class="text-center col-1">
+            <label class="text-positive" style="font-size: 10px;">czas</label>
+            <div class="self-center col text-center text-positive text-caption">
+              {{ item.innerTen }}
+            </div>
+          </div>
+          <div class="text-center col">
+            <label class="text-positive" style="font-size: 10px;">Wynik / HF</label>
+            <div class="self-center col text-center text-positive text-caption">
+              {{ item.score }} / {{ item.hf.toFixed(4) }}
+            </div>
+          </div>
+        </div>
+        <div v-if="competition.countingMethod === 'Dynamika Dziesiątka'" class="row col box">
+          <q-popup-edit @before-show="setVariables(item); series = setSeriesValues(item.series)" value=""
+            content-class="bg-dark text-positive">
+            <q-input @keypress.enter=" onEnter(scoreUUID)" input-class="text-center text-positive text-h6"
+              v-model="alfa" class="col" stack-label label="Alfa" label-color="positive"
+              onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+            <q-input @keypress.enter=" onEnter(scoreUUID)" input-class="text-center text-positive text-h6"
+              v-model="charlie" class="col" stack-label label="Charlie" label-color="positive"
+              onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+            <q-input @keypress.enter=" onEnter(scoreUUID)" input-class="text-center text-positive text-h6"
+              v-model="delta" class="col" stack-label label="Delta" label-color="positive"
+              onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+            <q-input @keypress.enter=" onEnter(scoreUUID)" input-class="text-center text-positive text-h6"
+              v-model="innerTen" class="col" stack-label label="czas" label-color="positive"
+              onkeypress="return (event.charCode > 47 && event.charCode < 58 || event.charCode > 44 || event.charCode < 46)" />
+            <q-input @keypress.enter=" onEnter(scoreUUID)" input-class="text-center text-positive text-h6"
+              v-model="procedures" class="col" stack-label label="procedury" label-color="positive"
+              onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+            <q-input @keypress.enter=" onEnter(scoreUUID)" input-class="text-center text-positive text-h6"
+              v-model="miss" class="col" stack-label label="miss" label-color="positive"
+              onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+            <div class="q-pa-xs text-center">
+              <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
+              <q-btn color="primary" label="Zapisz" v-close-popup
+                @click="scoreUUID = item.uuid; setScore(item.uuid, scoreLabel, innerTen, outerTen, alfa, charlie, delta, procedures, miss, series)"></q-btn>
+            </div>
+          </q-popup-edit>
+          <div class="text-center row col">
+            <div class="col">
+              <label class="text-positive" style="font-size: 10px;">alfa</label>
+              <div class="self-center col text-center text-positive text-caption">
+                {{ item.alfa }}
+              </div>
+            </div>
+            <div class="col">
+              <label class="text-positive" style="font-size: 10px;">charlie</label>
+              <div class="self-center col text-center text-positive text-caption">
+                {{ item.charlie }}
+              </div>
+            </div>
+            <div class="col">
+              <label class="text-positive" style="font-size: 10px;">delta</label>
+              <div class="self-center col text-center text-positive text-caption">
+                {{ item.delta }}
+              </div>
+            </div>
+          </div>
+          <div class="text-center col-1">
+            <label class="text-positive" style="font-size: 10px;">miss</label>
+            <div class="self-center col text-center text-positive text-caption">
+              {{ item.miss }}
+            </div>
+          </div>
+          <div class="text-center col-1">
+            <label class="text-positive" style="font-size: 10px;">czas</label>
+            <div class="self-center col text-center text-positive text-caption">
+              {{ item.innerTen }}
+            </div>
+          </div>
+          <div class="text-center col">
+            <label class="text-positive" style="font-size: 10px;">Wynik / HF</label>
+            <div class="self-center col text-center text-positive text-caption">
+              {{ item.score }} / {{ item.hf.toFixed(4) }}
+            </div>
+          </div>
+        </div>
       </div>
+    </div>
     <q-dialog v-model="toggleDSQDNF">
       <q-card class="bg-dark text-positive">
         <q-card-actions align="right" class="q-pa-xs q-ma-xs">
           <div class="text-h5 text-bold text-center col">Kary dla zawodnika</div>
-          <q-btn icon="close" color="primary" round dense v-close-popup/>
+          <q-btn icon="close" color="primary" round dense v-close-popup />
         </q-card-actions>
-        <div class="text-h6 text-center">Numer startowy {{metric}}</div>
+        <div class="text-h6 text-center">Numer startowy {{ metric }}</div>
         <q-card-section>
           <div class="col q-pa-md">
             <q-btn color="primary" class="full-width q-pa-md" @click="toggleDnfScore()">przyznaj DNF</q-btn>
@@ -373,53 +342,61 @@
     </q-dialog>
     <q-dialog v-model="addAmmo">
       <q-card class="bg-dark text-positive">
+        <q-card-actions align="right">
+          <q-btn icon="close" color="primary" round dense v-close-popup/>
+        </q-card-actions>
         <q-card-section>
           <div class="text-bold text-center text-h6">WYDAWANIE AMUNICJI</div>
           <div class="bg-dark">
             <div class="row">
               <div class="full-width text-positive">
-                  <div class="text-center full-width">Wybierz
-                    <b>Kaliber</b> właściwy dla konkurencji
-                  </div>
-                  <div class="text-center full-width text-bold text-h6">
-                    {{ compName }}
-                  </div>
+                <div class="text-center full-width">Wybierz
+                  <b>Kaliber</b> właściwy dla konkurencji
+                </div>
+                <div class="text-center full-width text-bold text-h6">
+                  {{ compName }}
+                </div>
               </div>
             </div>
             <div class="row">
               <div class="full-width">
-                <q-radio v-model="caliberUUID" v-for="(calibers,uuid) in calibers" :label="calibers.name" :key="uuid" :val="calibers.uuid"/>
+                <q-radio v-model="caliberUUID" v-for="(calibers, uuid) in calibers" :label="calibers.name" :key="uuid"
+                  :val="calibers.uuid" />
               </div>
             </div>
             <q-input @keypress.enter="addAmmoConfirm = true" type="number" filled class="full-width col"
-                     input-class="text-positive" label-color="positive"
-                     onkeypress="return (event.charCode > 44 && event.charCode < 58)" v-model="ammoQuantity"
-                     label='"Ilość Amunicji wraz z próbnymi"'></q-input>
+              input-class="text-positive" label-color="positive"
+              onkeypress="return (event.charCode > 44 && event.charCode < 58)" v-model="ammoQuantity"
+              label='"Ilość Amunicji wraz z próbnymi"'></q-input>
             <div align="right">
-              <q-btn v-if="caliberUUID===null||ammoQuantity===null||ammoQuantity===''" class="col full-width"
-                     color="grey-5">
+              <q-btn v-if="caliberUUID === null || ammoQuantity === null || ammoQuantity === ''" class="col full-width"
+                color="grey-5">
                 <div>
-                  <div v-if="caliberUUID===null">wybierz kaliber</div>
-                  <div v-if="ammoQuantity===null||ammoQuantity===''">wprowadź ilość</div>
+                  <div v-if="caliberUUID === null">wybierz kaliber</div>
+                  <div v-if="ammoQuantity === null || ammoQuantity === ''">wprowadź ilość</div>
                 </div>
               </q-btn>
-              <q-btn v-if="caliberUUID!==null&&ammoQuantity!==null&&ammoQuantity!==''" class="col full-width"
-                     color="primary" label="wydaj amunicję" @click="addAmmoConfirm = true"></q-btn>
+              <q-btn v-if="caliberUUID !== null && ammoQuantity !== null && ammoQuantity !== ''" class="col full-width"
+                color="primary" label="wydaj amunicję" @click="addAmmoConfirm = true"></q-btn>
             </div>
           </div>
         </q-card-section>
-        <q-card-section>
+        <!-- <q-card-section>
           <div class="text-bold text-center text-h6">WYDAWANIE BRONI</div>
           <div align="right">
-            <q-btn class="full-width" color="primary" @click="showloading();toggleGunInScore()">wydaj broń</q-btn>
+            <q-btn class="full-width" color="primary" @click="showloading(); toggleGunInScore()">wydaj broń</q-btn>
           </div>
+        </q-card-section> -->
+        <q-card-section>
+          <div class="text-bold text-center text-h6">WYDAWANIE PAKIETU AMUNICJI</div>
+          <q-btn label="Wydaj Pakiet" color="primary" class="full-width" @click="setPacket=true"></q-btn>
         </q-card-section>
         <q-card-actions align="right">
-          <q-btn text-color="white" label="zamknij" color="primary" v-close-popup/>
+          <q-btn text-color="white" label="zamknij" color="primary" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog position="top" v-model="gunAdded" persistent @keypress.enter="gunAdded=false">
+    <q-dialog position="top" v-model="gunAdded" persistent @keypress.enter="gunAdded = false">
       <q-card>
         <q-card-section class="row items-center">
           <span class="q-ml-sm text-h6 text-bold">Broń została przydzielona</span>
@@ -427,17 +404,25 @@
 
       </q-card>
     </q-dialog>
+    <q-dialog v-model="setPacket">
+      <q-card class="bg-dark text-positive">
+        <AddShootingPacket v-on:addMemberAndAmmoToCaliber="toggleAmmunitionInScore(scoreUUID)"
+            :nameMember="member != null ? member : { firstName: '0', secondName: '0', legitimationNumber: '0' }"
+            :nameOther="other != null ? other : { firstName: '0', secondName: '0', id: '0' }">
+          </AddShootingPacket>
+      </q-card>
+    </q-dialog>
     <q-dialog v-model="addAmmoConfirm" persistent
-              @keypress.enter="addMemberAndAmmoToCaliber();addAmmoConfirm=false;ammoQuantity=null;addAmmo=false">
+      @keypress.enter="addMemberAndAmmoToCaliber(); addAmmoConfirm = false; ammoQuantity = null; addAmmo = false">
       <q-card class="bg-dark text-positive">
         <q-card-section class="row items-center">
           <span class="q-ml-sm">Czy na pewno chcesz Wydać amunicję?</span>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn text-color="white" label="anuluj" color="secondary" v-close-popup/>
+          <q-btn text-color="white" label="anuluj" color="secondary" v-close-popup />
           <q-btn text-color="white" label="Wydaj" color="primary" v-close-popup
-                 @click="addMemberAndAmmoToCaliber();addAmmoConfirm=false;ammoQuantity=null;addAmmo=false"/>
+            @click="addMemberAndAmmoToCaliber(); addAmmoConfirm = false; ammoQuantity = null; addAmmo = false" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -447,23 +432,23 @@
           <div class="q-ml-sm text-h6 text-center text-bold">POBIERZ METRYKI STARTOWE ZAWODNIKA</div>
           <div class="q-ml-sm text-h6 text-center text-bold">{{ name }}</div>
           <ol class="col">
-            <li class="row hover1" v-for="(item,index) in infoScore" :key="index">
-              <q-checkbox color="secondary" class="col" v-model="compList" :val="infoScore1[index]" :label="item"/>
+            <li class="row hover1" v-for="(item, index) in infoScore" :key="index">
+              <q-checkbox color="secondary" class="col" v-model="compList" :val="infoScore1[index]" :label="item" />
             </li>
           </ol>
           <div>
             <q-checkbox class="hover1" v-model="a5rotate" :value="a5rotate" label="rozmiar A5"></q-checkbox>
           </div>
           <div class="row q-pa-xs">
-            <q-btn v-if="memberExist" dense @click="memberDial=true" class="col q-pa-xs" color="primary">
+            <q-btn v-if="memberExist" dense @click="memberDial = true" class="col q-pa-xs" color="primary">
               wyświetl profil
             </q-btn>
             <q-item></q-item>
-            <q-btn dense @click="getMemberMetrics(compList);compList=[]" class="col q-pa-xs" color="secondary">
+            <q-btn dense @click="getMemberMetrics(compList); compList = []" class="col q-pa-xs" color="secondary">
               wydrukuj wybrane metryki
             </q-btn>
             <q-item></q-item>
-            <q-btn dense @click="getMemberMetrics(infoScore1);compList=[]" class="col q-pa-xs" color="primary">
+            <q-btn dense @click="getMemberMetrics(infoScore1); compList = []" class="col q-pa-xs" color="primary">
               wydrukuj
               wszystkie metryki
             </q-btn>
@@ -471,7 +456,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn @click="compName='';infoScore = []; infoScore1 = [];compList=[]" label="zamknij" color="primary" v-close-popup/>
+          <q-btn @click="compName = ''; infoScore = []; infoScore1 = []; compList = []" label="zamknij" color="primary"
+            v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -485,7 +471,7 @@
     <q-dialog position="top" v-model="success">
       <q-card>
         <q-card-section>
-          <div v-if="message!=null" class="text-h6">{{ message }}</div>
+          <div v-if="message != null" class="text-h6">{{ message }}</div>
         </q-card-section>
 
       </q-card>
@@ -493,7 +479,7 @@
     <q-dialog position="standard" v-model="failure">
       <q-card class="bg-warning">
         <q-card-section>
-          <div v-if="message!=null" class="text-h6">{{ message }}</div>
+          <div v-if="message != null" class="text-h6">{{ message }}</div>
         </q-card-section>
 
       </q-card>
@@ -505,14 +491,13 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn text-color="white" label="zamknij" color="primary" v-close-popup/>
+          <q-btn text-color="white" label="zamknij" color="primary" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
   </div>
 </template>
-<style src="../../style/style.scss" lang="scss">
-</style>
+<style src="../../style/style.scss" lang="scss"></style>
 <script>
 import App from 'src/App.vue'
 import axios from 'axios'
@@ -524,6 +509,10 @@ export default {
   components: {
     Member: lazyLoadComponent({
       componentFactory: () => import('components/member/Member.vue'),
+      loading: SkeletonBox
+    }),
+    AddShootingPacket: lazyLoadComponent({
+      componentFactory: () => import('components/ammoList/AddShootingPacket.vue'),
       loading: SkeletonBox
     })
   },
@@ -573,12 +562,15 @@ export default {
       gunAdded: false,
       metricsInfo: false,
       startNumber: '',
+      member: null,
+      other: null,
       compName: null,
       name: '',
       date: '',
       compList: [],
       otherID: '',
       memberUUID: null,
+      setPacket: false,
       message: null,
       local: App.host
     }
@@ -953,6 +945,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

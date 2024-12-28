@@ -289,7 +289,9 @@
       </div>
     </q-dialog>
     <q-dialog v-model="packet">
-      <AddShootingPacket @hook:destroyed="getAmmoData()"></AddShootingPacket>
+      <AddShootingPacket @hook:destroyed="getAmmoData()"
+      :nameMember="{ firstName: '0', secondName: '0', legitimationNumber: '0' }"
+      :nameOther="{ firstName: '0', secondName: '0', id: '0' }"></AddShootingPacket>
     </q-dialog>
     <q-dialog v-model="addGun">
       <div class="bg-dark text-positive">
@@ -595,7 +597,6 @@ export default {
       packets: [],
       caliberUUID: null,
       memberName: '',
-      addNewOtherPerson: false,
       ammoQuantity: '',
       gunBarcode: null,
       options: stringOptions,

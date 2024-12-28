@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-btn class="full-width" color="primary" label="przejdź do formularza" @click="addNewOtherPerson = true" />
+    <q-btn class="full-width" color="primary" label="przejdź do formularza" @click="addNewOtherPerson = true, log(otherFirstName), log(nameFromForm)" />
     <q-dialog v-model="addNewOtherPerson">
       <q-card class="bg-dark text-positive">
         <q-card-section>
@@ -29,11 +29,11 @@
           <q-input dense input-class="text-positive" label-color="positive" mask="### ### ###" filled v-model="otherPhoneNumber" label="Numer telefonu" />
           <q-input dense input-class="text-positive" label-color="positive" filled v-model="otherEmail" label="e-mail" />
           <div>
-            <q-input filled v-model="otherPostOfficeCity" label="Miasto" dense input-class="text-positive" label-color="positive"/>
-            <q-input filled v-model="otherZipCode" label="Kod Pocztowy" mask="##-###" dense input-class="text-positive" label-color="positive"/>
-            <q-input filled v-model="otherStreet" label="Ulica" dense input-class="text-positive" label-color="positive"/>
-            <q-input filled v-model="otherStreetNumber" @input="nonMemberStreetNumber.length===0?nonMemberStreetNumber=null:''" label="Numer Ulicy" dense input-class="text-positive" label-color="positive"/>
-            <q-input filled v-model="otherFlatNumber" @input="nonMemberFlatNumber.length===0?nonMemberFlatNumber=null:''" label="Mieszkania" dense input-class="text-positive" label-color="positive"/>
+            <q-input filled v-model="nonMemberPostOfficeCity" label="Miasto" dense input-class="text-positive" label-color="positive"/>
+            <q-input filled v-model="nonMemberZipCode" label="Kod Pocztowy" mask="##-###" dense input-class="text-positive" label-color="positive"/>
+            <q-input filled v-model="nonMemberStreet" label="Ulica" dense input-class="text-positive" label-color="positive"/>
+            <q-input filled v-model="nonMemberStreetNumber" @input="nonMemberStreetNumber.length===0?nonMemberStreetNumber=null:''" label="Numer Ulicy" dense input-class="text-positive" label-color="positive"/>
+            <q-input filled v-model="nonMemberFlatNumber" @input="nonMemberFlatNumber.length===0?nonMemberFlatNumber=null:''" label="Mieszkania" dense input-class="text-positive" label-color="positive"/>
           </div>
           <div>
             <q-input filled v-model="nonMemberWeaponPermissionNumber" @input="nonMemberWeaponPermissionNumber.length===0?nonMemberWeaponPermissionNumber=null:''" label="Numer pozwolenia na Broń" dense input-class="text-positive" label-color="positive"/>
@@ -103,16 +103,23 @@
 <script>
 import App from 'src/App.vue'
 export default {
+  props: {
+    nameForm: {
+      type: String,
+      default: '',
+      required: false
+    }
+  },
   data () {
     return {
       otherFirstName: '',
-      otherSecondName: '',
+      otherSecondName: this.nameForm,
       otherPhoneNumber: '',
       otherEmail: '',
       clubName: '',
       ordinal: '',
-      nonMemberZipCode: null,
       nonMemberPostOfficeCity: null,
+      nonMemberZipCode: null,
       nonMemberStreet: null,
       nonMemberStreetNumber: null,
       nonMemberFlatNumber: null,

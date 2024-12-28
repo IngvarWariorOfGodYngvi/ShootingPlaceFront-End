@@ -58,12 +58,12 @@ export default {
   // mobile: isMobile(),
   main: JSON.parse(window.localStorage.getItem('main')), // dev //
   // prod: '192.168.1.30:8080/strzelnica/#/', // test //
-  prod: `http://${location.hostname}:8081/#/`, // dev //
-  host: `http://${location.hostname}:8080/` // test + dev //
+  // prod: `http://${location.hostname}:8081/#/`, // dev //
+  // host: `http://${location.hostname}:8080/` // test + dev //
   // prod: '192.168.1.30:8080/strzelnica/#/', // prod dom //
-  // prod: 'http://192.168.100.2:8080/strzelnica/#/', // prod //
+  prod: 'http://192.168.100.2:8080/strzelnica/#/', // prod //
   // prod: 'http://192.168.50.222:8080/strzelnica/#/', // rcs //
-  // host: `http://${location.hostname}:8080/shootingplace-1.0/` // test + prod + dev + rcs //
+  host: `http://${location.hostname}:8080/shootingplace-1.0/` // test + prod + dev + rcs //
 
 }
 

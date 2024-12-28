@@ -6,6 +6,8 @@
           @click="getMembersToErase()" /></div>
       <div class="q-pa-md col"><q-btn class="full-width" color="primary" label="pobierz listę .pdf"
           @click="getAllMembersToErase()" /></div>
+      <div class="q-pa-md col"><q-btn class="full-width" color="primary" label="pobierz listę .xls"
+          @click="getAllMembersToEraseXls()" /></div>
     </div>
     <div>
       <div class="row full-width">
@@ -114,17 +116,17 @@ export default {
           this.visible = false
         })
     },
-    getAllMembersToErase () {
+    getAllMembersToEraseXls () {
       this.visible = true
       axios({
-        url: `${this.local}/files/downloadAllMembersToErased/`,
+        url: `${this.local}/files/downloadAllMembersToErasedXlsx/`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
-        fileLink.setAttribute('download', `Lista_klubowiczów_do_skreślenia_${this.nowDate}.pdf`)
+        fileLink.setAttribute('download', `Lista_klubowiczów_do_skreślenia_${this.nowDate}.xlsx`)
         document.body.appendChild(fileLink)
         fileLink.click()
         this.listDownload = true
