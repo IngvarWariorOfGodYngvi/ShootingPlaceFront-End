@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-dark text-positive" style="min-width: 40vw;">
+  <div class="bg-dark text-positive" style="min-width: 50vw;">
     <q-card-actions align="right" class="q-pa-xs q-ma-xs">
       <div class="text-h5 text-bold text-center col">Wydaj Pakiet</div>
 <q-btn icon="close" color="primary" round dense v-close-popup @click="memberName = ''; otherName = ''"/>
@@ -52,21 +52,22 @@
             </template>
           </q-select>
         </div>
-        <div class="col">
-          <div v-for="(item,uuid) in packets" :key="uuid">
-            <q-item>
-              <div class=" col">
-                <q-btn class="full-width" @click="dis=true; singlePacket = item; simulateProgress(0,memberName.legitimationNumber,otherName.id)" :disable="dis" :loading="loading[0]" color="primary" :label="item.name">
-                  <q-tooltip v-if="!mobile" content-class="bg-secondary text-body1" transition-hide="none" content-style="opacity: 95%;">
+        <div class="row">
+          <div v-for="(item,index) in packets" :key="index" class="col-3">
+              <div class="q-pa-xs text-center">
+                <q-btn class="fit" style="min-height: 4em;" @click="dis=true; singlePacket = item; simulateProgress(0,memberName.legitimationNumber,otherName.id)" :disable="dis || (memberName.legitimationNumber === '0' && otherName.id === '0')" :loading="loading[0]" color="primary" :label="item.name">
+                  <q-tooltip v-if="!mobile && !(memberName.legitimationNumber === '0' && otherName.id === '0')" content-class="bg-secondary text-body1" transition-hide="none" content-style="opacity: 95%;">
                     <div v-for="(item1,index) in item.calibers" :key="index" class="row" style="min-width: 30vw">
                       <div class="col text-right q-pa-xs">{{ item1.caliberName }}</div>
                       <div class="col text-left  q-pa-xs">{{ item1.quantity }} sztuk</div>
                     </div>
                     <div class="col text-left q-pa-xs text-right">cena: {{ viewCurrency (item.price) }}</div>
                   </q-tooltip>
+                  <q-tooltip v-if="(memberName.legitimationNumber === '0' && otherName.id === '0')" content-class="bg-red text-h6" transition-hide="none" content-style="opacity: 95%;">
+                      <div class="col text-right q-pa-xs bg-red">Wybierz kogoś</div>
+                  </q-tooltip>
                 </q-btn>
               </div>
-            </q-item>
           </div>
         </div>
     <q-dialog position="top" v-model="success">

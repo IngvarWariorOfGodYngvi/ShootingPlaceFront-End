@@ -59,6 +59,9 @@
           <div v-if="choose === chooseSelect[7]" class="q-pa-md">
             <EvidenceBook></EvidenceBook>
           </div>
+          <div v-if="choose === chooseSelect[8]" class="q-pa-md">
+            <MembersToReportToPolice2></MembersToReportToPolice2>
+          </div>
         </q-card-section>
       </q-card>
     </q-expansion-item>
@@ -118,12 +121,16 @@ export default {
     MembersErasedList: lazyLoadComponent({
       componentFactory: () => import('components/otherFunctions/MembersErasedList.vue'),
       loading: SkeletonBox
+    }),
+    MembersToReportToPolice2: lazyLoadComponent({
+      componentFactory: () => import('components/otherFunctions/MembersToReportToPolice2.vue'),
+      loading: SkeletonBox
     })
   },
   data () {
     return {
       choose: null,
-      chooseSelect: ['Listy Klubowiczów', 'Lista do zgłoszenia na Policję', 'Lista do skreślenia', 'Lista skreślonych', 'Lista Obecności', 'Raport Sędziowania', 'Raport Czasu Pracy', 'Książka rejestru pobytu na strzelnicy'],
+      chooseSelect: ['Listy Klubowiczów', 'Lista do zgłoszenia na Policję', 'Lista do skreślenia', 'Lista skreślonych', 'Lista Obecności', 'Raport Sędziowania', 'Raport Czasu Pracy', 'Książka rejestru pobytu na strzelnicy', 'Lista do zgłoszenia na Policję2'],
       access: false,
       accessCode: '',
       accessMessage: '',

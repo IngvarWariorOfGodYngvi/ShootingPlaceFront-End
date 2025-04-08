@@ -94,7 +94,7 @@ if (App.main) {
           {
             path: '/licenseend',
             name: 'koniec licencji',
-            component: () => import(/* webpackChunkName: "Koniec Licencji" */'pages/licenseEnd.vue')
+            component: () => import(/* webpackChunkName: "Koniec Licencji" */'pages/LicenseEnd.vue')
           },
           {
             path: '/statistics',

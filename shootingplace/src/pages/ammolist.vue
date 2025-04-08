@@ -23,14 +23,10 @@
             <q-btn v-if="GunListExp" :class="mobile ? 'col-6' : 'col-4'" label="Dodaj broń do listy" color="primary"
               @click="getOther(); addGun = true">
             </q-btn>
-            <q-btn-dropdown v-if="AddShootingPacketExp" :class="mobile ? 'col-6' : 'col-4'" label="pakiety" color="primary" content-class="bg-dark">
-              <div>
-                <q-item>
-                  <q-btn label="wydaj pakiet" @click="packet=true" color="primary" class="full-width"></q-btn>
-                </q-item>
-                <q-item v-if="main"><q-btn @click="createNewPacket=true" label="konfiguruj nowy pakiet"  color="primary" class="full-width"></q-btn></q-item>
-              </div>
-            </q-btn-dropdown>
+            <ShootingPackets v-if="AddShootingPacketExp" :class="mobile ? 'col-6' : 'col-4'"
+            :nameMember="{ firstName: '0', secondName: '0', legitimationNumber: '0' }"
+            :nameOther="{ firstName: '0', secondName: '0', id: '0' }"
+            v-on:addMemberAndAmmoToCaliber="getAmmoData()"></ShootingPackets>
           </div>
           <div v-if="ammoList != null && ammoList.forceOpen" class="col-9">
             <div class=" q-pa-md bg-red-3 text-center text-black text-bold">UWAGA! LISTA OTWARTA PONOWNIE. NA KONIEC
@@ -288,11 +284,11 @@
         </div>
       </div>
     </q-dialog>
-    <q-dialog v-model="packet">
+    <!-- <q-dialog v-model="packet">
       <AddShootingPacket @hook:destroyed="getAmmoData()"
       :nameMember="{ firstName: '0', secondName: '0', legitimationNumber: '0' }"
       :nameOther="{ firstName: '0', secondName: '0', id: '0' }"></AddShootingPacket>
-    </q-dialog>
+    </q-dialog> -->
     <q-dialog v-model="addGun">
       <div class="bg-dark text-positive">
         <div class="row">
@@ -460,9 +456,6 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="createNewPacket" style="min-width: 80vw">
-      <AddNewShootingPacket></AddNewShootingPacket>
-    </q-dialog>
     <q-dialog v-model="open" id="1">
       <AddAmmunition v-on:addMemberAndAmmoToCaliber="getAmmoData()" :open="open"></AddAmmunition>
     </q-dialog>
@@ -540,12 +533,8 @@ export default {
       componentFactory: () => import('components/ammoList/AddAmmunition.vue'),
       loading: SkeletonBox
     }),
-    AddNewShootingPacket: lazyLoadComponent({
-      componentFactory: () => import('components/ammoList/AddNewShootingPacket.vue'),
-      loading: SkeletonBox
-    }),
-    AddShootingPacket: lazyLoadComponent({
-      componentFactory: () => import('components/ammoList/AddShootingPacket.vue'),
+    ShootingPackets: lazyLoadComponent({
+      componentFactory: () => import('src/components/ammoList/ShootingPackets.vue'),
       loading: SkeletonBox
     })
   },
@@ -555,13 +544,12 @@ export default {
       mobile: App.mobile,
       toggleShowClosedList: false,
       open: false,
-      packet: false,
       AddShootingPacketExp: JSON.parse(window.localStorage.getItem('AddShootingPacket')),
       AddGroupAmmoExp: JSON.parse(window.localStorage.getItem('AddGroupAmmo')),
       AddSingleAmmoExp: JSON.parse(window.localStorage.getItem('AddSingleAmmo')),
       GunListExp: JSON.parse(window.localStorage.getItem('GunList')),
       memberDial: false,
-      createNewPacket: false,
+      // createNewPacket: false,
       legitimationNumber: null,
       uuid: '',
       icon: 'menu',
@@ -594,7 +582,7 @@ export default {
       filters: [],
       filtersOther: [],
       calibers: [],
-      packets: [],
+      // packets: [],
       caliberUUID: null,
       memberName: '',
       ammoQuantity: '',

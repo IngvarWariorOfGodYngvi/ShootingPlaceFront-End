@@ -16,8 +16,7 @@
                 </div>
               </div>
           </div>
-          <div
-            v-if="shootingPatent.pistolPermission === true || shootingPatent.riflePermission === true || shootingPatent.shotgunPermission === true"
+          <div v-if="shootingPatent.pistolPermission === true || shootingPatent.riflePermission === true || shootingPatent.shotgunPermission === true"
             class="row">
             <div class="col text-positive text-left">
                      <label>Dyscypliny</label>
@@ -124,11 +123,11 @@
         <div class="text-h6 text-center">Uwaga! Wprowadzając zmiany bądź pewny tego co robisz</div>
         <q-card-section class="col">
           <div class="row bg-dark">
-            <div class="q-pa-md col-6">
+            <div class="q-pa-xs col-6">
               <q-input dense filled color="positive" input-class="text-positive" onkeypress="return (event.charCode > 47 && event.charCode < 58)" label-color="positive" stack-label v-model="editLicenseNumber"
                        label="Numer Licencji"></q-input>
             </div>
-            <div class="q-pa-md col-6">
+            <div class="q-pa-xs col-6">
               <q-input dense filled color="positive" input-class="text-positive" label-color="positive" stack-label v-model="editLicenseDate" mask="####-12-31"
                        label="Ważność licencji">
                 <template v-slot:append>
@@ -144,10 +143,18 @@
                 </template>
               </q-input>
             </div>
-              <div>
-                <div class="text-positive">{{license.paid?'Licencja jest oznaczona jako opłacona':'Licencja jest oznaczona jako nieopłacona'}}</div>
-                <q-checkbox value="" v-model="editLicensePaid" color="primary" keep-color class="text-positive" :label="editLicensePaid==null?'Nie wybrano oznaczenia':editLicensePaid?'Oznacz Licencję jako opłaconą':'Oznacz Licencję jako nieopłaconą'"/>
-              </div>
+          </div>
+          <div>
+            <div>Dyscypliny</div>
+            <div>
+              <q-checkbox label="Pistolet" v-model="pistolPermissionChange" :val="pistolPermission"></q-checkbox>
+              <q-checkbox label="Karabin" v-model="riflePermissionChange" :val="riflePermission"></q-checkbox>
+              <q-checkbox label="Strzelba" v-model="shotgunPermissionChange" :val="shotgunPermission"></q-checkbox>
+            </div>
+          </div>
+          <div>
+            <div class="text-positive">{{license.paid?'Licencja jest oznaczona jako opłacona':'Licencja jest oznaczona jako nieopłacona'}}</div>
+            <q-checkbox value="" v-model="editLicensePaid" color="primary" keep-color class="text-positive" :label="editLicensePaid==null?'Nie dokonuj zmian w oznaczaniu płatności':editLicensePaid?'Oznacz Licencję jako opłaconą':'Oznacz Licencję jako nieopłaconą'"/>
           </div>
           <div class="q-pa-md row full-width">
             <q-btn dense class="full-width" label="wprowadź zmiany" color="primary" v-close-popup
@@ -359,14 +366,14 @@
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
           <div>
-            <q-input @keypress.enter="forceUpdateLicence(memberUUID, editLicenseNumber, editLicenseDate, editLicensePaid);editLicenseCode=false" autofocus type="password"
+            <q-input @keypress.enter="forceUpdateLicence(memberUUID, editLicenseNumber, editLicenseDate, pistolPermissionChange, riflePermissionChange, shotgunPermissionChange, editLicensePaid);editLicenseCode=false" autofocus type="password"
                      v-model="code" filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input>
           </div>
         </q-card-section>
 
         <q-card-actions align="right">
           <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
-          <q-btn label="OK" color="black" v-close-popup @click="forceUpdateLicence(memberUUID, editLicenseNumber, editLicenseDate, editLicensePaid)"/>
+          <q-btn label="OK" color="black" v-close-popup @click="forceUpdateLicence(memberUUID, editLicenseNumber, editLicenseDate, pistolPermissionChange, riflePermissionChange, shotgunPermissionChange, editLicensePaid)"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -468,6 +475,9 @@ export default {
       editLicensePaymentYear: '',
       editLicense: false,
       prolongLicenseConfirm: false,
+      pistolPermissionChange: null,
+      riflePermissionChange: null,
+      shotgunPermissionChange: null,
       licenseConfirm: false,
       noDomesticStarts: false,
       licensePayment: false,
@@ -548,6 +558,9 @@ export default {
         response.json().then(
           response => {
             this.license = response
+            this.pistolPermissionChange = response.pistolPermission
+            this.riflePermissionChange = response.riflePermission
+            this.shotgunPermissionChange = response.shotgunPermission
           })
       })
     },
@@ -745,8 +758,8 @@ export default {
         this.condition = null
       })
     },
-    forceUpdateLicence (uuid, number, date, paid) {
-      fetch(`${this.local}/license/forceUpdate?memberUUID=${uuid}&number=${number}&date=${date.replace(/\//gi, '-')}&isPaid=${paid}&pinCode=${this.code}`, {
+    forceUpdateLicence (uuid, number, date, pistol, rifle, shotgun, paid) {
+      fetch(`${this.local}/license/forceUpdate?memberUUID=${uuid}&number=${number}&date=${date.replace(/\//gi, '-')}&isPaid=${paid}&pistol=${pistol}&rifle=${rifle}&shotgun=${shotgun}&pinCode=${this.code}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'

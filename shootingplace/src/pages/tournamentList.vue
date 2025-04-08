@@ -29,7 +29,9 @@
           </div>
           <div class="col-3">
             <q-item>
-              <q-btn-dropdown @click="tournamentUUID = tournaments.uuid; date = tournaments.date; name = tournaments.name"
+              <q-btn v-close-popup @click="getAnnouncementFromCompetitionXLSX()" class="full-width ghover1"
+              label="pobierz rezultaty" color="primary"/>
+              <!-- <q-btn-dropdown @click="tournamentUUID = tournaments.uuid; date = tournaments.date; name = tournaments.name"
                 align="center" content-class="bg-dark" class="full-width ghover1" label="pobierz komunikat" color="primary">
                 <q-list>
                       <q-btn v-close-popup @click="getAnnouncementFromCompetition()" rounded dense class="full-width bg-red-6 q-ma-xs"
@@ -37,7 +39,7 @@
                       <q-btn v-close-popup @click="getAnnouncementFromCompetitionXLSX()" rounded dense class="full-width bg-green-6 q-ma-xs"
                         label="pobierz plik .xslx" color="secondary"/>
                 </q-list>
-              </q-btn-dropdown>
+              </q-btn-dropdown> -->
             </q-item>
             <q-item>
               <q-btn color="primary" class="full-width ghover1" label="pobierz listę Sędziów"
@@ -843,14 +845,8 @@
           </div>
           <div>
             <q-item>
-              <q-btn-dropdown align="center" content-class="bg-dark" class="full-width" label="pobierz komunikat" color="primary">
-                <q-list>
-                      <q-btn v-close-popup @click="getAnnouncementFromCompetition()" rounded dense class="full-width bg-red-6 q-ma-xs"
-                        label="pobierz plik .pdf" color="secondary"></q-btn>
-                      <q-btn v-close-popup @click="getAnnouncementFromCompetitionXLSX()" rounded dense class="full-width bg-green-6 q-ma-xs"
-                        label="pobierz plik .xslx" color="secondary"></q-btn>
-                </q-list>
-              </q-btn-dropdown>
+              <q-btn v-close-popup @click="getAnnouncementFromCompetitionXLSX()" dense class="full-width"
+                        label="pobierz rezultaty" color="primary"></q-btn>
             </q-item>
           </div>
           <div>

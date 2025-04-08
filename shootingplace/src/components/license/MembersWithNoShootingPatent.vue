@@ -34,10 +34,8 @@
       </div>
       <div class="row text-caption" style="cursor: pointer">
         <div class="col-4" @click="sortF('name')">lp <q-icon size="2em" :name="sortName ? 'arrow_drop_up' : 'arrow_drop_down'" />Nazwisko i imię</div>
-        <div class="col-2" @click="sortF('status')"><q-icon size="2em" :name="sortStatus ? 'arrow_drop_up' : 'arrow_drop_down'" />Status</div>
+        <div class="col-4" @click="sortF('status')"><q-icon size="2em" :name="sortStatus ? 'arrow_drop_up' : 'arrow_drop_down'" />Status</div>
         <div class="col-2" @click="sortF('group')"><q-icon size="2em" :name="sortGroup ? 'arrow_drop_up' : 'arrow_drop_down'" />Grupa</div>
-        <div class="col-2" @click="sortF('date')"><q-icon size="2em" :name="sortDate ? 'arrow_drop_up' : 'arrow_drop_down'" />Data Wpłaty</div>
-        <div class="col-2" @click="sortF('valid')"><q-icon size="2em" :name="sortValid ? 'arrow_drop_up' : 'arrow_drop_down'" />Ważność na Rok</div>
       </div>
       <q-scroll-area style="height: 50vh">
         <div v-if="!visible">
@@ -46,20 +44,15 @@
           @dblclick="legitimationNumber = item.legitimationNumber;memberDial=true">
             <Tooltip2clickToShow></Tooltip2clickToShow>
             <div class="col-4">&nbsp;
-              {{index + 1}} {{ item.secondName }} {{ item.firstName }}
+              {{ index+1 }} {{ item.secondName }} {{ item.firstName }}
             </div>
-            <div :class="`col-2 ${item.active?'':'bg-red-4 text-black'}`" style="border-radius: 2px">
+            <div :class="`col-4 ${item.active?'':'bg-red-4 text-black'}`" style="border-radius: 2px">
               {{ item.active?'Aktywny':'Nieaktywny'}}
             </div>
             <div class="col-2">
               {{item.adult?'Grupa Ogólna':'Grupa Młodzieżowa'}}
             </div>
-            <div class="col-2">
-              {{convertDate(item.history.licensePaymentHistory[0].date)}}
-            </div>
-            <div class="col-2">
-              {{ item.history.licensePaymentHistory[0].validForYear }}
-            </div>
+
           </div>
           </div>
           <q-inner-loading
@@ -71,11 +64,11 @@
     <q-dialog v-model="memberDial" style="min-width: 80vw">
       <q-card style="min-width: 80vw" class="bg-dark">
         <q-card-section class="flex-center">
-          <Member :member-number-legitimation="legitimationNumber" @hook:destroyed="getMembersWithLicenseNotValid()"></Member>
+          <Member :member-number-legitimation="legitimationNumber"></Member>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn label="zamknij" color="primary" text-color="white" v-close-popup/>
+          <q-btn label="zamknij" color="primary" text-color="white" v-close-popup @click="pinCode=null"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -96,18 +89,28 @@
 
       </q-card>
     </q-dialog>
+    <q-dialog v-model="prolongLicenseAlert">
+      <q-card class="bg-dark text-positive">
+        <q-card-section>
+          <div class="text-h6">Czy przedłużyć licencje?</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn text-color="white" label="anuluj" color="primary" v-close-popup/>
+          <q-btn text-color="white" label="Przedłuż" color="primary" v-close-popup @click="pinProlongLicense = true"/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
-<style src="src\style\style.scss" lang="scss">
-</style>
 <script>
 import App from 'src/App.vue'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox.vue'
 
 export default {
-  name: 'NoLicenseWithPayment',
+  name: 'NotValidLicense',
   data () {
     return {
       mobile: App.mobile,
@@ -116,16 +119,14 @@ export default {
       mailingList: JSON.parse(window.localStorage.getItem('mailingList')),
       mailing: true,
       list: [],
-      licenseList: [],
       memberName: '',
       memberUUID: '',
-      sortValid: false,
       sortGroup: false,
-      sortDate: false,
       sortStatus: false,
       sortName: false,
       memberDial: false,
       legitimationNumber: null,
+      pinCode: null,
       success: false,
       failure: false,
       message: null,
@@ -133,7 +134,7 @@ export default {
     }
   },
   created () {
-    this.getMembersWithLicenseNotValid()
+    this.getMembersWithNoShootingPatent()
   },
   components: {
     Member: lazyLoadComponent({
@@ -146,8 +147,8 @@ export default {
     })
   },
   methods: {
-    getMembersWithLicenseNotValid () {
-      fetch(`${this.local}/license/allNoLicenseWithPayment`, {
+    getMembersWithNoShootingPatent () {
+      fetch(`${this.local}/patent/`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -214,7 +215,7 @@ export default {
     },
     convertDate (date) {
       const current = new Date(date)
-      let month = current.getMonth()
+      let month = current.getMonth() + 1
       let day = current.getDate()
       if (day < 10) {
         day = '0' + day
@@ -252,30 +253,13 @@ export default {
           this.sortGroup = !this.sortGroup
         }
       }
-      if (type === 'date') {
-        if (!this.sortDate) {
-          this.list.sort((a, b) => new Date(b.date) - new Date(a.date))
-          this.sortDate = !this.sortDate
-        } else {
-          this.list.sort((a, b) => new Date(a.date) - new Date(b.date))
-          this.sortDate = !this.sortDate
-        }
-      }
-      if (type === 'valid') {
-        if (!this.sortValid) {
-          this.list.sort((a, b) => new Date(b.license.validThru) - new Date(a.license.validThru))
-          this.sortValid = !this.sortValid
-        } else {
-          this.list.sort((a, b) => new Date(a.license.validThru) - new Date(b.license.validThru))
-          this.sortValid = !this.sortValid
-        }
-      }
     },
     autoClose () {
       setTimeout(() => {
         this.success = false
         this.failure = false
         this.message = null
+        this.pinCode = null
       }, 2000)
     }
   }

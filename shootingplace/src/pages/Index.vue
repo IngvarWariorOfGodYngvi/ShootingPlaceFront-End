@@ -6,6 +6,7 @@
     <div class="col flex flex-center full-width q-pa-xl">
     <img v-if="!mobile && shootingPlace === 'prod'" draggable="false" class="fun col" style="border-radius: 50%" alt="logo" src="~assets/logo.jpg" loading="lazy">
     <img v-if="!mobile && shootingPlace === 'rcs'" draggable="false" class="fun col" style="border-radius: 50%" alt="logo" src="~assets/logo-panaszew.jpg" loading="lazy">
+    <img v-if="!mobile && shootingPlace === 'rp'" draggable="false" class="fun col" style="border-radius: 50%" alt="logo" src="~assets/rp.png" loading="lazy">
     </div>
     </div>
   </q-page>

@@ -28,7 +28,7 @@
           {{ convertDate(member.history.contributionList[0].paymentDay) }}
         </q-item-label>
         <div v-if="member.imageUUID != null">
-          <q-btn color="primary" label="zmień zdjęcie">
+          <q-btn color="primary" label="zmień zdjęcie" dense glossy>
             <q-popup-edit value="" content-class="bg-dark text-positive" >
               <q-uploader style="width:100%;height:100%" method="POST"
                 :url="(`${local}/files/member/${member.uuid}`)" label="Dodaj zdjęcie"
@@ -41,6 +41,7 @@
       <q-card-section class="col text-bold">
         <q-item-label class="text-h6" :id="member.legitimationNumber">Numer Legitymacji: {{ member.legitimationNumber }}</q-item-label>
         <q-item-label>Numer PESEL: {{ member.pesel }}</q-item-label>
+        <q-item-label>Data Urodzenia: {{ convertDate(member.birthDate) }}</q-item-label>
         <q-item-label>Data Zapisu do Klubu: {{ convertDate(member.joinDate) }}</q-item-label>
         <q-item-label v-if="member.signBy != null">Zapisany do Klubu przez: {{ member.signBy }}</q-item-label>
       </q-card-section>
@@ -688,7 +689,7 @@
                 <q-icon name="contact_mail" size="1.5rem" />
                 Dane Kontaktowe
               </q-item-label>
-              <q-item-label class="text-positive" caption lines="2">e-mail: {{ member.email }}</q-item-label>
+              <div class="row items-center"><q-item-label class="text-positive" caption lines="2">e-mail: {{ member.email }}</q-item-label><q-btn icon="content_copy" size="0.5em" @click="copyEmail(member.email)"></q-btn></div>
               <q-item-label class="text-positive" caption lines="2">Numer Telefonu:
                 {{ member.phoneNumber.toString().substring(0, 3) + ' ' + member.phoneNumber.toString().substring(3, 6) + ' '
                 + member.phoneNumber.toString().substring(6, 9) + ' ' + member.phoneNumber.substring(9, 12) }}
@@ -2492,6 +2493,22 @@ export default {
     onRejected () {
       this.failure = true
       this.message = 'Nie można dodać pliku, sprawdź jego rozmiar i typ'
+      this.autoClose()
+    },
+    copyEmail(email) {
+      const textArea = document.createElement('textarea')
+      textArea.value = email
+      document.body.appendChild(textArea)
+      textArea.focus()
+      textArea.select()
+      try {
+        document.execCommand('copy')
+      } catch (err) {
+        console.error('Unable to copy to clipboard', err)
+      }
+      document.body.removeChild(textArea)
+      this.message = 'Skopiowano do schowka'
+      this.success = true
       this.autoClose()
     },
     autoClose () {

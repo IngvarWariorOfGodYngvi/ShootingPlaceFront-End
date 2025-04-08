@@ -405,12 +405,10 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model="setPacket">
-      <q-card class="bg-dark text-positive">
         <AddShootingPacket v-on:addMemberAndAmmoToCaliber="toggleAmmunitionInScore(scoreUUID)"
             :nameMember="member != null ? member : { firstName: '0', secondName: '0', legitimationNumber: '0' }"
             :nameOther="other != null ? other : { firstName: '0', secondName: '0', id: '0' }">
           </AddShootingPacket>
-      </q-card>
     </q-dialog>
     <q-dialog v-model="addAmmoConfirm" persistent
       @keypress.enter="addMemberAndAmmoToCaliber(); addAmmoConfirm = false; ammoQuantity = null; addAmmo = false">

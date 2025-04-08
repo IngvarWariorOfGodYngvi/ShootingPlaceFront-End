@@ -398,8 +398,29 @@ export default {
       if (this.backgroundDark) {
         window.localStorage.setItem('BackgroundDark', 'true')
         colors.setBrand('dark-separator', '$grey-6')
-        this.shootingPlace === 'prod' ? colors.setBrand('primary', '#871421') : this.shootingPlace === 'rcs' ? colors.setBrand('primary', '#008000') : colors.setBrand('primary', '#008000')// Dziesiątka
-        this.shootingPlace === 'prod' ? colors.setBrand('secondary', '#374550') : this.shootingPlace === 'rcs' ? colors.setBrand('secondary', '#A00000') : colors.setBrand('secondary', '#A00000')// Dziesiątka
+        switch (this.shootingPlace) {
+          case 'prod': {
+            colors.setBrand('primary', '#871421')
+            colors.setBrand('secondary', '#374550')
+            break
+          }
+          case 'rcs': {
+            colors.setBrand('primary', '#008000')
+            colors.setBrand('secondary', '#A00000')
+            break
+          }
+          case 'rp':
+            colors.setBrand('primary', '#be141e')
+            colors.setBrand('secondary', '#151510')
+            // colors.setBrand('secondary', '#be141e')
+            // colors.setBrand('primary', '#151510')
+            break
+
+          default:
+            alert('Default case')
+        }
+        // this.shootingPlace === 'prod' ? colors.setBrand('primary', '#871421') : this.shootingPlace === 'rcs' ? colors.setBrand('primary', '#008000') : colors.setBrand('primary', '#008000')// Dziesiątka
+        // this.shootingPlace === 'prod' ? colors.setBrand('secondary', '#374550') : this.shootingPlace === 'rcs' ? colors.setBrand('secondary', '#A00000') : colors.setBrand('secondary', '#A00000')// Dziesiątka
         // colors.setBrand('primary', '#871421') // DZIESIĄTKA
         // colors.setBrand('primary', '#008000') // Panaszew
         // colors.setBrand('secondary', '#374550') // Dziesiątka
@@ -410,8 +431,29 @@ export default {
       } else {
         window.localStorage.setItem('BackgroundDark', 'false')
         colors.setBrand('dark-separator', '$grey-2')
-        this.shootingPlace === 'prod' ? colors.setBrand('primary', '#871421') : this.shootingPlace === 'rcs' ? colors.setBrand('primary', '#008000') : colors.setBrand('primary', '#008000')// Dziesiątka
-        this.shootingPlace === 'prod' ? colors.setBrand('secondary', '#374550') : this.shootingPlace === 'rcs' ? colors.setBrand('secondary', '#A00000') : colors.setBrand('secondary', '#A00000')// Dziesiątka
+        switch (this.shootingPlace) {
+          case 'prod': {
+            colors.setBrand('primary', '#871421')
+            colors.setBrand('secondary', '#374550')
+            break
+          }
+          case 'rcs': {
+            colors.setBrand('primary', '#008000')
+            colors.setBrand('secondary', '#A00000')
+            break
+          }
+          case 'rp':
+            colors.setBrand('primary', '#be141e')
+            colors.setBrand('secondary', '#151510')
+            // colors.setBrand('secondary', '#be141e')
+            // colors.setBrand('primary', '#151510')
+            break
+
+          default:
+            alert('Default case')
+        }
+        // this.shootingPlace === 'prod' ? colors.setBrand('primary', '#871421') : this.shootingPlace === 'rcs' ? colors.setBrand('primary', '#008000') : colors.setBrand('primary', '#008000')// Dziesiątka
+        // this.shootingPlace === 'prod' ? colors.setBrand('secondary', '#374550') : this.shootingPlace === 'rcs' ? colors.setBrand('secondary', '#A00000') : colors.setBrand('secondary', '#A00000')// Dziesiątka
         // colors.setBrand('primary', '#871421') // DZIESIĄTKA
         // colors.setBrand('primary', '#008000') // Panaszew
         // colors.setBrand('secondary', '#374550') // Dziesiątka

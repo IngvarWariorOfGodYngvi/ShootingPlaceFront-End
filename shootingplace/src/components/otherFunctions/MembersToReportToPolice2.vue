@@ -1,11 +1,47 @@
 <template>
-  <div>
+  <div class="col">
     <q-inner-loading :showing="visible" label="Przetwarzanie..." color="primary" />
+    <q-card-section>
+      <q-item class="col">
+        <q-input class="full-width" color="positive" input-class="text-positive" label-color="positive" dense filled
+          v-model="firstDate" mask="####-##-##" label="Data początkowa">
+          <template v-slot:append>
+            <q-icon name="event" color="positive" class="cursor-pointer">
+              <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                <q-date v-model="firstDate" mask="YYYY-MM-DD" class="bg-dark text-positive">
+                  <div class="row items-center justify-end">
+                    <q-btn v-close-popup label="Zamknij" color="primary" />
+                  </div>
+                </q-date>
+              </q-popup-proxy>
+            </q-icon>
+          </template>
+        </q-input>
+      </q-item>
+      <q-item class="col">
+        <q-input class="full-width" color="positive" input-class="text-positive" label-color="positive" dense filled
+          v-model="secondDate" mask="####-##-##" label="Data końcowa">
+          <template v-slot:append>
+            <q-icon name="event" color="positive" class="cursor-pointer">
+              <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                <q-date v-model="secondDate" mask="YYYY-MM-DD" class="bg-dark text-positive">
+                  <div class="row items-center justify-end">
+                    <q-btn v-close-popup label="Zamknij" color="primary" />
+                  </div>
+                </q-date>
+              </q-popup-proxy>
+            </q-icon>
+          </template>
+        </q-input>
+      </q-item>
+    </q-card-section>
     <div class="row full-width">
-      <div class="q-pa-md col"><q-btn class="full-width" color="primary" label="wyświetl listę osób"
-          @click="getMembersToReportToThePolice()" /></div>
+      <div class="q-pa-md col-6"><q-btn class="full-width" color="primary" label="wyświetl listę osób"
+          @click="getMembersToReportToPoliceView(firstDate, secondDate)" /></div>
       <div class="q-pa-md col"><q-btn class="full-width" color="primary" label="pobierz listę .pdf"
-          @click="generateListOfMembersToReportToPolice()" /></div>
+          @click="getMembersToReportToPolicePDF(firstDate, secondDate)" /></div>
+      <div class="q-pa-md col"><q-btn class="full-width" color="green" label="pobierz listę .xlsx"
+          @click="getMembersToReportToPoliceXLSX(firstDate, secondDate)" /></div>
     </div>
     <div>
       <div class="row full-width">
@@ -61,7 +97,7 @@ import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox'
 
 export default {
-  name: 'MembersToReportOnPolice.vue',
+  name: 'MembersToReportToPolice2.vue',
   data () {
     return {
       list: [],
@@ -69,6 +105,8 @@ export default {
       memberDial: false,
       legitimationNumber: null,
       nowDate: this.createTodayDate(),
+      firstDate: null,
+      secondDate: this.createTodayDate(),
       listDownload: false,
       message: null,
       local: App.host
@@ -101,30 +139,47 @@ export default {
       }
       return date.getFullYear() + '/' + month + '/' + day
     },
-    getMembersToReportToThePolice () {
+    getMembersToReportToPoliceView (firstDate, secondDate) {
       this.visible = true
-      fetch(`${this.local}/member/getMembersToReportToThePolice`, {
+      fetch(`${this.local}/member/reportView?firstDate=${firstDate.replace(/\//gi, '-')}&secondDate=${secondDate.replace(/\//gi, '-')}`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
           this.list = response
           this.visible = false
-        })
-        .catch(() => {
+        }).catch(() => {
           this.visible = false
         })
     },
-    generateListOfMembersToReportToPolice () {
+    getErasedMembers () {
       this.visible = true
       axios({
-        url: `${this.local}/files/generateListOfMembersToReportToPolice`,
+        url: `${this.local}/files/downloadAllErasedMembers?firstDate=${this.firstDate.replace(/\//gi, '-')}&secondDate=${this.secondDate.replace(/\//gi, '-')}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
-        fileLink.setAttribute('download', 'Lista_klubowiczów_do_zgłoszenia_na_policję.pdf')
+        fileLink.setAttribute('download', `Lista_klubowiczów_skreślonych_${this.nowDate}.pdf`)
+        document.body.appendChild(fileLink)
+        fileLink.click()
+        this.listDownload = true
+        this.visible = false
+        this.autoClose()
+      })
+    },
+    getErasedMembersXlsx () {
+      this.visible = true
+      axios({
+        url: `${this.local}/files/downloadAllErasedMembersXlsx?firstDate=${this.firstDate.replace(/\//gi, '-')}&secondDate=${this.secondDate.replace(/\//gi, '-')}`,
+        method: 'GET',
+        responseType: 'blob'
+      }).then(response => {
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        const fileLink = document.createElement('a')
+        fileLink.href = fileURL
+        fileLink.setAttribute('download', `Lista_klubowiczów_skreślonych_${this.nowDate}.xlsx`)
         document.body.appendChild(fileLink)
         fileLink.click()
         this.listDownload = true

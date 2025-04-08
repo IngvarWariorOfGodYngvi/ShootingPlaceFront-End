@@ -1,7 +1,8 @@
 <template>
   <q-page padding>
-    <div v-if="!mobile&&main" class="q-pa-md">
-      <DownloadBtn/>
+    <div v-if="!mobile&&main" class="q-pa-md row">
+      <!-- <DownloadBtn class="q-pa-xs"/> -->
+      <licenseXLSX class="q-pa-xs"/>
     </div>
     <q-expansion-item label="Licencje nieważne" dense class="text-left text-h6 text-bold bg-dark text-positive round" group="list">
       <NotValidLicense></NotValidLicense>
@@ -25,6 +26,16 @@
                       group="list">
       <LicensesQualifyingToProlong></LicensesQualifyingToProlong>
     </q-expansion-item>
+    <p></p>
+    <q-expansion-item label="Osoby niekwalifikujące się do przedłużenia licencji" dense class="text-left text-h6 text-bold bg-dark text-positive round"
+                      group="list">
+      <LicensesNotQualifyingToProlong></LicensesNotQualifyingToProlong>
+    </q-expansion-item>
+    <p></p>
+    <q-expansion-item label="Osoby bez patentu strzeleckiego" dense class="text-left text-h6 text-bold bg-dark text-positive round"
+                      group="list">
+      <MembersWithNoShootingPatent></MembersWithNoShootingPatent>
+    </q-expansion-item>
   </q-page>
 </template>
 
@@ -36,10 +47,10 @@ import App from 'src/App'
 
 export default {
   components: {
-    DownloadBtn: lazyLoadComponent({
-      componentFactory: () => import('components/license/DownloadLicense.vue'),
-      loading: SkeletonBox
-    }),
+    // DownloadBtn: lazyLoadComponent({
+    //   componentFactory: () => import('components/license/DownloadLicense.vue'),
+    //   loading: SkeletonBox
+    // }),
     NotValidLicense: lazyLoadComponent({
       componentFactory: () => import('components/license/NotValidLicense.vue'),
       loading: SkeletonBox
@@ -58,6 +69,18 @@ export default {
     }),
     LicensesQualifyingToProlong: lazyLoadComponent({
       componentFactory: () => import('components/license/LicensesQualifyingToProlong.vue'),
+      loading: SkeletonBox
+    }),
+    LicenseXLSX: lazyLoadComponent({
+      componentFactory: () => import('components/license/LicenseXLSX.vue'),
+      loading: SkeletonBox
+    }),
+    LicensesNotQualifyingToProlong: lazyLoadComponent({
+      componentFactory: () => import('components/license/LicensesNotQualifyingToProlong.vue'),
+      loading: SkeletonBox
+    }),
+    MembersWithNoShootingPatent: lazyLoadComponent({
+      componentFactory: () => import('components/license/MembersWithNoShootingPatent.vue'),
       loading: SkeletonBox
     })
   },
