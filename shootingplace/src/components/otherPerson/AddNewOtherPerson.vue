@@ -1,8 +1,8 @@
 <template>
   <div>
-    <q-btn class="full-width" color="primary" label="przejdź do formularza" @click="addNewOtherPerson = true, log(otherFirstName), log(nameFromForm)" />
+    <q-btn class="full-width" color="primary" label="dodaj nową osobę - formularz" @click="addNewOtherPerson = true, log(otherFirstName), log(nameFromForm)" />
     <q-dialog v-model="addNewOtherPerson">
-      <q-card class="bg-dark text-positive">
+      <q-card class="bg-dark text-positive" style="min-width: 40vw;">
         <q-card-section>
           <div class="text-h6">Dodawanie nowej osoby spoza klubu</div>
           <q-input dense input-class="text-positive" label-color="positive"
@@ -26,6 +26,7 @@
               </template>
             </q-select>
           </div>
+          <q-expansion-item label="informacje dodatkowe">
           <q-input dense input-class="text-positive" label-color="positive" mask="### ### ###" filled v-model="otherPhoneNumber" label="Numer telefonu" />
           <q-input dense input-class="text-positive" label-color="positive" filled v-model="otherEmail" label="e-mail" />
           <div>
@@ -70,6 +71,7 @@
               </q-icon>
             </template>
           </q-input>
+        </q-expansion-item>
           <div>* pole wymagane</div>
           <q-item>
             <q-btn label="Zapisz do bazy" v-close-popup

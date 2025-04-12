@@ -29,7 +29,7 @@
           </div>
           <div class="col-3">
             <q-item>
-              <q-btn v-close-popup @click="getAnnouncementFromCompetitionXLSX()" class="full-width ghover1"
+              <q-btn v-close-popup @click="tournamentUUID = tournaments.uuid; date = tournaments.date; name = tournaments.name;getAnnouncementFromCompetitionXLSX()" class="full-width ghover1"
               label="pobierz rezultaty" color="primary"/>
               <!-- <q-btn-dropdown @click="tournamentUUID = tournaments.uuid; date = tournaments.date; name = tournaments.name"
                 align="center" content-class="bg-dark" class="full-width ghover1" label="pobierz komunikat" color="primary">
@@ -295,12 +295,17 @@
                         </q-item-section>
                       </q-item>
                     </template>
+                    <template v-slot:before-options>
+                      <q-item class="full-width bg-dark"  style="position: sticky; top: 0; z-index: 1">
+                        <AddNewOtherPerson v-on:addOtherPerson="getOther()" class="full-width"></AddNewOtherPerson>
+                      </q-item>
+                    </template>
                     <template v-slot:no-option>
                       <div>
                         <div class="q-pa-md bg-grey-5 text-center text-bold">Brak wyników - możesz dodać nową osobę
                         </div>
                         <div class="q-pa-md bg-grey-5">
-                            <AddNewOtherPerson v-on:addOtherPerson="getOther()"></AddNewOtherPerson>
+                          <AddNewOtherPerson v-on:addOtherPerson="getOther()"></AddNewOtherPerson>
                         </div>
                       </div>
                     </template>
