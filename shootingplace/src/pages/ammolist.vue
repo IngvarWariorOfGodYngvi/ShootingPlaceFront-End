@@ -1,7 +1,7 @@
 <template>
   <q-page>
     <div class="full-width row reverse">
-      <q-btn v-if="!mobile" dense color="primary" class="q-pa-none q-ma-none brand" :icon="icon"
+      <q-btn v-if="!mobile" dense color="primary" class="q-pa-none q-ma-none brand" :icon="icon" id="closedListBtn"
         @click="toggleShowClosedList = !toggleShowClosedList; toggleShowClosedList ? getClosedEvidence(pageNumber) : ''"
         @mousemove="!toggleShowClosedList ? icon = 'arrow_left' : icon = 'arrow_right'" @mouseleave="icon = 'menu'">
         <q-tooltip content-class="bg-secondary text-h6" content-style="opacity: 93%;">{{ toggleShowClosedList ? 'Ukryj'
@@ -10,16 +10,16 @@
     <div :class="!mobile ? 'row' : 'col'">
       <q-card class="col bg-dark text-positive">
         <div class="row">
-          <div class="col row">
-            <q-btn v-if="AddGroupAmmoExp" :class="mobile ? 'col-6' : 'col-4'" label="Dodaj Amunicję" color="primary"
+          <div class="full-width row" style="display: flex;">
+            <q-btn v-if="AddGroupAmmoExp" :class="mobile ? 'col-6' : 'col-3'" label="Dodaj Amunicję" color="primary"
               @click="open = !open"></q-btn>
-            <q-btn v-if="AddSingleAmmoExp" :class="mobile ? 'col-6' : 'col-4'" label="Dodaj osobę do listy"
+            <q-btn v-if="AddSingleAmmoExp" :class="mobile ? 'col-6' : 'col-3'" label="Dodaj osobę do listy"
               color="primary" @click="getOther(); addAmmo = true">
             </q-btn>
-            <q-btn v-if="GunListExp" :class="mobile ? 'col-6' : 'col-4'" label="Dodaj broń do listy" color="primary"
+            <q-btn v-if="GunListExp" :class="mobile ? 'col-6' : 'col-3'" label="Dodaj broń do listy" color="primary"
               @click="getOther(); addGun = true">
             </q-btn>
-            <ShootingPackets v-if="AddShootingPacketExp" :class="mobile ? 'col-6' : 'col-4'"
+            <ShootingPackets v-if="AddShootingPacketExp" :class="mobile ? 'col-6' : 'col-3'"
               :nameMember="{ firstName: '0', secondName: '0', legitimationNumber: '0' }"
               :nameOther="{ firstName: '0', secondName: '0', id: '0' }" v-on:addMemberAndAmmoToCaliber="getAmmoData()">
             </ShootingPackets>
@@ -139,35 +139,33 @@
           </div>
         </div>
       </q-card>
-      <div v-if="!mobile">
-        <q-card v-if="toggleShowClosedList" class="col-2 bg-dark">
-          <div>
-            <q-item>
-              <q-item-label class="text-h5 text-bold text-positive">
-                Zamknięte listy
-              </q-item-label>
-            </q-item>
-            <div class="row full-width bg-secondary q-mb-xs">
-              <q-btn icon="arrow_left" @click="pageNumber = pageNumber - 1; getClosedEvidence(pageNumber)"
-                :disable="pageNumber === 0" class="col-2" text-color="positive" color="primary"></q-btn>
-              <div class="self-center text-bold text-center text-white col">STRONA {{ pageNumber + 1 }}</div>
-              <q-btn icon="arrow_right"
-                @click="pageNumber = ammoListClose.length === 25 ? pageNumber + 1 : pageNumber; getClosedEvidence(pageNumber)"
-                :disabled="ammoListClose.length !== 25" class="col-2" text-color="positive" color="primary"></q-btn>
-            </div>
-            <div v-for="(item, index) in ammoListClose" :key="index">
-              <q-btn class="full-width q-mb-xs" dense text-color="white" color="primary"
-                @click="date = item.date; number = item.number; uuid = item.evidenceUUID; getEvidence(); ammunitionListInfo = true">
-                <div class="col q-pa-none q-ma-none">
-                  <q-item-label>{{ item.number + ' ' }}</q-item-label>
-                  <q-item-label class="text-white" caption>{{ convertDate(item.date) }}</q-item-label>
-                </div>
-                <q-tooltip content-class="bg-secondary text-body2">Sprawdź Listę</q-tooltip>
-              </q-btn>
-            </div>
+      <q-drawer v-model="toggleShowClosedList" v-if="!mobile" content-class="bg-dark col-2" side="right">
+        <div>
+          <q-item>
+            <q-item-label class="text-h5 text-bold text-positive text-center col">
+              Zamknięte listy
+            </q-item-label>
+          </q-item>
+          <div class="row full-width bg-secondary q-mb-xs">
+            <q-btn icon="arrow_left" @click="pageNumber = pageNumber - 1; getClosedEvidence(pageNumber)"
+              :disable="pageNumber === 0" class="col-2" text-color="positive" color="primary"></q-btn>
+            <div class="self-center text-bold text-center text-white col">STRONA {{ pageNumber + 1 }}</div>
+            <q-btn icon="arrow_right"
+              @click="pageNumber = ammoListClose.length === 25 ? pageNumber + 1 : pageNumber; getClosedEvidence(pageNumber)"
+              :disabled="ammoListClose.length !== 25" class="col-2" text-color="positive" color="primary"></q-btn>
           </div>
-        </q-card>
-      </div>
+          <div v-for="(item, index) in ammoListClose" :key="index">
+            <q-btn class="full-width q-mb-xs" dense text-color="white" color="primary"
+              @click="date = item.date; number = item.number; uuid = item.evidenceUUID; getEvidence(); ammunitionListInfo = true">
+              <div class="col q-pa-none q-ma-none">
+                <q-item-label>{{ item.number + ' ' }}</q-item-label>
+                <q-item-label class="text-white" caption>{{ convertDate(item.date) }}</q-item-label>
+              </div>
+              <q-tooltip content-class="bg-secondary text-body2">Sprawdź Listę</q-tooltip>
+            </q-btn>
+          </div>
+        </div>
+      </q-drawer>
     </div>
     <q-dialog position="top" v-model="ammunitionListAlert">
       <q-card>
@@ -243,7 +241,7 @@
           </q-select>
           <q-select @popup-show="getOther()" @popup-hide="getOther()" options-dense class="col" dense filled
             v-model="otherName" use-input hide-selected fill-input input-debounce="0" color="positive"
-            input-class="text-positive" label-color="positive" popup-content-class="bg-red text-positive"
+            input-class="text-positive" label-color="positive" popup-content-class="bg-dark text-positive"
             :options="options1" @input="memberName = '0 0'" @filter="filterOther" label="Dodaj osobę spoza klubu">
             <template v-slot:before-options>
               <q-item class="full-width bg-dark" style="position: sticky; top: 0; z-index: 1">
@@ -491,6 +489,7 @@ const stringOptions = []
 import App from 'src/App.vue'
 
 export default {
+
   setup () {
     const loading = ref([
       false

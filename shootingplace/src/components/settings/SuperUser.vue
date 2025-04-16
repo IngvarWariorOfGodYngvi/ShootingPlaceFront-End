@@ -124,9 +124,10 @@
         </q-card-section>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="userActions">
+    <q-dialog v-model="userActions" @hide="actions = []">
       <q-card class="text-center bg-dark text-positive" style="width: 60vw; max-width: 60vw">
-        <q-card-section>
+        <CircularLoadingBox v-if="actions.length == 0"/>
+        <q-card-section v-else>
           <div class="text-h6">Akcje użytkownika</div>
           <q-virtual-scroll :items="actions" dense visible class="full-width" style="height: 80vh;">
             <template v-slot="{ item, index }">
@@ -180,9 +181,17 @@
 
 <script>
 import App from 'src/App'
+import lazyLoadComponent from 'src/utils/lazyLoadComponent'
+import SkeletonBox from 'src/utils/SkeletonBox.vue'
 
 export default {
   name: 'SuperUser.vue',
+  components: {
+    CircularLoadingBox: lazyLoadComponent({
+      componentFactory: () => import('src/utils/CircularLoadingBox.vue'),
+      loading: SkeletonBox
+    })
+  },
   created () {
     this.getAllSuperUsers()
   },

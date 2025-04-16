@@ -147,9 +147,9 @@
           <div>
             <div>Dyscypliny</div>
             <div>
-              <q-checkbox label="Pistolet" v-model="pistolPermissionChange" :val="pistolPermission"></q-checkbox>
-              <q-checkbox label="Karabin" v-model="riflePermissionChange" :val="riflePermission"></q-checkbox>
-              <q-checkbox label="Strzelba" v-model="shotgunPermissionChange" :val="shotgunPermission"></q-checkbox>
+              <q-checkbox label="Pistolet" v-model="pistolPermissionChange"></q-checkbox>
+              <q-checkbox label="Karabin" v-model="riflePermissionChange"></q-checkbox>
+              <q-checkbox label="Strzelba" v-model="shotgunPermissionChange"></q-checkbox>
             </div>
           </div>
           <div>

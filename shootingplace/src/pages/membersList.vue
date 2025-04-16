@@ -185,6 +185,10 @@
                 <q-icon size="2em" :name="sortLicense ? 'arrow_drop_up' : 'arrow_drop_down'" />
                 Licencja
               </th>
+              <th class="text-center" @click="sortF('adult')">
+                <q-icon size="2em" :name="sortAdult ? 'arrow_drop_up' : 'arrow_drop_down'" />
+                Grupa
+              </th>
               <th v-if="!erase" class="text-center" @click="sortF('active')">
                 <q-icon size="2em" :name="sortActive ? 'arrow_drop_up' : 'arrow_drop_down'" />
                 Status
@@ -202,7 +206,8 @@
             @click.exact="showloading(), allMember = false; memberName = item; temp = item.legitimationNumber;visible = false">
             <td style="width:25%;" :class="item.club.id === 1 && (!item.declarationLOK && shootingPlace==='prod')? 'xyz bg-warning' : item.club.id === 1 && (item.declarationLOK && shootingPlace==='prod')? 'xyz' : item.club.id != 1? 'xyz bg-secondary':'xyz text-positive'">
             <!-- <td style="width:25%;" :class="item.club.id === 1 && (!item.declarationLOK && shootingPlace==='prod')? 'xyz bg-warning' : item.club.id === 1 && (item.declarationLOK && shootingPlace==='prod')? 'xyz' : 'xyz text-white'"> -->
-              <b>{{ index + 1 + ' ' }}</b>{{ item.club.id === 1 ? item.secondName + ' ' + item.firstName : item.secondName + ' ' + item.firstName + ' ' + item.club.name }} {{ !item.declarationLOK && shootingPlace === 'prod'? ' - Brak Deklaracji LOK' : ''}}
+              <div><b>{{ index + 1 + ' ' }}</b>{{item.fullName}}  {{ !item.declarationLOK && shootingPlace === 'prod'? ' - Brak Deklaracji LOK' : ''}}</div>
+              <div v-if="item.club.id != 1">{{ item.club.name }}</div>
             </td>
             <td style="width:10%;" class="text-center">
               {{ convertDate(item.joinDate) }}
@@ -213,30 +218,16 @@
             </td>
             <td style="width:5%;"
               :class="item.image != null ? 'bg-green-3 text-center text-black' : 'text-center text-black'">
-              <!-- <q-tooltip v-if="item.image != null" :delay="750" @hide="url = ''"
-                         @before-show="getUrl (item.image)" anchor="top middle" self="center middle"
-                         transition-show="scale"
-                         transition-hide="scale" content-style="width: auto; height: auto">
-                <img v-if="item.image != null" :src="url" spinner-color="white" style="height: 100%; width: 100%"/>
-              </q-tooltip> -->
               <q-icon :name="item.image != null ? 'done' : 'cancel'" :color="item.image != null ? '' : 'primary'"
                 size="1rem" />
             </td>
             <td style="width:10%;" class="text-center text-bold">
               {{ item.legitimationNumber }}
             </td>
-            <td style="width:15%;" v-if="item.license.number != null && item.license.valid"
-              class="bg-green-3 text-center text-black">
+            <td style="width:15%;" v-if="item.license.number != null"
+              :class="item.license.valid ? 'bg-green-3 text-center text-black' : 'bg-warning text-center text-black'">
               <q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">
-                Aktualna
-              </q-tooltip>
-              <div>{{ item.license.number }}</div>
-            </td>
-            <td style="width:15%;" v-if="item.license.number != null && !item.license.valid"
-              class="bg-warning text-center text-black">
-              <q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">
-                Nieaktualna -
-                ważna do: {{ convertDate(item.license.validThru) }}
+                {{item.license.valid ? 'Aktualna' : `Nieakutalna - ważna do: ${convertDate(item.license.validThru)}`}}
               </q-tooltip>
               <div>{{ item.license.number }}</div>
             </td>
@@ -246,6 +237,9 @@
               <q-icon name="density_large" />
               <q-icon name="density_large" />
               <q-icon name="density_large" />
+            </td>
+            <td style="width: 15%" class="text-center">
+              {{ item.adult ? 'Ogólna' : 'Młodzieżowa' }}
             </td>
             <td :class="item.active ? 'bg-green-3 text-center text-black' : 'bg-red-3 text-center text-black'">
               {{ item.active ? 'Klubowicz Aktywny' : 'Klubowicz Nieaktywny' }}
@@ -261,6 +255,12 @@
             </td>
             <td style="width:10%;" class="text-center text-bold">
               {{ item.legitimationNumber }}
+            </td>
+            <td v-if="item.license.number != null && item.license.valid" class="bg-green-3 text-center">
+              <q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">
+                Aktualna
+              </q-tooltip>
+              <div>{{ item.license.number }}</div>
             </td>
             <td v-if="item.license.number != null && item.license.valid" class="bg-green-3 text-center">
               <q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">
@@ -341,6 +341,7 @@ export default {
       temp: null,
       memberName: '',
       sortLicense: false,
+      sortAdult: false,
       sortLegitimation: false,
       sortName: false,
       sortDate: false,
@@ -594,6 +595,17 @@ export default {
           this.memberDTOArg.sort((a, b) => a.license.number - b.license.number)
           this.memberDTOArgRearrangeTable.sort((a, b) => a.license.number - b.license.number)
           this.sortLicense = !this.sortLicense
+        }
+      }
+      if (type === 'adult') {
+        if (!this.sortAdult) {
+          this.memberDTOArg.sort((a, b) => b.adult - a.adult)
+          this.memberDTOArgRearrangeTable.sort((a, b) => b.adult - a.adult)
+          this.sortAdult = !this.sortAdult
+        } else {
+          this.memberDTOArg.sort((a, b) => a.adult - b.adult)
+          this.memberDTOArgRearrangeTable.sort((a, b) => a.adult - b.adult)
+          this.sortAdult = !this.sortAdult
         }
       }
       if (type === 'date') {

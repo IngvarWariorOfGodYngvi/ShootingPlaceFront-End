@@ -211,7 +211,7 @@ label {
 
 	50% {
 		transform: scale(1.05);
-		box-shadow: 0 0 0 10px $secondary;
+		box-shadow: 0 0 0 10px $warning;
 	}
 
 	100% {
@@ -223,6 +223,11 @@ label {
   animation: pulsing 2s infinite;
   border-radius: 50%;
 }
+.pulsing1 {
+  animation: pulsing1 2s infinite;
+  border-radius: 50%;
+}
+
 @keyframes pulsing {
 	0% {
 		transform: scale(0.95);
@@ -231,6 +236,22 @@ label {
 
 	50% {
 		transform: scale(1.05);
+		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+	}
+
+	100% {
+		transform: scale(0.95);
+		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+	}
+}
+@keyframes pulsing1 {
+	0% {
+		transform: scale(0.95);
+		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+	}
+
+	50% {
+		transform: scale(1.50);
 		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
 	}
 

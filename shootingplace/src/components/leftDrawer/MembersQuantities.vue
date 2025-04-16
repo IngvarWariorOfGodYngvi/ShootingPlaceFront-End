@@ -1,7 +1,7 @@
 <template>
-  <div v-if="!mobile" class="q-pa-sm">
-    <q-item-label v-if="quantities[8]>0" class="text-bold text-white self-center text-center" dense caption> <q-icon name="warning" color="warning" size="1.5em" class="pulse"></q-icon>Nieopłaconych licencji :
-      {{ quantities[8] }} <q-icon name="warning" color="warning" size="1.5em" class="pulse"></q-icon>
+  <div v-if="!mobile && main" class="q-pa-sm">
+    <q-item-label v-if="quantities[8]>0" class="text-bold text-white self-center text-center" dense caption>
+      Nieopłaconych licencji : <b class="pulse">{{ quantities[8] }}</b>
     </q-item-label>
     <q-item-label class="text-bold text-white xyz1" dense caption @dblclick="legitimationNumber = number;memberDial=true" style="cursor: pointer;">
       <Tooltip2clickToShow></Tooltip2clickToShow>
@@ -65,6 +65,7 @@ export default {
       number: '',
       memberDial: false,
       legitimationNumber: null,
+      main: App.main,
       mobile: App.mobile,
       local: App.host
     }

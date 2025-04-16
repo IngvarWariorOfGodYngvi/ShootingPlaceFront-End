@@ -1,6 +1,5 @@
 <template>
-  <q-page v-if="!isMobile()" padding class="bg-dark text-positive">
-    <div class="bg-dark">
+  <q-page>
       <q-stepper header-nav v-model="step" ref="stepper" active-color="secondary" class="bg-dark" animated>
         <q-step :name="1" title="Podstawowe dane" caption="Wymagane" icon="settings"
           :done="step > 1">
@@ -327,7 +326,6 @@
           </q-stepper-navigation>
         </template>
       </q-stepper>
-    </div>
     <q-dialog v-model=" declarationLOK ">
       <q-card class="bg-dark text-positive">
         <q-card-section class="row text-center text-h6">
@@ -393,9 +391,6 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-  </q-page>
-  <q-page v-else class="text-positive text-center q-pa-md">
-    Nie można wyświetlić zawartości
   </q-page>
 </template>
 

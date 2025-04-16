@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!mobile && list.length > 0" class="q-pa-sm text-white text-bold">
+  <div v-if="!mobile&& main && list.length > 0" class="q-pa-sm text-white text-bold">
     <div class="text-center">Urodziny w tym tygodniu obchodzą:</div>
     <q-item-label class="text-white text-bold text-positive hover3 round q-pl-xs" caption  v-for="(item,index) in list" :key="index" @dblclick="legitimationNumber = item.legitimationNumber;memberDial=true">
       <Tooltip2clickToShow></Tooltip2clickToShow>
@@ -43,6 +43,7 @@ export default {
       list: ['ktoś', 'tam', 'ma', 'urodziny'],
       memberDial: false,
       legitimationNumber: null,
+      main: App.main,
       mobile: App.mobile,
       local: App.host
     }

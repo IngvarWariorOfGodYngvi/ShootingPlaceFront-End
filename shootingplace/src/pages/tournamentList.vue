@@ -51,7 +51,7 @@
             </q-item>
             <q-item v-if="tournaments.open">
               <q-btn color="white" class="text-black full-width ghover1" label="dodaj konkurencje"
-                @click="tournamentUUID = tournaments.uuid; addCompetitionConfirmbtn = true"/>
+                @click="getCompetitions();tournamentUUID = tournaments.uuid; addCompetitionConfirmbtn = true"/>
             </q-item>
             <q-dialog v-model="addCompetitionConfirmbtn">
               <q-card class="text-center bg-dark text-positive" style="min-width: 50vw;height: 75vh">
@@ -326,10 +326,9 @@
           </q-card>
         </div>
       </q-card>
-      <q-card v-if="toggleShowClosedCompetitions" class="col-2 bg-dark text-positive">
-        <div>
+      <q-drawer v-model="toggleShowClosedCompetitions" content-class="bg-dark text-positive" side="right">
           <q-item>
-            <q-item-label class="text-h5 text-bold">
+            <q-item-label class="text-h5 text-bold text-positive text-center col">
               Zamknięte Zawody
             </q-item-label>
           </q-item>
@@ -352,8 +351,7 @@
                   </q-tooltip></q-btn>
             </div>
           </div>
-        </div>
-      </q-card>
+      </q-drawer>
     </div>
     <q-dialog v-model="tournamentUpdateConfirm">
       <q-card style="width: 40vw" class="bg-dark text-positive">
@@ -1051,6 +1049,7 @@ export default {
       icon: 'menu',
       backgroundDark: JSON.parse(window.localStorage.getItem('BackgroundDark')),
       ClosedCompetitionTabEXP: JSON.parse(window.localStorage.getItem('ClosedCompetitionTab')),
+      DialogWindowAfterAddPlayer: JSON.parse(window.localStorage.getItem('DialogWindowAfterAddPlayer')),
       mobile: App.mobile,
       a5rotate: false,
       printAll: false,
@@ -1179,7 +1178,6 @@ export default {
   },
   created () {
     this.getListTournaments()
-    this.getCompetitions()
     this.getOther()
     this.getAllClubsToTournament()
   },
@@ -1253,6 +1251,11 @@ export default {
       }).then(response => response.json())
         .then(response => {
           this.usersInWork = response
+        }).catch(() => {
+          this.usersInWork = []
+          this.message = 'coś poszło nie tak'
+          this.failure = true
+          this.autoClose()
         })
     },
     getListTournaments () {
@@ -1383,7 +1386,9 @@ export default {
             response.text().then(response => {
               this.startNumber = response
               this.otherID = otherNameID
-              this.getScoreInfoByLegitimation()
+              if (this.DialogWindowAfterAddPlayer) {
+                this.getScoreInfoByLegitimation()
+              }
             })
           } else {
             response.text().then(response => {
@@ -1640,6 +1645,10 @@ export default {
             }
           )
         }
+      }).catch(() => {
+        this.message = 'coś poszło nie tak'
+        this.failure = true
+        this.autoClose()
       })
     },
     addCompetitionToTournament () {

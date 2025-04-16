@@ -28,6 +28,7 @@
     "vue-signature-pad": "^3.0.2",
     "vue-smooth-scrollbar": "^1.0.3",
     "vue2-touch-events": "^3.2.2",
+    "vuedraggable": "^2.24.3",
     "vuejs-logger": "^1.5.5",
     "vuex": "^3.6.2",
     "webstomp-client": "^1.2.6"

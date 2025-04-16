@@ -1,5 +1,5 @@
 <template>
-  <q-page padding class="bg-dark">
+  <q-page padding>
     <div>
       <Experimental class="col"></Experimental>
       <SuperUser v-if="main"></SuperUser>

@@ -3,39 +3,27 @@
     <router-view />
   </div>
 </template>
+<script src="src/scripts/SetLocalStorageVariables.js"/>
 <script>
-import { isWindows } from 'mobile-device-detect'
+// import { isWindows } from 'mobile-device-detect'
+import { scripts } from 'src/scripts/SetLocalStorageVariables.js'
+
 export default {
   created () {
-    this.getEnv()
   },
   beforeMount () {
+    this.getEnv()
     this.createMain()
   },
   methods: {
     createMain () {
-      // if (window.localStorage.getItem('shootingPlace') == null) {
-      //   window.localStorage.setItem('shootingPlace', this.getEnv())
-      // }
-      if (isWindows) {
-        if (window.localStorage.getItem('main') == null) {
-          window.localStorage.setItem('main', 'false')
-        }
-      } else {
-        window.localStorage.setItem('main', 'false')
+      if (window.localStorage.getItem('shootingPlace') == null) {
+        window.localStorage.setItem('shootingPlace', this.getEnv())
       }
-      if (window.localStorage.getItem('mailingList') == null) {
-        window.localStorage.setItem('mailingList', JSON.stringify([]))
+      if (window.localStorage.getItem('main') == null) {
+        window.localStorage.setItem('main', false)
       }
-      if (window.localStorage.getItem('drawer') == null) {
-        window.localStorage.setItem('drawer', this.mobile ? 'false' : 'true')
-      }
-      if (window.localStorage.getItem('arbiter') == null) {
-        window.localStorage.setItem('arbiter', '')
-      }
-      if (window.localStorage.getItem('arbiter').length < 4) {
-        window.localStorage.setItem('arbiter', '000')
-      }
+      scripts()
     },
     getEnv () {
       import('src/App.vue').then(App => {

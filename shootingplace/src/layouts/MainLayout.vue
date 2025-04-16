@@ -1,112 +1,106 @@
 <template>
-  <q-layout class="bg-none" view="lHh Lpr lFf" :class="[funRotate?'fun2':'', this.funRotateCLicks > 8 ? 'fun': '']" >
+  <q-layout class="bg-none" view="lHh LpR fFf"
+    :class="[funRotate ? 'fun2' : '', this.funRotateCLicks > 3 ? 'fun' : '']">
     <q-header elevated>
       <q-page-sticky v-if="mobile" position="top-right" :offset="[5, -50]" style="z-index: 100">
-        <q-icon class="fun" name="wifi" :color="networkStatusvar!=null?networkStatusvar?'green':'red':''"/>
+        <q-icon class="fun" name="wifi" :color="networkStatusvar != null ? networkStatusvar ? 'green' : 'red' : ''" />
       </q-page-sticky>
       <q-toolbar class="full-width row">
-        <q-btn
-          flat
-          dense
-          class="q-pa-none text-h6 brand"
-          :icon="icon"
-          aria-label="Menu"
-          :label="title"
-          @click="setDrawer(!leftDrawerOpen)"
-          @mousemove="leftDrawerOpen?icon='arrow_left':icon='arrow_right'"
-          @mouseleave="icon='menu'"
-        />
+        <q-btn flat dense class="q-pa-none text-h6 brand" :icon="icon" aria-label="Menu" :label="title"
+          @click="setDrawer(!leftDrawerOpen)" @mousemove="leftDrawerOpen ? icon = 'arrow_left' : icon = 'arrow_right'"
+          @mouseleave="icon = 'menu'" />
         <q-toggle v-model="backgroundDark" :val="true" :value="true" color="dark" keep-color
-                  @input="changeColor()" class="fun"><q-tooltip content-class="bg-secondary text-body2">{{backgroundDark?'Wyłącz': 'Włącz' }} ciemny motyw</q-tooltip></q-toggle>
-                  <div :class="`text-center text-h5 text-bold ${networkStatusvar!=null && networkStatusvar?'':'bg-warning'}`">{{siteNameChange()}} {{ networkStatusvar!=null && networkStatusvar?'':'&nbsp; Brak Połączenia Z Bazą' }}</div>
-         <div class="col row reverse">
-          <div class="row">
-        <q-avatar text-color="white" size="3.5em" color="secondary" rounded
-          style="border: solid 1px white; border-radius: 50%" class="lighterbtn rotating"
-          icon="settings" @click="openSettings=!openSettings" >
-          <q-tooltip class="bg-primary" content-class="bg-primary text-h6 text-center">Ustawienia</q-tooltip>
-          <q-popup-edit v-model="openSettings" :offset="[0,0]" content-class="bg-primary text-white" :cover="false" :content-style="mobile?'':'width:20vw'">
-            <Experimental></Experimental>
-          </q-popup-edit>
-        </q-avatar>
-      </div>
-        <div v-if="main" class="row reverse">
-          <q-icon class="fun" name="wifi" :color="networkStatusvar?'green':'red'" @click="funRotateCLicksIncrease()"></q-icon>
-          <div v-if="shootingPlace === 'prod'">
-          <q-tooltip content-class="bg-primary text-h6">Kalendarz</q-tooltip>
-            <q-btn-dropdown class="fit" icon="calendar_month" rounded color="secondary" style="border: 1px solid white">
-              <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&bgcolor=%23ffffff&ctz=Europe%2FWarsaw&src=MTA0MjM0ZTI5MTEyZThiYTk0MzBmZWZmNDk5MjRhNmU0YzI4NzJlMzA3ODdhMzhjZjdmZmE2ZTE2MGEyNmNkNkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=OTcwNXUwMTRuZXNicW05NGdiMWdkc3JvOGdAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ&color=%23F09300&color=%234285F4" style="border:solid 1px #777" width="800" height="600" frameborder="0" scrolling="no"></iframe></q-btn-dropdown>
+          :class="changesInfo[1] === false ? ' pulse' : ''" :icon="backgroundDark ? 'dark_mode' : 'light_mode'"
+          @input="changeColor(); changesInfo[1] === false ? check(1) : ''" class="fun"><q-tooltip
+            content-class="bg-secondary text-body2">{{ backgroundDark ? 'Wyłącz' : 'Włącz' }} ciemny
+            motyw</q-tooltip></q-toggle>
+        <div style="border-radius: 2em; padding: 0 1em"
+          :class="`text-center text-h5 text-bold ${networkStatusvar != null && networkStatusvar ? '' : 'bg-warning'}`">
+          {{ siteNameChange() }} {{ networkStatusvar != null && networkStatusvar ? '' : '&nbsp; Brak Połączenia Z Bazą'
+          }}</div>
+        <div class="col row reverse">
+          <div v-if="main != null" class="row" :class="changesInfo[0] === false ? ' pulse' : ''"
+            @click="changesInfo[0] === false ? check(0) : ''">
+            <q-avatar text-color="white" size="3.5em" color="secondary" rounded
+              style="border: solid 1px white; border-radius: 50%" class="lighterbtn rotating" icon="settings"
+              @click="openSettings = !openSettings">
+              <q-tooltip class="bg-primary" content-class="bg-primary text-h6 text-center">Ustawienia</q-tooltip>
+              <q-popup-edit v-model="openSettings" :offset="[0, 0]" content-class="bg-primary text-white" :cover="false"
+                :content-style="mobile ? '' : 'width:20vw'">
+                <Experimental v-if="main || main === false"></Experimental>
+              </q-popup-edit>
+            </q-avatar>
           </div>
-          <div>
-            <q-tooltip content-class="bg-primary text-h6">Lista pobytu na strzelnicy</q-tooltip>
-            <q-btn-dropdown class="fit" content-class="bg-primary text-white q-pa-xs" icon="groups" rounded color="secondary" style="border: 1px solid white" @click="getRecordsFromBook (today, today)">
-              <div v-if="evidenceBookList.length>0" style="width:30vw;height:50vh;">
-                <div class="row border1">
-                  <div class="col">lp Nazwisko i Imię</div>
-                  <div class="col">Godzina Wejścia</div>
+          <div v-if="main" class="row reverse">
+            <q-icon class="fun" :class="networkStatusvar ? 'fun' : 'fun pulsing1'" name="wifi"
+              :color="networkStatusvar ? 'green' : 'red'" @click="funRotateCLicksIncrease()"><q-tooltip
+                content-class="text-white bg-primary">Kliknij mnie {{ 4 - funRotateCLicks }} razy</q-tooltip></q-icon>
+            <div v-if="shootingPlace === 'prod'">
+              <q-tooltip content-class="bg-primary text-h6">Kalendarz</q-tooltip>
+              <q-btn-dropdown class="fit" icon="calendar_month" rounded color="secondary"
+                style="border: 1px solid white">
+                <iframe
+                  src="https://calendar.google.com/calendar/embed?height=600&wkst=2&bgcolor=%23ffffff&ctz=Europe%2FWarsaw&src=MTA0MjM0ZTI5MTEyZThiYTk0MzBmZWZmNDk5MjRhNmU0YzI4NzJlMzA3ODdhMzhjZjdmZmE2ZTE2MGEyNmNkNkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=OTcwNXUwMTRuZXNicW05NGdiMWdkc3JvOGdAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ&color=%23F09300&color=%234285F4"
+                  style="border:solid 1px #777" width="800" height="600" frameborder="0"
+                  scrolling="no"></iframe></q-btn-dropdown>
+            </div>
+            <div>
+              <q-tooltip content-class="bg-primary text-h6">Lista pobytu na strzelnicy</q-tooltip>
+              <q-btn-dropdown class="fit" content-class="bg-primary text-white q-pa-xs" icon="groups" rounded
+                color="secondary" style="border: 1px solid white" @click="getRecordsFromBook(today, today)">
+                <div v-if="evidenceBookList.length > 0" style="width:30vw;height:50vh;">
+                  <div class="row border1">
+                    <div class="col">lp Nazwisko i Imię</div>
+                    <div class="col">Godzina Wejścia</div>
+                  </div>
+                  <div v-for="(item, index) in evidenceBookList" :key="index" class="row border1">
+                    <div class="col">{{ index + 1 }} {{ item.nameOnRecord }}</div>
+                    <div class="col">{{ item.dateTime.substring(11, 19) }}</div>
+                  </div>
                 </div>
-                <div v-for="(item, index) in evidenceBookList" :key="index" class="row border1">
-                  <div class="col">{{index+1}} {{ item.nameOnRecord }}</div>
-                  <div class="col">{{ item.dateTime.substring(11,19) }}</div>
-                </div>
-              </div>
-              <div v-else class="bg-primary text-white text-h6">Nie ma nic do wyświetlenia</div>
-            </q-btn-dropdown>
+                <div v-else class="bg-primary text-white text-h6">Nie ma nic do wyświetlenia</div>
+              </q-btn-dropdown>
+            </div>
+            <div v-if="topTenTabExp">
+              <Top10CompetitionPoints></Top10CompetitionPoints>
+              <Top10Competitors></Top10Competitors>
+              <Top10Contributions></Top10Contributions>
+              <Top10Competition></Top10Competition>
+            </div>
           </div>
-          <div v-if="topTenTabExp">
-          <Top10CompetitionPoints></Top10CompetitionPoints>
-          <Top10Competitors></Top10Competitors>
-          <Top10Contributions></Top10Contributions>
-          <Top10Competition></Top10Competition>
         </div>
-      </div>
-    </div>
       </q-toolbar>
     </q-header>
-    <q-drawer
-      v-model="leftDrawerOpen"
-      bordered
-      class="bg-secondary"
-      @hide="setDrawer(false)"
-    >
-      <div class="bg-secondary">
-        <q-list>
-          <q-item @click="showloading();changeTitle ('STRONA GŁÓWNA')" class="flex flex-center q-pa-md bg-primary text-white" clickable tag="a"
-                  target="_self" :href="hrefTarget" width="max">
-            <div class="text-h6 text-bold text-center">
-              <div>PROGRAM</div>
-              <div>STRONA GŁÓWNA</div>
-            </div>
-          </q-item>
-          <div @click="showloading()">
-            <EssentialLink
-              v-for="link in essentialLinks"
-              :key="link.title"
-              v-bind="link"
-              :title="link.title"
-              :visible="link.visible"
-            />
-          </div>
-          <MembersQuantities v-if="(main || !main) && main != null" class="bg-secondary">
-          </MembersQuantities>
-          <WeekBirthdayList class="bg-secondary">
-          </WeekBirthdayList>
-          <WorkTimeList v-if="!mobile&&main" style="margin: auto;height:auto" class="bg-secondary">
-          </WorkTimeList>
-        </q-list>
+    <q-drawer v-model="leftDrawerOpen" bordered content-class="bg-secondary" class="bg-secondary"
+      @hide="setDrawer(false)">
+      <q-item @click="showloading(); changeTitle('STRONA GŁÓWNA')"
+        class="flex flex-center q-pa-md bg-primary text-white" clickable tag="a" target="_self" :href="hrefTarget"
+        width="max">
+        <div class="text-h6 text-bold text-center">
+          <div>PROGRAM KLUB</div>
+          <div>STRONA GŁÓWNA</div>
+        </div>
+      </q-item>
+      <div @click="showloading()">
+        <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link" :title="link.title"
+          :visible="link.visible" />
       </div>
+      <MembersQuantities v-if="main != null && main && MembersCounter" class="bg-secondary">
+      </MembersQuantities>
+      <WeekBirthdayList v-if="MembersBirthday" class="bg-secondary">
+      </WeekBirthdayList>
+      <WorkTimeList v-if="!mobile && main" style="margin: auto;height:auto" class="bg-secondary">
+      </WorkTimeList>
     </q-drawer>
 
     <q-page-container>
       <q-page>
-        <router-view/>
+        <router-view />
       </q-page>
     </q-page-container>
   </q-layout>
 </template>
-<style src="../style/style.scss" lang="scss">
-</style>
-
+<style src="../style/style.scss" lang="scss"></style>
 <script>
 import { colors } from 'quasar'
 import App from 'src/App.vue'
@@ -114,6 +108,7 @@ import { reactive } from 'vue'
 import { useNetwork } from '@vueuse/core'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox'
+import { checking } from 'src/scripts/ChangesInfo.js'
 export default {
   name: 'MainLayout',
   visible2: false,
@@ -167,6 +162,9 @@ export default {
     if (window.localStorage.getItem('SiteName') == null) {
       window.localStorage.setItem('SiteName', 'Strona Główna')
     }
+    if (window.localStorage.getItem('main') == null) {
+      window.localStorage.setItem('main', false)
+    }
     this.networkStatus()
     this.stata()
     this.createTodayDate()
@@ -183,6 +181,9 @@ export default {
       backgroundDark: JSON.parse(window.localStorage.getItem('BackgroundDark')),
       leftDrawerOpen: JSON.parse(window.localStorage.getItem('drawer')),
       topTenTabExp: JSON.parse(window.localStorage.getItem('TopTenTab')),
+      changesInfo: JSON.parse(window.localStorage.getItem('ChangesInfo')),
+      MembersCounter: JSON.parse(window.localStorage.getItem('MembersCounter')),
+      MembersBirthday: JSON.parse(window.localStorage.getItem('MembersBirthday')),
       icon: 'menu',
       distance: 1200000,
       number: null,
@@ -290,6 +291,10 @@ export default {
         this.timer = 0
       }, 500)
     },
+    check (number) {
+      checking(number)
+      this.changesInfo = JSON.parse(window.localStorage.getItem('ChangesInfo'))
+    },
     getRecordsFromBook (firstDate, secondDate) {
       fetch(`${this.local}/evidence/?firstDate=${firstDate}&secondDate=${secondDate}`, {
         method: 'GET'
@@ -377,8 +382,7 @@ export default {
       this.arbiter = '000'
     },
     setDrawer (condition) {
-      const b = String(condition)
-      window.localStorage.setItem('drawer', b)
+      window.localStorage.setItem('drawer', String(condition))
       this.leftDrawerOpen = JSON.parse(window.localStorage.getItem('drawer'))
     },
     getTop10CompetitionPoints () {
@@ -417,7 +421,7 @@ export default {
             break
 
           default:
-            alert('Default case')
+            alert('Default color case')
         }
         // this.shootingPlace === 'prod' ? colors.setBrand('primary', '#871421') : this.shootingPlace === 'rcs' ? colors.setBrand('primary', '#008000') : colors.setBrand('primary', '#008000')// Dziesiątka
         // this.shootingPlace === 'prod' ? colors.setBrand('secondary', '#374550') : this.shootingPlace === 'rcs' ? colors.setBrand('secondary', '#A00000') : colors.setBrand('secondary', '#A00000')// Dziesiątka

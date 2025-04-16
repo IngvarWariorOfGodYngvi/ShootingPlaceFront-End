@@ -14,6 +14,7 @@
       </div>
       <p></p>
       <q-scroll-area dense class="full-width q-pa-none" style="height: 400px;">
+        <draggable v-model="array" group="people" @start="drag=true" @end="drag=false">
         <div v-for="(comp, index) in competitions" :key="index" class="col hover1 q-mb-xs" @dblclick="competition = comp;compID = competition.uuid; competitionInfo = true;getCountingMethods();getCalibersList(),getCompetitionTypes(),getDisciplines()">
             <div class="row">
               <Tooltip2clickTip/>
@@ -30,6 +31,7 @@
               </q-btn> -->
             </div>
           </div>
+        </draggable>
       </q-scroll-area>
     </q-card>
     <q-dialog v-model="competitionInfo" @hide="getCompetitions()">
@@ -103,12 +105,14 @@
 import App from 'src/App'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox.vue'
+import draggable from 'vuedraggable'
 export default {
   name: 'Competitions.vue',
   created () {
     this.getCompetitions()
   },
   components: {
+    draggable,
     Tooltip2clickTip: lazyLoadComponent({
       componentFactory: () => import('src/utils/Tooltip2clickTip.vue'),
       loading: SkeletonBox
@@ -116,6 +120,7 @@ export default {
   },
   data () {
     return {
+      array: [],
       competitions: [],
       competition: [],
       countingMethods: [],
