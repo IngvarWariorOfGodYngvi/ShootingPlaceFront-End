@@ -76,12 +76,12 @@
           :items="licensePaymentHistory">
           <template v-slot="{ item }">
             <div :class="`row full-width ${item.new ? 'border-warning' : ''} round1`" style="cursor: pointer;">
-              <div v-if="item.new" class="self-center full-width text-center text-positive bg-warning round"
+              <div class="col">
+              <div v-if="item.new" class="self-center text-center text-positive bg-warning round"
                 @dblclick="main && !mobile ? (paymentUUID = item.uuid, editLicensePaymentDate = item.date, editLicensePaymentYear = item.validForYear, editLicensePayment = true) : ''">
                 <Tooltip2clickTip></Tooltip2clickTip>
                 Licencja Nowa
               </div>
-              <div class="col">
                 <Tooltip2clickTip></Tooltip2clickTip>
                 <div class="row">
                   <div class="col hover1"
