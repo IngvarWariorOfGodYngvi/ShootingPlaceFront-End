@@ -1,7 +1,7 @@
 <template>
   <div class="fullscreen bg-blue text-white text-center q-pa-md flex flex-center">
     <div>
-      <div style="font-size: 30vh">
+      <div style="font-size: 30em">
         !!! 404 !!!
       </div>
 
@@ -14,7 +14,7 @@
         color="white"
         text-color="blue"
         unelevated
-        to="/"
+        :to="fs ? '/firstStart' : '/'"
         label="Strona główna"
         no-caps
       />
@@ -23,7 +23,31 @@
 </template>
 
 <script >
+import App from 'src/App'
+
 export default {
-  name: 'Error404'
+  name: 'Error404',
+  data () {
+    return {
+      fs: null
+    }
+  },
+  created () {
+    this.getFs()
+  },
+  methods: {
+    getFs () {
+      fetch(`${App.host}/conf/fs`, {
+        method: 'GET'
+      }).then(response => {
+        if (response.status === 200) {
+          response.text().then(response => {
+            this.fs = JSON.parse(response)
+            console.log(this.fs)
+          })
+        }
+      })
+    }
+  }
 }
 </script>

@@ -2,185 +2,184 @@
   <div class="bg-dark">
     <div class="q-pa-md text-bold text-center text-h6 text-positive">TWORZENIE UŻYTKOWNIKÓW</div>
     <q-card class="row bg-dark">
-      <q-card-section :class="backgroundDark?'col-6 bg-dark':'col-6 bg-grey-3'">
-        <q-form>
-          <q-item>
-            <q-input v-model="userFirstName" input-class="text-positive" label-color="positive" class="full-width" dense label="Imię"
-                     onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32"
-                     filled/>
-          </q-item>
-          <q-item>
-            <q-input v-model="userSecondName" input-class="text-positive" label-color="positive" class="full-width" dense label="Nazwisko"
-                     onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32"
-                     filled/>
-          </q-item>
-          <q-item>
-            <q-select class="full-width" v-model="userSubTypeSelect" dense options-dense :dark="darkSet()" filled fill-input
-              label-color="positive" color="positive" input-class="text-positive"
-              popup-content-class="bg-dark text-positive" options-selected-class="bg-dark text-positive"
-              :options-dark="darkSet()"
-              :options="userSubType" label="Wybierz Rodzaj">
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    Brak wyników
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
-          </q-item>
-          <q-item>
-            <q-input v-model="userCode" input-class="text-positive" label-color="positive" @paste.prevent @copy.prevent class="full-width" dense mask="####"
-                     label="Kod PIN" type="password" filled/>
-          </q-item>
-          <q-item>
-            <q-input v-model="userCodeConfirm" input-class="text-positive" label-color="positive" @paste.prevent @copy.prevent class="full-width" dense mask="####"
-                     label="Powtórz kod PIN" type="password" filled/>
-          </q-item>
-          <q-item>
-            <q-input v-model="memberUUID" @input="otherID = ''" input-class="text-positive" label-color="positive" class="full-width" dense
-                     label="Identyfikator Klubowicza" filled/>
-          </q-item>
-          <q-item>
-            <q-input v-model="otherID" @input="memberUUID = ''" input-class="text-positive" label-color="positive" class="full-width" dense onkeypress="return (event.charCode > 47 && event.charCode < 58)"
-                     label="Identyfikator Osoby spoza klubu" filled/>
-          </q-item>
-          <q-item>
-            <q-btn @click="acceptCodeUser = true" label="Dodaj" color="secondary"/>
-          </q-item>
-        </q-form>
+      <q-card-section :class="backgroundDark ? 'col-6 bg-dark' : 'col-6 bg-grey-3'">
+        <q-item>
+          <q-input v-model="userFirstName" input-class="text-positive" label-color="positive" class="full-width" dense
+            label="Imię"
+            onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32"
+            filled />
+        </q-item>
+        <q-item>
+          <q-input v-model="userSecondName" input-class="text-positive" label-color="positive" class="full-width" dense
+            label="Nazwisko"
+            onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32"
+            filled />
+        </q-item>
+        <q-item>
+          <q-select class="full-width" v-model="userSubTypeSelect" dense options-dense filled fill-input
+            label-color="positive" color="positive" input-class="text-positive"
+            popup-content-class="bg-dark text-positive" options-selected-class="bg-dark text-positive"
+            :options="userSubType" label="Wybierz Rodzaj">
+            <template v-slot:no-option>
+              <q-item>
+                <q-item-section class="text-grey">
+                  Brak wyników
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
+        </q-item>
+        <q-item>
+          <q-input v-model="userCode" input-class="text-positive" label-color="positive" @paste.prevent @copy.prevent
+            class="full-width" dense mask="####" label="Kod PIN" type="password" filled />
+        </q-item>
+        <q-item>
+          <q-input v-model="userCodeConfirm" input-class="text-positive" label-color="positive" @paste.prevent
+            @copy.prevent class="full-width" dense mask="####" label="Powtórz kod PIN" type="password" filled />
+        </q-item>
+        <q-item>
+          <q-input v-model="memberUUID" @input="otherID = ''" input-class="text-positive" label-color="positive"
+            class="full-width" dense label="Identyfikator Klubowicza" filled />
+        </q-item>
+        <q-item>
+          <q-input v-model="otherID" @input="memberUUID = ''" input-class="text-positive" label-color="positive"
+            class="full-width" dense onkeypress="return (event.charCode > 47 && event.charCode < 58)"
+            label="Identyfikator Osoby spoza klubu" filled />
+        </q-item>
+        <q-item>
+          <q-btn @click="acceptCodeUser = true" label="Dodaj" color="secondary" />
+        </q-item>
       </q-card-section>
       <q-card-section class="col-6 text-positive">
-          <div class="col q-pa-md text-bold text-h6">Użytkownicy :</div>
-          <ol>
-            <li v-for="(user,id) in users" :key="id" class="col text-bold">
-              <div class="row full-width flex-center bg-grey-3 q-ma-sm">
-                <div class="col full-width text-black" style="cursor: pointer;" @click.ctrl="uuid = user.uuid;setSuperUserDialogConfirm=true"
-                     @dblclick="uuid = user.uuid;userSubTypeBarCodeSelect = user.subType;inputBarCode=true">
-                  {{ user.firstName }} {{ user.secondName }}
-                </div>
-                <q-btn color="primary" class=" col full-width"
-                       @click="uuid = user.uuid;getUserActions(uuid);userActions=true">wyświetl działania
-                </q-btn>
+        <div class="col q-pa-md text-bold text-h6">Użytkownicy :</div>
+        <ol>
+          <li v-for="(user, id) in users" :key="id" class="col text-bold">
+            <div class="row full-width flex-center bg-grey-3 q-ma-sm">
+              <div class="col full-width text-black" style="cursor: pointer;"
+                @click.ctrl="uuid = user.uuid; setSuperUserDialogConfirm = true"
+                @dblclick="uuid = user.uuid; userSubTypeBarCodeSelect = user.subType; inputBarCode = true">
+                {{ user.firstName }} {{ user.secondName }}
               </div>
-            </li>
-          </ol>
+              <q-btn color="primary" class=" col full-width"
+                @click="uuid = user.uuid; getUserActions(uuid); userActions = true">wyświetl działania
+              </q-btn>
+            </div>
+          </li>
+        </ol>
       </q-card-section>
     </q-card>
     <q-dialog v-model="inputBarCode">
       <q-card class="text-center bg-dark" style="min-width: 30vw">
         <q-card-section>
           <q-item class="flex-center text-h6 text-bold text-positive">Edytuj</q-item>
-        <div>
-          <q-item-label class="text-positive text-body1">Przypisz numer karty</q-item-label>
-          <q-input v-model="barCode" dense label-color="positive" input-class="text-positive" type="password" label="nadaj kartę tutaj"
-          @input="getMasterCardCheck(barCode)"/>
-          <q-btn color="primary" class="q-ma-md" @click="acceptCodeUser1=true" label="zatwierdź numer karty"></q-btn>
-        </div>
-            <q-input v-model="userFirstName1" input-class="text-positive" label-color="positive" dense label="Imię"
-                     onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32"
-                     />
-            <q-input v-model="userSecondName1" input-class="text-positive" label-color="positive" dense label="Nazwisko"
-                     onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32"
-                     />
-            <q-input v-model="memberUUID1" @input="otherID=''" dense label-color="positive" input-class="text-positive" label="przypisz identyfikator Klubowicza"/>
-            <q-input v-model="otherID1" @input="memberUUID" dense label-color="positive" input-class="text-positive" label="przypisz identyfikator Osoby spoza Klubu"/>
-            <q-input v-model="userCode1" type="password" dense label-color="positive" input-class="text-positive" label="nadaj nowy PIN" mask="####"/>
-            <q-input v-model="userCodeConfirm1" type="password" dense label-color="positive" input-class="text-positive" label="powtórz nowy PIN" mask="####"/>
-            <q-select class="text-positive"
-                      input-class="text-positive" label-color="positive" popup-content-class="bg-dark text-positive"
-                      emit-value
-                      map-options
-                      options-dense
-                      v-model="userSubTypeSelect1"
-                      dense use-input hide-selected fill-input
-                      :options="userSubType"
-                      label="Wybierz Rodzaj">
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    Brak wyników
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
-          <q-checkbox style="display: none" v-model="master" dense disable/>
-          <q-checkbox v-if="master===true" style="display: flex; font-size: 10px;" v-model="master" dense disable
-                      label="potwierdzone przez Admina"/>
-          </q-card-section>
-          <q-card-actions align="right">
-            <q-btn text-color="white" color="secondary" label="anuluj" v-close-popup @click="barCode=null; uuid = null;master=false;memberUUID1='';otherID1='';userFirstName1=null;userSecondName1=null;userCode1=null;userCodeConfirm1=null"/>
-            <q-btn text-color="white" color="primary" label="zapisz" v-close-popup @click="acceptCodeUser2=true;"/>
-          </q-card-actions>
+          <div>
+            <q-item-label class="text-positive text-body1">Przypisz numer karty</q-item-label>
+            <q-input v-model="barCode" dense label-color="positive" input-class="text-positive" type="password"
+              label="nadaj kartę tutaj" @input="getMasterCardCheck(barCode)" />
+            <q-btn color="primary" class="q-ma-md" @click="acceptCodeUser1 = true" label="zatwierdź numer karty"></q-btn>
+          </div>
+          <q-input v-model="userFirstName1" input-class="text-positive" label-color="positive" dense label="Imię"
+            onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" />
+          <q-input v-model="userSecondName1" input-class="text-positive" label-color="positive" dense label="Nazwisko"
+            onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" />
+          <q-input v-model="memberUUID1" @input="otherID = ''" dense label-color="positive" input-class="text-positive"
+            label="przypisz identyfikator Klubowicza" />
+          <q-input v-model="otherID1" @input="memberUUID" dense label-color="positive" input-class="text-positive"
+            label="przypisz identyfikator Osoby spoza Klubu" />
+          <q-input v-model="userCode1" type="password" dense label-color="positive" input-class="text-positive"
+            label="nadaj nowy PIN" mask="####" />
+          <q-input v-model="userCodeConfirm1" type="password" dense label-color="positive" input-class="text-positive"
+            label="powtórz nowy PIN" mask="####" />
+          <q-select class="text-positive" input-class="text-positive" label-color="positive"
+            popup-content-class="bg-dark text-positive" emit-value map-options options-dense
+            v-model="userSubTypeSelect1" dense use-input hide-selected fill-input :options="userSubType"
+            label="Wybierz Rodzaj">
+            <template v-slot:no-option>
+              <q-item>
+                <q-item-section class="text-grey">
+                  Brak wyników
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
+          <q-checkbox style="display: none" v-model="master" dense disable />
+          <q-checkbox v-if="master === true" style="display: flex; font-size: 10px;" v-model="master" dense disable
+            label="potwierdzone przez Admina" />
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn text-color="white" color="secondary" label="anuluj" v-close-popup
+            @click="barCode = null; uuid = null; master = false; memberUUID1 = ''; otherID1 = ''; userFirstName1 = null; userSecondName1 = null; userCode1 = null; userCodeConfirm1 = null" />
+          <q-btn text-color="white" color="primary" label="zapisz" v-close-popup @click="acceptCodeUser2 = true;" />
+        </q-card-actions>
       </q-card>
     </q-dialog>
     <q-dialog v-model="acceptCodeUser1" persistent
-              @keypress.enter="checkPinCode (code);addNewCardToUser(barCode,uuid,userSubTypeBarCodeSelect,code);code=null">
+      @keypress.enter="checkPinCode(code); addNewCardToUser(barCode, uuid, userSubTypeBarCodeSelect, code); code = null">
       <q-card class="bg-red-5 text-center">
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający1</span></h3>
           <div>
             <q-input autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold"
-                     mask="####"></q-input>
+              mask="####"></q-input>
           </div>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
+          <q-btn label="anuluj" color="black" v-close-popup @click="code = null" />
           <q-btn id="3" label="Dodaj" color="black" v-close-popup
-                 @click="checkPinCode (code);addNewCardToUser(barCode,uuid,userSubTypeBarCodeSelect,code);code=null"/>
+            @click="checkPinCode(code); addNewCardToUser(barCode, uuid, userSubTypeBarCodeSelect, code); code = null" />
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="acceptCodeUser" persistent @keypress.enter="createUser();acceptCodeUser=false;code=null">
+    <q-dialog v-model="acceptCodeUser" persistent @keypress.enter="createUser(); acceptCodeUser = false; code = null">
       <q-card class="bg-red-5 text-center">
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
           <div>
             <q-input autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold"
-                     mask="####"></q-input>
+              mask="####"></q-input>
           </div>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
+          <q-btn label="anuluj" color="black" v-close-popup @click="code = null" />
           <q-btn id="3" label="Dodaj" color="black" v-close-popup
-                 @click="createUser ();acceptCodeUser=false;code=null"/>
+            @click="createUser(); acceptCodeUser = false; code = null" />
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="acceptCodeUser2" persistent @keypress.enter="editUser();acceptCodeUser2=false;code=null">
+    <q-dialog v-model="acceptCodeUser2" persistent @keypress.enter="editUser(); acceptCodeUser2 = false; code = null">
       <q-card class="bg-red-5 text-center">
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
           <div>
             <q-input autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold"
-                     mask="####"></q-input>
+              mask="####"></q-input>
           </div>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
-          <q-btn id="3" label="Dodaj" color="black" v-close-popup
-                 @click="editUser();acceptCodeUser2=false;code=null"/>
+          <q-btn label="anuluj" color="black" v-close-popup @click="code = null" />
+          <q-btn id="3" label="Dodaj" color="black" v-close-popup @click="editUser(); acceptCodeUser2 = false; code = null" />
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="setSuperUserDialogConfirm" persistent @keypress.enter="setSuperUser(uuid, code);setSuperUserDialogConfirm=false;code=null">
+    <q-dialog v-model="setSuperUserDialogConfirm" persistent
+      @keypress.enter="setSuperUser(uuid, code); setSuperUserDialogConfirm = false; code = null">
       <q-card class="bg-red-5 text-center">
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Ustawić jako Super Użytkownika?</span></h3>
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
           <div>
             <q-input autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold"
-                     mask="####"></q-input>
+              mask="####"></q-input>
           </div>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn label="anuluj" color="black" v-close-popup @click="code=null"/>
+          <q-btn label="anuluj" color="black" v-close-popup @click="code = null" />
           <q-btn id="3" label="Dodaj" color="black" v-close-popup
-                 @click="setSuperUser(uuid, code);setSuperUserDialogConfirm=false;code=null"/>
+            @click="setSuperUser(uuid, code); setSuperUserDialogConfirm = false; code = null" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -205,7 +204,7 @@
     <q-dialog position="top" v-model="success">
       <q-card>
         <q-card-section>
-          <div v-if="message!=null" class="text-h6">{{ message }}</div>
+          <div v-if="message != null" class="text-h6">{{ message }}</div>
         </q-card-section>
 
       </q-card>
@@ -213,7 +212,7 @@
     <q-dialog position="standard" v-model="failure">
       <q-card class="bg-warning">
         <q-card-section>
-          <div v-if="message!=null" class="text-h6">{{ message }}</div>
+          <div v-if="message != null" class="text-h6">{{ message }}</div>
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -274,9 +273,6 @@ export default {
         .then(response => {
           this.users = response
         })
-    },
-    darkSet () {
-      return JSON.parse(window.localStorage.getItem('BackgroundDark'))
     },
     getUserActions (uuid) {
       fetch(`${this.local}/users/userActions?uuid=${uuid}`, {
@@ -454,6 +450,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -3,7 +3,7 @@
     <router-view />
   </div>
 </template>
-<script src="src/scripts/SetLocalStorageVariables.js"/>
+<script src="src/scripts/SetLocalStorageVariables.js" />
 <script>
 // import { isWindows } from 'mobile-device-detect'
 import { scripts } from 'src/scripts/SetLocalStorageVariables.js'
@@ -12,6 +12,7 @@ export default {
   created () {
   },
   beforeMount () {
+    // this.getFs()
     this.getEnv()
     this.createMain()
   },
@@ -39,6 +40,21 @@ export default {
         })
       })
     }
+    // getFs () {
+    //   import('src/App.vue').then(App => {
+    //     const local = App.default.host
+    //     fetch(`${local}/conf/fs`, {
+    //       method: 'GET'
+    //     }).then(response => {
+    //       if (response.status === 200) {
+    //         response.text().then(() => {
+    //           console.log('coś')
+    //           window.location.reload(`${this.prod}firstStart`)
+    //         })
+    //       }
+    //     })
+    //   })
+    // }
   },
   name: 'App',
   shootingPlace: window.localStorage.getItem('shootingPlace'),
@@ -50,7 +66,7 @@ export default {
   host: `http://${location.hostname}:8080/` // test + dev //
   // prod: '192.168.1.30:8080/strzelnica/#/', // prod dom //
   // prod: 'http://192.168.100.2:8080/strzelnica/#/', // prod //
-  // prod: 'http://192.168.1.26:8080/strzelnica/#/', // rcs //
+  // prod: 'http://192.168.1.44:8080/strzelnica/#/', // rcs //
   // host: `http://${location.hostname}:8080/shootingplace-1.0/` // test + prod + dev + rcs //
 
 }

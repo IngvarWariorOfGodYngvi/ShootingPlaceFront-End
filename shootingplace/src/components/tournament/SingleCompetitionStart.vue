@@ -1,156 +1,86 @@
 <template>
-  <div v-if="competition!=null" class="col">
-    <div v-if="juryPanelCompetitionInExpansionItem"
-      class="full-width text-h5 text-bold text-center q-pa-none q-ma-none text-positive">{{
-        competition.countingMethod === 'NORMAL' ? competition.name : competition.name + ' ' + competition.countingMethod
-      }}
-    </div>
-    <div class="row q-pa-none q-ma-none">
-      <div class="row fit q-pa-sm self-center text-center text-positive">
-        <div class="col-3">Zawodnik</div>
-        <div class="col-3">Klub</div>
-        <div class="col-1">M.</div>
-        <div class="col-1">
-          <div v-if="competition.countingMethod === 'NORMAL'">10x</div>
-          <div v-if="competition.countingMethod === 'COMSTOCK'">tr.</div>
-          <div v-if="competition.countingMethod === 'CZAS'"></div>
-          <div v-if="competition.countingMethod === 'IPSC'">
-            <div>tr.</div>
-            <div>miss</div>
-          </div>
-          <div v-if="competition.countingMethod === 'Dynamika Dziesiątka'">
-            <div>tr.</div>
-            <div>miss</div>
-          </div>
-        </div>
-        <div class="col-1">
-          <div v-if="competition.countingMethod === 'NORMAL'">10/</div>
-          <div v-if="competition.countingMethod === 'COMSTOCK'">cz.</div>
-          <div v-if="competition.countingMethod === 'CZAS'"></div>
-          <div v-if="competition.countingMethod === 'IPSC'">cz.</div>
-          <div v-if="competition.countingMethod === 'Dynamika Dziesiątka'">cz.</div>
-        </div>
-        <div class="col-1">
-          <div v-if="competition.countingMethod === 'NORMAL'"></div>
-          <div v-if="competition.countingMethod === 'COMSTOCK'">proc.</div>
-          <div v-if="competition.countingMethod === 'CZAS'">proc.</div>
-          <div v-if="competition.countingMethod === 'IPSC'">proc.</div>
-          <div v-if="competition.countingMethod === 'Dynamika Dziesiątka'">proc.</div>
-        </div>
-        <div class="col-2 self-center text-positive">
-          <div v-if="competition.countingMethod === 'NORMAL'" class="text-center">
-            <div>Wynik</div>
-          </div>
-          <div v-if="competition.countingMethod === 'COMSTOCK'" class="text-center">
-            <div>Wynik</div>
-            <div>HF</div>
-            <div>pkt</div>
-          </div>
-          <div v-if="competition.countingMethod === 'IPSC'" class="text-center">
-            <div>Wynik</div>
-            <div>HF</div>
-            <div>pkt</div>
-          </div>
-          <div v-if="competition.countingMethod === 'Dynamika Dziesiątka'" class="text-center">
-            <div>Wynik</div>
-            <div>HF</div>
-            <div>pkt</div>
-          </div>
-          <div v-if="competition.countingMethod === 'CZAS'" class="text-center">
-            <div>Czas</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <q-virtual-scroll :items="competition.scoreList" virtual-scroll-slice-size="500" visible class="full-width q-pa-none q-ma-none">
-      <template v-slot="{ item, index }">
-        <div :key="index">
-          <div class="row text-body2 full-width ghover" :class="index%2===0?'bg-grey text-black':'text-positive'">
+  <div>
+    <div class="bg-grey col text-center text-black text-h6" style="border: solid transparent; border-radius: 20em;">{{ competition.name }}</div>
+    <div class="full-width q-pa-none q-ma-none border-positive" style="border: solid 1px; border-radius: 2em;">
+          <div class="row text-body2 full-width ghover">
             <div class="col"
-                 @click="mobile?(setVariables (item)) : ' '"
-                 @dblclick="!mobile?(setVariables (item)) : ' '">
+                 @click="mobile?(setVariables (compStart)) : ' '"
+                 @dblclick="!mobile?(setVariables (compStart)) : ' '">
               <div class="text-positive text-caption row q-pa-xs self-center text-center" style="cursor: pointer;">
-                <div class="col-3 self-center" :class="index%2===0?'text-black':'text-positive'">
-                  <div>
-                    {{ item.member != null ? temp = item.member.secondName : temp = item.otherPersonEntity.secondName }}
-                  </div>
-                  <div>
-                    {{ item.member != null ? temp = item.member.firstName : temp = item.otherPersonEntity.firstName }}
-                  </div>
+                <div class="col-3 self-center">
+                    {{ compStart.name }}
                 </div>
-                <div class="col-3 self-center" :class="index%2===0?'text-black':'text-positive'">
-                  {{ item.member != null ? temp = item.member.club.name : temp = item.otherPersonEntity.club.name }}
+                <div class="col-3 self-center" v-if="compStart != []">
+                  {{ compStart.member != null ? temp = compStart.member.club.name : temp = compStart.otherPersonEntity.club.name }}
                 </div>
-                <div class="col-1 text-h6 self-center">{{ item.metricNumber }}</div>
-                <div class="col-1 self-center" :class="index%2===0?'text-black':'text-positive'">
-                  <div v-if="competition.countingMethod === 'NORMAL'">{{item.innerTen}}</div>
-                  <div v-if="competition.countingMethod === 'COMSTOCK'">{{item.innerTen}}</div>
+                <div class="col-1 text-h6 self-center">{{ compStart.metricNumber }}</div>
+                <div class="col-1 self-center">
+                  <div v-if="competition.countingMethod === 'NORMAL'">{{compStart.innerTen}}</div>
+                  <div v-if="competition.countingMethod === 'COMSTOCK'">{{compStart.innerTen}}</div>
                   <div v-if="competition.countingMethod === 'CZAS'"></div>
-                  <div v-if="competition.countingMethod === 'IPSC'">{{ item.innerTen }}</div>
+                  <div v-if="competition.countingMethod === 'IPSC'">{{ compStart.innerTen }}</div>
                   <div v-if="competition.countingMethod === 'Dynamika Dziesiątka'">
-                    <div>{{ (item.alfa + item.charlie + item.delta) }}</div>
-                    <div>{{ item.miss }}</div>
+                    <div>{{ (compStart.alfa + compStart.charlie + compStart.delta) }}</div>
+                    <div>{{ compStart.miss }}</div>
                   </div>
                 </div>
-                <div class="col-1 self-center" :class="index%2===0?'text-black':'text-positive'">
-                  <div v-if="competition.countingMethod === 'NORMAL'">{{item.outerTen}}</div>
-                  <div v-if="competition.countingMethod === 'COMSTOCK'">{{item.outerTen}}</div>
+                <div class="col-1 self-center">
+                  <div v-if="competition.countingMethod === 'NORMAL'">{{compStart.outerTen}}</div>
+                  <div v-if="competition.countingMethod === 'COMSTOCK'">{{compStart.outerTen}}</div>
                   <div v-if="competition.countingMethod === 'CZAS'"></div>
                   <div v-if="competition.countingMethod === 'IPSC'">
-                    <div>{{ (item.alfa + item.charlie + item.delta) }}</div>
-                    <div>{{ item.miss }}</div>
+                    <div>{{ (compStart.alfa + compStart.charlie + compStart.delta) }}</div>
+                    <div>{{ compStart.miss }}</div>
                   </div>
-                  <div v-if="competition.countingMethod === 'Dynamika Dziesiątka'">{{ item.innerTen }}</div>
+                  <div v-if="competition.countingMethod === 'Dynamika Dziesiątka'">{{ compStart.innerTen }}</div>
                 </div>
-                <div class="col-1 self-center" :class="index%2===0?'text-black':'text-positive'">
+                <div class="col-1 self-center">
                   <div v-if="competition.countingMethod === 'NORMAL'"></div>
-                  <div v-if="competition.countingMethod === 'COMSTOCK'">{{item.procedures}}</div>
-                  <div v-if="competition.countingMethod === 'CZAS'">{{item.procedures}}</div>
-                  <div v-if="competition.countingMethod === 'IPSC'">{{ item.procedures }}</div>
-                  <div v-if="competition.countingMethod === 'Dynamika Dziesiątka'">{{ item.procedures }}</div>
+                  <div v-if="competition.countingMethod === 'COMSTOCK'">{{compStart.procedures}}</div>
+                  <div v-if="competition.countingMethod === 'CZAS'">{{compStart.procedures}}</div>
+                  <div v-if="competition.countingMethod === 'IPSC'">{{ compStart.procedures }}</div>
+                  <div v-if="competition.countingMethod === 'Dynamika Dziesiątka'">{{ compStart.procedures }}</div>
                 </div>
                 <div class="col-2 self-center">
-                  <div v-if="item.dnf||item.dsq||item.pk" :class="index%2===0?'text-black':'text-positive'"
+                  <div v-if="compStart.dnf||compStart.dsq||compStart.pk"
                        class="self-center full-width text-center">
-                    <div v-if="item.dnf">DNF ({{ item.score }})</div>
-                    <div v-if="item.dsq">DSQ ({{ item.score }})</div>
-                    <div v-if="item.pk">PK ({{ item.score }})</div>
+                    <div v-if="compStart.dnf">DNF ({{ compStart.score }})</div>
+                    <div v-if="compStart.dsq">DSQ ({{ compStart.score }})</div>
+                    <div v-if="compStart.pk">PK ({{ compStart.score }})</div>
                   </div>
-                  <div v-else :class="item.edited?'':'bg-warning round1'">
+                  <div v-else :class="compStart.edited?'':'bg-warning round1'">
                     <div v-if="competition.countingMethod === 'NORMAL'" class="text-center">
-                      <div>{{ item.score }}</div>
+                      <div>{{ compStart.score }}</div>
                     </div>
                     <div v-if="competition.countingMethod === 'COMSTOCK'" class="text-center">
-                      <div>{{ item.score }}</div>
-                      <div>{{ item.hf.toFixed(4) }}</div>
-                      <div>{{ item.outerTen }}</div>
+                      <div>{{ compStart.score }}</div>
+                      <div>{{ compStart.hf.toFixed(4) }}</div>
+                      <div>{{ compStart.outerTen }}</div>
                     </div>
                     <div v-if="competition.countingMethod === 'IPSC'" class="text-center">
-                      <div>{{ item.score }}</div>
-                      <div>{{ item.hf.toFixed(4) }}</div>
-                      <div>{{ item.outerTen }}</div>
+                      <div>{{ compStart.score }}</div>
+                      <div>{{ compStart.hf.toFixed(4) }}</div>
+                      <div>{{ compStart.outerTen }}</div>
                     </div>
                     <div v-if="competition.countingMethod === 'Dynamika Dziesiątka'" class="text-center">
-                      <div>{{ item.score }}</div>
-                      <div>{{ item.hf.toFixed(4) }}</div>
-                      <div>{{ item.outerTen }}</div>
+                      <div>{{ compStart.score }}</div>
+                      <div>{{ compStart.hf.toFixed(4) }}</div>
+                      <div>{{ compStart.outerTen }}</div>
                     </div>
                     <div v-if="competition.countingMethod === 'CZAS'" class="text-center">
-                      <div>{{ item.score }}</div>
+                      <div>{{ compStart.score }}</div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </template>
-    </q-virtual-scroll>
+    </div>
     <q-dialog v-model="setScorePlayer">
       <q-card style="min-width: 95vw;min-height: 90vh; margin-bottom: 10vh" class="bg-dark" id="1">
         <q-card-section class="full-width">
           <div>
-            <div class="text-h5 text-positive text-bold text-center">{{ temp.secondName }} {{ temp.firstName }} nr
+            <div class="text-h5 text-positive text-bold text-center">{{ compStart.name }} nr
               {{ startNumber }}
             </div>
           </div>
@@ -185,7 +115,7 @@
                             @hide="innerTenSeries=0;outerTenSeries=0;manuallyClosed?'':(series[index]=tempSeries, series = setSeriesValues(series));manuallyClosed=false">
               <div class="text-h6 text-black row" color="positive" label-color="positive">
                     <div class="col">
-                      <div class="text-h5 text-bold text-center">{{ temp.secondName }} {{ temp.firstName }} nr
+                      <div class="text-h5 text-bold text-center">{{ compStart.name }} nr
                         {{ startNumber }}
                       </div>
                       <div class="text-h5 text-bold text-center">Seria: {{ index+1 }}
@@ -534,26 +464,16 @@
 import App from 'src/App.vue'
 
 export default {
-  name: 'SingleCompetitionJuryPanel',
-  created () {
-    this.getCompetitionByID(this.uuid)
-  },
   data () {
     return {
-      juryPanelCompetitionInExpansionItem: JSON.parse(window.localStorage.getItem('JuryPanelCompetitionInExpansionItem')),
-      competition: null,
-      controlSize: 0,
-      shootingPlace: App.shootingPlace,
-      main: App.main,
-      mobile: App.mobile,
+      compStart: [],
+      competition: '',
+      number: '',
       val: [],
       temp: '',
       tempVar: null,
       competitionTemp: '',
       legitimationNumber: null,
-      listDownload: false,
-      success: false,
-      failure: false,
       setScorePlayer: false,
       calibers: [],
       infoScore: [],
@@ -579,45 +499,59 @@ export default {
       metric: null,
       ammoQuantity: null,
       gunAdded: false,
-      startNumber: '',
       compName: null,
-      name: '',
-      otherID: '',
+      failure: false,
+      success: false,
       message: null,
+      mobile: App.mobile,
+      main: App.main,
       local: App.host
     }
+  },
+  created () {
+    this.getFilteredCompetitionByID(this.uuid, this.startNumber)
+    this.getCompetitionDTOByUUID(this.uuid)
   },
   props: {
     uuid: {
       type: String,
       required: true
     },
-    size: {
+    startNumber: {
       type: Number,
-      required: false
+      required: true
     }
   },
   watch: {
-    uuid (newValue, oldValue) {
+    startNumber (newValue, oldValue) {
       if (newValue !== oldValue) {
-        this.getCompetitionByID(this.uuid)
-      }
-    },
-    size (newValue, oldValue) {
-      if (newValue !== oldValue) {
-        this.getCompetitionByID(this.uuid)
+        this.getFilteredCompetitionByID(this.uuid, this.startNumber)
+        this.getCompetitionDTOByUUID(this.uuid)
       }
     }
   },
   methods: {
-    addClass () {
-      document.getElementById('1').classList.add('blind')
+    getFilteredCompetitionByID (uuid, number) {
+      this.compStart = ''
+      fetch(`${this.local}/competitionMembersList/getFilteredByID/?uuid=${uuid}&startNumber=${number}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response != null) {
+          response.json().then(response => {
+            this.compStart = response
+          }).catch(() => {
+            this.message = 'coś poszło nie tak'
+            this.failure = true
+            this.autoClose()
+          })
+        }
+      })
     },
-    removeClass () {
-      document.getElementById('1').classList.remove('blind')
-    },
-    getCompetitionByID (uuid) {
-      fetch(`${this.local}/competitionMembersList/getByID/?uuid=${uuid}`, {
+    getCompetitionDTOByUUID (uuid) {
+      fetch(`${this.local}/competitionMembersList/getCompetitionDTOByUUID/?uuid=${uuid}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -625,9 +559,14 @@ export default {
       }).then(response => {
         response.json().then(response => {
           this.competition = response
-          this.compName = response.name
         })
       })
+    },
+    addClass () {
+      document.getElementById('1').classList.add('blind')
+    },
+    removeClass () {
+      document.getElementById('1').classList.remove('blind')
     },
     checkInput (item) {
       if (item.length > 1 && item.startsWith('0')) {
@@ -657,6 +596,13 @@ export default {
       }
       return pkt > 0 ? pkt : 0
     },
+    showloading () {
+      this.$q.loading.show({ message: 'Dzieje się coś ważnego... Poczekaj' })
+      this.timer = setTimeout(() => {
+        this.$q.loading.hide()
+        this.timer = 0
+      }, 1000)
+    },
     setVariables (item) {
       this.scoreUUID = item.uuid
       this.player = item
@@ -671,7 +617,7 @@ export default {
       this.setScorePlayer = true
       this.series = this.setSeriesValues(item.series)
       this.temp = item.member != null ? item.member : item.otherPersonEntity
-      this.startNumber = item.metricNumber
+      this.number = item.metricNumber
       this.competitionTemp = this.competition
       function checkZero (number) {
         return number.toString() !== 0 ? number : ''
@@ -748,21 +694,6 @@ export default {
     onEnter (scoreUUID) {
       this.setScore(scoreUUID, this.scoreLabel, this.innerTen, this.outerTen, this.alfa, this.charlie, this.delta, this.procedures, this.miss, this.series)
     },
-    getListCalibers () {
-      fetch(`${this.local}/armory/calibers`, {
-        method: 'GET'
-      }).then(response => response.json())
-        .then(response => {
-          this.calibers = response
-        })
-    },
-    showloading () {
-      this.$q.loading.show({ message: 'Dzieje się coś ważnego... Poczekaj' })
-      this.timer = setTimeout(() => {
-        this.$q.loading.hide()
-        this.timer = 0
-      }, 1000)
-    },
     setScore (scoreUUID, score, innerTen, outerTen, alfa, charlie, delta, procedures, miss, series) {
       if (innerTen === '' || innerTen === 'NaN') {
         innerTen = '-1.0'
@@ -816,7 +747,7 @@ export default {
               this.miss = ''
               this.message = response
               this.success = true
-              this.getCompetitionByID(this.uuid)
+              this.getFilteredCompetitionByID(this.uuid, this.startNumber)
               this.autoClose()
             }
           )
@@ -845,7 +776,7 @@ export default {
         if (response.status === 200) {
           response.text().then(
             response => {
-              this.getCompetitionByID(this.uuid)
+              this.getFilteredCompetitionByID(this.uuid, this.startNumber)
               this.message = response
               this.success = true
               this.autoClose()
@@ -876,7 +807,7 @@ export default {
         if (response.status === 200) {
           response.text().then(
             response => {
-              this.getCompetitionByID(this.uuid)
+              this.getFilteredCompetitionByID(this.uuid, this.startNumber)
               this.message = response
               this.success = true
               this.autoClose()
@@ -907,7 +838,7 @@ export default {
         if (response.status === 200) {
           response.text().then(
             response => {
-              this.getCompetitionByID(this.uuid)
+              this.getFilteredCompetitionByID(this.uuid, this.startNumber)
               this.message = response
               this.success = true
               this.autoClose()
@@ -930,17 +861,11 @@ export default {
     },
     autoClose () {
       setTimeout(() => {
-        this.failure = false
-        this.gunAdded = false
-        this.listDownload = false
-        this.message = null
         this.success = false
+        this.failure = false
+        this.message = null
       }, 2000)
     }
   }
 }
 </script>
-
-<style scoped>
-
-</style>

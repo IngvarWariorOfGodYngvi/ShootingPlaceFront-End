@@ -4,6 +4,7 @@
     :color="presentationMode ? '' : 'primary'" v-if="main && !mobile && !presentationMode && tournamentCheck"
     @click="presentationMode = !presentationMode; presentationUUID()" class="q-ma-md"/>
     <!-- {{progress}} {{timer}} {{ time }} -->
+     <q-checkbox :class="changesInfo[2] === false ? ' pulse' : ''" v-if="!presentationMode && arbiter.length > 3" v-model="findByShooter" color="primary" keep-color label="wyszukaj po imieniu, nazwisku lub numerze startowym" @input="changesInfo[2] === false ? check(2) : ''"/>
     <div v-if="!presentationMode && tournamentCheck">
       <div v-if="arbiter.length < 4" class="text-h6 q-pa-md">
         <q-input v-model="arbiterCode" @keypress.enter="checkArbiter(arbiterCode)" color="primary" type="password" label="Podaj pin" input-class="text-positive"
@@ -11,11 +12,12 @@
         <q-btn color="primary" label="zapisz" type="submit" @click="checkArbiter(arbiterCode)"></q-btn>
       </div>
       <div v-else>
-        <div v-if="JuryPanelCompetitionInExpansionItem">
+        <JuryPanelFindByShooter v-if="tournament != '' && findByShooter" :tournamentUUID="tournament.uuid"/>
+        <div v-if="JuryPanelCompetitionInExpansionItem && !findByShooter">
           <div class="row" v-if="!open">
             <div v-for="(comp, index) in tournament.competitionsList" :key="index" class="col-4 q-pa-md">
-              <q-btn :color="comp.discipline=='Karabin'?'secondary':comp.discipline=='Pistolet'?'primary':comp.discipline=='Strzelba'?'accent':comp.disciplineList!=null&&comp.disciplineList.length>1?'yellow':''" class="full-width" :class="comp.discipline=='Strzelba'?'text-black' : ''"  :style="mobile?'height: 20vh;':'height: 15vh;'" no-caps glossy
-              @click="uuid=comp.uuid;size=comp.scoreListSize;compName=comp.name;open=true">{{comp.name}}</q-btn>
+              <q-btn :color="comp.discipline=='Karabin'?'secondary':comp.discipline=='Pistolet'?'primary':comp.discipline=='Strzelba'?'accent':comp.disciplineList!=null&&comp.disciplineList.length>1?'yellow':''" class="full-width" :class="comp.discipline=='Strzelba' || comp.disciplineList.length>1?'text-black' : 'text-positive'"  :style="mobile?'height: 20vh;':'height: 15vh;'" no-caps
+              @click="uuid=comp.uuid;size=comp.scoreListSize;compName=comp.name;open=true" glossy>{{comp.name}}</q-btn>
             </div>
           </div>
           <div v-if="open" class="full-width">
@@ -23,7 +25,7 @@
             <SingleCompetitionJuryPanel :uuid="uuid" :size="size"></SingleCompetitionJuryPanel>
           </div>
         </div>
-        <div v-if="!JuryPanelCompetitionInExpansionItem">
+        <div v-if="!JuryPanelCompetitionInExpansionItem && !findByShooter">
           <div v-for="(comp, index) in tournament.competitionsList" :key="index">
             <q-expansion-item :label="comp.name" :header-class="index%2===0?'bg-grey text-black text-center text-h6 text-bold':'text-positive text-center text-h6 text-bold'" dense group="list" class="text-positive bg-dark">
               <SingleCompetitionJuryPanel :uuid="comp.uuid" :size="comp.scoreListSize"></SingleCompetitionJuryPanel>
@@ -33,9 +35,13 @@
       </div>
     </div>
     <div v-if="presentationMode && tournamentCheck">
-      <q-page-sticky expand position="top">
-      <q-linear-progress :value="progress" :color="color" instant-feedback
-        track-color="secondary" dark/>
+      <q-page-sticky expand position="top" class="col">
+        <q-linear-progress :value="progress" :color="color" instant-feedback
+          track-color="secondary" dark/>
+      <label class="col-6 text-pisitive">
+        Chcesz mieć program u siebie? Napisz do mnie: i.zebrowski.ul@gmail.com
+      </label>
+      <div class="col"></div>
       </q-page-sticky>
       <SingleCompetitionJuryPanelPresentationModeComponent :uuid="uuid">
       </SingleCompetitionJuryPanelPresentationModeComponent>
@@ -68,6 +74,7 @@ import SkeletonBox from 'src/utils/SkeletonBox.vue'
 import App from 'src/App.vue'
 // import { isWindows } from 'mobile-device-detect'
 import { scroll } from 'quasar'
+import { checking } from 'src/scripts/ChangesInfo.js'
 const { setVerticalScrollPosition } = scroll
 export default {
   name: 'juryPanel.vue',
@@ -79,10 +86,14 @@ export default {
     SingleCompetitionJuryPanelPresentationModeComponent: lazyLoadComponent({
       componentFactory: () => import('components/tournament/SingleCompetitionJuryPanelPresentationModeComponent.vue'),
       loading: SkeletonBox
+    }),
+    JuryPanelFindByShooter: lazyLoadComponent({
+      componentFactory: () => import('components/tournament/JuryPanelFindByShooter.vue'),
+      loading: SkeletonBox
     })
   },
   created () {
-    this.getListTournaments()
+    this.getOpenTournament()
     this.checkTournament()
     this.setColor()
   },
@@ -92,7 +103,8 @@ export default {
       arbiter: window.localStorage.getItem('arbiter'),
       JuryPanelCompetitionInExpansionItem: JSON.parse(window.localStorage.getItem('JuryPanelCompetitionInExpansionItem')),
       backgroundDark: JSON.parse(window.localStorage.getItem('BackgroundDark')),
-      tournament: [],
+      changesInfo: JSON.parse(window.localStorage.getItem('ChangesInfo')),
+      tournament: '',
       tournamentCheck: false,
       open: false,
       uuid: '',
@@ -107,6 +119,7 @@ export default {
       vol: 0.0,
       interval: null,
       interval1: null,
+      findByShooter: false,
       failure: false,
       success: false,
       message: null,
@@ -117,7 +130,11 @@ export default {
     }
   },
   methods: {
-    getListTournaments () {
+    check (number) {
+      checking(number)
+      this.changesInfo = JSON.parse(window.localStorage.getItem('ChangesInfo'))
+    },
+    getOpenTournament () {
       fetch(`${this.local}/tournament/openTournament`, {
         method: 'GET'
       }).then(response => {
@@ -168,8 +185,8 @@ export default {
         }
         if (this.progress > 0.2) {
           const target = document.documentElement
-          const offset = window.screen.height * (this.progress - 0.2)
-          // const offset = document.documentElement.clientHeight * (this.progress - 0.2)
+          // const offset = window.screen.height * (this.progress - 0.2)
+          const offset = document.documentElement.scrollHeight * (this.progress - 0.2)
           const duration = 0
           setVerticalScrollPosition(target, offset, duration)
           // setVerticalScrollPosition(document.documentElement, document.documentElement.clientHeight * ((this.progress - 0.2)), 0)
@@ -177,7 +194,7 @@ export default {
         this.setColor()
         this.progress = this.progress + 0.001
         if (this.tournament.competitionsList[index] == null) {
-          this.getListTournaments()
+          this.getOpenTournament()
           index = 0
         }
         this.uuid = ''

@@ -20,7 +20,7 @@
           <div class="col-6">
             <q-item-section class="col q-pa-md">
               <div class="col">
-                <q-item-label>{{ tournaments.name }} {{ tournaments.date }}</q-item-label>
+                <q-item-label>{{ tournaments.name }} {{ convertDatToNative(tournaments.date) }}</q-item-label>
                 <q-item-label caption lines="2" class="text-positive">zawody{{ !tournaments.wzss?' nie':'' }} wpisane do
                   kalendarza Wojewódzkiego Związku Strzelectwa Sportowego
                 </q-item-label>
@@ -1182,6 +1182,51 @@ export default {
     this.getAllClubsToTournament()
   },
   methods: {
+    convertDatToNative (date) {
+      const convertDate = new Date(date)
+      console.log(convertDate.getDate())
+      console.log(convertDate.getDay())
+      let ret
+      switch (convertDate.getMonth() + 1) {
+        case 1:
+          ret = convertDate.getDate() + ' stycznia ' + convertDate.getFullYear()
+          return ret
+        case 2:
+          ret = convertDate.getDate() + ' lutego ' + convertDate.getFullYear()
+          return ret
+        case 3:
+          ret = convertDate.getDate() + ' marca ' + convertDate.getFullYear()
+          return ret
+        case 4:
+          ret = convertDate.getDate() + ' kwietnia ' + convertDate.getFullYear()
+          return ret
+        case 5:
+          ret = convertDate.getDate() + ' maja ' + convertDate.getFullYear()
+          return ret
+        case 6:
+          ret = convertDate.getDate() + ' czerwca ' + convertDate.getFullYear()
+          return ret
+        case 7:
+          ret = convertDate.getDate() + ' lipca ' + convertDate.getFullYear()
+          return ret
+        case 8:
+          ret = convertDate.getDate() + ' sierpnia ' + convertDate.getFullYear()
+          return ret
+        case 9:
+          ret = convertDate.getDate() + ' września ' + convertDate.getFullYear()
+          return ret
+        case 10:
+          ret = convertDate.getDate() + ' października ' + convertDate.getFullYear()
+          return ret
+        case 11:
+          ret = convertDate.getDate() + ' listopada ' + convertDate.getFullYear()
+          return ret
+        case 12:
+          ret = convertDate.getDate() + ' grudnia ' + convertDate.getFullYear()
+          return ret
+      }
+      return date
+    },
     selectAllToPrint () {
       this.compList = []
       if (this.printAll) {

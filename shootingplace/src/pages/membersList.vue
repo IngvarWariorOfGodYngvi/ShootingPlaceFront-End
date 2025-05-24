@@ -152,16 +152,15 @@
     <Member v-if="temp!=null" :member-number-legitimation="temp"></Member>
     <div v-if="temp === null" class="full-width">
       <div v-if="memberDTOArg.length < 1" class="text-center text-bold text-h5 text-positive">
-        Brak Wyników
+        <CircularLoadingBox></CircularLoadingBox>
       </div>
-      <q-virtual-scroll :virtual-scroll-item-size="48" :virtual-scroll-sticky-size-start="48"
+      <q-virtual-scroll v-else :virtual-scroll-item-size="48" :virtual-scroll-sticky-size-start="48"
         :virtual-scroll-sticky-size-end="32" dense :items="memberDTOArgRearrangeTable" type="table"
         class="row full-width q-pa-none bg-dark text-positive" style="height: 90vh;" @mouseleave="visible=false">
         <template v-slot:before>
           <thead class="thead-sticky text-left">
             <tr class="bg-primary text-white">
               <th class="text-left" @click="sortF('name')">
-                {{ memberDTOArgRearrangeTable.length }}
                 <q-icon size="2em" :name="sortName ? 'arrow_drop_up' : 'arrow_drop_down'" />
                 Imię i nazwisko
               </th>
@@ -170,8 +169,10 @@
                 Data zapisu
               </th>
               <th v-if="!erase" class="text-left" @click="sortF('PZSS')">
-                <q-icon size="2em" :name="sortPZSS ? 'arrow_drop_up' : 'arrow_drop_down'" />
-                Wpis do portalu PZSS
+                  <div class="col text-center">
+                    <div><q-icon size="2em" :name="sortPZSS ? 'arrow_drop_up' : 'arrow_drop_down'" />Wpis</div>
+                    <div>do portalu PZSS</div>
+                  </div>
               </th>
               <th v-if="!erase" class="text-center" @click="sortF('image')">
                 <q-icon size="2em" :name="sortImage ? 'arrow_drop_up' : 'arrow_drop_down'" />
@@ -201,7 +202,7 @@
         </template>
         <template v-slot="{ item, index }">
           <tr v-if="!item.erased" :key="index" class="rounded bg-dark text-positive" style="cursor:pointer"
-            @mouseenter="item.image!=null?getUrl (item.image):''"
+            @mouseenter="item.image!=null?getUrl (item.image):visible=false"
             @click.ctrl="pushOrRemoveEmailToList(item.legitimationNumber)"
             @click.exact="showloading(), allMember = false; memberName = item; temp = item.legitimationNumber;visible = false">
             <td style="width:25%;" :class="item.club.id === 1 && (!item.declarationLOK && shootingPlace==='prod')? 'xyz bg-warning' : item.club.id === 1 && (item.declarationLOK && shootingPlace==='prod')? 'xyz' : item.club.id != 1? 'xyz bg-secondary':'xyz text-positive'">
@@ -376,6 +377,10 @@ export default {
   components: {
     Member: lazyLoadComponent({
       componentFactory: () => import('components/member/Member.vue'),
+      loading: SkeletonBox
+    }),
+    CircularLoadingBox: lazyLoadComponent({
+      componentFactory: () => import('src/utils/CircularLoadingBox.vue'),
       loading: SkeletonBox
     })
   },

@@ -151,6 +151,7 @@ export default {
     })
   },
   beforeMount () {
+    this.getFs()
     this.getEnv()
   },
   created () {
@@ -236,12 +237,6 @@ export default {
           link: App.prod + 'competition',
           visible: App.main
         },
-        // {
-        //   title: 'Lista Osób z Uprawnieniami',
-        //   icon: 'book',
-        //   link: App.prod + 'memberwithpermission',
-        //   visible: App.main
-        // },
         {
           title: 'Zbrojownia',
           icon: 'storage',
@@ -260,12 +255,6 @@ export default {
           link: App.prod + 'otherFunctions',
           visible: App.main
         },
-        // {
-        //   title: 'Ustawienia',
-        //   icon: 'settings',
-        //   link: App.prod + 'settings',
-        //   visible: true
-        // },
         {
           title: 'Pliki',
           icon: 'download',
@@ -290,6 +279,21 @@ export default {
         this.$q.loading.hide()
         this.timer = 0
       }, 500)
+    },
+    getFs () {
+      fetch(`${this.local}/conf/fs`, {
+        method: 'GET'
+      }).then(response => response.json())
+        .then(response => {
+          if (response === true) {
+            this.essentialLinks = [{
+              title: 'Pierwszy Start',
+              icon: 'arrow_forward',
+              link: App.prod + 'firstStart',
+              visible: App.main
+            }]
+          }
+        })
     },
     check (number) {
       checking(number)

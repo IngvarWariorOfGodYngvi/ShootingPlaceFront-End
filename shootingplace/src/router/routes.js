@@ -121,6 +121,11 @@ if (App.main) {
             component: () => import(/* webpackChunkName: "Panel Sędziego" */'pages/juryPanel.vue')
           },
           {
+            path: '/firstStart',
+            name: 'Pierwszy Start',
+            component: () => import(/* webpackChunkName: "Panel Sędziego" */'pages/FirstStart.vue')
+          },
+          {
             path: '/settings',
             component: () => import(/* webpackChunkName: "Ustawienia" */'pages/settings.vue')
           }

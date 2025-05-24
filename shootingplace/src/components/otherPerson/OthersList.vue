@@ -1,19 +1,19 @@
 <template>
   <div>
-    <q-card class="col bg-dark text-positive">
+    <div class="col bg-dark text-positive" >
       <div class="q-pa-md text-center col full-width no-outline text-h5 text-bold">Lista osób spoza klubu</div>
-      <div class="row col">
-        <div style="width:3%">Lp</div>
+      <div class="row col bg-primary text-white" style="border-radius: 2em;">
+        <div class="text-center" style="width:3%">Lp</div>
         <div class="col-4" @click="sortF('name')"><q-icon size="2em" :name="sortName ? 'arrow_drop_up' : 'arrow_drop_down'" />Nazwisko i imię</div>
         <div class="col text-left" @click="sortF('id')"><q-icon size="2em" :name="sortId ? 'arrow_drop_up' : 'arrow_drop_down'" />ID</div>
-        <div class="col text-left">Klub</div>
+        <div class="col text-left" @click="sortF('club')"><q-icon size="2em" :name="sortClub ? 'arrow_drop_up' : 'arrow_drop_down'" />Klub</div>
         <div class="col-1">Telefon</div>
         <div class="col-1">e-mail</div>
       </div>
-      <q-scroll-area class="full-width q-pa-none" style="height: 400px;">
+      <q-scroll-area class="full-width q-pa-none" style="height: 60vh;">
         <div v-for="(item, index) in others" :key="index" class="row hover1" @dblclick="getArbiterClasses();editOtherPerson=true;temp=item; id=item.id">
           <Tooltip2clickTip/>
-          <div style="width:3%">{{index + 1 }}</div>
+          <div class="text-center" style="width:3%">{{index + 1 }}</div>
           <div class="self-center col-4 text-left">
             {{ item.secondName }} {{ item.firstName }}</div>
           <div class="col text-left">{{ item.id }}</div>
@@ -22,34 +22,7 @@
           <div class="self-center col-1 text-left">{{ item.email }}</div>
         </div>
       </q-scroll-area>
-    </q-card>
-    <q-dialog position="top" v-model="success">
-      <q-card>
-        <q-card-section>
-          <div v-if="message != null" class="text-h6">{{ message }}</div>
-        </q-card-section>
-
-      </q-card>
-    </q-dialog>
-    <q-dialog position="standard" v-model="failure">
-      <q-card class="bg-warning">
-        <q-card-section>
-          <div v-if="message != null" class="text-h6">{{ message }}</div>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
-    <q-dialog v-model="alertDial">
-      <q-card class="bg-dark text-positive">
-        <q-card-section>
-          <div class="text-h6">Czy na pewno usunąć? Zmiana będzie trwała.</div>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn label="anuluj" color="secondary" v-close-popup />
-          <q-btn label="usuń" color="primary" v-close-popup @click="deactivateOther()" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+    </div>
     <q-dialog v-model="editOtherPerson">
       <q-card class="bg-dark text-positive row" style="min-width:45vw">
         <q-card-section v-if="temp!=null" class="col">
@@ -128,12 +101,61 @@
           </q-input>
             </q-expansion-item>
           </div>
-          <q-card-actions align="right">
-            <q-btn label="anuluj" color="secondary" v-close-popup />
-            <q-btn label="zapisz" color="primary" v-close-popup
+          <div class="row">
+            <q-card-actions align="left" class="col">
+              <q-btn label="usuń" color="red" v-close-popup @click="alertDial = true"/>
+            </q-card-actions>
+            <q-card-actions align="right" class="col">
+              <q-btn label="anuluj" color="secondary" v-close-popup />
+              <q-btn label="zapisz" color="primary" v-close-popup
               @click="updateOtherPerson()" />
-          </q-card-actions>
+            </q-card-actions>
+          </div>
         </q-card-section>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model=" acceptCodeDial ">
+      <q-card class="bg-red-5 text-center">
+        <q-card-section class="flex-center">
+          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
+          <div>
+            <q-input @keypress.enter="deactivateOther(id,code); code = null; acceptCodeDial = false " autofocus
+              type="password" v-model=" code " filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input>
+          </div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn label="anuluj" color="black" v-close-popup @click=" code = null " />
+          <q-btn id="3" label="Wprowadź zmiany" color="black" v-close-popup
+            @click="deactivateOther(id,code); code = null " />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog position="top" v-model="success">
+      <q-card>
+        <q-card-section>
+          <div v-if="message != null" class="text-h6">{{ message }}</div>
+        </q-card-section>
+
+      </q-card>
+    </q-dialog>
+    <q-dialog position="standard" v-model="failure">
+      <q-card class="bg-warning">
+        <q-card-section>
+          <div v-if="message != null" class="text-h6">{{ message }}</div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="alertDial">
+      <q-card class="bg-dark text-positive">
+        <q-card-section>
+          <div class="text-h6">Czy na pewno usunąć? Zmiana będzie trwała.</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn label="anuluj" color="secondary" v-close-popup />
+          <q-btn label="usuń" color="primary" v-close-popup @click="acceptCodeDial = true" />
+        </q-card-actions>
       </q-card>
     </q-dialog>
   </div>
@@ -158,6 +180,8 @@ export default {
   data () {
     return {
       temp: null,
+      code: null,
+      acceptCodeDial: false,
       others: [],
       clubNames: [],
       filterOptions: [],
@@ -213,9 +237,9 @@ export default {
           this.classes = response
         })
     },
-    deactivateOther () {
-      fetch(`${this.local}/other/?id=${this.id}`, {
-        method: 'POST'
+    deactivateOther (id, code) {
+      fetch(`${this.local}/other/deactivatePerson?id=${id}&pinCode=${code}`, {
+        method: 'DELETE'
       }).then(response => {
         if (response.status === 200) {
           response.text().then(
@@ -234,7 +258,14 @@ export default {
               this.autoClose()
             })
         }
-      })
+      }).catch(() => {
+        this.message = 'coś poszło nie tak'
+        this.success = true
+        this.id = null
+        this.getOther()
+        this.autoClose()
+      }
+      )
     },
     updateOtherPerson () {
       const data = {
@@ -329,6 +360,15 @@ export default {
         } else {
           this.others.sort((a, b) => a.id - b.id)
           this.sortId = !this.sortId
+        }
+      }
+      if (type === 'club') {
+        if (!this.sortClub) {
+          this.others.sort((a, b) => (b.club.name).localeCompare(a.club.name))
+          this.sortClub = !this.sortClub
+        } else {
+          this.others.sort((a, b) => (a.club.name).localeCompare(b.club.name))
+          this.sortClub = !this.sortClub
         }
       }
     },

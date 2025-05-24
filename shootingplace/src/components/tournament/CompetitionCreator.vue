@@ -96,7 +96,7 @@
         </q-card-section>
         <q-card-section>
           <div>
-            <q-btn color="primary" label="zapisz" @click="createCompetition()" v-close-popup :disable="discipline.length === 0 && disciplines.length === 0"/>
+            <q-btn color="primary" label="zapisz" @click="createCompetition()" v-close-popup :disable="(discipline!=null && discipline.length === 0) && disciplines.length === 0"/>
             <q-btn color="secondary" label="anuluj" v-close-popup/>
           </div>
         </q-card-section>

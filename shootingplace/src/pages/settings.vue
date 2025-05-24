@@ -4,37 +4,20 @@
       <Experimental class="col"></Experimental>
       <SuperUser v-if="main"></SuperUser>
       <Users v-if="main"></Users>
-      <div v-if="main" class="q-pa-md text-bold text-center text-h6 text-positive bg-dark">TWORZENIE KLUBU MACIERZYSTEGO</div>
-      <q-card v-if="main" class="row bg-dark text-positive">
-            <q-card-section class="col-6">
-              <q-item>
-                <q-input v-model="clubName" dense class="full-width" input-class="text-positive" label-color="positive" filled label="Nazwa"/>
-              </q-item>
-              <q-item>
-                <q-input v-model="clubFullName" dense class="full-width" input-class="text-positive" label-color="positive" filled label="Pełna nazwa do dokumentów"/>
-              </q-item>
-              <q-item>
-                <q-input v-model="clubLicenseNumber" dense class="full-width" input-class="text-positive" label-color="positive" filled
-                         label="Numer licencji Klubowej"/>
-              </q-item>
-              <q-item>
-                <q-input v-model="clubPhoneNumber" dense type="tel" class="full-width" input-class="text-positive" label-color="positive" mask="### ### ###" filled
-                         label="Telefon"/>
-              </q-item>
-              <q-item>
-                <q-input v-model="clubEmail" dense type="email" class="full-width" input-class="text-positive" label-color="positive" filled label="email"/>
-              </q-item>
-              <q-item>
-                <q-input v-model="clubAddress" dense type="address" class="full-width" input-class="text-positive" label-color="positive" filled label="Adres"/>
-              </q-item>
-              <q-item>
-                <q-input v-model="clubURL" dense type="url" class="full-width" input-class="text-positive" label-color="positive" filled label="Strona internetowa"/>
-              </q-item>
-              <q-item>
-                <q-btn @click="createMotherClub ()" label="Dodaj" color="secondary"/>
-              </q-item>
-            </q-card-section>
-          </q-card>
+      <q-dialog position="top" v-model="success">
+        <q-card>
+          <q-card-section>
+            <div class="text-h6">{{ message }}</div>
+          </q-card-section>
+        </q-card>
+      </q-dialog>
+      <q-dialog position="standard" v-model="failure">
+        <q-card class="bg-warning">
+          <q-card-section>
+            <div class="text-h6">{{ message }}</div>
+          </q-card-section>
+        </q-card>
+      </q-dialog>
     </div>
   </q-page>
 </template>
@@ -73,9 +56,7 @@ export default {
       acceptCodeUser1: false,
       code: null,
       url: '',
-      fileName: '',
       city: null,
-      clubMessage: null,
       clubName: null,
       clubFullName: null,
       clubLicenseNumber: null,
@@ -83,7 +64,9 @@ export default {
       clubEmail: null,
       clubAddress: null,
       clubURL: null,
-      clubs: [],
+      message: null,
+      success: false,
+      failure: false,
       local: App.host,
       main: App.main
     }
@@ -96,46 +79,47 @@ export default {
         this.timer = 0
       }, 1000)
     },
-    getAllClubs () {
-      fetch(`${this.local}/club/`, {
-        method: 'GET'
-      }).then(response => response.json())
-        .then(response => {
-          this.clubs = response
-        })
-    },
+
     createMotherClub () {
-      if (this.clubs.length > 0) {
-        this.clubMessage = 'Nie można dodać więcej macierzystego Klubu'
-      } else {
-        const data = {
-          name: this.clubName,
-          fullName: this.clubFullName,
-          licenseNumber: this.clubLicenseNumber,
-          phoneNumber: this.clubPhoneNumber,
-          email: this.clubEmail,
-          address: this.clubAddress,
-          url: this.clubURL
-        }
-        fetch(`${this.local}/settings/createMotherClub`, {
-          method: 'POST',
-          body: JSON.stringify(data),
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }).then(response => {
-          if (response.status === 200) {
-            this.clubMessage = 'Utworzono Klub Macierzysty'
-          }
-          if (response.status === 400) {
-            this.clubMessage = 'Sprawdź poprawność wszystkich danych'
-          }
-        })
+      const data = {
+        name: this.clubName,
+        fullName: this.clubFullName,
+        licenseNumber: this.clubLicenseNumber,
+        phoneNumber: this.clubPhoneNumber,
+        email: this.clubEmail,
+        address: this.clubAddress,
+        url: this.clubURL
       }
+      fetch(`${this.local}/settings/createMotherClub`, {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          response.text().then(
+            response => {
+              this.message = response
+              this.success = true
+              this.autoClose()
+            }
+          )
+        } else {
+          response.text().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            }
+          )
+        }
+      })
     },
     autoClose () {
       setTimeout(() => {
         this.message = null
+        this.failure = false
         this.success = false
         this.barCode = null
         this.code = null

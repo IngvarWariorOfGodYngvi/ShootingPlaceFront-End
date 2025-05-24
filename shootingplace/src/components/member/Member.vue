@@ -99,7 +99,7 @@
               !main && !mobile ? '' : (contributionUUID = item.uuid, memberUUID = member.uuid, editContributionPaymentDate = item.paymentDay
                 , editContributionValidThruDate = item.validThru, editContribution = true)">
                 <Tooltip2clickTip></Tooltip2clickTip>
-                <div class="col text-left">
+                <div class="col text-center">
                   <label v-if="item.acceptedBy != null" class="q-pa-xs">{{ (item.edited ? 'Edytowano' : 'Zaakceptowano') }}
                     przez: {{ item.acceptedBy }}</label>
                   <div class="row">
@@ -124,7 +124,7 @@
       <q-card-section class="col-5 text-center">
         <q-item-section class="text-center text-positive">
           <q-expansion-item dense label="Informacje o Uprawnieniach" class="col bg-dark text-positive'"
-            group="right-card">
+            group="right-card" icon="account_circle">
             <div
               v-if="(member.memberPermissions.arbiterNumber !== null && member.memberPermissions.arbiterNumber !== '')"
               class="col q-pl-xs text-left">
@@ -222,7 +222,7 @@
           </q-expansion-item>
         </q-item-section>
         <q-expansion-item v-if="!member.erased && main && !mobile" dense label="Wydawanie Amunicji"
-          class="col items-center bg-dark text-positive" group="right-card">
+          class="col bg-dark text-positive" group="right-card" icon="content_paste">
           <div>
             <div class="row noSelect">
               <div class="col text-center self-center q-pa-xs">
@@ -233,20 +233,32 @@
               </div>
             </div>
             <q-card flat class="row bg-dark">
-              <q-card-section class="col q-pa-none">
-                <div v-for="(calibers, uuid) in calibers" :key="uuid" class="q-pa-xs hover">
-                  <q-radio dense v-model="caliberUUID" :val="calibers.uuid" class="full-width text-left"
-                    :label="calibers.name">
+              <q-card-section  class="col q-pa-none" v-if="calibers.length > 0">
+                <div v-for="(item, index) in calibers" :key="index" class="q-pa-xs hover">
+                  <q-radio dense v-model="caliberUUID" :val="item.uuid" class="full-width text-left"
+                    :label="item.name">
                   </q-radio>
                 </div>
               </q-card-section>
-              <q-card-section class="col q-pa-none">
+              <q-card-section  class="col q-pa-none" v-else>
+                <div class="q-pa-xs">
+                  Lista jest pusta
+                </div>
+              </q-card-section>
+              <q-card-section class="col q-pa-none" v-if="member.personalEvidence.ammoList.length > 0">
                 <div v-for="(counter, uuid) in member.personalEvidence.ammoList" :key="uuid">
                   <div class="col text-left q-pa-xs">
                     <label style="font-size: 0.75em">{{ counter.caliberName }}</label>
                     <div>
                       {{ counter.counter }} sztuk
                     </div>
+                  </div>
+                </div>
+              </q-card-section>
+              <q-card-section class="col q-pa-none" v-else>
+                <div>
+                  <div class="q-pa-xs">
+                  Lista jest pusta
                   </div>
                 </div>
               </q-card-section>
@@ -265,28 +277,23 @@
             </div>
           </div>
         </q-expansion-item>
-        <q-expansion-item icon dense v-if="!member.erased && main && !mobile"
-          :header-class="!headerColorChange ? '' : 'bg-grey-3 text-black round'"
+        <q-expansion-item dense v-if="!member.erased && main && !mobile"
+          :header-class="!headerColorChange ? '' : 'bg-grey-3 text-black'"
           @hide="headerColorChange = !headerColorChange" @show="headerColorChange = !headerColorChange"
           label="Opcje Dodatkowe" group="right-card" class="bg-dark text-positive">
           <template v-slot:header>
-            <q-item-section
-              v-if="(!member.pzss && member.club.id == 1) || (!member.declarationLOK && shootingPlace === 'prod')"
-              class="text-left col-4">
-              <q-icon name="warning" color="warning" size="5vh" class="pulse" />
-            </q-item-section>
-            <q-item-section
-              v-if="(!member.pzss && member.club.id == 1) || (!member.declarationLOK && shootingPlace === 'prod')"
-              class="col text-left">
-              Opcje Dodatkowe
-            </q-item-section>
-            <q-item-section v-else class="col text-center">
-              Opcje Dodatkowe
-            </q-item-section>
+          <q-item-section avatar>
+            <q-icon
+            :name="(!member.pzss && member.club.id == 1) || (!member.declarationLOK && shootingPlace === 'prod')?'warning':'add'" :class="(!member.pzss && member.club.id == 1) || (!member.declarationLOK && shootingPlace === 'prod')?'pulse':''"
+            :color="(!member.pzss && member.club.id == 1) || (!member.declarationLOK && shootingPlace === 'prod')?'warning':''" />
+          </q-item-section>
+          <q-item-section>
+            Opcje Dodatkowe
+          </q-item-section>
           </template>
           <q-expansion-item dense v-if="!member.erased"
-            :label="member.shootingPatent.patentNumber !== null ? (helpersDefault[0] + ': ' + member.shootingPatent.patentNumber + ' Data: ' + member.shootingPatent.dateOfPosting) : helpersDefault[0]"
-            group="right-right-card" class="text-positive">
+            :label="member.shootingPatent.patentNumber !== null ? (helpersDefault[0] + ': ' + member.shootingPatent.patentNumber) : helpersDefault[0]"
+            group="right-right-card" class="text-positive" icon="list">
             <q-btn class="full-width round" color="primary" v-if="member.shootingPatent.patentNumber !== null"
               label="AKTUALIZUJ PATENT" @click="
                 memberUUID = member.uuid;
@@ -308,7 +315,7 @@
           </q-expansion-item>
           <q-expansion-item dense v-if="member.adult && !member.erased"
             :label="member.weaponPermission.exist ? (helpersDefault[1] + ': ' + member.weaponPermission.number) : helpersDefault[1]"
-            group="right-right-card">
+            group="right-right-card" icon="list">
             <div class="row">
               <q-input dense @keypress.enter=" changeWeaponPermission(member.uuid, weaponPermissionNumber, isExist)"
                 filled class="col" bg-color="grey-3"
@@ -322,7 +329,7 @@
           </q-expansion-item>
           <q-expansion-item dense v-if="member.adult && !member.erased"
             :label="member.weaponPermission.admissionToPossessAWeaponIsExist ? (helpersDefault[2] + ': ' + member.weaponPermission.admissionToPossessAWeapon) : helpers[2]"
-            group="right-right-card">
+            group="right-right-card" icon="list">
             <div class="row">
               <q-input dense
                 @keypress.enter=" changeWeaponAdmission(member.uuid, admissionToPossess, admissionToPossessIsExist)"
@@ -340,10 +347,10 @@
           <q-expansion-item dense v-if="member.adult && !member.erased" label="Uprawnienia"
             :header-class="!headerColorChange2 ? '' : 'bg-grey-3 text-black round'"
             @hide="headerColorChange2 = !headerColorChange2" @show="headerColorChange2 = !headerColorChange2"
-            group="right-right-card">
+            group="right-right-card" icon="fingerprint">
             <q-expansion-item dense
               :label="helpers[3] = member.memberPermissions.shootingLeaderNumber != null ? ('Prowadzący Strzelanie: ' + member.memberPermissions.shootingLeaderNumber) : helpersDefault[3]"
-              group="qualifications">
+              group="qualifications" icon="arrow_forward">
               <div class="row">
                 <q-input dense @keypress.enter=" memberUUID = member.uuid; shootingLeaderConfirm = true" filled
                   class="col" bg-color="grey-3" v-model="permissionsShootingLeaderNumber" label="Numer Uprawnień" />
@@ -353,7 +360,7 @@
             </q-expansion-item>
             <q-expansion-item dense
               :label="helpers[4] = member.memberPermissions.instructorNumber != null ? ('Instruktor: ' + member.memberPermissions.instructorNumber) : helpersDefault[4]"
-              group="qualifications">
+              group="qualifications" icon="arrow_forward">
               <div class="row">
                 <q-input dense @keypress.enter=" memberUUID = member.uuid; instructorConfirm = true" filled class="col"
                   v-model="permissionsInstructorNumber" label="Numer Uprawnień" bg-color="grey-3" />
@@ -364,7 +371,7 @@
             </q-expansion-item>
             <q-expansion-item dense v-if="member.adult && !member.erased"
               :label="helpers[5] = member.memberPermissions.arbiterNumber != null ? ('Sędzia: ' + member.memberPermissions.arbiterNumber) : helpersDefault[5]"
-              group="qualifications">
+              group="qualifications" icon="arrow_forward">
               <q-item class="full-width">
                 <q-input dense outlined filled class="full-width col"
                   v-if="member.memberPermissions.arbiterNumber == null || member.memberPermissions.arbiterNumber === ''"
@@ -421,14 +428,21 @@
           </q-expansion-item>
           <q-expansion-item dense v-if="!member.erased" label="Portal PZSS" group="right-right-card">
             <template v-slot:header>
-              <q-item-section class="col-4 text-left">
+              <!-- <q-item-section class="col-5 text-left">
                 <q-icon v-if="!member.pzss && member.club.id == 1" size="5vh" class="pulse" name="warning"
                   color="warning" />
                 <q-icon v-else size="5vh">
                   <img src="~assets/logo-PZSS.png">
                 </q-icon>
+              </q-item-section> -->
+              <q-item-section avatar>
+                <q-icon v-if="!member.pzss && member.club.id == 1" class="pulse" name="warning"
+                  color="warning" />
+                <q-icon v-else>
+                  <img src="~assets/logo-PZSS.png">
+                </q-icon>
               </q-item-section>
-              <q-item-section class="col text-left">
+              <q-item-section>
                 Portal PZSS
               </q-item-section>
             </template>
@@ -456,13 +470,13 @@
           <q-expansion-item dense v-if="!member.erased && shootingPlace === 'prod'" label="Deklaracja LOK"
             group="right-right-card">
             <template v-slot:header>
-              <q-item-section class="text-left col-4">
-                <q-icon v-if="!member.declarationLOK" name="warning" size="5vh" color="warning" class="pulse" />
-                <q-icon v-else size="5vh">
-                  <img src="~assets/logo_LOK.png">
+              <q-item-section avatar>
+                <q-icon v-if="!member.declarationLOK" name="warning" color="warning" class="pulse" />
+                <q-icon v-else>
+                  <img style="border-radius: 50%;" src="~assets/logo_LOK.png">
                 </q-icon>
               </q-item-section>
-              <q-item-section class="col text-left">
+              <q-item-section>
                 Deklaracja LOK
               </q-item-section>
             </template>
@@ -479,7 +493,7 @@
             </q-item>
           </q-expansion-item>
           <q-expansion-item dense label="Pokaż statystyki" group="right-right-card"
-            @show=" uuid = member.uuid; getPersonalStatistics(uuid)">
+            @show=" uuid = member.uuid; getPersonalStatistics(uuid)" icon="timeline">
             <div v-if="personalStatisticsObject != null" class="col text-left text-caption">
               <div class="row full-width" style="border-bottom: solid 1px;">
                 <div class="col">Ilość wpłaconych składek:</div>
@@ -508,7 +522,7 @@
             </div>
           </q-expansion-item>
           <q-expansion-item dense v-if="member.active" label="Przenieś do Nieaktywnych" group="right-right-card"
-            class="bg-red round">
+            class="bg-red round" icon="cancel">
             <div class="q-pa-md text-h6 text-bold text-center full-width bg-red-4">Czy na pewno chcesz przenieść
               osobę?
             </div>
@@ -518,7 +532,7 @@
             </div>
           </q-expansion-item>
           <q-expansion-item dense v-if="!member.active && !member.erased" class="bg-green round"
-            label="Przywróć do Aktywnych" group="right-right-card">
+            label="Przywróć do Aktywnych" group="right-right-card" icon="done">
             <q-item class="bg-green-2 text-black">
               <q-item-label class="text-h6 text-bold text-center full-width">Czy na pewno chcesz przywrócić osobę?
               </q-item-label>
@@ -528,7 +542,7 @@
                 @click=" memberUUID = member.uuid; backConfirm = true" />
             </q-item>
           </q-expansion-item>
-          <q-expansion-item dense v-if="!member.adult" label="Przenieś do Grupy Ogólnej" group="right-right-card">
+          <q-expansion-item dense v-if="!member.adult" label="Przenieś do Grupy Ogólnej" group="right-right-card" icon="upgrade">
             <q-item class="text-left">
               <q-item-label>Aby przenieść osobę do Grupy Ogólnej wymaga się:<br />
                 1. minimum 1 rok stażu od daty zapisu do klubu <span class="round"
@@ -556,7 +570,7 @@
           </q-expansion-item>
           <q-expansion-item dense @focus.stop=" erasedReasonType = null; erasedDate = null" class="bg-red round"
             @click=" getListErasedType()" v-if="!member.active && !member.erased" label="Skreśl z listy członków"
-            group="right-right-card">
+            group="right-right-card" icon="do_not_disturb_on">
             <q-item class="bg-red-2 text-black">
               <q-item-label class="text-h6 text-bold text-center full-width">Czy na pewno chcesz usunąć osobę?
               </q-item-label>
@@ -587,7 +601,7 @@
               <q-btn class="round" label="Usuń" color="red" @click=" memberUUID = member.uuid; eraseConfirm = true" />
             </q-item>
           </q-expansion-item>
-          <q-expansion-item dense label="Zmień klub macierzysty" @click=" getAllClubs()" class="text-center">
+          <q-expansion-item dense label="Zmień klub macierzysty" @click=" getAllClubs()" class="text-center" icon="swap_horiz">
             <div class="text-left">
               <q-checkbox :value="clubChoiceToggle" v-model="clubChoiceToggle"
                 label="Inny Klub jest Klubem macierzystym" class="text-positive"></q-checkbox>
@@ -613,7 +627,7 @@
             </div>
           </q-expansion-item>
           <q-expansion-item dense label="Przypisane dokumenty" class="text-center"
-            @show=" personalFiles = []; getAllMemberFiles(member.uuid)">
+            @show=" personalFiles = []; getAllMemberFiles(member.uuid)" icon="attach_file">
             <q-virtual-scroll class="full-width q-pa-none" :items="personalFiles" style="height: 20vh;">
               <template v-slot="{ item }">
                 <div @dblclick=" showloading(); getFile(item.uuid, item.name)"
@@ -631,7 +645,7 @@
         </q-expansion-item>
         <q-expansion-item dense label="Historia startów" group="right-card"
           :header-class="!headerColorChange1 ? '' : 'bg-grey-3 text-black round'" @hide="headerColorChange1 = false"
-          @show="headerColorChange1 = true" class="text-positive" default-opened>
+          @show="headerColorChange1 = true" class="text-positive" default-opened icon="sym_o_footprint">
           <div class="q-pa-xs">
             <div class="self-center full-width text-center">Licznik startów</div>
           </div>
@@ -655,14 +669,14 @@
               </div>
             </div>
           </div>
-          <q-expansion-item dense label="Daty Startów" class="q-pa-none" default-opened>
+          <q-expansion-item dense label="Daty Startów" class="q-pa-none" default-opened icon="calendar_month">
             <SmoothScrollbar class="full-width q-pa-none text-left"
               :style="member.memberPermissions.arbiterNumber != null ? 'height: 46.8vh' : 'height: 51vh'">
               <div v-for="(item, index) in member.history.competitionHistory" :key="index" class="hover1"
                 @dblclick="showloading(); getMemberScores(item.attachedToList); tournament.name = item.name; tournament.date = item.date">
                 <Tooltip2clickToShow></Tooltip2clickToShow>
                 <div class="full-width ">
-                  <label class="text-caption">Nazwa</label>
+                  <!-- <label class="text-caption">Nazwa</label> -->
                   <div class="text-left">
                     {{ item.name }}
                   </div>
@@ -698,7 +712,7 @@
           </q-expansion-item>
         </q-expansion-item>
         <q-expansion-item dense v-if="member.memberPermissions.arbiterNumber != null" label="Historia sędziowania"
-          group="right-card" class="text-positive">
+          group="right-card" class="text-positive" icon="sym_o_footprint">
           <SmoothScrollbar style="height: 52vh">
             <div v-for="(item, index) in member.history.judgingHistory" :key="index">
               <div class="row">
@@ -1286,7 +1300,7 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model="patentConfirm2">
-      <q-card class="bg-dark text-white">
+      <q-card class="bg-dark text-positive">
         <q-card-section>
           <div class="q-pa-xs text-h5 text-center text-bold">Aktualizowanie Patentu</div>
         </q-card-section>
@@ -1313,17 +1327,17 @@
                 </q-icon>
               </template>
             </q-input>
-          </div>
-          <div class="row">
-            <q-item v-if="!patentPistolPermission1">
-              <q-checkbox v-model="patentPistolPermission" label="Pistolet" class="text-positive" />
-            </q-item>
-            <q-item v-if="!patentRiflePermission1">
-              <q-checkbox v-model="patentRiflePermission" label="Karabin" class="text-positive" />
-            </q-item>
-            <q-item v-if="!patentShotgunPermission1">
-              <q-checkbox v-model="patentShotgunPermission" label="Strzelba" class="text-positive" />
-            </q-item>
+            <div class="row">
+              <q-item v-if="!patentPistolPermission1">
+                <q-checkbox v-model="patentPistolPermission" label="Pistolet" class="text-positive" />
+              </q-item>
+              <q-item v-if="!patentRiflePermission1">
+                <q-checkbox v-model="patentRiflePermission" label="Karabin" class="text-positive" />
+              </q-item>
+              <q-item v-if="!patentShotgunPermission1">
+                <q-checkbox v-model="patentShotgunPermission" label="Strzelba" class="text-positive" />
+              </q-item>
+            </div>
           </div>
         </q-card-section>
 

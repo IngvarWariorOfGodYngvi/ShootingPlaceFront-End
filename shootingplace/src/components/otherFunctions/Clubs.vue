@@ -8,25 +8,25 @@
         <div class="row col">
           <div class="q-pr-md">lp</div>
           <div class="col">Nazwa</div>
-          <div class="col">Strona</div>
+          <div class="col-2">Strona</div>
           <div class="col">Telefon</div>
-          <div class="col">e-mail</div>
-          <div class="col">adres</div>
+          <div class="col-2">e-mail</div>
+          <div class="col-3">adres</div>
         </div>
-        <q-scroll-area class="full-width q-pa-none" style="height: 400px;">
-          <div v-for="(club, index) in clubs" :key="index">
-            <div v-if="club.name !== 'BRAK'" class="row text-positive">
+        <q-scroll-area class="full-width q-pa-none" style="height: 70vh;">
+          <div v-for="(club, index) in clubs" :key="index" class="hover1" style="cursor: pointer;" @dblclick="clubInfoModel = club; clubInfo = true; clubID = club.id">
+            <div v-if="club.name !== 'BRAK'" class="row text-positive items-center">
               <div class="self-center q-pr-md">{{ index + 1 }}</div>
-              <div @dblclick="clubInfoModel = club; clubInfo = true" class=" col self-center">{{ club.name }}</div>
-              <div class="col self-center"><a :href="club.url" target="_blank">{{ club.url }}</a></div>
-              <div class="col self-center">{{ club.phoneNumber }}</div>
-              <div class="col self-center">{{ club.email }}</div>
-              <div class="col self-center">{{ club.address }}</div>
-              <q-btn dense class="col-1" @click="clubID = club.id; editClub = true" color="primary" icon="edit">
+              <div class="col">{{ club.name }}</div>
+              <div class="col-2"><a :href="club.url" target="_blank">{{ club.url }}</a></div>
+              <div class="col">{{ club.phoneNumber }}</div>
+              <div class="col-2">{{ club.email }}</div>
+              <div class="col-3">{{ club.address }}</div>
+              <!-- <q-btn dense class="col-1" @click="clubID = club.id; editClub = true" color="primary" icon="edit">
                 <q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">Edytuj
                   {{ club.name }}
                 </q-tooltip>
-              </q-btn>
+              </q-btn> -->
             </div>
           </div>
         </q-scroll-area>
@@ -34,14 +34,19 @@
     </div>
     <q-dialog v-model="clubInfo">
       <q-card>
-        <q-card-section class="text-bold">
-          <div class="text-h6">Informacje dodatkowe o klubie {{ clubInfoModel.name }}</div>
+        <q-card-section>
+          <div class="text-h6 text-bold">Informacje dodatkowe o klubie {{ clubInfoModel.name }}</div>
           <div>ID : {{ clubInfoModel.id }}</div>
           <div v-if="clubInfoModel.id === 1">Pełna nazwa : {{ clubInfoModel.fullName }}</div>
           <div v-if="clubInfoModel.id === 1">Numer Licencji Klubowej : {{ clubInfoModel.licenseNumber }}</div>
           <div>email : {{ clubInfoModel.email }}</div>
           <div>telefon : {{ clubInfoModel.phoneNumber }}</div>
           <div>adres : {{ clubInfoModel.address }}</div>
+          <q-btn dense class="col-1" @click="editClub = true" color="primary" icon="edit" label="edytuj">
+                <q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">Edytuj
+                  {{ clubInfoModel.name }}
+                </q-tooltip>
+              </q-btn>
         </q-card-section>
         <q-card-actions align="right">
           <q-btn label="zamknij" color="primary" v-close-popup />

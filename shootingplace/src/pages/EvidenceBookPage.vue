@@ -87,11 +87,19 @@
         <q-checkbox v-model="statementOnReadingTheShootingPlaceRegulations" class="text-positive col">Zapoznałem się z regulaminem strzelnicy</q-checkbox>
       </q-card-section>
       <div>
-        <q-card-actions align="right">
-          <q-btn @click="clear()" label="wyczyść" color="secondary"></q-btn>
-          <q-btn v-if="statementOnReadingTheShootingPlaceRegulations && (member!=null || otherPerson!=null || (nonMemberFirstName!=null&&nonMemberSecondName))" @click="nonMember?saveNonMember():save()" label="zapisz" color="primary"></q-btn>
-          <q-btn v-else label="zapisz" color="grey"><q-tooltip v-if="!statementOnReadingTheShootingPlaceRegulations" content-class="text-h6 bg-primary" :offset="[10,50]" anchor="top middle">Zaakceptuj zapoznanie się z regulaminem na strzelnicy</q-tooltip></q-btn>
+        <div class="row">
+        <q-card-actions align="left" class="text-positive col">
+          <label>
+              Chcesz mieć program u siebie? Napisz do mnie: i.zebrowski.ul@gmail.com
+          </label>
         </q-card-actions>
+          <q-card-actions align="right col">
+            <q-btn @click="clear()" label="wyczyść" color="secondary"></q-btn>
+            <q-btn v-if="statementOnReadingTheShootingPlaceRegulations && (member!=null || otherPerson!=null || (nonMemberFirstName!=null&&nonMemberSecondName))" @click="nonMember?saveNonMember():save()" label="zapisz" color="primary"></q-btn>
+            <q-btn v-else label="zapisz" color="grey"><q-tooltip v-if="!statementOnReadingTheShootingPlaceRegulations" content-class="text-h6 bg-primary" :offset="[10,50]" anchor="top middle">Zaakceptuj zapoznanie się z regulaminem na strzelnicy</q-tooltip></q-btn>
+          </q-card-actions>
+        </div>
+
       </div>
     </div>
     </q-card>

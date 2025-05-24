@@ -8,8 +8,11 @@
       group="list">
       <Clubs class="bg-dark text-positive text-body2"></Clubs>
     </q-expansion-item>
-    <q-expansion-item label="Lista Konkurencji" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
+    <q-expansion-item label="Lista Konkurencji" dense class="text-left text-h6 text-bold bg-grey-3 q-mb-md" group="list">
       <Competitions class="bg-dark text-positive text-body2"></Competitions>
+    </q-expansion-item>
+    <q-expansion-item label="Lista Pakietów" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
+      <PacketEdit class="bg-dark text-positive text-body2"></PacketEdit>
     </q-expansion-item>
     <p></p>
     <div v-if="!access">
@@ -92,6 +95,10 @@ export default {
     }),
     Competitions: lazyLoadComponent({
       componentFactory: () => import('components/otherFunctions/Competitions.vue'),
+      loading: SkeletonBox
+    }),
+    PacketEdit: lazyLoadComponent({
+      componentFactory: () => import('components/otherFunctions/PacketEdit.vue'),
       loading: SkeletonBox
     }),
     WorkTimeReport: lazyLoadComponent({

@@ -4,13 +4,15 @@ export function changesInfo () {
   }
   const changes = window.localStorage.getItem('ChangesInfo')
   const a = JSON.parse(changes)
-  if (a[0] == null || a[0] === !true) {
-    a[0] = false // ogólnie sprawdź ustawienia
-    window.localStorage.setItem('ChangesInfo', JSON.stringify(a))
-  }
-  if (a[1] == null || a[1] === !true) {
-    a[1] = false // ciemny motyw
-    window.localStorage.setItem('ChangesInfo', JSON.stringify(a))
+
+  // 1 ogólnie sprawdź ustawienia
+  // 2 ciemny motyw
+  // 3 wyszukiwnie ludzi w panelu po numerze
+  for (let i = 0; i < 3; i++) {
+    if (a[i] == null || a[i] === !true) {
+      a[i] = false
+      window.localStorage.setItem('ChangesInfo', JSON.stringify(a))
+    }
   }
 }
 export function checking (number) {
