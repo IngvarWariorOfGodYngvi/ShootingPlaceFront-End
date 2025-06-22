@@ -1,5 +1,10 @@
 <template>
   <div>
+    <div class="col-6">
+      <q-uploader class="fit" method="POST" :url="(`${local}/files/upload/csvOthers`)" label="dodaj z csv - Format: NAZWISKO;Imię;Klub"
+        max-file-size="40960000" accept=".csv" @rejected="onRejected" field-name="file"
+        @uploaded="message = 'OK';success=true;getOther();autocClose()"/>
+    </div>
     <div class="col bg-dark text-positive" >
       <div class="q-pa-md text-center col full-width no-outline text-h5 text-bold">Lista osób spoza klubu</div>
       <div class="row col bg-primary text-white" style="border-radius: 2em;">
@@ -17,7 +22,7 @@
           <div class="self-center col-4 text-left">
             {{ item.secondName }} {{ item.firstName }}</div>
           <div class="col text-left">{{ item.id }}</div>
-          <div class="self-center col text-left">{{ item.club.name }}</div>
+          <div class="self-center col text-left">{{ item.club.shortName }}</div>
           <div class="self-center col-1 text-left">{{ item.phoneNumber }}</div>
           <div class="self-center col-1 text-left">{{ item.email }}</div>
         </div>
@@ -28,7 +33,7 @@
         <q-card-section v-if="temp!=null" class="col">
           <div class="col text-caption">
             <div class="row"><div class="col">Nazwisko i imię:</div><div class="col text-left">{{ temp.fullName }}</div></div>
-            <div class="row"><div class="col">Klub:</div><div class="col text-left">{{ temp.club.name }}</div></div>
+            <div class="row"><div class="col">Klub:</div><div class="col text-left">{{ temp.club.shortName }}</div></div>
             <div class="row"><div class="col">numer telefonu:</div><div class="col text-left">{{ temp.phoneNumber }}</div></div>
             <div class="row"><div class="col">e-mail:</div><div class="col text-left">{{ temp.email }}</div></div>
             <div v-if="temp.address!=null">
@@ -364,13 +369,18 @@ export default {
       }
       if (type === 'club') {
         if (!this.sortClub) {
-          this.others.sort((a, b) => (b.club.name).localeCompare(a.club.name))
+          this.others.sort((a, b) => (b.club.shortName).localeCompare(a.club.shortName))
           this.sortClub = !this.sortClub
         } else {
-          this.others.sort((a, b) => (a.club.name).localeCompare(b.club.name))
+          this.others.sort((a, b) => (a.club.shortName).localeCompare(b.club.shortName))
           this.sortClub = !this.sortClub
         }
       }
+    },
+    onRejected () {
+      this.failure = true
+      this.message = 'Nie można dodać pliku, sprawdź jego rozmiar i typ'
+      this.autoClose()
     },
     autoClose () {
       setTimeout(() => {

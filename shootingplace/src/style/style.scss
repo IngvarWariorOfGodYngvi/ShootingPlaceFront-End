@@ -73,7 +73,7 @@
 }
 .hover:hover {
   border-radius: 20px;
-  background-color: rgb(225, 225, 225);
+  background-color: rgb(103, 103, 103);
   color: black;
   cursor: pointer;
 }
@@ -84,7 +84,7 @@
 .hover1:hover {
   padding-left: 1em;
   border-radius: 20px;
-  background-color: rgb(225, 225, 225);
+  background-color: rgb(103, 103, 103);
   color: black;
   cursor: pointer;
 }
@@ -133,7 +133,7 @@ label {
   color: white;
   cursor: pointer;
   border-radius: 0.75em;
-  background-color: $secondary;
+  background-color: $info;
   opacity: 100;
 }
 .siz {

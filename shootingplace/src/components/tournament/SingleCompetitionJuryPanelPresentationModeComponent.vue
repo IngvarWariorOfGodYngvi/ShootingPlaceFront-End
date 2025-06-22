@@ -1,7 +1,7 @@
 <template>
   <div v-if="competition!=null" class="col">
     <div
-      class="full-width text-h5 text-bold text-center q-pa-none q-ma-none text-positive">{{competition.name + ' ' + competition.countingMethod}}
+      class="full-width text-h5 text-bold text-center q-pa-none q-ma-none text-positive">{{competition.name}}
     </div>
     <div class="row fit q-pa-sm self-center text-positive" v-if="competition.countingMethod === 'NORMAL'">
         <div class="col-3 self-center text-left text-positive">Zawodnik</div>
@@ -50,18 +50,18 @@
           </div>
         </div>
         <div class="col-1 self-center text-center text-positive">
-          {{ competition.countingMethod === 'COMSTOCK' ? 'czas' : '10X' }}
+          {{ competition.countingMethod === 'IPSC' ? 'czas' : '10X' }}
         </div>
         <div class="col-1 self-center text-center text-positive">
-          {{ competition.countingMethod === 'COMSTOCK' ? 'trafienia' : '10/' }}
+          {{ competition.countingMethod === 'IPSC' ? 'trafienia' : '10/' }}
         </div>
-        <div v-if="competition.countingMethod === 'COMSTOCK'"
+        <div v-if="competition.countingMethod === 'IPSC'"
              class="col-1 self-center text-center text-positive">
           procedury
         </div>
-        <div v-if="competition.countingMethod === 'COMSTOCK'" class="col"></div>
+        <div v-if="competition.countingMethod === 'IPSC'" class="col"></div>
         <div class="col-2 self-center text-positive">
-          <div v-if="competition.countingMethod === 'COMSTOCK'" class="text-center">
+          <div v-if="competition.countingMethod === 'IPSC'" class="text-center">
             <div>
               Wynik / HF
             </div>
@@ -79,23 +79,23 @@
           </div>
         </div>
         <div class="col-1 self-center text-center text-positive">
-          {{ competition.countingMethod === 'COMSTOCK' ? 'czas' : '10X' }}
+          {{ competition.countingMethod === 'CZAS' ? 'czas' : '10X' }}
         </div>
         <div class="col-1 self-center text-center text-positive">
-          {{ competition.countingMethod === 'COMSTOCK' ? 'trafienia' : '10/' }}
+          {{ competition.countingMethod === 'CZAS' ? 'trafienia' : '10/' }}
         </div>
-        <div v-if="competition.countingMethod === 'COMSTOCK'"
+        <div v-if="competition.countingMethod === 'CZAS'"
              class="col-1 self-center text-center text-positive">
           procedury
         </div>
-        <div v-if="competition.countingMethod === 'COMSTOCK'" class="col"></div>
+        <div v-if="competition.countingMethod === 'CZAS'" class="col"></div>
         <div class="col-2 self-center text-positive">
-          <div v-if="competition.countingMethod === 'COMSTOCK'" class="text-center">
+          <div v-if="competition.countingMethod === 'CZAS'" class="text-center">
             <div>
               Wynik / HF
             </div>
           </div>
-          <div v-if="competition.countingMethod !== 'COMSTOCK'" class="text-center">
+          <div v-if="competition.countingMethod !== 'CZAS'" class="text-center">
             <div> Wynik</div>
           </div>
         </div>
@@ -128,6 +128,47 @@
           </div>
         </div>
     </div>
+    <div v-if="competition.countingMethod === 'Pojedynek Strzelecki'">
+      <div v-for="(item,index) in competition.scoreList" :key="index" class="full-width q-pa-none q-ma-none">
+        <div class="q-pl-xs q-pr-xs" :class="index===0?'bg-yellow':index===1?'bg-gray':index===2?'bg-brown':''">
+          <div class="row text-body2 full-width" :class="index===0?'bg-yellow':index===1?'bg-gray':index===2?'bg-brown':index>3&&index%2===0?'bg-grey-3 text-black':'text-positive'">
+            <!-- name & club -->
+              <div class="col row q-pa-none q-pl-xs q-pr-xs self-center text-positive">
+                <div class="col-3 self-center text-left text-bold"
+                     :class="index%2===0?'text-black':'text-positive'">
+                  <div class="q-pa-none">
+                    {{index+1}}
+                    {{ item.member != null ? item.member.secondName : item.otherPersonEntity.secondName }}
+                    {{ item.member != null ? item.member.firstName : item.otherPersonEntity.firstName }}
+                  </div>
+                </div>
+                <div class="col-2 self-center text-left  "
+                     :class="index%2===0?'text-black':'text-positive'">
+                  {{ item.member != null ? item.member.club.shortName : item.otherPersonEntity.club.shortName }}
+                </div>
+                <div class="col-1 self-center text-center "
+                :class="index%2===0?'text-black':'text-positive'">{{ item.metricNumber }}
+              </div>
+                <div class="col-1"></div>
+                <div class="col-1 self-center text-center">
+                  <div v-if="item.dnf||item.dsq||item.pk" :class="index%2===0?'text-black':'text-positive'"
+                       class="self-center full-width text-center">
+                    <div v-if="item.dnf">DNF ({{ item.score }})</div>
+                    <div v-if="item.dsq">DSQ ({{ item.score }})</div>
+                    <div v-if="item.pk">PK ({{ item.score }})</div>
+                  </div>
+                  <div v-else class="self-center text-center text-bold q-pa-none q-ma-none">
+                    <div v-if="item.edited" class="text-center self-center text-bold"
+                         :class="index%2===0?'text-black':'text-positive'">
+                      {{ item.score }}
+                    </div>
+                  </div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <div v-if="competition.countingMethod === 'NORMAL'">
       <div v-for="(item,index) in competition.scoreList" :key="index" class="full-width q-pa-none q-ma-none">
         <div class="q-pl-xs q-pr-xs">
@@ -144,7 +185,7 @@
                 </div>
                 <div class="col-2 self-center text-left  "
                      :class="index%2===0?'text-black':'text-positive'">
-                  {{ item.member != null ? item.member.club.name : item.otherPersonEntity.club.name }}
+                  {{ item.member != null ? item.member.club.shortName : item.otherPersonEntity.club.shortName }}
                 </div>
                 <div class="col-1 self-center text-center "
                 :class="index%2===0?'text-black':'text-positive'">{{ item.metricNumber }}
@@ -152,7 +193,7 @@
               <div class="col row">
                 <div v-for="(item1,index1) in item.series" :key="index1"
                      class="col self-center text-center " :class="index%2===0?'text-black':'text-positive'">
-                  <div class="col">{{ item1 }}</div>
+                  <div class="col" v-if="item.edited">{{ item1 }}</div>
                 </div>
               </div>
                 <div class="col-1 self-center text-center "
@@ -170,7 +211,7 @@
                     <div v-if="item.pk">PK ({{ item.score }})</div>
                   </div>
                   <div v-else class="self-center text-center text-bold q-pa-none q-ma-none">
-                    <div class="text-center self-center text-bold"
+                    <div v-if="item.edited" class="text-center self-center text-bold"
                          :class="index%2===0?'text-black':'text-positive'">
                       {{ item.score }}
                     </div>
@@ -197,7 +238,7 @@
                 </div>
                 <div class="col-2 self-center text-left  "
                      :class="index%2===0?'text-black':'text-positive'">
-                  {{ item.member != null ? item.member.club.name : item.otherPersonEntity.club.name }}
+                  {{ item.member != null ? item.member.club.shortName : item.otherPersonEntity.club.shortName }}
                 </div>
                 <div class="col-1 self-center text-center "
                      :class="index%2===0?'text-black':'text-positive'">{{ item.metricNumber }}
@@ -258,7 +299,7 @@
                 </div>
                 <div class="col-2 self-center text-left  "
                      :class="index%2===0?'text-black':'text-positive'">
-                  {{ item.member != null ? item.member.club.name : item.otherPersonEntity.club.name }}
+                  {{ item.member != null ? item.member.club.shortName : item.otherPersonEntity.club.shortName }}
                 </div>
                 <div class="col-1 self-center text-center "
                      :class="index%2===0?'text-black':'text-positive'">{{ item.metricNumber }}
@@ -308,7 +349,7 @@
                 </div>
                 <div class="col-2 self-center text-left  "
                      :class="index%2===0?'text-black':'text-positive'">
-                  {{ item.member != null ? item.member.club.name : item.otherPersonEntity.club.name }}
+                  {{ item.member != null ? item.member.club.shortName : item.otherPersonEntity.club.shortName }}
                 </div>
                 <div class="col-1 self-center text-center "
                      :class="index%2===0?'text-black':'text-positive'">{{ item.metricNumber }}
@@ -358,7 +399,7 @@
                 </div>
                 <div class="col-2 self-center text-left  "
                      :class="index%2===0?'text-black':'text-positive'">
-                  {{ item.member != null ? item.member.club.name : item.otherPersonEntity.club.name }}
+                  {{ item.member != null ? item.member.club.shortName : item.otherPersonEntity.club.shortName }}
                 </div>
                 <div class="col-1 self-center text-center "
                      :class="index%2===0?'text-black':'text-positive'">{{ item.metricNumber }}

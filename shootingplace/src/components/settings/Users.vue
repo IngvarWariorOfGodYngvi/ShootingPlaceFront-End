@@ -17,7 +17,7 @@
         </q-item>
         <q-item>
           <q-select class="full-width" v-model="userSubTypeSelect" dense options-dense filled fill-input
-            label-color="positive" color="positive" input-class="text-positive"
+            label-color="positive" color="positive" input-class="text-positive" use-input hide-selected
             popup-content-class="bg-dark text-positive" options-selected-class="bg-dark text-positive"
             :options="userSubType" label="Wybierz Rodzaj">
             <template v-slot:no-option>
@@ -53,11 +53,10 @@
       <q-card-section class="col-6 text-positive">
         <div class="col q-pa-md text-bold text-h6">Użytkownicy :</div>
         <ol>
-          <li v-for="(user, id) in users" :key="id" class="col text-bold">
-            <div class="row full-width flex-center bg-grey-3 q-ma-sm">
-              <div class="col full-width text-black" style="cursor: pointer;"
-                @click.ctrl="uuid = user.uuid; setSuperUserDialogConfirm = true"
-                @dblclick="uuid = user.uuid; userSubTypeBarCodeSelect = user.subType; inputBarCode = true">
+          <li v-for="(user, id) in users" :key="id" class="col text-bold rounded">
+            <div @click.ctrl="uuid = user.uuid; setSuperUserDialogConfirm = true" style="cursor: pointer;"
+                @dblclick="uuid = user.uuid; inputBarCode = true" class="row full-width flex-center bg-grey-3 q-ma-sm">
+              <div class="col full-width text-black">
                 {{ user.firstName }} {{ user.secondName }}
               </div>
               <q-btn color="primary" class=" col full-width"
@@ -114,10 +113,10 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model="acceptCodeUser1" persistent
-      @keypress.enter="checkPinCode(code); addNewCardToUser(barCode, uuid, userSubTypeBarCodeSelect, code); code = null">
+      @keypress.enter="addNewCardToUser(barCode, uuid, code); code = null">
       <q-card class="bg-red-5 text-center">
         <q-card-section class="flex-center">
-          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający1</span></h3>
+          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
           <div>
             <q-input autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold"
               mask="####"></q-input>
@@ -127,7 +126,7 @@
         <q-card-actions align="right">
           <q-btn label="anuluj" color="black" v-close-popup @click="code = null" />
           <q-btn id="3" label="Dodaj" color="black" v-close-popup
-            @click="checkPinCode(code); addNewCardToUser(barCode, uuid, userSubTypeBarCodeSelect, code); code = null" />
+            @click="addNewCardToUser(barCode, uuid, code); code = null" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -377,24 +376,14 @@ export default {
           })
       }
     },
-    addNewCardToUser (barCode, uuid, userSubType) {
+    addNewCardToUser (barCode, userUUID, pinCode) {
       this.sleep(400).then(() => {
         if (barCode === null || barCode === '') {
           this.message = 'Nie podano numeru karty'
           this.failure = true
-          return
-        }
-        const data = {
-          barCode: barCode,
-          isActive: true,
-          belongsTo: uuid,
-          subType: userSubType,
-          isMaster: this.master
-        }
-        if (this.accept) {
-          fetch(`${this.local}/barCode/`, {
+        } else {
+          fetch(`${this.local}/barCode/?barCode=${barCode}&uuid=${userUUID}&pinCode=${pinCode}`, {
             method: 'POST',
-            body: JSON.stringify(data),
             headers: { 'Content-Type': 'Application/json' }
           }).then(response => {
             if (response.status === 200) {
@@ -404,8 +393,7 @@ export default {
                   this.message = response
                 }
               )
-            }
-            if (response.status === 400) {
+            } else {
               response.text().then(
                 response => {
                   this.failure = true
@@ -414,11 +402,8 @@ export default {
               )
             }
           })
-        } else {
-          this.failure = true
-          this.message = 'Podano zły pin. Spróbuj ponownie'
+          this.autoClose()
         }
-        this.autoClose()
       })
     },
     getMasterCardCheck (code) {

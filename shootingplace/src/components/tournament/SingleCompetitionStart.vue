@@ -11,7 +11,7 @@
                     {{ compStart.name }}
                 </div>
                 <div class="col-3 self-center" v-if="compStart != []">
-                  {{ compStart.member != null ? temp = compStart.member.club.name : temp = compStart.otherPersonEntity.club.name }}
+                  {{ compStart.member != null ? temp = compStart.member.club.shortName : temp = compStart.otherPersonEntity.club.shortName }}
                 </div>
                 <div class="col-1 text-h6 self-center">{{ compStart.metricNumber }}</div>
                 <div class="col-1 self-center">
@@ -727,7 +727,7 @@ export default {
       delta = delta.toString().replaceAll(/,/gi, '.')
       procedures = procedures.toString().replaceAll(/,/gi, '.')
       miss = miss.toString().replaceAll(/,/gi, '.')
-      fetch(`${this.local}/competition/score/set?scoreUUID=${scoreUUID}&score=${score}&innerTen=${innerTen}&outerTen=${outerTen}&alfa=${alfa}&charlie=${charlie}&delta=${delta}&procedures=${procedures}&miss=${miss}&series=${series}`, {
+      fetch(`${this.local}/score/set?scoreUUID=${scoreUUID}&score=${score}&innerTen=${innerTen}&outerTen=${outerTen}&alfa=${alfa}&charlie=${charlie}&delta=${delta}&procedures=${procedures}&miss=${miss}&series=${series}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -766,8 +766,48 @@ export default {
         this.autoClose()
       })
     },
+    forceSetScore (scoreUUID, forceScore) {
+      fetch(`${this.local}/score/forceSetScore?scoreUUID=${scoreUUID}&score=${forceScore}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          response.text().then(
+            response => {
+              this.showloading()
+              this.scoreLabel = ''
+              this.innerTen = ''
+              this.outerTen = ''
+              this.procedures = ''
+              this.alfa = ''
+              this.charlie = ''
+              this.delta = ''
+              this.miss = ''
+              this.message = response
+              this.success = true
+              this.getFilteredCompetitionByID(this.uuid, this.startNumber)
+              this.autoClose()
+            }
+          )
+        } else {
+          response.text().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            }
+          )
+        }
+      }).catch(() => {
+        this.message = 'Pojawił się problem - wynik niezostał wprowadzony'
+        this.failure = true
+        this.autoClose()
+      })
+    },
     toggleDnfScore () {
-      fetch(`${this.local}/competition/score/dnf?scoreUUID=${this.scoreUUID}`, {
+      fetch(`${this.local}/score/dnf?scoreUUID=${this.scoreUUID}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -798,7 +838,7 @@ export default {
       })
     },
     toggleDsqScore () {
-      fetch(`${this.local}/competition/score/dsq?scoreUUID=${this.scoreUUID}`, {
+      fetch(`${this.local}/score/dsq?scoreUUID=${this.scoreUUID}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -829,7 +869,7 @@ export default {
       })
     },
     togglePkScore () {
-      fetch(`${this.local}/competition/score/pk?scoreUUID=${this.scoreUUID}`, {
+      fetch(`${this.local}/score/pk?scoreUUID=${this.scoreUUID}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'

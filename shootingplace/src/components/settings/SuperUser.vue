@@ -17,7 +17,7 @@
         </q-item>
         <q-item>
           <q-select class="full-width" v-model="userSubTypeSelect" dense options-dense filled fill-input
-            label-color="positive" color="positive" input-class="text-positive"
+            label-color="positive" color="positive" input-class="text-positive" use-input hide-selected
             popup-content-class="bg-dark text-positive" :options="userSubType" label="Wybierz Rodzaj">
             <template v-slot:no-option>
               <q-item>
@@ -53,10 +53,9 @@
         <div class="q-pa-md">
           <div class="col q-pa-md text-bold text-h6">Super-Użytkownik :</div>
           <ol>
-            <li v-for="(superUser, id) in superUsers" :key="id" class="col text-bold">
-              <div class="row full-width flex-center bg-grey-3 q-ma-sm">
-                <div class="col full-width text-black" style="cursor: pointer;"
-                  @dblclick="inputBarCode = true, userSubTypeBarCodeSelect = user.subType;">{{ superUser.firstName }}
+            <li v-for="(superUser, id) in superUsers" :key="id" class="col text-bold rounded">
+              <div @dblclick="uuid = superUser.uuid;inputBarCode = true" style="cursor: pointer" class="row full-width flex-center bg-grey-3 q-ma-sm">
+                <div class="col full-width text-black">{{ superUser.firstName }}
                   {{ superUser.secondName }}
                 </div>
                 <q-btn color="primary" class="col full-width"
@@ -90,10 +89,12 @@
         <q-card-section class="text-positive">
           <q-item class="flex-center text-h6 text-bold">Przypisywanie Karty</q-item>
           <q-item>
-            <q-input color="positive" label-color="positive" input-class="text-positive text-h6" class="full-width"
-              filled v-model="barCode" type="password" label="zeskanuj kartę tutaj"
-              @input="getMasterCardCheck(barCode)"></q-input>
+            <q-input @keypress.enter="acceptCodeUser1 = true" color="positive" label-color="positive" input-class="text-positive text-h6" class="full-width"
+              filled v-model="barCode" type="password" label="zeskanuj kartę tutaj"></q-input>
           </q-item>
+          <q-btn text-color="white" color="secondary" v-close-popup
+            @click="barCode = null; uuid = null;">Anuluj</q-btn>
+          <q-btn text-color="white" color="primary" v-close-popup @click="acceptCodeUser1 = true">zatwierdź</q-btn>
           <!-- <q-item>
               <q-select
                 class="full-width text-positive q-pb-md"
@@ -115,13 +116,39 @@
               </template>
             </q-select>
           </q-item> -->
+          <q-input v-model="userFirstName1" input-class="text-positive" label-color="positive" dense label="Imię"
+            onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" />
+          <q-input v-model="userSecondName1" input-class="text-positive" label-color="positive" dense label="Nazwisko"
+            onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode == 32" />
+          <q-input v-model="memberUUID1" @input="otherID = ''" dense label-color="positive" input-class="text-positive"
+            label="przypisz identyfikator Klubowicza" />
+          <q-input v-model="otherID1" @input="memberUUID" dense label-color="positive" input-class="text-positive"
+            label="przypisz identyfikator Osoby spoza Klubu" />
+          <q-input v-model="userCode1" type="password" dense label-color="positive" input-class="text-positive"
+            label="nadaj nowy PIN" mask="####" />
+          <q-input v-model="userCodeConfirm1" type="password" dense label-color="positive" input-class="text-positive"
+            label="powtórz nowy PIN" mask="####" />
+          <q-select class="text-positive" input-class="text-positive" label-color="positive"
+            popup-content-class="bg-dark text-positive" emit-value map-options options-dense
+            v-model="userSubTypeSelect1" dense use-input hide-selected fill-input :options="userSubType"
+            label="Wybierz Rodzaj">
+            <template v-slot:no-option>
+              <q-item>
+                <q-item-section class="text-grey">
+                  Brak wyników
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
           <q-checkbox style="display: none" v-model="master" dense disable></q-checkbox>
           <q-checkbox v-if="master === true" style="display: flex; font-size: 10px;" v-model="master" dense disable
             label="potwierdzone przez Admina"></q-checkbox>
           <p></p>
-          <q-btn text-color="white" color="secondary" v-close-popup
-            @click="barCode = null; uuid = null; master = false">Anuluj</q-btn>
-          <q-btn text-color="white" color="primary" v-close-popup @click="acceptCodeUser1 = true">zatwierdź</q-btn>
+        <q-card-actions align="right">
+          <q-btn text-color="white" color="secondary" label="anuluj" v-close-popup
+            @click="barCode = null; uuid = null; master = false; memberUUID1 = ''; otherID1 = ''; userFirstName1 = null; userSecondName1 = null; userCode1 = null; userCodeConfirm1 = null" />
+          <q-btn text-color="white" color="primary" label="zapisz" v-close-popup @click="acceptCodeUser2 = true;" />
+        </q-card-actions>
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -146,10 +173,27 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model="acceptCodeUser1" persistent
-      @keypress.enter="checkPinCode(code); addNewCardToUser(barCode, uuid, userSubTypeBarCodeSelect, code); code = null">
+      @keypress.enter="addNewCardToUser(barCode, uuid, code); code = null">
       <q-card class="bg-red-5 text-center">
         <q-card-section class="flex-center">
-          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający1</span></h3>
+          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
+          <div>
+            <q-input @keypress.enter="addNewCardToUser(barCode, uuid, code)" autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold"
+              mask="####"></q-input>
+          </div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn label="anuluj" color="black" v-close-popup @click="code = null" />
+          <q-btn id="3" label="Dodaj" color="black" v-close-popup
+            @click="addNewCardToUser(barCode, uuid, code); code = null" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="acceptCodeUser2" persistent @keypress.enter="editUser(); acceptCodeUser2 = false; code = null">
+      <q-card class="bg-red-5 text-center">
+        <q-card-section class="flex-center">
+          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
           <div>
             <q-input autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold"
               mask="####"></q-input>
@@ -158,8 +202,7 @@
 
         <q-card-actions align="right">
           <q-btn label="anuluj" color="black" v-close-popup @click="code = null" />
-          <q-btn id="3" label="Dodaj" color="black" v-close-popup
-            @click="checkPinCode(code); addNewCardToUser(barCode, uuid, userSubTypeBarCodeSelect, code); code = null" />
+          <q-btn id="3" label="Dodaj" color="black" v-close-popup @click="editUser(); acceptCodeUser2 = false; code = null" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -203,18 +246,24 @@ export default {
       actions: null,
       barCode: null,
       backgroundDark: JSON.parse(window.localStorage.getItem('BackgroundDark')),
+      userFirstName: null,
+      userFirstName1: null,
+      userSecondName: null,
+      userSecondName1: null,
+      userCode: null,
+      userCodeConfirm: null,
+      userCode1: null,
+      userCodeConfirm1: null,
+      userSubTypeSelect: null,
+      userSubTypeSelect1: null,
       acceptCodeUser: false,
       acceptCodeUser1: false,
+      acceptCodeUser2: false,
       master: false,
       userActions: false,
       inputBarCode: false,
-      userFirstName: null,
-      userSubTypeSelect: null,
-      userSecondName: null,
       memberUUID: '',
       otherID: '',
-      userCode: null,
-      userCodeConfirm: null,
       userSubType: ['Pracownik', 'Zarząd', 'Komisja Rewizyjna', 'Gość', 'Pracownik/Zarząd', 'Prezes/Zarząd'],
       userSubTypeBarCodeSelect: null,
       superUsers: [],
@@ -248,7 +297,42 @@ export default {
               response => {
                 this.message = response
                 this.success = true
+                this.$emit('createSuperUser')
                 this.getAllSuperUsers()
+              }
+            )
+          } else {
+            response.text().then(
+              response => {
+                this.message = response
+                this.failure = true
+              }
+            )
+          }
+          this.autoClose()
+        })
+      }
+    },
+    editUser () {
+      if (this.userCode1 !== this.userCodeConfirm1) {
+        this.message = 'Coś poszło nie tak'
+        this.failure = true
+      } else {
+        fetch(`${this.local}/users/editUser?firstName=${this.userFirstName1}&secondName=${this.userSecondName1}&subType=${this.userSubTypeSelect1}&pinCode=${this.userCode1}&superPinCode=${this.code}&memberUUID=${this.memberUUID1}&otherID=${this.otherID1}&userUUID=${this.uuid}`, {
+          method: 'POST'
+        }).then(response => {
+          if (response.status === 200) {
+            response.text().then(
+              response => {
+                this.message = response
+                this.success = true
+                this.memberUUID1 = ''
+                this.otherID1 = ''
+                this.userFirstName1 = null
+                this.userSecondName1 = null
+                this.userCode1 = null
+                this.userCodeConfirm1 = null
+                this.getAllUsers()
               }
             )
           } else {
@@ -291,25 +375,14 @@ export default {
           })
       }
     },
-    addNewCardToUser (barCode, uuid, userSubType) {
+    addNewCardToUser (barCode, userUUID, pinCode) {
       this.sleep(400).then(() => {
         if (barCode === null || barCode === '') {
           this.message = 'Nie podano numeru karty'
           this.failure = true
-          return
-        }
-        const data = {
-          barCode: barCode,
-          isActive: true,
-          belongsTo: uuid,
-          subType: userSubType,
-          isMaster: this.master
-        }
-        console.log(this.accept)
-        if (this.accept) {
-          fetch(`${this.local}/barCode/`, {
+        } else {
+          fetch(`${this.local}/barCode/?barCode=${barCode}&uuid=${userUUID}&pinCode=${pinCode}`, {
             method: 'POST',
-            body: JSON.stringify(data),
             headers: { 'Content-Type': 'Application/json' }
           }).then(response => {
             if (response.status === 200) {
@@ -319,8 +392,7 @@ export default {
                   this.message = response
                 }
               )
-            }
-            if (response.status === 400) {
+            } else {
               response.text().then(
                 response => {
                   this.failure = true
@@ -329,11 +401,8 @@ export default {
               )
             }
           })
-        } else {
-          this.failure = true
-          this.message = 'Podano zły pin. Spróbuj ponownie'
+          this.autoClose()
         }
-        this.autoClose()
       })
     },
     sleep (ms) {

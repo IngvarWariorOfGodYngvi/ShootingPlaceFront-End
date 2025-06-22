@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-btn class="full-width" color="primary" label="dodaj nową osobę - formularz" @click="addNewOtherPerson = true, log(otherFirstName), log(nameFromForm)" />
+    <q-btn class="full-width" color="primary" label="dodaj nową osobę - formularz" @click="addNewOtherPerson = true" />
     <q-dialog v-model="addNewOtherPerson">
       <q-card class="bg-dark text-positive" style="min-width: 40vw;">
         <q-card-section>
@@ -11,12 +11,13 @@
           <q-input dense input-class="text-positive" label-color="positive"
             onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode === 45"
             v-model="otherSecondName" label="Nazwisko *" />
+            <hr>
             <div class="self-center full-width">poniżej można zostawić puste</div>
           <div class="row"><q-checkbox left-label color="primary" false-value="" true-value="BRAK" v-model="clubName" :val="'BRAK'"
               label="Brak Klubu"/>
             <q-select stack-label dense options-dense popup-content-class="bg-dark text-positive" class="col" input-class="text-positive" label-color="positive" v-if="clubName !== 'BRAK'" new-value-mode="add-uniqe" hide-selected use-chips
               filled v-model="clubName" use-input fill-input input-debounce="0" :options="filterOptions"
-              @filter="filterFna" label="Wybierz Klub">
+              @filter="filterFna" label="Wybierz Klub" @input.stop="getAllClubsToTournament()">
               <template v-slot:no-option>
                 <q-item dense>
                   <q-item-section class="text-grey">
@@ -25,6 +26,7 @@
                 </q-item>
               </template>
             </q-select>
+            <q-btn color="primary" label="importuj klub z bazy PZSS" @click="importClub = true"/>
           </div>
           <q-expansion-item label="informacje dodatkowe">
           <q-input dense input-class="text-positive" label-color="positive" mask="### ### ###" filled v-model="otherPhoneNumber" label="Numer telefonu" />
@@ -85,6 +87,16 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <q-dialog v-model="importClub">
+      <q-card style="min-width: 70vw;" class="bg-dark">
+        <q-card-actions align="right">
+          <q-btn icon="close" round color="primary" v-close-popup />
+        </q-card-actions>
+        <q-card-section>
+          <PZSSClubs v-on:importClub="getAllClubsToTournament()"/>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
     <q-dialog position="top" v-model="success">
       <q-card>
         <q-card-section>
@@ -103,6 +115,8 @@
 </template>
 
 <script>
+import lazyLoadComponent from 'src/utils/lazyLoadComponent'
+import SkeletonBox from 'src/utils/SkeletonBox.vue'
 import App from 'src/App.vue'
 export default {
   props: {
@@ -111,6 +125,12 @@ export default {
       default: '',
       required: false
     }
+  },
+  components: {
+    PZSSClubs: lazyLoadComponent({
+      componentFactory: () => import('components/otherFunctions/PZSSClubs.vue'),
+      loading: SkeletonBox
+    })
   },
   data () {
     return {
@@ -129,6 +149,7 @@ export default {
       permissionsOtherArbiterNumber: '',
       permissionsOtherArbiterPermissionValidThru: '',
       addNewOtherPerson: false,
+      importClub: false,
       success: false,
       failure: false,
       message: null,

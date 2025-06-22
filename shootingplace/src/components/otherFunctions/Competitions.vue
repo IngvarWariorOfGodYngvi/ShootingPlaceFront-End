@@ -60,8 +60,41 @@
           <q-radio v-for="(item,index) in countingMethods" :key="index" :label="item" class="col" :val="item" v-model="method"/>
         </q-card-section>
         <q-card-actions align="right">
+          <q-btn label="usuń" color="primary" @click="deleteCopmetition = true" v-close-popup />
           <q-btn label="zapisz" color="primary" @click="acceptDialog = true" v-close-popup />
           <q-btn label="zamknij" color="secondary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="deleteCopmetition"
+      @keypress.enter="deleteCopmetitionCode = true; deleteCopmetition = false">
+      <q-card class="bg-dark text-positive">
+        <q-card-section class="items-center">
+          <p class="q-ml-sm text-h6 text-center col">Czy na pewno chcesz usunąć Konkurencję?</p>
+          <p class="q-ml-sm text-h6 text-center col">Zmiana będzie nieodwracalna!</p>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn text-color="white" label="anuluj" color="secondary" v-close-popup />
+          <q-btn text-color="white" label="usuń" color="primary" v-close-popup
+            @click="deleteCopmetitionCode=true" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model=" deleteCopmetitionCode ">
+      <q-card class="bg-red-5 text-center">
+        <q-card-section class="flex-center">
+          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
+          <div>
+            <q-input @keypress.enter=" deleteCompetition(compID, code); code = null; deleteCopmetitionCode = false " autofocus
+              type="password" v-model=" code " filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input>
+          </div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn label="anuluj" color="black" v-close-popup @click=" code = null " />
+          <q-btn id="3" label="Wprowadź zmiany" color="black" v-close-popup
+            @click="deleteCompetition(compID, code); code = null; deletePacketCode = false; code = null " />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -127,6 +160,8 @@ export default {
       countingTypes: [],
       calibersList: [],
       disciplines: [],
+      deleteCopmetitionCode: false,
+      deleteCopmetition: false,
       acceptDialog: false,
       compID: null,
       orderNumber: null,
@@ -232,6 +267,36 @@ export default {
         }
       }).catch(() => {
         this.message = 'pojawił się jakiś błąd'
+        this.failure = true
+        this.autoClose()
+      })
+    },
+    deleteCompetition (uuid, code) {
+      fetch(`${this.local}/competition/delete?uuid=${uuid}&pinCode=${code}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          response.text().then(
+            response => {
+              this.getCompetitions()
+              this.message = response
+              this.success = true
+              this.autoClose()
+            })
+        } else {
+          response.text().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            }
+          )
+        }
+      }).catch(() => {
+        this.message = 'coś poszło nie tak'
         this.failure = true
         this.autoClose()
       })

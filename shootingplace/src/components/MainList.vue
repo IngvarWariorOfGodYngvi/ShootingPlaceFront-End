@@ -3,7 +3,7 @@
     <div v-if="fs" @click="showloading(); changeTitle('Rejestr Pobytu na Strzelnicy')" class="q-pa-xs">
       <q-item class="q-pa-none xyz2" clickable tag="a" target="_self" :href="app + 'firstStart'" width="max">
         <div class="row text-grey-7 text-left">
-          <q-icon class="q-pa-md text-h5" name="person" />
+          <q-icon class="q-pa-md text-h5" name="arrow_forward" />
           <div class="self-center text-black">Pierwszy Start</div>
         </div>
       </q-item>

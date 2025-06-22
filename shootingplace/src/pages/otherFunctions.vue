@@ -4,6 +4,10 @@
       group="list">
       <OtherList class="bg-dark text-positive text-body2"></OtherList>
     </q-expansion-item>
+    <q-expansion-item label="Lista klubów PZSS" dense class="text-left text-h6 text-bold bg-grey-3 q-mb-md"
+      group="list">
+      <PZSSClubs class="bg-dark text-positive text-body2"></PZSSClubs>
+    </q-expansion-item>
     <q-expansion-item label="Lista znanych klubów" dense class="text-left text-h6 text-bold bg-grey-3 q-mb-md"
       group="list">
       <Clubs class="bg-dark text-positive text-body2"></Clubs>
@@ -75,6 +79,22 @@
         </q-card-section>
       </q-card>
     </q-dialog>
+        <q-dialog position="standard" v-model="failure">
+      <q-card class="bg-warning">
+        <q-card-section>
+          <div v-if="message != null" class="text-h6">{{ message }}</div>
+        </q-card-section>
+
+      </q-card>
+    </q-dialog>
+    <q-dialog position="top" v-model="success">
+      <q-card>
+        <q-card-section>
+          <div v-if="message != null" class="text-h6">{{ message }}</div>
+        </q-card-section>
+
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -91,6 +111,10 @@ export default {
     }),
     Clubs: lazyLoadComponent({
       componentFactory: () => import('components/otherFunctions/Clubs.vue'),
+      loading: SkeletonBox
+    }),
+    PZSSClubs: lazyLoadComponent({
+      componentFactory: () => import('components/otherFunctions/PZSSClubs.vue'),
       loading: SkeletonBox
     }),
     Competitions: lazyLoadComponent({
@@ -141,6 +165,9 @@ export default {
       access: false,
       accessCode: '',
       accessMessage: '',
+      failure: false,
+      success: false,
+      message: null,
       listDownload: false,
       nowDate: this.createTodayDate(),
       local: App.host
@@ -204,6 +231,11 @@ export default {
         fileLink.click()
         this.autoClose()
       })
+    },
+    onRejected () {
+      this.failure = true
+      this.message = 'Nie można dodać pliku, sprawdź jego rozmiar i typ'
+      this.autoClose()
     },
     autoClose () {
       setTimeout(() => {

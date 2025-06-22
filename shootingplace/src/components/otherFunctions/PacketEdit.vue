@@ -52,6 +52,7 @@
           </q-item>
         </q-card-section>
         <q-card-actions align="right">
+          <q-btn label="usuń" color="primary" @click="deletePacket = true" v-close-popup />
           <q-btn label="zapisz" color="primary" @click="addNewPacketCode = true" v-close-popup />
           <q-btn label="zamknij" color="secondary" v-close-popup />
         </q-card-actions>
@@ -71,6 +72,38 @@
           <q-btn label="anuluj" color="black" v-close-popup @click=" code = null " />
           <q-btn id="3" label="Wprowadź zmiany" color="black" v-close-popup
             @click="updatePacket(uuid, newPacketName, mapCalibers (calibers),newPacketPrice,code); code = null " />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="deletePacket"
+      @keypress.enter="deletePacketCode = true; deletePacket = false">
+      <q-card class="bg-dark text-positive">
+        <q-card-section class="items-center">
+          <p class="q-ml-sm text-h6 text-center col">Czy na pewno chcesz usunąć pakiet?</p>
+          <p class="q-ml-sm text-h6 text-center col">Zmiana będzie nieodwracalna!</p>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn text-color="white" label="anuluj" color="secondary" v-close-popup />
+          <q-btn text-color="white" label="usuń" color="primary" v-close-popup
+            @click="deletePacketCode=true" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model=" deletePacketCode ">
+      <q-card class="bg-red-5 text-center">
+        <q-card-section class="flex-center">
+          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
+          <div>
+            <q-input @keypress.enter=" deleteShootingPacket(uuid, code); code = null; deletePacketCode = false " autofocus
+              type="password" v-model=" code " filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input>
+          </div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn label="anuluj" color="black" v-close-popup @click=" code = null " />
+          <q-btn id="3" label="Wprowadź zmiany" color="black" v-close-popup
+            @click="deleteShootingPacket(uuid, code); code = null; deletePacketCode = false; code = null " />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -118,7 +151,9 @@ export default {
       packet: '',
       newPacketName: '',
       newPacketPrice: '',
+      deletePacket: false,
       addNewPacketCode: false,
+      deletePacketCode: false,
       editPacket: false,
       success: false,
       failure: false,
@@ -190,6 +225,34 @@ export default {
         }
       }).catch(() => {
         this.message = 'coś jest nie tak'
+        this.failure = true
+        this.autoClose()
+      })
+    },
+    deleteShootingPacket (uuid, code) {
+      fetch(`${this.local}/armory/deleteShootingPacket?uuid=${uuid}&pinCode=${code}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          response.text().then(response => {
+            this.message = response
+            this.success = true
+            this.getPackets()
+            this.autoClose()
+          })
+        } else {
+          response.text().then(response => {
+            this.message = response
+            this.failure = true
+            this.getPackets()
+            this.autoClose()
+          })
+        }
+      }).catch(() => {
+        this.message = 'coś poszło nie tak'
         this.failure = true
         this.autoClose()
       })

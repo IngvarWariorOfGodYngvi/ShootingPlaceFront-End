@@ -3,7 +3,7 @@
     <router-view />
   </div>
 </template>
-<script src="src/scripts/SetLocalStorageVariables.js" />
+<script src="src/scripts/SetLocalStorageVariables.js"></script>
 <script>
 // import { isWindows } from 'mobile-device-detect'
 import { scripts } from 'src/scripts/SetLocalStorageVariables.js'

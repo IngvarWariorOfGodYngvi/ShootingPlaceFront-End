@@ -79,7 +79,7 @@
                   </div>
                 </div>
                 <div class="col-3 self-center" :class="index%2===0?'text-black':'text-positive'">
-                  {{ item.member != null ? temp = item.member.club.name : temp = item.otherPersonEntity.club.name }}
+                  {{ item.member != null ? temp = item.member.club.shortName : temp = item.otherPersonEntity.club.shortName }}
                 </div>
                 <div class="col-1 text-h6 self-center">{{ item.metricNumber }}</div>
                 <div class="col-1 self-center" :class="index%2===0?'text-black':'text-positive'">
@@ -796,7 +796,7 @@ export default {
       delta = delta.toString().replaceAll(/,/gi, '.')
       procedures = procedures.toString().replaceAll(/,/gi, '.')
       miss = miss.toString().replaceAll(/,/gi, '.')
-      fetch(`${this.local}/competition/score/set?scoreUUID=${scoreUUID}&score=${score}&innerTen=${innerTen}&outerTen=${outerTen}&alfa=${alfa}&charlie=${charlie}&delta=${delta}&procedures=${procedures}&miss=${miss}&series=${series}`, {
+      fetch(`${this.local}/score/set?scoreUUID=${scoreUUID}&score=${score}&innerTen=${innerTen}&outerTen=${outerTen}&alfa=${alfa}&charlie=${charlie}&delta=${delta}&procedures=${procedures}&miss=${miss}&series=${series}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -836,7 +836,7 @@ export default {
       })
     },
     toggleDnfScore () {
-      fetch(`${this.local}/competition/score/dnf?scoreUUID=${this.scoreUUID}`, {
+      fetch(`${this.local}/score/dnf?scoreUUID=${this.scoreUUID}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -867,7 +867,7 @@ export default {
       })
     },
     toggleDsqScore () {
-      fetch(`${this.local}/competition/score/dsq?scoreUUID=${this.scoreUUID}`, {
+      fetch(`${this.local}/score/dsq?scoreUUID=${this.scoreUUID}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -898,7 +898,7 @@ export default {
       })
     },
     togglePkScore () {
-      fetch(`${this.local}/competition/score/pk?scoreUUID=${this.scoreUUID}`, {
+      fetch(`${this.local}/score/pk?scoreUUID=${this.scoreUUID}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'

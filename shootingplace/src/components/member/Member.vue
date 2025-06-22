@@ -20,7 +20,7 @@
       <q-card-section class="col">
         <q-item-label class="text-h6">{{ member.secondName }} {{ member.firstName }}</q-item-label>
         <q-item-label class="text-bold text-center bg-secondary text-white" caption style="border-radius: 1em;">{{
-          member.club.name }}</q-item-label>
+          member.club.shortName }}</q-item-label>
         <q-item-label style="border-radius: 1em;" :class="member.adult ? ' bg-primary' : ' bg-secondary'"
           class="text-bold text-center text-white" caption>{{ member.adult ? 'Grupa: Ogólna' : 'Grupa: Młodzieżowa'
           }}</q-item-label>
@@ -616,7 +616,7 @@
                     style="padding: 0; margin: 0;" v-bind="option['itemProps']" v-on="option.itemEvents">
                     <q-item-section dense style="padding: 0.5em; margin: 0;">
                       <div class="container">
-                        {{ option.opt.name }}
+                        {{ option.opt.shortName }}
                       </div>
                     </q-item-section>
                   </q-item>
@@ -1400,7 +1400,7 @@
                   {{ item1.member.secondName + ' ' + item1.member.firstName }}
                 </div>
                 <div class="col">
-                  {{ item1.member.club.name }}
+                  {{ item1.member.club.shortName }}
                 </div>
                 <div class="col text-right" v-if="item1.dnf">DNF</div>
                 <div class="col text-right" v-if="item1.dsq">DSQ</div>
@@ -1415,7 +1415,7 @@
                   {{ item1.otherPersonEntity.secondName + ' ' + item1.otherPersonEntity.firstName }}
                 </div>
                 <div class="col">
-                  {{ item1.otherPersonEntity.club.name }}
+                  {{ item1.otherPersonEntity.club.shortName }}
                 </div>
                 <div class="col text-right" v-if="item1.dnf">DNF</div>
                 <div class="col text-right" v-if="item1.dsq">DSQ</div>

@@ -4,8 +4,9 @@
       <q-card-section>
         <div class="row">
           <q-checkbox v-model="nonMember" class="text-positive self-center col" @input="pesel='', member=null, phone='', otherPerson=null, getAllClubsToTournament()">Nie Jestem Klubowiczem</q-checkbox>
-          <ShootingPlaceStatutePanaszew v-if="shootingPlace === 'rcs'"></ShootingPlaceStatutePanaszew>
-          <ShootingPlaceStatuteDziesiątka v-if="shootingPlace === 'prod'"></ShootingPlaceStatuteDziesiątka>
+          <ShootingPlaceStatutePanaszew v-if="shootingPlace === 'rcs'" class="q-pa-md"></ShootingPlaceStatutePanaszew>
+          <ShootingPlaceStatuteDziesiątka v-if="shootingPlace === 'prod'" class="q-pa-md"></ShootingPlaceStatuteDziesiątka>
+          <RCSPanaszewRODO v-if="shootingPlace === 'rcs'" class="q-pa-md"></RCSPanaszewRODO>
         </div>
         <div v-if="!nonMember" class="row q-mb-xs">
           <q-input v-model="pesel" class="col" dense input-class="text-positive" label="Wpisz numer PESEL" label-color="positive" filled type="text" inputmode="numeric" @input="pesel.length>10?getMemberByPesel(pesel): member=null" mask="###########" onkeypress="return (event.charCode > 47 && event.charCode < 58)"></q-input>
@@ -25,7 +26,7 @@
             <div dense class="q-mt-xs q-pl-md" >Numer Legitymacji: {{ member.legitimationNumber }}</div>
             <div dense class="q-mt-xs q-pl-md" :class="member.active?'':'text-bold text-h6'">Składka ważna do: {{ convertDate(member.history.contributionList[0].validThru) }}</div>
             <div dense class="q-mt-xs q-pl-md" v-if="member.shootingPatent.patentNumber!=null">Patent numer: {{ member.shootingPatent.patentNumber }} {{ member.shootingPatent.pistolPermission? 'P' : '' }}{{ member.shootingPatent.riflePermission? 'K' : '' }}{{ member.shootingPatent.shotgunPermission? 'S' : '' }}</div>
-            <div dense class="q-mt-xs q-pl-md" v-if="member.license.number!=null">Licencja numer: {{ member.license.number }} Ważna do: {{ convertDate(member.license.validThru) }}<q-icon v-if="!member.license.valid" name="error" class="bg-black" style="border-radius: 50%" color="warning" size="1.5em"></q-icon></div>
+            <div dense class="q-mt-xs q-pl-md" v-if="member.license.number!=null" :class="member.license.valid?'':'bg-red round'">Licencja numer: {{ member.license.number }} Ważna do: {{ convertDate(member.license.validThru) }}</div>
             <div dense class="q-mt-xs q-pl-md" v-if="member.weaponPermission.number!=null">Licencja numer: {{ member.weaponPermission.number }}</div>
             <div dense class="q-mt-xs q-pl-md" >Ilość startów: Pistolet: {{ member.history.pistolCounter }} Karabin: {{ member.history.rifleCounter }} Strzelba: {{ member.history.shotgunCounter }}</div>
           </div>
@@ -41,10 +42,11 @@
             <div dense class="q-mt-xs q-pl-md" v-if="otherPerson.weaponPermissionNumber!=null">Pozwolenie na broń: {{ otherPerson.weaponPermissionNumber }}</div>
           </div>
         </div>
-        <div v-if="member==null && otherPerson==null && nonMember">
+        <div v-if="member==null && otherPerson==null && nonMember" class="col">
           <q-input v-model="nonMemberFirstName" filled label="imię *" dense input-class="text-positive" label-color="positive"/>
           <q-input v-model="nonMemberSecondName" filled label="Nazwisko *" dense input-class="text-positive" label-color="positive"/>
-          <q-checkbox v-model="rememberMe" @input="nonMemberClubName=null;nonMemberPhoneNumber=null" class="text-positive">Zapamiętaj Mnie - twoje dane będą przechowywane w celach rejestracji pobytu na strzelnicy i startu w zawodach klubowych</q-checkbox>
+          <q-checkbox v-model="rememberMe" @input="nonMemberClubName=null;nonMemberPhoneNumber=null" class="text-positive full-width">Zapamiętaj Mnie - twoje dane będą przechowywane w celach rejestracji pobytu na strzelnicy i startu w zawodach klubowych</q-checkbox>
+          <q-checkbox v-model="rodo" class="text-positive full-width">zgoda na przetwarzanie danych osobowych</q-checkbox>
           <div v-if="rememberMe" class="row">
           <div class="col">
             <q-select v-model="nonMemberClubName" style="border: 1px solid green" filled label="Wybierz Klub" @popup-hide="getAllClubsToTournament()" dense options-dense popup-content-class="bg-dark text-positive" class="col" input-class="text-positive" label-color="positive" @new-value="createValue" hide-selected use-chips
@@ -95,7 +97,7 @@
         </q-card-actions>
           <q-card-actions align="right col">
             <q-btn @click="clear()" label="wyczyść" color="secondary"></q-btn>
-            <q-btn v-if="statementOnReadingTheShootingPlaceRegulations && (member!=null || otherPerson!=null || (nonMemberFirstName!=null&&nonMemberSecondName))" @click="nonMember?saveNonMember():save()" label="zapisz" color="primary"></q-btn>
+            <q-btn v-if="statementOnReadingTheShootingPlaceRegulations && (shootingPlace==='rcs' && rodo) && (member!=null || otherPerson!=null || (nonMemberFirstName!=null&&nonMemberSecondName))" @click="nonMember?saveNonMember():save()" label="zapisz" color="primary"></q-btn>
             <q-btn v-else label="zapisz" color="grey"><q-tooltip v-if="!statementOnReadingTheShootingPlaceRegulations" content-class="text-h6 bg-primary" :offset="[10,50]" anchor="top middle">Zaakceptuj zapoznanie się z regulaminem na strzelnicy</q-tooltip></q-btn>
           </q-card-actions>
         </div>
@@ -139,7 +141,12 @@ export default {
     ShootingPlaceStatuteDziesiątka: lazyLoadComponent({
       componentFactory: () => import('components/statutes/ShootingPlaceStatuteDziesiątka'),
       loading: SkeletonBox
+    }),
+    RCSPanaszewRODO: lazyLoadComponent({
+      componentFactory: () => import('components/RODO/RCSPanaszewRODO'),
+      loading: SkeletonBox
     })
+
   },
   data () {
     return {
@@ -161,6 +168,7 @@ export default {
       clubs: [],
       statementOnReadingTheShootingPlaceRegulations: false,
       rememberMe: false,
+      rodo: false,
       nonMember: false,
       address: false,
       permission: false,
@@ -182,6 +190,7 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           response.json().then(response => {
+            this.rodo = true
             this.member = response
           })
         } else {
@@ -212,6 +221,7 @@ export default {
       this.nonMember = false
       this.rememberMe = false
       this.address = false
+      this.rodo = false
       this.permission = false
     },
     getOtherbyPhone (phone) {
@@ -220,6 +230,7 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           response.json().then(response => {
+            this.rodo = true
             this.otherPerson = response
           })
         } else {

@@ -2,34 +2,32 @@
   <div class="col q-pa-md bg-dark">
     <div class="row">
       <div dense class="row col" standout="bg-accent text-positive">
-        <div class="col-1 self-center text-left text-positive">Amunicja</div>
-        <div class="col-4 self-center text-center text-positive">Zawodnik</div>
-        <div class="col-3 self-center text-center text-positive">Klub</div>
+        <div class="col-1 self-center text-left text-positive text-caption">Amunicja</div>
+        <div class="col-2 self-center text-left text-positive">Zawodnik</div>
+        <div class="col-2 self-center text-center text-positive">Klub</div>
         <div class="col self-center text-center text-positive">Wynik</div>
       </div>
     </div>
     <div v-for="(item, index) in competition.scoreList" :key="index" class="full-width q-pa-none ghover">
       <div class="row text-body2 full-width">
         <!-- button -->
-        <div class="row col-1">
-          <q-btn dense glossy class="full-width"
+        <div class="row" style="width: 5%;">
+          <q-btn dense glossy class="full-width box"
             :icon="item.ammunition === false && item.gun === false ? 'book' : item.ammunition === true && item.gun === false ? 'done book' : item.ammunition === false && item.gun === true ? 'book done' : item.ammunition === true && item.gun === true ? 'done' : 'book'"
             @click="scoreUUID = item.uuid; temp = item.member != null ? item.member : item.otherPersonEntity.secondName; item.member != null ? (memberLeg = item.member.legitimationNumber, otherID = 0) : (otherID = item.otherPersonEntity.id, memberLeg = 0); getListCalibers(); caliberUUID = competition.caliberUUID; ammoQuantity = competition.practiceShots + competition.numberOfShots; member = item.member; other = item.otherPersonEntity; addAmmo = true">
-            <q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">{{ item.ammunition === false &&
+            <q-tooltip anchor="top middle" self="bottom middle" :offset="[0, 0]">{{ item.ammunition === false &&
               item.gun === false ? 'Wydaj broń lub amunicję' : item.ammunition === true && item.gun === false ? 'Amunicja              wydana':item.ammunition === false && item.gun === true?'Broń wydana':'Broń i Amunicja Wydane' }}
             </q-tooltip>
           </q-btn>
         </div>
         <!-- name & club -->
-        <div class="col-5" @dblclick="item.member != null && item.member.uuid ? memberExist = true : memberExist = false; item.member != null ?
+        <div class="col-5 box" @dblclick="item.member != null && item.member.uuid ? memberExist = true : memberExist = false; item.member != null ?
           (memberUUID = item.member.uuid, otherID = 0, temp = item.member, memberLeg = item.member.legitimationNumber, name = item.member.secondName + ' ' + item.member.firstName + ' ' + item.member.legitimationNumber)
           :
           (memberUUID = '0', otherID = item.otherPersonEntity.id, temp = item.otherPersonEntity, name = item.otherPersonEntity.secondName + ' ' + item.otherPersonEntity.firstName + ' ' + item.otherPersonEntity.id);
         date = competition.date; startNumber = item.metricNumber; getScoreInfo(); metricsInfo = true">
           <div dense standout="bg-accent text-positive row" class="row fit text-positive">
-            <q-tooltip v-if="item.member != null && !item.member.active" content-class="bg-red text-subtitle2"
-              anchor="top middle">UREGULUJ SKŁADKI
-            </q-tooltip>
+            <q-tooltip content-class="bg-dark text-positive text-subtitle2" self="bottom middle" :offset="[0, 0]" anchor="top middle">Kliknij 2 razy aby wydrukować metryki</q-tooltip>
             <div class="self-center row full-width text-caption">
               <div class="text-positive">&nbsp;{{ index + 1 }}.</div>
               <div class="col text-positive">
@@ -37,18 +35,68 @@
                 {{ item.member != null ? temp = item.member.firstName : temp = item.otherPersonEntity.firstName }}
               </div>
               <div class="self-center col-5 no-outline text-positive">
-                {{ item.member != null ? temp = item.member.club.name : temp = item.otherPersonEntity.club.name }}
+                {{ item.member != null ? temp = item.member.club.shortName : temp = item.otherPersonEntity.club.shortName }}
               </div>
             </div>
           </div>
         </div>
         <!-- metric -->
-        <div class="col-1 text-positive"
-          @dblclick="scoreUUID = item.uuid; metric = item.metricNumber; toggleDSQDNF = true">
+        <div class="col-1 text-positive box"
+          @dblclick="scoreUUID = item.uuid; metric = item.metricNumber;item.member != null && item.member.uuid ? memberExist = true : memberExist = false; item.member != null ?
+          (memberUUID = item.member.uuid, otherID = 0, temp = item.member, memberLeg = item.member.legitimationNumber, name = item.member.secondName + ' ' + item.member.firstName)
+          :
+          (memberUUID = '0', otherID = item.otherPersonEntity.id, temp = item.otherPersonEntity, name = item.otherPersonEntity.secondName + ' ' + item.otherPersonEntity.firstName); toggleDSQDNF = true">
+          <q-tooltip content-class="bg-dark text-positive text-subtitle2" self="bottom middle" :offset="[0, 0]" anchor="top middle">Przyznaj kary</q-tooltip>
           <div class="text-center">
             <label style="font-size: 10px">metryka</label>
             <div class="self-center text-center text-positive text-caption">
               {{ item.metricNumber }}
+            </div>
+          </div>
+        </div>
+        <div v-if="competition.countingMethod === 'Pojedynek Strzelecki'" class="row col box">
+          <q-popup-edit @before-show="setVariables(item); series = setSeriesValues(item.series)" value=""
+            content-class="bg-dark text-positive">
+            <q-input @focus="scoreUUID = item.uuid" input-class="text-center text-positive" v-model="outerTen"
+              @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus stack-label
+              label="ilość 10 zwykłe" label-color="positive"
+              onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+            <q-input @focus="scoreUUID = item.uuid" input-class="text-center text-positive" v-model="innerTen"
+              @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus stack-label
+              label="ilość 10 wewnętrzne" label-color="positive"
+              onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+            <q-input onkeypress="return (event.charCode > 47 && event.charCode < 58) || event.charCode === 44  || event.charCode === 46"
+              v-model="forceScore" stack-label label-color="positive"
+              @keypress.enter="scoreUUID = item.uuid; forceSetScore(item.uuid,forceScore)" :label="'wynik'"
+              input-class="text-center text-positive" />
+            <div class="q-pa-xs text-center">
+              <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
+              <q-btn color="primary" label="Zapisz" v-close-popup
+                @click="scoreUUID = item.uuid; forceSetScore(item.uuid,forceScore)"></q-btn>
+            </div>
+          </q-popup-edit>
+          <div class="text-center col">
+            <label class="text-positive" style="font-size: 10px;">10 wew.</label>
+            <div class="self-center col text-center text-positive text-caption">
+              {{ item.innerTen }}
+            </div>
+          </div>
+          <div class="text-center col">
+            <label class="text-positive" style="font-size: 10px;">10 zw.</label>
+            <div class="self-center col text-center text-positive text-caption">
+              {{ item.outerTen }}
+            </div>
+          </div>
+          <div class="text-center col">
+            <label class="text-positive" style="font-size: 10px;">Wynik</label>
+            <div v-if="item.dnf || item.dsq || item.pk" class="self-center col text-center text-positive text-caption">
+              <div v-if="item.dnf">DNF ({{ item.score }})</div>
+              <div v-if="item.dsq">DSQ ({{ item.score }})</div>
+              <div v-if="item.pk">PK ({{ item.score }})</div>
+            </div>
+            <div v-else
+              :class="`self-center col text-center text-positive text-caption ${item.edited ? '' : 'bg-warning round1'}`">
+              {{ item.score }}
             </div>
           </div>
         </div>
@@ -95,7 +143,7 @@
               <div v-if="item.pk">PK ({{ item.score }})</div>
             </div>
             <div v-else
-              :class="`self-center full-width col text-center text-positive text-caption ${item.edited ? '' : 'bg-warning round1'}`">
+              :class="`self-center col text-center text-positive text-caption ${item.edited ? '' : 'bg-warning round1'}`">
               {{ item.score }}
             </div>
           </div>
@@ -154,7 +202,7 @@
               <div v-if="item.pk">PK ({{ item.score }})</div>
             </div>
             <div v-else
-              :class="`self-center full-width col text-center text-positive text-caption ${item.edited ? '' : 'bg-warning round1'}`">
+              :class="`self-center col text-center text-positive text-caption ${item.edited ? '' : 'bg-warning round1'}`">
               {{ item.score }} / {{ item.hf }}
             </div>
           </div>
@@ -249,7 +297,7 @@
           </div>
           <div class="text-center col">
             <label class="text-positive" style="font-size: 10px;">Wynik / HF</label>
-            <div class="self-center col text-center text-positive text-caption">
+            <div :class="`self-center col text-center text-positive text-caption ${item.edited ? '' : 'bg-warning round1'}`">
               {{ item.score }} / {{ item.hf.toFixed(4) }}
             </div>
           </div>
@@ -315,7 +363,7 @@
           </div>
           <div class="text-center col">
             <label class="text-positive" style="font-size: 10px;">Wynik / HF</label>
-            <div class="self-center col text-center text-positive text-caption">
+            <div :class="`self-center col text-center text-positive text-caption ${item.edited ? '' : 'bg-warning round1'}`">
               {{ item.score }} / {{ item.hf.toFixed(4) }}
             </div>
           </div>
@@ -328,6 +376,7 @@
           <div class="text-h5 text-bold text-center col">Kary dla zawodnika</div>
           <q-btn icon="close" color="primary" round dense v-close-popup />
         </q-card-actions>
+        <div class="text-h6 text-center">{{name}}</div>
         <div class="text-h6 text-center">Numer startowy {{ metric }}</div>
         <q-card-section>
           <div class="col q-pa-md">
@@ -426,6 +475,9 @@
     </q-dialog>
     <q-dialog v-model="metricsInfo">
       <q-card @hook:destroyed="infoScore = []; infoScore1 = []" class="bg-dark text-positive">
+        <q-card-actions align="right">
+          <q-btn icon="close" color="primary" round dense v-close-popup/>
+        </q-card-actions>
         <q-card-section class="col">
           <div class="q-ml-sm text-h6 text-center text-bold">POBIERZ METRYKI STARTOWE ZAWODNIKA</div>
           <div class="q-ml-sm text-h6 text-center text-bold">{{ name }}</div>
@@ -542,6 +594,7 @@ export default {
       scoreUUID: null,
       singleScore: null,
       score: '',
+      forceScore: '',
       scoreLabel: '',
       innerTen: '',
       outerTen: '',
@@ -731,7 +784,7 @@ export default {
       delta = delta.toString().replaceAll(/,/gi, '.')
       procedures = procedures.toString().replaceAll(/,/gi, '.')
       miss = miss.toString().replaceAll(/,/gi, '.')
-      fetch(`${this.local}/competition/score/set?scoreUUID=${scoreUUID}&score=${score}&innerTen=${innerTen}&outerTen=${outerTen}&alfa=${alfa}&charlie=${charlie}&delta=${delta}&procedures=${procedures}&miss=${miss}&series=${series}`, {
+      fetch(`${this.local}/score/set?scoreUUID=${scoreUUID}&score=${score}&innerTen=${innerTen}&outerTen=${outerTen}&alfa=${alfa}&charlie=${charlie}&delta=${delta}&procedures=${procedures}&miss=${miss}&series=${series}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -771,7 +824,7 @@ export default {
       })
     },
     toggleAmmunitionInScore (scoreUUID) {
-      fetch(`${this.local}/competition/score/ammo?scoreUUID=${scoreUUID}`, {
+      fetch(`${this.local}/score/ammo?scoreUUID=${scoreUUID}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -798,7 +851,7 @@ export default {
       })
     },
     toggleGunInScore () {
-      fetch(`${this.local}/competition/score/gun?scoreUUID=${this.scoreUUID}`, {
+      fetch(`${this.local}/score/gun?scoreUUID=${this.scoreUUID}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -827,7 +880,7 @@ export default {
       })
     },
     toggleDnfScore () {
-      fetch(`${this.local}/competition/score/dnf?scoreUUID=${this.scoreUUID}`, {
+      fetch(`${this.local}/score/dnf?scoreUUID=${this.scoreUUID}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -854,7 +907,7 @@ export default {
       })
     },
     toggleDsqScore () {
-      fetch(`${this.local}/competition/score/dsq?scoreUUID=${this.scoreUUID}`, {
+      fetch(`${this.local}/score/dsq?scoreUUID=${this.scoreUUID}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -880,8 +933,48 @@ export default {
         }
       })
     },
+    forceSetScore (scoreUUID, forceScore) {
+      fetch(`${this.local}/score/forceSetScore?scoreUUID=${scoreUUID}&score=${forceScore}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          response.text().then(
+            response => {
+              this.showloading()
+              this.scoreLabel = ''
+              this.innerTen = ''
+              this.outerTen = ''
+              this.procedures = ''
+              this.alfa = ''
+              this.charlie = ''
+              this.delta = ''
+              this.miss = ''
+              this.message = response
+              this.success = true
+              this.getCompetitionByID(this.uuid)
+              this.autoClose()
+            }
+          )
+        } else {
+          response.text().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            }
+          )
+        }
+      }).catch(() => {
+        this.message = 'Pojawił się problem - wynik niezostał wprowadzony'
+        this.failure = true
+        this.autoClose()
+      })
+    },
     togglePkScore () {
-      fetch(`${this.local}/competition/score/pk?scoreUUID=${this.scoreUUID}`, {
+      fetch(`${this.local}/score/pk?scoreUUID=${this.scoreUUID}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
