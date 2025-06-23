@@ -1,25 +1,31 @@
 <template>
   <div>
-    <q-card class="bg-dark text-positive" >
       <div class="q-pa-md text-center full-width no-outline text-h5 text-bold">Lista Pakietów
       </div>
-      <div class="row col">
-        <div class="col-4 self-center">Lp Nazwa Pakietu</div>
-        <div class="col text-center">cena</div>
-      </div>
-      <p></p>
-      <q-scroll-area dense class="full-width q-pa-none" style="height: 70vh;">
+              <div class="row col bg-primary text-white" style="border-radius: 2em;">
+        <div class="text-center" style="width:3%">Lp</div>
+          <div class="col">Nazwa pakietu</div>
+          <div class="col-4">Użyte kalibry</div>
+          <div class="col-2 text-center">Cena</div>
+        </div>
+        <hr>
+        <q-scroll-area dense class="full-width q-pa-none" style="height: 70vh;">
         <div v-for="(item, index) in packets" :key="index" class="col hover1 q-mb-xs" @dblclick="uuid = item.uuid; packet = item;getListCalibers(); editPacket = true;">
-            <div class="row">
+              <div class="text-positive row text-center">
               <Tooltip2clickTip/>
-              <div class="col-4 self-center">{{ index + 1 }} {{ item.name }}</div>
-              <div class="col self-center text-center">{{ item.price }}</div>
+              <div class="text-center" style="width:3%">{{index + 1 }}</div>
+              <div class="col caption text-left">
+                <div class="text-bold">{{ item.name }}</div>
+              </div>
+               <div class="col-4 row text-left">
+                 <div v-for="(item1, index) in item.calibers" :key="index" class="text-center">{{ item1.caliberName }} &nbsp;</div>
+               </div>
+              <div class="col-2">{{ viewCurrency(item.price) }}</div>
             </div>
           </div>
       </q-scroll-area>
-    </q-card>
     <q-dialog v-model="editPacket">
-      <q-card class="bg-dark text-positive" style="width: 60vw;">
+      <q-card class="bg-dark text-positive" style="min-width: 50vw;">
         <q-card-section class="text-bold text-center text-h6">
           Edytuj Pakiet
         </q-card-section>
@@ -29,7 +35,7 @@
         <q-card-section class="text-bold">
           <div>ID: {{ packet.uuid }}</div>
           <div>nazwa: {{ packet.name }}</div>
-          <div>cena: {{ packet.price }}</div>
+          <div>cena: {{ viewCurrency(packet.price) }}</div>
           <div>Kalibry:</div>
           <div v-for="(caliber,index) in packet.calibers" :key="index">
             <q-card-section>
@@ -52,7 +58,7 @@
           </q-item>
         </q-card-section>
         <q-card-actions align="right">
-          <q-btn label="usuń" color="primary" @click="deletePacket = true" v-close-popup />
+          <q-btn label="usuń" color="red" @click="deletePacket = true" v-close-popup />
           <q-btn label="zapisz" color="primary" @click="addNewPacketCode = true" v-close-popup />
           <q-btn label="zamknij" color="secondary" v-close-popup />
         </q-card-actions>
@@ -256,6 +262,12 @@ export default {
         this.failure = true
         this.autoClose()
       })
+    },
+    viewCurrency (money) {
+      if (money === undefined) { money = '0' }
+      const formatterPL = new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' })
+      const cash = formatterPL.format(money)
+      return cash
     },
     autoClose () {
       setTimeout(() => {

@@ -1,43 +1,39 @@
 <template>
   <div>
-    <q-card class="bg-dark text-positive" >
       <div class="q-pa-md text-center full-width no-outline text-h5 text-bold">Lista Konkurencji
       </div>
-      <div class="row col">
-        <div class="col-4 self-center">Lp Nazwa Konkurencji</div>
-        <div class="col text-center">Kolejność<br/>na listach</div>
-        <div class="col text-center">Dyscypliny</div>
-        <div class="col text-center">Metoda<br/>Liczenia</div>
-        <div class="col-2 text-center">Ilość strzałów<br/>ocenianych</div>
-        <div class="col-2 text-center">Ilość strzałów<br/>próbnych</div>
-        <!-- <div class="col-1 text-center"></div> -->
-      </div>
-      <p></p>
-      <q-scroll-area dense class="full-width q-pa-none" style="height: 400px;">
-        <draggable v-model="array" group="people" @start="drag=true" @end="drag=false">
-        <div v-for="(comp, index) in competitions" :key="index" class="col hover1 q-mb-xs" @dblclick="competition = comp;compID = competition.uuid; competitionInfo = true;getCountingMethods();getCalibersList(),getCompetitionTypes(),getDisciplines()">
-            <div class="row">
+        <div class="row col bg-primary text-white" style="border-radius: 2em;">
+        <div class="text-center" style="width:3%">Lp</div>
+          <div class="col">Nazwa i Metoda Liczenia</div>
+          <div class="col-2">Kolejność na listach</div>
+          <div class="col-2 text-center">Dyscypliny</div>
+          <div class="col-2">Ilość strzałów ocenianych</div>
+          <div class="col-2">Ilość strzałów próbnych</div>
+        </div>
+      <hr>
+        <q-scroll-area class="full-width q-pa-none" style="height: 70vh;">
+          <draggable v-model="array" group="people" @start="drag=true" @end="drag=false">
+          <div v-for="(comp, index) in competitions" :key="index" class="hover1 text-positive items-center"
+            style="cursor: pointer;" @dblclick="competition = comp;compID = competition.uuid; competitionInfo = true;getCountingMethods();getCalibersList(),getCompetitionTypes(),getDisciplines()">
+            <div class="text-positive row text-center">
               <Tooltip2clickTip/>
-              <div class="col-4 self-center">{{ index + 1 }} {{ comp.name }}</div>
-              <div class="col self-center text-center">{{ comp.ordering }}</div>
-              <div class="col self-center text-center">{{ comp.disciplineList.length>0 ? arrayToString(comp.disciplineList) : comp.discipline }}</div>
-              <div class="col self-center text-center">{{ comp.countingMethod }}</div>
-              <div class="col-2 self-center text-center">{{ comp.numberOfShots }}</div>
-              <div class="col-2 self-center text-center">{{ comp.practiceShots }}</div>
-              <!-- <q-btn dense class="col-1" color="primary" icon="edit">
-                <q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">
-                  {{ comp.name }}
-                </q-tooltip>
-              </q-btn> -->
+              <div class="text-center" style="width:3%">{{index + 1 }}</div>
+              <div class="col caption text-left">
+                <div class="text-bold">{{ comp.name }}</div>
+                <div class="text-caption">{{ comp.countingMethod }}</div>
+              </div>
+              <div class="col-2">{{ comp.ordering }}</div>
+              <div class="col-2">{{ comp.disciplineList.length > 0 ? arrayToString(comp.disciplineList) : comp.discipline }}</div>
+              <div class="col-2">{{ comp.numberOfShots }}</div>
+              <div class="col-2">{{ comp.practiceShots }}</div>
             </div>
           </div>
-        </draggable>
-      </q-scroll-area>
-    </q-card>
+          </draggable>
+        </q-scroll-area>
     <q-dialog v-model="competitionInfo" @hide="getCompetitions()">
-      <q-card class="bg-dark text-positive" @show="method = competition.countingMethod">
+      <q-card class="bg-dark text-positive" @show="method = competition.countingMethod" style="min-width: 50vw;">
         <q-card-section class="text-bold">
-          <div class="text-h6">{{ competition.name }}</div>
+          <div class="text-h6 text-center">{{ competition.name }}</div>
           <div>ID: {{ competition.uuid }}</div>
           <div v-if="competition.disciplineList!=null&&competition.disciplineList.length>0">dyscypliny: {{ arrayToString(competition.disciplineList) }}</div>
           <div v-else>Dyscyplina: {{ competition.discipline }}</div>
@@ -60,7 +56,7 @@
           <q-radio v-for="(item,index) in countingMethods" :key="index" :label="item" class="col" :val="item" v-model="method"/>
         </q-card-section>
         <q-card-actions align="right">
-          <q-btn label="usuń" color="primary" @click="deleteCopmetition = true" v-close-popup />
+          <q-btn label="usuń" color="red" @click="deleteCopmetition = true" v-close-popup />
           <q-btn label="zapisz" color="primary" @click="acceptDialog = true" v-close-popup />
           <q-btn label="zamknij" color="secondary" v-close-popup />
         </q-card-actions>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="text-body2 bg-dark text-positive" style="border: 0">
+    <div class="text-body2 bg-dark text-positive" style="height: 50vh">
       <div>
         <q-radio label="dorośli" v-model="condition" :val="true" />
         <q-radio label="młodzież" v-model="condition" :val="false" />

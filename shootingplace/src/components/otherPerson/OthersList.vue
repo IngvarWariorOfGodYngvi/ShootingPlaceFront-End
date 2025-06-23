@@ -1,37 +1,51 @@
 <template>
   <div>
-    <div class="col-6">
+    <!-- <div class="col-6">
       <q-uploader class="fit" method="POST" :url="(`${local}/files/upload/csvOthers`)" label="dodaj z csv - Format: NAZWISKO;Imię;Klub"
         max-file-size="40960000" accept=".csv" @rejected="onRejected" field-name="file"
         @uploaded="message = 'OK';success=true;getOther();autocClose()"/>
-    </div>
+    </div> -->
     <div class="col bg-dark text-positive" >
       <div class="q-pa-md text-center col full-width no-outline text-h5 text-bold">Lista osób spoza klubu</div>
+        <q-input debounce="500" v-model="searchName" class="col q-pb-xs q-pt-xs" @keypress.enter="getSearchName(searchName)"
+            @input="getSearchName(searchName)"
+            label="wyszukaj osobę spoza Klubu" color="white" bg-color="secondary"
+            input-class="text-white" label-color="white" dense rounded standout="">
+            <template v-slot:append>
+              <q-icon v-if="searchName != ''" name="close" @click="searchName = ''; getSearchName(searchName)"
+                class="cursor-pointer text-white" />
+              <q-icon name="search" class="text-white" @click="getSearchName(searchName)" />
+            </template>
+        </q-input>
       <div class="row col bg-primary text-white" style="border-radius: 2em;">
         <div class="text-center" style="width:3%">Lp</div>
-        <div class="col-4" @click="sortF('name')"><q-icon size="2em" :name="sortName ? 'arrow_drop_up' : 'arrow_drop_down'" />Nazwisko i imię</div>
-        <div class="col text-left" @click="sortF('id')"><q-icon size="2em" :name="sortId ? 'arrow_drop_up' : 'arrow_drop_down'" />ID</div>
-        <div class="col text-left" @click="sortF('club')"><q-icon size="2em" :name="sortClub ? 'arrow_drop_up' : 'arrow_drop_down'" />Klub</div>
-        <div class="col-1">Telefon</div>
-        <div class="col-1">e-mail</div>
+        <div class="col" @click="sortF('name')"><q-icon size="1.5em" :name="sortName ? 'arrow_drop_up' : 'arrow_drop_down'" />Nazwisko i imię</div>
+        <div class="col-1 text-left" @click="sortF('id')"><q-icon size="1.5em" :name="sortId ? 'arrow_drop_up' : 'arrow_drop_down'" />ID</div>
+        <div class="col-2 text-left" @click="sortF('club')"><q-icon size="1.5em" :name="sortClub ? 'arrow_drop_up' : 'arrow_drop_down'" />Klub</div>
+        <div class="col-2">Telefon</div>
+        <div class="col">e-mail</div>
       </div>
       <q-scroll-area class="full-width q-pa-none" style="height: 60vh;">
-        <div v-for="(item, index) in others" :key="index" class="row hover1" @dblclick="getArbiterClasses();editOtherPerson=true;temp=item; id=item.id">
+        <div v-for="(item, index) in others" :key="index" class="row hover1 items-center" @dblclick="getArbiterClasses();editOtherPerson=true;temp=item; id=item.id">
           <Tooltip2clickTip/>
           <div class="text-center" style="width:3%">{{index + 1 }}</div>
-          <div class="self-center col-4 text-left">
-            {{ item.secondName }} {{ item.firstName }}</div>
-          <div class="col text-left">{{ item.id }}</div>
-          <div class="self-center col text-left">{{ item.club.shortName }}</div>
-          <div class="self-center col-1 text-left">{{ item.phoneNumber }}</div>
-          <div class="self-center col-1 text-left">{{ item.email }}</div>
+          <!-- <div class="self-center col-4 text-left text-bold">
+            {{ item.secondName }} {{ item.firstName }}</div> -->
+          <div class="col caption">
+              <div class="text-bold">{{ item.secondName }} {{ item.firstName }}</div>
+              <div class="text-caption" v-if="item.permissionsEntity!=null">{{ item.permissionsEntity.arbiterNumber }} {{ item.permissionsEntity.arbiterClass }} {{ item.permissionsEntity.arbiterPermissionValidThru }}</div>
+          </div>
+          <div class="col-1 text-left">{{ item.id }}</div>
+          <div class="self-center col-2 text-left">{{ item.club.shortName }}</div>
+          <div class="self-center col-2 text-left">{{ item.phoneNumber }}</div>
+          <div class="self-center col text-left">{{ item.email }}</div>
         </div>
       </q-scroll-area>
     </div>
     <q-dialog v-model="editOtherPerson">
-      <q-card class="bg-dark text-positive row" style="min-width:45vw">
+      <q-card class="bg-dark text-positive row" style="min-width: 50vw;">
         <q-card-section v-if="temp!=null" class="col">
-          <div class="col text-caption">
+          <div class="col text-caption text-bold">
             <div class="row"><div class="col">Nazwisko i imię:</div><div class="col text-left">{{ temp.fullName }}</div></div>
             <div class="row"><div class="col">Klub:</div><div class="col text-left">{{ temp.club.shortName }}</div></div>
             <div class="row"><div class="col">numer telefonu:</div><div class="col text-left">{{ temp.phoneNumber }}</div></div>
@@ -106,16 +120,12 @@
           </q-input>
             </q-expansion-item>
           </div>
-          <div class="row">
-            <q-card-actions align="left" class="col">
+            <q-card-actions align="right">
               <q-btn label="usuń" color="red" v-close-popup @click="alertDial = true"/>
-            </q-card-actions>
-            <q-card-actions align="right" class="col">
-              <q-btn label="anuluj" color="secondary" v-close-popup />
               <q-btn label="zapisz" color="primary" v-close-popup
               @click="updateOtherPerson()" />
+              <q-btn label="anuluj" color="secondary" v-close-popup />
             </q-card-actions>
-          </div>
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -185,8 +195,10 @@ export default {
   data () {
     return {
       temp: null,
+      tempOthers: null,
       code: null,
       acceptCodeDial: false,
+      searchName: '',
       others: [],
       clubNames: [],
       filterOptions: [],
@@ -224,6 +236,7 @@ export default {
       }).then(response => response.json())
         .then(response => {
           this.others = response
+          this.tempOthers = response
         })
     },
     getAllClubsToTournament () {
@@ -375,6 +388,15 @@ export default {
           this.others.sort((a, b) => (a.club.shortName).localeCompare(b.club.shortName))
           this.sortClub = !this.sortClub
         }
+      }
+    },
+    getSearchName (val) {
+      this.others = this.tempOthers
+      if (val === '') {
+        this.others = this.tempOthers
+      } else {
+        const needle = val.toLowerCase()
+        this.others = this.others.filter(v => v.fullName.toLowerCase().indexOf(needle) > -1)
       }
     },
     onRejected () {

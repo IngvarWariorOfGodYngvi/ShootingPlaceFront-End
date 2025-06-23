@@ -12,16 +12,16 @@
       group="list">
       <Clubs class="bg-dark text-positive text-body2"></Clubs>
     </q-expansion-item>
-    <q-expansion-item label="Lista Konkurencji" dense class="text-left text-h6 text-bold bg-grey-3 q-mb-md" group="list">
+    <q-expansion-item label="Lista konkurencji" dense class="text-left text-h6 text-bold bg-grey-3 q-mb-md" group="list">
       <Competitions class="bg-dark text-positive text-body2"></Competitions>
     </q-expansion-item>
-    <q-expansion-item label="Lista Pakietów" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
+    <q-expansion-item label="Lista pakietów" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
       <PacketEdit class="bg-dark text-positive text-body2"></PacketEdit>
     </q-expansion-item>
-    <p></p>
+    <hr>
     <div v-if="!access">
-      <q-input dense input-class="text-positive" label-color="positive" color="positive" v-model="accessCode"
-        label="Wprowadź kod" type="password" mask="####" @keypress.enter="getAccess(accessCode)" filled></q-input>
+      <q-input dense input-class="text-positive" standout="" label-color="white" bg-color="primary" color="primary" rounded v-model="accessCode"
+        label="Wprowadź kod" type="password" mask="####" @keypress.enter="getAccess(accessCode)"></q-input>
       <q-item dense>{{ accessMessage }}</q-item>
       <q-btn color="primary" text-color="white" dense label="wprowadź" @click="getAccess(accessCode)"></q-btn>
     </div>
@@ -54,7 +54,7 @@
           <div v-if="choose === chooseSelect[3]" class="row">
             <MembersErasedList></MembersErasedList>
           </div>
-          <div v-if="choose === chooseSelect[4]" class="q-pa-md">
+          <div v-if="choose === chooseSelect[4]" class="q-pa-md" style="height: 50vh">
             <q-btn color="primary" label="pobierz listę obecności klubowiczów" @click="getAllMembersListToElection()" />
           </div>
           <div v-if="choose === chooseSelect[5]" class="q-pa-md">

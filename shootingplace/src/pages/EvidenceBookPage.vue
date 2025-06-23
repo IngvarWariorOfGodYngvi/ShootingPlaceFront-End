@@ -9,12 +9,12 @@
           <RCSPanaszewRODO v-if="shootingPlace === 'rcs'" class="q-pa-md"></RCSPanaszewRODO>
         </div>
         <div v-if="!nonMember" class="row q-mb-xs">
-          <q-input v-model="pesel" class="col" dense input-class="text-positive" label="Wpisz numer PESEL" label-color="positive" filled type="text" inputmode="numeric" @input="pesel.length>10?getMemberByPesel(pesel): member=null" mask="###########" onkeypress="return (event.charCode > 47 && event.charCode < 58)"></q-input>
-          <q-btn color="primary" label="resetuj" @click="reset()"></q-btn>
+          <q-input v-model="pesel" label-color="white" standout="" bg-color="primary" rounded class="col" dense input-class="text-white" label="Wpisz numer PESEL" type="text" inputmode="numeric" @input="pesel.length>10?getMemberByPesel(pesel): member=null;" mask="###########" onkeypress="return (event.charCode > 47 && event.charCode < 58)"></q-input>
+          <q-btn class="q-ml-xs" color="primary" rounded label="resetuj" @click="reset()"></q-btn>
         </div>
         <div v-if="nonMember" class="row q-mb-xs">
-          <q-input v-model="phone" class="col" @input="phone.length > 10? getOtherbyPhone(phone) : otherPerson = null" dense filled input-class="text-positive" label="Jeśli zostawiłeś nam numer telefonu to wpisz go tutaj" type="tel" label-color="positive" mask="### ### ###" onkeypress="return (event.charCode > 47 && event.charCode < 58)"></q-input>
-          <q-btn color="primary" label="resetuj" @click="reset()"></q-btn>
+          <q-input v-model="phone" label-color="white" standout="" bg-color="primary" rounded class="col" @input="phone.length > 10? getOtherbyPhone(phone) : otherPerson = null" dense input-class="text-white" label="Jeśli zostawiłeś nam numer telefonu to wpisz go tutaj" type="tel" mask="### ### ###" onkeypress="return (event.charCode > 47 && event.charCode < 58)"></q-input>
+          <q-btn class="q-ml-xs" color="primary" rounded label="resetuj" @click="reset()"></q-btn>
         </div>
         <div v-if="member!=null && !nonMember" class="row round" :class="member.active?'bg-green':'bg-red'">
           <div style="min-height: 10vh;" @click="visible=false" class="col-3" v-if="member.image!=null">
@@ -95,10 +95,10 @@
               Chcesz mieć program u siebie? Napisz do mnie: i.zebrowski.ul@gmail.com
           </label>
         </q-card-actions>
-          <q-card-actions align="right col">
+          <q-card-actions align="right" class="row">
             <q-btn @click="clear()" label="wyczyść" color="secondary"></q-btn>
-            <q-btn v-if="statementOnReadingTheShootingPlaceRegulations && (shootingPlace==='rcs' && rodo) && (member!=null || otherPerson!=null || (nonMemberFirstName!=null&&nonMemberSecondName))" @click="nonMember?saveNonMember():save()" label="zapisz" color="primary"></q-btn>
-            <q-btn v-else label="zapisz" color="grey"><q-tooltip v-if="!statementOnReadingTheShootingPlaceRegulations" content-class="text-h6 bg-primary" :offset="[10,50]" anchor="top middle">Zaakceptuj zapoznanie się z regulaminem na strzelnicy</q-tooltip></q-btn>
+            <q-btn v-if="statementOnReadingTheShootingPlaceRegulations && rodo && (member!=null || otherPerson!=null || (nonMemberFirstName!=null&&nonMemberSecondName))" @click="nonMember?saveNonMember():save()" label="zapisz" color="primary"></q-btn>
+            <q-btn v-else label="zapisz" color="grey"><q-tooltip v-if="!statementOnReadingTheShootingPlaceRegulations || !rodo" content-class="text-h6 bg-primary" :offset="[0,35]" self="bottom middle" anchor="top middle">{{!statementOnReadingTheShootingPlaceRegulations ? '-> Zaakceptuj zapoznanie się z regulaminem na strzelnicy':''}} <br/> {{!rodo ? '-> Zaakceptuj politykę prywatności':''}}</q-tooltip></q-btn>
           </q-card-actions>
         </div>
 
@@ -332,6 +332,7 @@ export default {
     },
     saveNonMember () {
       const other = {
+        id: this.otherPerson !== null ? this.otherPerson.id : null,
         firstName: this.nonMemberFirstName,
         secondName: this.nonMemberSecondName,
         phoneNumber: this.nonMemberPhoneNumber,
@@ -344,7 +345,7 @@ export default {
           flatNumber: this.nonMemberFlatNumbenr
         },
         club: {
-          name: this.nonMemberClubName
+          shortName: this.nonMemberClubName
         }
       }
       const { data } = this.$refs.signaturePad.saveSignature()
@@ -354,7 +355,7 @@ export default {
         other: other
       }
       if (!isEmpty) {
-        fetch(`${this.local}/evidence/other?phone=${this.phone}&club=${this.nonMemberClubName}&rememberMe=${this.rememberMe}`, {
+        fetch(`${this.local}/evidence/other?phone=${this.phone}&rememberMe=${this.rememberMe}`, {
           method: 'POST',
           body: JSON.stringify(dat),
           headers: {

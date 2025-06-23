@@ -1,5 +1,5 @@
 <template>
-  <div class="col">
+  <div class="col" style="height: 50vh">
     <div class="full-width col-4">
       <q-select class="col-4" dense options-dense :dark="darkSet()" filled label-color="positive" color="positive" input-class="text-positive"
                 fill-input popup-content-class="bg-dark text-positive" options-selected-class="bg-dark text-positive" :options-dark="darkSet()"

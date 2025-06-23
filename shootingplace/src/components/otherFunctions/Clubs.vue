@@ -1,11 +1,12 @@
 <template>
   <div>
     <div class="bg-dark text-positive">
-      <q-card-section>
         <div class="q-pa-md text-center col full-width no-outline text-h5 text-bold" tabindex="0">Lista znanych klubów
         </div>
-        <q-btn @click="createClub = true" color="primary" label="dodaj nowy klub"></q-btn>
-        <div class="row">
+        <div class="q-pb-md">
+          <q-btn @click="createClub = true" color="primary" label="dodaj nowy klub" rounded></q-btn>
+        </div>
+        <div class="row q-pb-xs q-pt-xs">
           <q-input debounce="500" v-model="searchName" class="col"
             @keypress.enter="searchCity = ''; getSearchName(searchName)"
             @input="searchCity = ''; getSearchName(searchName)" label="wyszukaj po nazwie" color="white"
@@ -27,9 +28,9 @@
             </template>
           </q-input>
         </div>
-        <div class="row col text-center">
-          <div class="q-pr-md">lp</div>
-          <div class="col" @click="sortF('name')"><q-icon size="2em"
+        <div class="row col bg-primary text-white" style="border-radius: 2em;">
+        <div class="text-center" style="width:3%">Lp</div>
+          <div class="col q-pa-none" @click="sortF('name')"><q-icon size="1.5em"
               :name="sortShortName ? 'arrow_drop_up' : 'arrow_drop_down'" />Nazwa</div>
           <div class="col">Telefon</div>
           <div class="col-2">e-mail</div>
@@ -40,8 +41,9 @@
         <q-scroll-area class="full-width q-pa-none" style="height: 70vh;">
           <div v-for="(club, index) in clubs" :key="index" class="hover1 text-positive items-center"
             style="cursor: pointer;" @dblclick="clubInfoModel = club; clubInfo = true; clubID = club.id">
+            <Tooltip2clickTip/>
             <div v-if="club.shortName !== 'BRAK'" class="text-positive row">
-              <div class="self-center q-pr-md">{{ index + 1 }}</div>
+              <div class="text-center" style="width:3%">{{index + 1 }}</div>
               <div class="col caption">
                 <div class="text-bold">{{ club.shortName }}</div>
                 <div class="text-caption">{{ club.fullName }}</div>
@@ -53,23 +55,26 @@
             </div>
           </div>
         </q-scroll-area>
-      </q-card-section>
     </div>
     <q-dialog v-model="clubInfo">
       <q-card class="bg-dark text-positive" style="min-width: 50vw;">
-        <q-card-section>
-          <div class="text-h6 text-bold text-center">Informacje dodatkowe o klubie</div>
-          <div>ID : {{ clubInfoModel.id }}</div>
-          <div>Skrócona nazwa : {{ clubInfoModel.shortName }}</div>
-          <div>Pełna nazwa : {{ clubInfoModel.fullName }}</div>
-          <div v-if="clubInfoModel.id === 1">Numer Licencji Klubowej : {{ clubInfoModel.licenseNumber }}</div>
-          <div>email : {{ clubInfoModel.email }}</div>
-          <div>telefon : {{ clubInfoModel.phoneNumber }}</div>
-          <div>WZSS : {{ clubInfoModel.wzss }}</div>
-          <div>województwo : {{ clubInfoModel.vovoidership }}</div>
-          <div>miasto : {{ clubInfoModel.city }}</div>
-          <div>ulica : {{ clubInfoModel.street }} {{ clubInfoModel.houseNumber }}</div>
-          <div>lokal : {{ clubInfoModel.appartmentNumber }}</div>
+        <q-card-actions align="right">
+          <q-btn icon="close" color="primary" round v-close-popup />
+        </q-card-actions>
+        <q-card-section class="text-bold">
+          <div class="text-h6 text-bold text-center text-bold">Informacje dodatkowe o klubie</div>
+          <div v-if="clubInfoModel.id == 1" class="text-h5 text-center text-bold">Uwaga! Klub Macierzysty</div>
+          <div class="row"><div class="col-3">ID :</div><div class="col">{{ clubInfoModel.id }}</div> </div>
+          <div class="row"><div class="col-3">Skrócona nazwa :</div><div class="col"> {{ clubInfoModel.shortName }}</div></div>
+          <div class="row"><div class="col-3">Pełna nazwa :</div><div class="col"> {{ clubInfoModel.fullName }}</div></div>
+          <div class="row"><div class="col-3">Numer Licencji Klubowej :</div><div class="col">  {{ clubInfoModel.licenseNumber }}</div></div>
+          <div class="row"><div class="col-3">email :</div><div class="col"> {{ clubInfoModel.email }}</div></div>
+          <div class="row"><div class="col-3">Telefon :</div><div class="col"> {{ clubInfoModel.phoneNumber }}</div></div>
+          <div class="row"><div class="col-3">WZSS :</div><div class="col"> {{ clubInfoModel.wzss }}</div></div>
+          <div class="row"><div class="col-3">Województwo :</div><div class="col"> {{ clubInfoModel.vovoidership }}</div></div>
+          <div class="row"><div class="col-3">Miasto :</div><div class="col"> {{ clubInfoModel.city }}</div></div>
+          <div class="row"><div class="col-3">Ulica :</div><div class="col"> {{ clubInfoModel.street }} {{ clubInfoModel.houseNumber }}</div></div>
+          <div class="row"><div class="col-3">Lokal :</div><div class="col"> {{ clubInfoModel.appartmentNumber }}</div></div>
           <div class="full-width row">
             <q-btn class="col" rounded dense @click="editClub = true" color="primary" icon="edit" label="edytuj">
               <q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">Edytuj
@@ -86,8 +91,8 @@
           </div>
         </q-card-section>
         <q-card-actions align="right">
-          <q-btn label="Usuń Klub" color="primary" @click="deleteClub=true" v-close-popup />
-          <q-btn label="zamknij" color="primary" v-close-popup />
+          <q-btn v-if="clubInfoModel.id!=1" label="Usuń" color="red" @click="deleteClub=true" v-close-popup />
+          <q-btn label="zamknij" color="secondary" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -294,6 +299,8 @@ import App from 'src/App'
 import Clubs from 'src/utils/PZSSClubsJS.json'
 import Vovoiderships from 'src/utils/VovoidersipsName.json'
 import WZSS from 'src/utils/WZSS.json'
+import lazyLoadComponent from 'src/utils/lazyLoadComponent'
+import SkeletonBox from 'src/utils/SkeletonBox.vue'
 
 export default {
   name: 'Clubs',
@@ -336,6 +343,12 @@ export default {
       message: null,
       local: App.host
     }
+  },
+  components: {
+    Tooltip2clickTip: lazyLoadComponent({
+      componentFactory: () => import('src/utils/Tooltip2clickTip.vue'),
+      loading: SkeletonBox
+    })
   },
   created () {
     this.getAllClubs()
