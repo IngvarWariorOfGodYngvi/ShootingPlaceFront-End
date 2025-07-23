@@ -54,7 +54,7 @@ export default {
   methods: {
     refresh () {
       document.title = 'Strzelnica - ' + this.title
-      window.localStorage.setItem('SiteName', this.title)
+      window.sessionStorage.setItem('SiteName', this.title)
       if (window.location.href === this.link) {
         window.location.reload()
       }

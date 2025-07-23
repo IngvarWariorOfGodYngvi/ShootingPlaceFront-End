@@ -1,6 +1,6 @@
 <template>
   <div class="full-width rounded">
-    <q-btn class="full-width" :disable="disable" @click="dialog=true" color="secondary">Pobierz Wniosek o przedłużenie licencji
+    <q-btn glossy class="full-width" :disable="disable" @click="dialog=true" color="secondary">Pobierz Wniosek o przedłużenie licencji
     </q-btn>
     <q-dialog v-model="dialog" @keypress.enter="dialog=false;getApplicationForExtensionOfTheCompetitorsLicense()">
       <q-card class="bg-dark text-positive">
@@ -9,8 +9,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn text-color="white" label="anuluj" color="secondary" v-close-popup />
-          <q-btn text-color="white" label="Pobierz" color="primary" v-close-popup @click="getApplicationForExtensionOfTheCompetitorsLicense()" />
+          <q-btn glossy text-color="white" label="anuluj" color="secondary" v-close-popup />
+          <q-btn glossy text-color="white" label="Pobierz" color="primary" v-close-popup @click="getApplicationForExtensionOfTheCompetitorsLicense()" />
         </q-card-actions>
       </q-card>
     </q-dialog>

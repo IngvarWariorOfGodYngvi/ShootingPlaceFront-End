@@ -1,9 +1,23 @@
 <template>
   <div class="q-pa-md">
-    <q-circular-progress indeterminate rounded size="3em" color="primary" class="q-ma-md" />
+    <q-circular-progress indeterminate rounded :size="size" :color="color" class="q-ma-md" />
     <div>Ładowanie danych...</div>
   </div>
 </template>
 <script>
-
+export default {
+  name: 'circular progress',
+  props: {
+    color: {
+      type: String,
+      required: false,
+      default: 'primary'
+    },
+    size: {
+      type: String,
+      required: false,
+      default: '3em'
+    }
+  }
+}
 </script>

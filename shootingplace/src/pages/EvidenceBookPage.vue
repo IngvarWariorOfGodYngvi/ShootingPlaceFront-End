@@ -1,34 +1,34 @@
 <template>
   <q-page>
-    <q-card class="bg-dark">
+    <q-card class="bg-dark fit">
       <q-card-section>
         <div class="row">
-          <q-checkbox v-model="nonMember" class="text-positive self-center col" @input="pesel='', member=null, phone='', otherPerson=null, getAllClubsToTournament()">Nie Jestem Klubowiczem</q-checkbox>
-          <ShootingPlaceStatutePanaszew v-if="shootingPlace === 'rcs'" class="q-pa-md"></ShootingPlaceStatutePanaszew>
-          <ShootingPlaceStatuteDziesiątka v-if="shootingPlace === 'prod'" class="q-pa-md"></ShootingPlaceStatuteDziesiątka>
-          <RCSPanaszewRODO v-if="shootingPlace === 'rcs'" class="q-pa-md"></RCSPanaszewRODO>
+          <q-checkbox v-model="nonMember" dense class="text-positive self-center col" @input="pesel='', member=null, phone='', otherPerson=null, getAllClubsToTournament()">Nie Jestem Klubowiczem</q-checkbox>
+          <ShootingPlaceStatutePanaszew v-if="shootingPlace === 'rcs'" class="q-pa-xs"></ShootingPlaceStatutePanaszew>
+          <ShootingPlaceStatuteDziesiątka v-if="shootingPlace === 'prod'" class="q-pa-xs"></ShootingPlaceStatuteDziesiątka>
+          <RCSPanaszewRODO v-if="shootingPlace === 'rcs'" class="q-pa-xs"></RCSPanaszewRODO>
         </div>
         <div v-if="!nonMember" class="row q-mb-xs">
           <q-input v-model="pesel" label-color="white" standout="" bg-color="primary" rounded class="col" dense input-class="text-white" label="Wpisz numer PESEL" type="text" inputmode="numeric" @input="pesel.length>10?getMemberByPesel(pesel): member=null;" mask="###########" onkeypress="return (event.charCode > 47 && event.charCode < 58)"></q-input>
-          <q-btn class="q-ml-xs" color="primary" rounded label="resetuj" @click="reset()"></q-btn>
+          <q-btn glossy class="q-ml-xs" color="primary" rounded label="resetuj" @click="reset()"></q-btn>
         </div>
         <div v-if="nonMember" class="row q-mb-xs">
           <q-input v-model="phone" label-color="white" standout="" bg-color="primary" rounded class="col" @input="phone.length > 10? getOtherbyPhone(phone) : otherPerson = null" dense input-class="text-white" label="Jeśli zostawiłeś nam numer telefonu to wpisz go tutaj" type="tel" mask="### ### ###" onkeypress="return (event.charCode > 47 && event.charCode < 58)"></q-input>
-          <q-btn class="q-ml-xs" color="primary" rounded label="resetuj" @click="reset()"></q-btn>
+          <q-btn glossy class="q-ml-xs" color="primary" rounded label="resetuj" @click="reset()"></q-btn>
         </div>
         <div v-if="member!=null && !nonMember" class="row round" :class="member.active?'bg-green':'bg-red'">
           <div style="min-height: 10vh;" @click="visible=false" class="col-3" v-if="member.image!=null">
-            <q-img contain fit=none style="max-height: 40vh; border-radius: 5px" class="text-body1" alt="zdjęcie profilowe"
+            <q-img contain fit=none style="max-height: 30vh;" class="text-body1" alt="zdjęcie profilowe"
           :src="(`${local}/files/getFile?uuid=${member.image}`)" />
           </div>
           <div class="col" :class="member.active?'col':'col-6'">
-            <div dense class="q-mt-xs q-pl-md" >Imię i Nazwisko: {{ member.firstName }} {{ member.secondName }}</div>
-            <div dense class="q-mt-xs q-pl-md" >Numer Legitymacji: {{ member.legitimationNumber }}</div>
-            <div dense class="q-mt-xs q-pl-md" :class="member.active?'':'text-bold text-h6'">Składka ważna do: {{ convertDate(member.history.contributionList[0].validThru) }}</div>
-            <div dense class="q-mt-xs q-pl-md" v-if="member.shootingPatent.patentNumber!=null">Patent numer: {{ member.shootingPatent.patentNumber }} {{ member.shootingPatent.pistolPermission? 'P' : '' }}{{ member.shootingPatent.riflePermission? 'K' : '' }}{{ member.shootingPatent.shotgunPermission? 'S' : '' }}</div>
-            <div dense class="q-mt-xs q-pl-md" v-if="member.license.number!=null" :class="member.license.valid?'':'bg-red round'">Licencja numer: {{ member.license.number }} Ważna do: {{ convertDate(member.license.validThru) }}</div>
-            <div dense class="q-mt-xs q-pl-md" v-if="member.weaponPermission.number!=null">Licencja numer: {{ member.weaponPermission.number }}</div>
-            <div dense class="q-mt-xs q-pl-md" >Ilość startów: Pistolet: {{ member.history.pistolCounter }} Karabin: {{ member.history.rifleCounter }} Strzelba: {{ member.history.shotgunCounter }}</div>
+            <div class="q-mt-xs q-pl-md" >Imię i Nazwisko: {{ member.firstName }} {{ member.secondName }}</div>
+            <div class="q-mt-xs q-pl-md" >Numer Legitymacji: {{ member.legitimationNumber }}</div>
+            <div class="q-mt-xs q-pl-md" :class="member.active?'':'text-bold text-h6'">Składka ważna do: {{ convertDate(member.history.contributionList[0].validThru) }}</div>
+            <div class="q-mt-xs q-pl-md" v-if="member.shootingPatent.patentNumber!=null">Patent numer: {{ member.shootingPatent.patentNumber }} {{ member.shootingPatent.pistolPermission? 'P' : '' }}{{ member.shootingPatent.riflePermission? 'K' : '' }}{{ member.shootingPatent.shotgunPermission? 'S' : '' }}</div>
+            <div class="q-mt-xs q-pl-md" v-if="member.license.number!=null" :class="member.license.valid?'':'bg-red round'">Licencja numer: {{ member.license.number }} Ważna do: {{ convertDate(member.license.validThru) }}</div>
+            <div class="q-mt-xs q-pl-md" v-if="member.weaponPermission.number!=null">Licencja numer: {{ member.weaponPermission.number }}</div>
+            <div class="q-mt-xs q-pl-md" >Ilość startów: Pistolet: {{ member.history.pistolCounter }} Karabin: {{ member.history.rifleCounter }} Strzelba: {{ member.history.shotgunCounter }}</div>
           </div>
           <div v-if="member!=null" class="self-center" :class="member.active?'':'col-3'">
             <div v-if="!member.active" class="text-bold text-h6" style="display: flex; justify-content: center;">Ureguluj Swoje Składki Członkowskie !</div>
@@ -84,9 +84,9 @@
       <div class="text-positive full-width text-h6 text-center ">Podpisz poniżej</div>
       <q-card-section>
         <div style="padding-left: 12.5vw; padding-right: 12.5vw;">
-          <VueSignaturePad id="canvas" ref="signaturePad" style="height: 25vh;background-color: white;"></VueSignaturePad>
+          <VueSignaturePad id="canvas" ref="signaturePad" height="25vh" style="background-color: white;"/>
         </div>
-        <q-checkbox v-model="statementOnReadingTheShootingPlaceRegulations" class="text-positive col">Zapoznałem się z regulaminem strzelnicy</q-checkbox>
+        <q-checkbox v-model="statementOnReadingTheShootingPlaceRegulations" class="text-positive col">Zapoznałem się z regulaminem strzelnicy i polityką prywatności</q-checkbox>
       </q-card-section>
       <div>
         <div class="row">
@@ -96,9 +96,9 @@
           </label>
         </q-card-actions>
           <q-card-actions align="right" class="row">
-            <q-btn @click="clear()" label="wyczyść" color="secondary"></q-btn>
-            <q-btn v-if="statementOnReadingTheShootingPlaceRegulations && rodo && (member!=null || otherPerson!=null || (nonMemberFirstName!=null&&nonMemberSecondName))" @click="nonMember?saveNonMember():save()" label="zapisz" color="primary"></q-btn>
-            <q-btn v-else label="zapisz" color="grey"><q-tooltip v-if="!statementOnReadingTheShootingPlaceRegulations || !rodo" content-class="text-h6 bg-primary" :offset="[0,35]" self="bottom middle" anchor="top middle">{{!statementOnReadingTheShootingPlaceRegulations ? '-> Zaakceptuj zapoznanie się z regulaminem na strzelnicy':''}} <br/> {{!rodo ? '-> Zaakceptuj politykę prywatności':''}}</q-tooltip></q-btn>
+            <q-btn glossy @click="clear()" label="wyczyść" color="secondary"></q-btn>
+            <q-btn glossy v-if="statementOnReadingTheShootingPlaceRegulations && rodo && (member!=null || otherPerson!=null || (nonMemberFirstName!=null&&nonMemberSecondName))" @click="nonMember?saveNonMember():save()" label="zapisz" color="primary"></q-btn>
+            <q-btn glossy v-else label="zapisz" color="grey"><q-tooltip v-if="!statementOnReadingTheShootingPlaceRegulations || !rodo" content-class="text-h6 bg-primary" :offset="[0,35]" self="bottom middle" anchor="top middle">{{!statementOnReadingTheShootingPlaceRegulations ? '-> Zaakceptuj zapoznanie się z regulaminem na strzelnicy':''}} <br/> {{!rodo ? '-> Zaakceptuj politykę prywatności':''}}</q-tooltip></q-btn>
           </q-card-actions>
         </div>
 

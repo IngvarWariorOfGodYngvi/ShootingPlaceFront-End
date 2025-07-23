@@ -48,7 +48,8 @@ module.exports = function (/* ctx */) {
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
     build: {
       vueRouterMode: 'hash', // available values: 'hash', 'history'
-
+      ignorePublicFolder: false,
+      distDir: 'dist/strzelnica',
       // transpile: false,
 
       // Add dependencies for transpiling with Babel (Array of string/regex)
@@ -59,7 +60,8 @@ module.exports = function (/* ctx */) {
       // rtl: false, // https://quasar.dev/options/rtl-support
       preloadChunks: true,
       showProgress: true,
-      // gzip: true,
+      webpackShowProgress: true,
+      gzip: true,
       // analyze: true,
 
       // Options below are automatically set depending on the env, set them if you want to override

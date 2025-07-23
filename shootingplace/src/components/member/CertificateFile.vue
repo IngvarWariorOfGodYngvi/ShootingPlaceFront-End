@@ -1,6 +1,6 @@
 <template>
   <div class="full-width rounded">
-    <q-btn class="full-width" @click="dialog=true" color="secondary">Pobierz Zaświadczenie o przynależności
+    <q-btn glossy class="full-width" @click="dialog=true" color="secondary">Pobierz Zaświadczenie o przynależności
       <div v-if="loading " class="text-center"><q-circular-progress color="white" indeterminate/></div>
     </q-btn>
     <q-dialog v-model="dialog">
@@ -24,8 +24,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn label="anuluj" color="primary" v-close-popup @click="certificateChoice = null"/>
-          <q-btn color="primary" label="pobierz" @click="certificateDownload = true"></q-btn>
+          <q-btn glossy label="anuluj" color="primary" v-close-popup @click="certificateChoice = null"/>
+          <q-btn glossy color="primary" label="pobierz" @click="certificateDownload = true"></q-btn>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -38,8 +38,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn text-color="white" label="anuluj" color="primary" v-close-popup @click="certificateChoice = null"/>
-          <q-btn text-color="white" label="Pobierz" color="primary" v-close-popup
+          <q-btn glossy text-color="white" label="anuluj" color="primary" v-close-popup @click="certificateChoice = null"/>
+          <q-btn glossy text-color="white" label="Pobierz" color="primary" v-close-popup
                  @click="loading=true;getDownloadCertificateOfClubMembership();dialog=false"/>
         </q-card-actions>
       </q-card>

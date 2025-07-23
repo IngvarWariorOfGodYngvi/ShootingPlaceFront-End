@@ -1,6 +1,6 @@
 <template>
   <div class="full-width rounded">
-    <q-btn class="full-width" @click="dialog=true" color="secondary">Pobierz Plik .csv
+    <q-btn glossy class="full-width" @click="dialog=true" color="secondary">Pobierz Plik .csv
       <div v-if="loading " class="text-center"><q-circular-progress color="white" indeterminate/></div>
     </q-btn>
     <q-dialog v-model="dialog" @keypress.enter="dialog=false;getCSVFile()">
@@ -10,8 +10,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn text-color="white" label="anuluj" color="secondary" v-close-popup />
-          <q-btn text-color="white" label="Pobierz" color="primary" v-close-popup @click="loading=true;getCSVFile()" />
+          <q-btn glossy text-color="white" label="anuluj" color="secondary" v-close-popup />
+          <q-btn glossy text-color="white" label="Pobierz" color="primary" v-close-popup @click="loading=true;getCSVFile()" />
         </q-card-actions>
       </q-card>
     </q-dialog>

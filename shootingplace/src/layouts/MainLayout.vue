@@ -25,9 +25,11 @@
               style="border: solid 1px white; border-radius: 50%" class="lighterbtn rotating" icon="settings"
               @click="openSettings = !openSettings">
               <q-tooltip class="bg-primary" content-class="bg-primary text-h6 text-center">Ustawienia</q-tooltip>
-              <q-popup-edit v-model="openSettings" :offset="[0, 0]" content-class="bg-primary text-white" :cover="false"
+              <q-popup-edit v-model="openSettings" :offset="[0, 0]" content-class="bg-primary text-white col" :cover="false"
                 :content-style="mobile ? '' : 'width:20vw'">
-                <Experimental v-if="main || main === false"></Experimental>
+                <Experimental v-if="main || main === false"/>
+                <UpdateProgram v-if="main" class="q-pa-md text-center"/>
+                <SignInByPin v-if="mobile"/>
               </q-popup-edit>
             </q-avatar>
           </div>
@@ -145,6 +147,14 @@ export default {
       componentFactory: () => import('components/leftDrawer/WorkTimeList.vue'),
       loading: SkeletonBox
     }),
+    UpdateProgram: lazyLoadComponent({
+      componentFactory: () => import('components/settings/UpdateProgram.vue'),
+      loading: SkeletonBox
+    }),
+    SignInByPin: lazyLoadComponent({
+      componentFactory: () => import('components/settings/SignInByPin.vue'),
+      loading: SkeletonBox
+    }),
     Experimental: lazyLoadComponent({
       componentFactory: () => import('components/settings/Experimental.vue'),
       loading: SkeletonBox
@@ -160,8 +170,8 @@ export default {
     } else {
       this.changeColor()
     }
-    if (window.localStorage.getItem('SiteName') == null) {
-      window.localStorage.setItem('SiteName', 'Strona Główna')
+    if (window.sessionStorage.getItem('SiteName') == null) {
+      window.sessionStorage.setItem('SiteName', 'Strona Główna')
     }
     if (window.localStorage.getItem('main') == null) {
       window.localStorage.setItem('main', false)
@@ -174,7 +184,7 @@ export default {
     return {
       title: '',
       openSettings: false,
-      siteName: 'Strona Główna',
+      siteName: App.siteName,
       zero: 1,
       arbiter: window.localStorage.getItem('arbiter'),
       mobile: App.mobile,
@@ -353,7 +363,7 @@ export default {
       this.networkStatusFunction()
       setInterval(() => {
         this.networkStatusFunction()
-      }, 100000)
+      }, 30000)
     },
     networkStatusFunction () {
       fetch(`${this.local}/conf/ping`, {
@@ -364,7 +374,23 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           response.text().then(
-            () => {
+            response => {
+              if (window.sessionStorage.getItem('buildDateTime') == null) {
+                window.sessionStorage.setItem('buildDateTime', response)
+              } else {
+                if (window.sessionStorage.getItem('buildDateTime') !== response) {
+                  window.sessionStorage.setItem('buildDateTime', response)
+                  window.location.reload()
+                }
+              }
+              if (window.localStorage.getItem('usrPerm') != null) {
+                if (JSON.parse(window.localStorage.getItem('usrPermTime')) < new Date().getTime()) {
+                  // window.localStorage.setItem('usrPerm', null)
+                  // window.localStorage.setItem('usrPerm', null)
+                  window.localStorage.removeItem('usrPerm')
+                  window.localStorage.removeItem('usrPermTime')
+                }
+              }
               this.networkStatusvar = true
             })
         } else {
@@ -375,11 +401,11 @@ export default {
       })
     },
     siteNameChange () {
-      return window.localStorage.getItem('SiteName')
+      return window.sessionStorage.getItem('SiteName')
     },
     changeTitle (title) {
       document.title = 'Strzelnica - ' + title
-      window.localStorage.setItem('SiteName', title)
+      window.sessionStorage.setItem('SiteName', title)
     },
     reset () {
       window.localStorage.setItem('arbiter', '000')

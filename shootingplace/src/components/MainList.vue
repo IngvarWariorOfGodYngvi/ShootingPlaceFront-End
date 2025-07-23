@@ -156,7 +156,7 @@ export default {
     },
     changeTitle (title) {
       document.title = 'Strzelnica - ' + title
-      window.localStorage.setItem('SiteName', title)
+      window.sessionStorage.setItem('SiteName', title)
     },
     checkAnyOpenAmmoList () {
       fetch(`${this.local}/ammoEvidence/checkAnyOpenEvidence`, {

@@ -1,6 +1,6 @@
 <template>
   <div class="full-width">
-    <q-btn class="full-width round" :disable="disable" @click="dialog=true" color="secondary" label="Pobierz deklarację członkowską LOK">
+    <q-btn glossy class="full-width round" :disable="disable" @click="dialog=true" color="secondary" label="Pobierz deklarację członkowską LOK">
       &nbsp;&nbsp;<q-avatar>
         <div v-if="loading " class="text-center"><q-circular-progress color="white" indeterminate><img src="~assets/logo_LOK.png"></q-circular-progress></div>
         <img v-else src="~assets/logo_LOK.png">
@@ -12,8 +12,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn text-color="white" label="anuluj" color="secondary" v-close-popup />
-          <q-btn text-color="white" label="Pobierz" color="primary" v-close-popup @click="loading=true;membershipDeclarationLOKPDF()" />
+          <q-btn glossy text-color="white" label="anuluj" color="secondary" v-close-popup />
+          <q-btn glossy text-color="white" label="Pobierz" color="primary" v-close-popup @click="loading=true;membershipDeclarationLOKPDF()" />
         </q-card-actions>
       </q-card>
     </q-dialog>

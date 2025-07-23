@@ -169,7 +169,6 @@ export default {
     const loading = ref([
       false
     ])
-    const progress = ref(false)
 
     function simulateProgress (number, memberNumberLegitimation, otherID) {
       loading.value[number] = true
@@ -187,7 +186,6 @@ export default {
     }
     return {
       loading,
-      progress,
       simulateProgress,
       simulateProgressGun
     }

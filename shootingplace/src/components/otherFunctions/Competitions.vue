@@ -14,7 +14,7 @@
         <q-scroll-area class="full-width q-pa-none" style="height: 70vh;">
           <draggable v-model="array" group="people" @start="drag=true" @end="drag=false">
           <div v-for="(comp, index) in competitions" :key="index" class="hover1 text-positive items-center"
-            style="cursor: pointer;" @dblclick="competition = comp;compID = competition.uuid; competitionInfo = true;getCountingMethods();getCalibersList(),getCompetitionTypes(),getDisciplines()">
+            style="cursor: pointer;" @dblclick="setVariables (comp);competition = comp;compID = competition.uuid; competitionInfo = true;">
             <div class="text-positive row text-center">
               <Tooltip2clickTip/>
               <div class="text-center" style="width:3%">{{index + 1 }}</div>
@@ -23,7 +23,8 @@
                 <div class="text-caption">{{ comp.countingMethod }}</div>
               </div>
               <div class="col-2">{{ comp.ordering }}</div>
-              <div class="col-2">{{ comp.disciplineList.length > 0 ? arrayToString(comp.disciplineList) : comp.discipline }}</div>
+              <!-- <div class="col-2">{{ comp.disciplineList.length > 0 ? arrayToString(comp.disciplineList) : '' }}</div> -->
+              <div class="col-2">{{ comp.disciplineList.toString()}}</div>
               <div class="col-2">{{ comp.numberOfShots }}</div>
               <div class="col-2">{{ comp.practiceShots }}</div>
             </div>
@@ -35,8 +36,8 @@
         <q-card-section class="text-bold">
           <div class="text-h6 text-center">{{ competition.name }}</div>
           <div>ID: {{ competition.uuid }}</div>
-          <div v-if="competition.disciplineList!=null&&competition.disciplineList.length>0">dyscypliny: {{ arrayToString(competition.disciplineList) }}</div>
-          <div v-else>Dyscyplina: {{ competition.discipline }}</div>
+          <div v-if="competition.disciplineList!=null&&competition.disciplineList.length>0">dyscypliny: {{ competition.disciplineList.toString() }}</div>
+          <!-- <div v-else>Dyscyplina: {{ competition.discipline }}</div> -->
           <div>Ilość Strzałów: {{ competition.numberOfShots }}</div>
           <div>Rodzaj: {{ competition.type }}</div>
           <div>Metoda Liczenia: {{ competition.countingMethod === 'NORMAL'?'Normalnie' : ' COMSTOCK' }}</div>
@@ -44,7 +45,7 @@
           <div>Ilość Strzałów próbnych: {{ competition.practiceShots }}</div>
           <div>Kaliber: {{ competition.caliberUUID }}</div>
           <q-input @keypress.enter="competitionInfo=false;acceptDialog=true" dense input-class="text-positive" label-color="positive" v-model="name" label="nazwa"/>
-          <q-checkbox class="col" v-for="(item,index) in disciplines" :key="index" :val="item" :label="item" v-model="disciplineList"/>
+          <q-checkbox class="col" v-for="(item,index1) in disciplines" :key="index1" :val="item" :label="item" v-model="disciplineList"/>
           <q-input @keypress.enter="competitionInfo=false;acceptDialog=true" dense input-class="text-positive" label-color="positive" v-model="orderNumber" label="kolejność na listach" onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
           <q-input @keypress.enter="competitionInfo=false;acceptDialog=true" dense input-class="text-positive" label-color="positive" v-model="numberOfShots" label="ilość strzałów ocenianych" onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
           <q-input @keypress.enter="competitionInfo=false;acceptDialog=true" dense input-class="text-positive" label-color="positive" v-model="practiceShots" label="ilość strzałów próbnych" onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
@@ -139,6 +140,10 @@ export default {
   name: 'Competitions.vue',
   created () {
     this.getCompetitions()
+    this.getCountingMethods()
+    this.getCalibersList()
+    this.getCompetitionTypes()
+    this.getDisciplines()
   },
   components: {
     draggable,
@@ -217,6 +222,21 @@ export default {
           this.calibersList = response
         })
     },
+    getCaliberNameFromUUID (caliberUUID) {
+      return fetch(`${this.local}/armory/getCaiberNameFromCaliberUUID?caliberUUID=${caliberUUID}`, {
+        method: 'GET'
+      }).then(response => response.json())
+    },
+    setVariables (competition) {
+      this.name = competition.name
+      this.disciplineList = competition.disciplineList
+      this.orderNumber = competition.ordering
+      this.numberOfShots = competition.numberOfShots
+      this.practiceShots = competition.practiceShots
+      this.caliberUUID = this.calibersList.filter(f => f.uuid === competition.caliberUUID)[0]
+      this.competitionType = competition.type
+      this.method = competition.countingMethod
+    },
     arrayToString (arr) {
       let string = ''
       for (let i = 0; i < arr.length; i++) {
@@ -229,9 +249,8 @@ export default {
       const data = {
         ordering: this.orderNumber,
         practiceShots: this.practiceShots,
-        discipline: this.disciplineList.length === 1 ? this.disciplineList[0] : '',
-        disciplineList: this.disciplineList.length > 1 ? this.disciplineList : [],
-        caliberUUID: this.caliberUUID,
+        disciplineList: this.disciplineList,
+        caliberUUID: this.caliberUUID != null ? this.caliberUUID.uuid : '',
         type: this.competitionType,
         name: this.name,
         countingMethod: this.method,
@@ -298,14 +317,16 @@ export default {
       })
     },
     autoClose () {
+      this.code = null
+      this.orderNumber = null
+      this.practiceShots = null
+      // this.disciplineList = null
+      this.caliberUUID = null
+      this.competitionType = null
+      this.name = null
+      this.method = null
+      this.numberOfShots = null
       setTimeout(() => {
-        this.code = null
-        this.orderNumber = null
-        this.practiceShots = null
-        this.numberOfShots = null
-        this.caliberUUID = null
-        this.name = null
-        this.method = null
         this.success = false
         this.failure = false
         this.message = null

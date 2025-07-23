@@ -1,9 +1,9 @@
 <template>
   <q-page padding>
-    <div v-if="!mobile&&main" class="q-pa-md row">
-      <!-- <DownloadBtn class="q-pa-xs"/> -->
+    <!-- <div v-if="!mobile&&main" class="q-pa-md row">
+      <DownloadBtn class="q-pa-xs"/>
       <licenseXLSX class="q-pa-xs"/>
-    </div>
+    </div> -->
     <q-expansion-item label="Licencje nieważne" dense class="text-left text-h6 text-bold bg-dark text-positive round" group="list">
       <NotValidLicense></NotValidLicense>
     </q-expansion-item>
@@ -71,10 +71,10 @@ export default {
       componentFactory: () => import('components/license/LicensesQualifyingToProlong.vue'),
       loading: SkeletonBox
     }),
-    LicenseXLSX: lazyLoadComponent({
-      componentFactory: () => import('components/license/LicenseXLSX.vue'),
-      loading: SkeletonBox
-    }),
+    // LicenseXLSX: lazyLoadComponent({
+    //   componentFactory: () => import('components/license/LicenseXLSX.vue'),
+    //   loading: SkeletonBox
+    // }),
     LicensesNotQualifyingToProlong: lazyLoadComponent({
       componentFactory: () => import('components/license/LicensesNotQualifyingToProlong.vue'),
       loading: SkeletonBox

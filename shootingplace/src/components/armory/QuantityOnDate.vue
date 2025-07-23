@@ -1,7 +1,8 @@
 <template>
   <div>
     <div class="text-center">
-      <q-circular-progress v-if="q=='przeliczanie'" color="primary" indeterminate/>
+      <CircularLoadingBox size="1em" v-if="q=='przeliczanie'"></CircularLoadingBox>
+      <!-- <q-circular-progress v-if="q=='przeliczanie'" color="primary" indeterminate/> -->
       <div v-else>{{ q }}</div>
     </div>
   </div>
@@ -11,7 +12,8 @@
   </style>
 <script>
 import App from 'src/App'
-
+import lazyLoadComponent from 'src/utils/lazyLoadComponent'
+import SkeletonBox from 'src/utils/SkeletonBox.vue'
 export default {
   name: 'contributions.vue',
   data () {
@@ -47,6 +49,12 @@ export default {
         this.getCaliberQuantityOnDate(this.uuid, this.date)
       }
     }
+  },
+  components: {
+    CircularLoadingBox: lazyLoadComponent({
+      componentFactory: () => import('src/utils/CircularLoadingBox.vue'),
+      loading: SkeletonBox
+    })
   },
   created () {
     this.getCaliberQuantityOnDate(this.uuid, this.quantityOnDate)

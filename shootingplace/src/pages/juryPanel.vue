@@ -16,7 +16,7 @@
         <div v-if="JuryPanelCompetitionInExpansionItem && !findByShooter">
           <div class="row" v-if="!open">
             <div v-for="(comp, index) in tournament.competitionsList" :key="index" class="col-4 q-pa-md">
-              <q-btn :color="comp.discipline=='Karabin'?'secondary':comp.discipline=='Pistolet'?'primary':comp.discipline=='Strzelba'?'accent':comp.disciplineList!=null&&comp.disciplineList.length>1?'yellow':''" class="full-width" :class="comp.discipline=='Strzelba' || comp.disciplineList.length>1?'text-black' : 'text-positive'"  :style="mobile?'height: 20vh;':'height: 15vh;'" no-caps
+              <q-btn :color="comp.disciplineList.length == 1 &&  comp.disciplineList[0] == 'Karabin'?'secondary':comp.disciplineList.length == 1 &&  comp.disciplineList[0] =='Pistolet'?'primary':comp.disciplineList.length == 1 &&  comp.disciplineList[0] =='Strzelba'?'accent':comp.disciplineList.length>1?'yellow':''" class="full-width" :class="comp.disciplineList[0]=='Strzelba' || comp.disciplineList.length>1?'text-black' : 'text-positive'"  :style="mobile?'height: 20vh;':'height: 15vh;'" no-caps
               @click="uuid=comp.uuid;size=comp.scoreListSize;compName=comp.name;open=true" glossy>{{comp.name}}</q-btn>
             </div>
           </div>

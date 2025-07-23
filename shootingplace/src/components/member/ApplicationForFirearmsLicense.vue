@@ -1,9 +1,9 @@
 <template>
   <div class="full-width rounded">
-    <q-btn class="full-width" :disable="disable" @click="dialog=true" color="secondary">Pobierz wniosek o pozwolenie na broń
+    <q-btn glossy class="full-width" :disable="disable" @click="dialog=true" color="secondary">Pobierz wniosek o pozwolenie na broń
     </q-btn>
     <q-dialog v-model="dialog">
-      <q-card style="width: 400px;" class="bg-dark text-positive">
+      <q-card style="width: 60vw;" class="bg-dark text-positive">
         <q-card-section class="row items-center">
           <div class="q-ml-sm full-width text-h5 text-bold text-center">Uzupełnij dane aby wygenerować wniosek</div>
         </q-card-section>
@@ -47,8 +47,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn label="anuluj" color="secondary" v-close-popup />
-          <q-btn color="primary" :disable="disable" label="pobierz" @click="getApplicationForFirearmsLicense (thirdName, birthPlace, fatherName, motherName, motherMaidenName, issuingAuthority, IDDate, licenseDate,city)"></q-btn>
+          <q-btn glossy label="anuluj" color="secondary" v-close-popup />
+          <q-btn glossy color="primary" :disable="disable" label="pobierz" @click="getApplicationForFirearmsLicense (thirdName, birthPlace, fatherName, motherName, motherMaidenName, issuingAuthority, IDDate, licenseDate,city)"></q-btn>
         </q-card-actions>
       </q-card>
     </q-dialog>

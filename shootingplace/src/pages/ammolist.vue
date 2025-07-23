@@ -16,9 +16,7 @@
             <q-btn v-if="AddSingleAmmoExp" :class="mobile ? 'col-6' : 'col-3'" label="Dodaj osobę do listy"
               color="primary" @click="getOther(); addAmmo = true">
             </q-btn>
-            <q-btn v-if="GunListExp" :class="mobile ? 'col-6' : 'col-3'" label="Dodaj broń do listy" color="primary"
-              @click="getOther(); addGun = true">
-            </q-btn>
+            <AddGunToList v-on:addGunToList="getAmmoData();getGunListAmmoList()"></AddGunToList>
             <ShootingPackets v-if="AddShootingPacketExp" :class="mobile ? 'col-6' : 'col-3'"
               :nameMember="{ firstName: '0', secondName: '0', legitimationNumber: '0' }"
               :nameOther="{ firstName: '0', secondName: '0', id: '0' }" v-on:addMemberAndAmmoToCaliber="getAmmoData()">
@@ -31,7 +29,7 @@
             </div>
           </div>
         </div>
-        <div class="text-h5 text-bold" v-if="ammoList.length <= 0">
+        <div class="text-h5 text-bold" v-if="ammoList==null">
           <q-item>
             <q-item-section>
               Brak aktywnej listy amunicji
@@ -56,10 +54,11 @@
               </q-item-section>
             </q-item>
           </div>
-          <div v-for="(ammoInEvidenceDTOList, uuid) in ammoList.ammoInEvidenceDTOList" :key="uuid">
+          <div v-for="(ammoInEvidenceDTOList, uuid) in ammoList.ammoInEvidenceDTOList" :key="uuid"
+            :class="ammoInEvidenceDTOList.locked ? 'bg-red-4 round' : ''">
             <q-item dense>
               <q-item-label class="text-h6">
-                Kaliber {{ ammoInEvidenceDTOList.caliberName }}
+                Kaliber {{ ammoInEvidenceDTOList.caliberName }} {{ ammoInEvidenceDTOList.locked ? '(dodawanie osób zablokowane)': '' }}
               </q-item-label>
             </q-item>
             <div class="col">
@@ -113,29 +112,15 @@
               Lista Broni w Użyciu
             </q-item-label>
           </q-item>
-          <q-btn v-if="gunsInUsed.length > 0" class="full-width" color="primary" @click="weaponConfirmation = true"
-            label="Zwróć wszystko do magazynu">
-          </q-btn>
-          <div v-for="(item, index) in gunsInUsed" :key="index">
-            <q-btn class="full-width q-ma-xs" dense color="primary"
-              @dblclick="!mobile ? returnToStore(item.gunUUID) : (gunUUID = item.gunUUID, gunImage = true)"
-              @click="gunUUID = item.gunUUID; gunImage = true">
-              <q-tooltip :delay="500" content-style="width: 50%; height: 60%;background-image: url('img/logo-panaszew.jpg');
-                background-repeat: no-repeat;
-                background-position: center;
-                background-attachment: fixed;" anchor="top middle" self="top middle" transition-show="scale"
-                transition-hide="scale">
-                <div style="height: 100%; width: 100%;opacity: 0.92;">
-                  <q-img spinner-color="white" ratio="1" contain style="height: 100%; width: 100%;"
-                    :src="(local + '/files/getGunImg?gunUUID=' + item.gunUUID)" />
-                </div>
-              </q-tooltip>
-              <div class="col q-pa-none q-ma-none">
-                <q-item-label>{{ item.gunName }}</q-item-label>
-                <q-item-label>{{ item.gunSerialNumber }}</q-item-label>
-                <q-item-label v-if="item.userName != null">{{ item.userName }}</q-item-label>
+          <div v-for="(item, index) in gunsInUsed" :key="index" @dblclick="gunUsedUUID = item.uuid;gunUsedInfoDial = true">
+            <div class="col q-pl-md bg-primary xyz1 text-caption text-white" style="border: 1px solid white; border-radius: 2em; line-height: 1.4em;">
+              <div>{{ item.gun.modelName }}</div>
+              <div class="row">
+                <div class="col">{{ item.gun.serialNumber }}</div>
+                <div class="col">{{ item.gun.caliber }}</div>
+                <div class="col">{{ item.issuanceDate }}</div>
               </div>
-            </q-btn>
+            </div>
           </div>
         </div>
       </q-card>
@@ -167,6 +152,9 @@
         </div>
       </q-drawer>
     </div>
+    <q-dialog v-model="gunUsedInfoDial">
+      <GunUsedInfo :uuid="gunUsedUUID"></GunUsedInfo>
+    </q-dialog>
     <q-dialog position="top" v-model="ammunitionListAlert">
       <q-card>
         <q-card-section>
@@ -182,7 +170,7 @@
             <div class="text-h6">Lista numer {{ number }}</div>
           </div>
           <div class="col q-pa-md">
-            <div class="row bg-accent">
+            <div class="row bg-accent round text-black">
               <div class="col h6 text-bold text-center">Kaliber</div>
               <div class="col h6 text-bold text-center">Suma</div>
             </div>
@@ -197,8 +185,13 @@
           <div class="row">
             <AmmoListDownloadBtn :uuid="uuid" :date="date" class="col full-height" />
             <q-item></q-item>
-            <q-btn color="primary" class="col full-width full-height" icon="lock_open" @click="openList = true">
-              <q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">Otwórz listę
+            <q-btn :disable="ammunitionListEvidence.locked" color="primary" class="col full-width full-height"
+              icon="lock_open" @click="openList = true">
+              <q-tooltip v-if="!ammunitionListEvidence.locked" anchor="top middle" :offset="[35, 35]"
+                content-class="text-body1 bg-secondary">Otwórz listę
+              </q-tooltip>
+              <q-tooltip v-if="ammunitionListEvidence.locked" anchor="top middle" :offset="[35, 35]"
+                content-class="text-body1 bg-secondary">Lista zablokowana - nie można otworzyć listy
               </q-tooltip>
             </q-btn>
           </div>
@@ -284,78 +277,6 @@
         </div>
       </div>
     </q-dialog>
-    <!-- <q-dialog v-model="packet">
-      <AddShootingPacket @hook:destroyed="getAmmoData()"
-      :nameMember="{ firstName: '0', secondName: '0', legitimationNumber: '0' }"
-      :nameOther="{ firstName: '0', secondName: '0', id: '0' }"></AddShootingPacket>
-    </q-dialog> -->
-    <q-dialog v-model="addGun">
-      <div class="bg-dark text-positive">
-        <div class="row">
-          <q-select label="Wybierz osobę z Klubu" popup-content-class="bg-dark text-positive"
-            :option-value="opt => opt !== '' ? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber).toString() : ''"
-            :option-label="opt => opt !== '' ? Object(opt.secondName + ' ' + opt.firstName + ' ' + opt.legitimationNumber).toString() : ''"
-            emit-value map-options options-dense color="positive" input-class="text-positive" label-color="positive"
-            dark v-model="memberName" fill-input filled dense use-input hide-selected input-debounce="0"
-            :options="options" @input="otherName = '0 0'" @filter="filterFn" class="col">
-            <template v-slot:option="option">
-              <q-item class="rounded bg-dark text-positive" dense style="padding: 0; margin: 0;"
-                v-bind="option.itemProps" v-on="option.itemEvents">
-                <q-item-section dense style="padding: 0.5em; margin: 0;"
-                  :class="option.opt.active ? '' : 'bg-warning rounded'"
-                  @click="otherName = '0 0'; memberName = option.opt.secondName + ' ' + option.opt.firstName + ' ' + option.opt.legitimationNumber">
-                  <div>{{ option.opt.secondName }} {{ option.opt.firstName }}
-                    {{ option.opt.legitimationNumber }} {{ option.opt.adult ? 'Ogólna' : 'Młodzież' }} {{
-                      option.opt.active ? '' : ' - BRAK SKŁADEK' }}
-                  </div>
-                </q-item-section>
-              </q-item>
-            </template>
-            <template v-slot:no-option>
-              <q-item>
-                <q-item-section class="text-grey">
-                  Brak wyników
-                </q-item-section>
-              </q-item>
-            </template>
-          </q-select>
-          <q-select @popup-show="getOther()" @popup-hide="getOther()" options-dense class="col" dense filled
-            v-model="otherName" use-input hide-selected fill-input input-debounce="0" color="positive"
-            input-class="text-positive" label-color="positive" popup-content-class="bg-dark text-positive"
-            :options="options1" @input="memberName = '0 0'" @filter="filterOther" label="Dodaj osobę spoza klubu">
-            <template v-slot:before-options>
-              <q-item class="full-width bg-dark" style="position: sticky; top: 0; z-index: 1">
-                <AddNewOtherPerson v-on:addOtherPerson="getOther()" class="full-width"></AddNewOtherPerson>
-              </q-item>
-            </template>
-            <template v-slot:no-option>
-              <div class="bg-dark text-center text-bold text-positive">
-                <div class="q-pa-md bg-dark text-center text-bold text-positive">Brak wyników - możesz dodać nową
-                  osobę
-                </div>
-                <AddNewOtherPerson></AddNewOtherPerson>
-              </div>
-            </template>
-          </q-select>
-        </div>
-        <div class="col">
-          <q-input v-model="gunBarcode" autofocus class="full-width col" color="positive" label-color="positive"
-            input-class="text-positive" dense filled label="Zeskanuj broń"
-            @keypress.enter="dis = true; simulateProgressGun(0, ammoList.uuid, gunBarcode)"></q-input>
-          <q-card-actions class="row" align="right">
-            <q-item>
-              <q-btn class="full-width col" color="primary" icon="close" @click="memberName = ''; otherName = ''"
-                v-close-popup></q-btn>
-            </q-item>
-            <q-item>
-              <q-btn class="full-width col" color="primary" :loading="loading[0]" icon="done"
-                :disable="dis || addAmmo == null"
-                @click="dis = true; simulateProgressGun(0, ammoList.uuid, gunBarcode);"></q-btn>
-            </q-item>
-          </q-card-actions>
-        </div>
-      </div>
-    </q-dialog>
     <q-dialog v-model="openList" persistent>
       <q-card class="bg-red-5 text-center">
         <q-card-section class="flex-center">
@@ -402,40 +323,6 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="weaponConfirmation"
-      @keypress.enter="showloading(); returnToStore(returnToStoreHelper(gunsInUsed)); weaponConfirmation = false">
-      <q-card class="bg-dark text-positive">
-        <q-card-section>
-          <div class="text-h6">Czy na pewno oddać broń</div>
-        </q-card-section>
-
-        <q-card-actions align="center">
-          <q-btn text-color="white" label="anuluj" color="secondary" v-close-popup />
-          <q-btn text-color="white" label="zwróć do magazynu" color="primary" v-close-popup
-            @click="showloading(); returnToStore(returnToStoreHelper(gunsInUsed))" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-    <q-dialog v-model="gunImage" @hide="gunUUID = null">
-      <!-- <q-card class="bg-dark text-positive" style="width: 100%; height: 70%"> -->
-      <!-- <q-card-section style="width: 100%; height: 70%;background-image: url('img/logo-panaszew.jpg');
-                background-repeat: no-repeat;
-                background-position: center;
-                background-attachment: fixed;">
-          <q-img v-if="gunUUID != null" spinner-color="white" ratio="1" contain style="height: 100%; width: 100%; opacity: 0.92;"
-            :src="('local + '/files/getGunImg?gunUUID=' + this.gunUUID)" />
-        </q-card-section> -->
-      <q-card class="bg-dark" style="min-width: 80vw">
-        <q-card-section class="flex-center">
-          <Gun :uuid="gunUUID" :armory="false"></Gun>
-        </q-card-section>
-        <q-card-actions align="right">
-          <q-btn color="secondary" label="zwróć do magazynu" class="full-width q-mb-xs"
-            @click="weaponConfirmation = true" v-close-popup></q-btn>
-          <q-btn color="primary" label="zamknij" class="full-width" @click="gunUUID = null" v-close-popup></q-btn>
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
     <q-dialog position="top" v-model="success">
       <q-card>
         <q-card-section>
@@ -467,27 +354,13 @@
   </q-page>
 </template>
 <style src="src\style\style.scss" lang="scss">
-#container {
-  position: relative;
-}
-
-#background {
-  position: absolute;
-  padding: 50%;
-  margin: 50%;
-  z-index: -1;
-  overflow: hidden;
-}
 </style>
 <script>
 import { ref } from 'vue'
-// import { isWindows } from 'mobile-device-detect'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox.vue'
 
-const stringOptions = []
 import App from 'src/App.vue'
-
 export default {
 
   setup () {
@@ -503,19 +376,11 @@ export default {
         loading.value[number] = false
       }, 0)
     }
-    function simulateProgressGun (number, evidenceUUID, barcode) {
-      loading.value[number] = true
-      this.addGunToList(evidenceUUID, barcode)
-      setTimeout(() => {
-        loading.value[number] = false
-      }, 0)
-    }
 
     return {
       loading,
       progress,
-      simulateProgress,
-      simulateProgressGun
+      simulateProgress
     }
   },
   components: {
@@ -531,12 +396,16 @@ export default {
       componentFactory: () => import('src/components/otherPerson/AddNewOtherPerson.vue'),
       loading: SkeletonBox
     }),
-    Gun: lazyLoadComponent({
-      componentFactory: () => import('src/components/armory/Gun.vue'),
+    AddGunToList: lazyLoadComponent({
+      componentFactory: () => import('components/ammoList/AddGunToList.vue'),
       loading: SkeletonBox
     }),
     AddAmmunition: lazyLoadComponent({
       componentFactory: () => import('components/ammoList/AddAmmunition.vue'),
+      loading: SkeletonBox
+    }),
+    GunUsedInfo: lazyLoadComponent({
+      componentFactory: () => import('components/armory/GunUsedInfo.vue'),
       loading: SkeletonBox
     }),
     ShootingPackets: lazyLoadComponent({
@@ -546,6 +415,7 @@ export default {
   },
   data () {
     return {
+      gunUsedInfoDial: false,
       pageNumber: 0,
       mobile: App.mobile,
       toggleShowClosedList: false,
@@ -555,7 +425,7 @@ export default {
       AddSingleAmmoExp: JSON.parse(window.localStorage.getItem('AddSingleAmmo')),
       GunListExp: JSON.parse(window.localStorage.getItem('GunList')),
       memberDial: false,
-      // createNewPacket: false,
+      gunUsedUUID: null,
       legitimationNumber: null,
       uuid: '',
       icon: 'menu',
@@ -567,34 +437,26 @@ export default {
       ammunitionListInfo: false,
       number: null,
       ammunitionListEvidence: ['', []],
-      ammoList: {
-        ammoInEvidenceDTOList: [],
-        forceOpen: false
-      },
+      ammoList: null,
       ammoListClose: [],
       date: '',
-      gunImage: false,
       message: null,
       success: false,
       failure: false,
       openList: false,
       confirmation: false,
-      weaponConfirmation: false,
       code: null,
       otherName: '',
       addAmmo: false,
-      addGun: false,
       gunUUID: null,
       filters: [],
       filtersOther: [],
       calibers: [],
-      // packets: [],
       caliberUUID: null,
       memberName: '',
       ammoQuantity: '',
-      gunBarcode: null,
-      options: stringOptions,
-      options1: stringOptions,
+      options: [],
+      options1: [],
       main: App.main,
       local: App.host
     }
@@ -604,6 +466,7 @@ export default {
     this.getListCalibers()
     this.getMembersNames()
     this.getOther()
+    this.getGunListAmmoList()
     this.checkAmmoEvidence()
   },
   methods: {
@@ -614,19 +477,20 @@ export default {
         this.timer = 0
       }, 1000)
     },
-    back () {
-      this.gunImage = false
-    },
     checkAmmoEvidence () {
       setInterval(() => {
-        this.check(this.count())
+        if (this.ammoList != null) {
+          this.check(this.count())
+        }
       }, 10000)
     },
     count () {
       const t = this.ammoList
       let count = 0
-      for (let i = 0; i < t.ammoInEvidenceDTOList.length; i++) {
-        count += t.ammoInEvidenceDTOList[i].quantity
+      if (t != null) {
+        for (let i = 0; i < t.ammoInEvidenceDTOList.length; i++) {
+          count += t.ammoInEvidenceDTOList[i].quantity
+        }
       }
       return count
     },
@@ -666,12 +530,12 @@ export default {
       }).then(response => response.json())
         .then(response => {
           this.ammoList = response
-          this.getGunInAmmoEvidenceList()
+          this.getGunListAmmoList()
         })
     },
-    getGunInAmmoEvidenceList () {
+    getGunListAmmoList () {
       if (this.GunListExp) {
-        fetch(`${this.local}/armory/getGunInAmmoEvidenceList`, {
+        fetch(`${this.local}/armory/getGunListAmmoList`, {
           method: 'GET'
         }).then(response => response.json())
           .then(response => {
@@ -705,7 +569,7 @@ export default {
               this.message = response
               this.success = true
               this.uuid = null
-              this.getAmmoData()
+              this.ammoList = null
               this.getClosedEvidence(this.pageNumber)
               this.autoClose()
             }
@@ -786,74 +650,12 @@ export default {
         }
       })
     },
-    addGunToList (evidenceUUID, barcode) {
-      const memberNameWord = this.memberName.split(' ')
-      const legNumber = memberNameWord.length
-      const memberNameUUID = memberNameWord[legNumber - 1]
-      const otherNameWord = this.otherName.split(' ')
-      const idNumber = otherNameWord.length
-      const otherNameID = otherNameWord[idNumber - 1]
-      if (evidenceUUID === 'undefined') {
-        evidenceUUID = null
-      }
-      fetch(`${this.local}/armory/addGunToList?evidenceUUID=${evidenceUUID}&barcode=${barcode}&legitimationNumber=${memberNameUUID}&IDNumber=${otherNameID}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.text().then(response => {
-            this.message = response
-            this.success = true
-            this.dis = false
-            this.getAmmoData()
-            this.autoClose()
-          })
-        } else {
-          response.text().then(response => {
-            this.message = response
-            this.failure = true
-            this.dis = false
-            this.autoClose()
-          })
-        }
-      })
-    },
-    returnToStore (gunUUID) {
-      const list = [gunUUID]
-      fetch(`${this.local}/armory/returnToStore?gunsUUID=${list}`, {
-        method: 'PATCH'
-      }).then(response => {
-        if (response.status === 200) {
-          response.text().then(response => {
-            this.message = response
-            this.success = true
-            this.getGunInAmmoEvidenceList()
-            this.autoClose()
-          })
-        } else {
-          response.text().then(response => {
-            this.message = response
-            this.failure = true
-            this.autoClose()
-          })
-        }
-      })
-    },
-    returnToStoreHelper (gunsInUsed) {
-      const list = []
-      for (let i = 0; i < gunsInUsed.length; i++) {
-        list.push(gunsInUsed[i].gunUUID)
-      }
-      return list
-    },
     getListCalibers () {
       fetch(`${this.local}/armory/calibers`, {
         method: 'GET'
       }).then(response => response.json())
-        .then(calibers => {
-          this.calibers = calibers
+        .then(response => {
+          this.calibers = response
         })
     },
     getOther () {
@@ -897,7 +699,6 @@ export default {
         this.success = false
         this.failure = false
         this.message = null
-        this.gunBarcode = null
       }, 2000)
     }
   }

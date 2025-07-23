@@ -12,11 +12,11 @@
       <div class="row text-body2 full-width">
         <!-- button -->
         <div class="row" style="width: 5%;">
-          <q-btn dense glossy class="full-width box"
+          <q-btn dense glossy class="full-width box text-positive"
             :icon="item.ammunition === false && item.gun === false ? 'book' : item.ammunition === true && item.gun === false ? 'done book' : item.ammunition === false && item.gun === true ? 'book done' : item.ammunition === true && item.gun === true ? 'done' : 'book'"
             @click="scoreUUID = item.uuid; temp = item.member != null ? item.member : item.otherPersonEntity.secondName; item.member != null ? (memberLeg = item.member.legitimationNumber, otherID = 0) : (otherID = item.otherPersonEntity.id, memberLeg = 0); getListCalibers(); caliberUUID = competition.caliberUUID; ammoQuantity = competition.practiceShots + competition.numberOfShots; member = item.member; other = item.otherPersonEntity; addAmmo = true">
             <q-tooltip anchor="top middle" self="bottom middle" :offset="[0, 0]">{{ item.ammunition === false &&
-              item.gun === false ? 'Wydaj broń lub amunicję' : item.ammunition === true && item.gun === false ? 'Amunicja              wydana':item.ammunition === false && item.gun === true?'Broń wydana':'Broń i Amunicja Wydane' }}
+              item.gun === false ? 'Wydaj broń lub amunicję' : item.ammunition === true && item.gun === false ? 'Amunicja wydana':item.ammunition === false && item.gun === true?'Broń wydana':'Broń i Amunicja Wydane' }}
             </q-tooltip>
           </q-btn>
         </div>
@@ -40,15 +40,15 @@
             </div>
           </div>
         </div>
-        <!-- metric -->
-        <div class="col-1 text-positive box"
+        <!-- metryka -->
+        <div class="col-1 box"
           @dblclick="scoreUUID = item.uuid; metric = item.metricNumber;item.member != null && item.member.uuid ? memberExist = true : memberExist = false; item.member != null ?
           (memberUUID = item.member.uuid, otherID = 0, temp = item.member, memberLeg = item.member.legitimationNumber, name = item.member.secondName + ' ' + item.member.firstName)
           :
           (memberUUID = '0', otherID = item.otherPersonEntity.id, temp = item.otherPersonEntity, name = item.otherPersonEntity.secondName + ' ' + item.otherPersonEntity.firstName); toggleDSQDNF = true">
           <q-tooltip content-class="bg-dark text-positive text-subtitle2" self="bottom middle" :offset="[0, 0]" anchor="top middle">Przyznaj kary</q-tooltip>
           <div class="text-center">
-            <label style="font-size: 10px">metryka</label>
+            <label class="text-positive" style="font-size: 10px">metryka</label>
             <div class="self-center text-center text-positive text-caption">
               {{ item.metricNumber }}
             </div>

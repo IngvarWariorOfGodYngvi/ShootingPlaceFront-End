@@ -1,103 +1,151 @@
 <template>
-  <div v-if="gun!=null" class="full-width">
-  <q-card class="bg-dark">
-        <div :class="!mobile ? 'col' : 'col'" >
-          <q-card-section v-if="gun.imgUUID != null" id="layout" style="display: flex; justify-content: center;">
-            <q-img spinner-color="white" style="max-height: 50%; max-width: 50%;opacity:0.92" class="flex-center"
-              :src="(local + '/files/getGunImg?gunUUID=' + gun.uuid)" />
-          </q-card-section>
-          <q-card-section v-if="gun.imgUUID == null && mobile" avatar :class="mobile ? 'col-4' : 'col-2'">
-            <q-uploader style="width:100%;height:100%" method="POST" max-file-size="10240000"
-              :url="(local + '/files/addImageToGun?gunUUID=' + gun.uuid)" label="Dodaj zdjęcie"
-              accept=".jpg, image/*" @rejected="onRejected" field-name="file" @uploaded="getGun(gun.uuid)" />
-          </q-card-section>
-          <q-card-section :class="!mobile ? 'row full-width' : 'col'" class="text-positive">
-            <div class="col">
-            <div class="text-h6 text-center">Informacje o broni</div>
-            <div>
-              <div class="row"><div class="col-3">Identyfikator:</div><div>{{ gun.uuid }}</div></div>
-              <div class="row"><div class="col-3">Dostępność:</div><div>{{ (gun.available ? 'tak' : 'nie') }}</div></div>
-              <div class="row"><div class="col-3">Nazwa:</div><div>{{ gun.modelName }}</div></div>
-              <div class="row"><div class="col-3">Kaliber:</div><div>{{ gun.caliber }}</div></div>
-              <div class="row"><div class="col-3">Rodzaj:</div><div>{{ gun.gunType }}</div></div>
-              <div class="row"><div class="col-3">Numer seryjny:</div><div>{{ gun.serialNumber }}</div></div>
-              <div class="row"><div class="col-3">Ilość magazynków:</div><div>{{ gun.numberOfMagazines }}</div></div>
-              <div class="row"><div class="col-3">Numer Świadectwa:</div><div>{{ gun.gunCertificateSerialNumber }}</div></div>
-              <div class="row"><div class="col-3">Pozycja w książce:</div><div>{{ gun.recordInEvidenceBook }}</div></div>
-              <div class="row"><div class="col-3">Rok produkcji:</div><div>{{ gun.productionYear }}</div></div>
-              <div class="row"><div class="col-3">Podstawa <br/> wpisu:</div><div>{{ gun.basisForPurchaseOrAssignment }}</div></div>
-              <div class="row"><div class="col-3">Wyposażenie dodatkowe:</div><div>{{ gun.additionalEquipment }}</div></div>
-              <div class="row"><div class="col-3">Uwagi:</div><div>{{ gun.comment }}</div></div>
-              <div class="row"><div class="col-3">Numer Kodu Kreskowego:</div><div>{{ gun.barcode }}</div></div>
-              <div class="row"><div class="col-3">Data wpisu:</div><div>{{ gun.addedDate }}</div></div>
-            </div>
+  <div v-if="gun != null && !close" style="min-width: 50vw;">
+    <q-card class="bg-dark text-positive">
+        <q-card-actions align="right">
+          <div class="text-h6 text-center text-bold col">Informacje o Broni</div>
+          <q-btn dense color="primary" icon="close" round v-close-popup></q-btn>
+        </q-card-actions>
+      <q-card-section class="col">
+        <div class="col text-caption">
+          <div class="row col">
+            <div class="col">Identyfikator:</div>
+            <div class="col">{{ gun.uuid }}</div>
           </div>
-          <div class="col">
-            <div class="text-h6 text-center">Wydarzenia broni</div>
-            <div class="row">
-              <div class="col text-bold">Data</div>
-              <div class="col text-bold">Rodzaj użycia</div>
-              <div class="col text-bold">Dla kogo wydana</div>
-            </div>
-            <q-virtual-scroll class="full-height" :items="gun.usedHistoryEntityList" style="max-height: 40vh">
-              <template class="row" v-slot="{ item }">
-                <div class="row col" :style="backgroundDark ? 'border: 1px solid white;' : 'border: 1px solid black;'">
-                  <div class="col text-left">{{ convertDateTime(item.dateTime) }}</div>
-                  <div class="col text-left">{{ item.usedType }}</div>
-                  <div class="col text-left">{{ (item.userName != null ? item.userName : '') }}</div>
-                </div>
-              </template>
-            </q-virtual-scroll>
+          <div class="row col">
+            <div class="col">Nazwa:</div>
+            <div class="col">{{ gun.modelName }}</div>
           </div>
-          </q-card-section>
+          <div class="row col">
+            <div class="col">Kaliber:</div>
+            <div class="col">{{ gun.caliber }}</div>
+          </div>
+          <div class="row col">
+            <div class="col">Rodzaj:</div>
+            <div class="col">{{ gun.gunType }}</div>
+          </div>
+          <div class="row col">
+            <div class="col">Numer seryjny:</div>
+            <div class="col">{{ gun.serialNumber }}</div>
+          </div>
+          <div class="row col">
+            <div class="col">Ilość magazynków:</div>
+            <div class="col">{{ gun.numberOfMagazines }}</div>
+          </div>
+          <div class="row col">
+            <div class="col">Numer Świadectwa:</div>
+            <div class="col">{{ gun.gunCertificateSerialNumber }}</div>
+          </div>
+          <div class="row col">
+            <div class="col">Pozycja w książce:</div>
+            <div class="col">{{ gun.recordInEvidenceBook != null ? gun.recordInEvidenceBook : 'Brak' }}</div>
+          </div>
+          <div class="row col">
+            <div class="col">Rok produkcji:</div>
+            <div class="col">{{ gun.productionYear != null ? gun.productionYear : 'Nieznany' }}</div>
+          </div>
+          <div class="row col">
+            <div class="col">Podstawa wpisu:</div>
+            <div class="col">{{ gun.basisForPurchaseOrAssignment }}</div>
+          </div>
+          <div class="row col">
+            <div class="col">Wyposażenie dodatkowe:</div>
+            <div class="col">{{ gun.additionalEquipment != null ? gun.additionalEquipment : 'Brak' }}</div>
+          </div>
+          <div class="row col">
+            <div class="col">Uwagi:</div>
+            <div class="col">{{ gun.comment }}</div>
+          </div>
+          <div class="row col">
+            <div class="col">Data wpisu:</div>
+            <div class="col">{{ gun.addedDate }}</div>
+          </div>
+          <div class="row col">
+            <div class="col">Wpisane przez:</div>
+            <div class="col">{{ gun.addedBy != null ? gun.addedBy : 'Nie wskazano' }}</div>
+          </div>
+          <div class="row col" v-if="gun.removedBy!=null">
+            <div class="col">Usunięte przez:</div>
+            <div class="col">{{ gun.removedBy != null ? gun.removedBy : 'Nie wskazano' }}</div>
+          </div>
         </div>
-        <q-card-section v-if="armory" class="col">
-          <div v-if="!mobile" class="q-pa-md text-right">
-            <q-btn class="q-ma-xs" color="secondary" :label="gun.available ? 'wydaj do naprawy' : 'odblokuj'"
-              @click="(gun.available ? addGunToRepair(gun.uuid) : returnToStore(gun.uuid))"/>
-            <q-btn class="q-ma-xs" color="negative" label="usuń z ewidencji"
-              @click=" gunUUID = gun.uuid; acceptCode = true" />
-            <q-btn class="q-ma-xs" color="primary" label="edytuj" @click="
-              gunUUID = gun.uuid;
-            gunModelName = gun.modelName;
-            gunCaliber = gun.caliber;
-            gunType = gun.gunType;
-            gunSerialNumber = gun.serialNumber;
-            gunProductionYear = gun.productionYear;
-            gunNumberOfMagazines = gun.numberOfMagazines;
-            gunCertificateSerialNumber = gun.gunCertificateSerialNumber;
-            gunAdditionalEquipment = gun.additionalEquipment;
-            gunRecordInEvidenceBook = gun.recordInEvidenceBook;
-            gunComment = gun.comment;
-            gunBasisForPurchaseOrAssignment = gun.basisForPurchaseOrAssignment;
-            gunBarcode = gun.barcode;
-            gunDate = gun.addedDate;
-            editGun = true" />
+        <div class="col">
+          <div>Podpis wprowadzającego broń:</div>
+            <q-img contain style="max-height: 10vh; border-radius: 5px; border: 1px solid black; " class="bg-white"
+            alt="Podpis wprowadzającego broń" :src="(`${local}/files/getFile?uuid=${gun.addedSign}`)" />
+          <!-- <div>{{ gun.addedSign != null ? gun.addedSign : 'Brak podpisu' }}</div> -->
+        </div>
+        <div class="row col" v-if="gun.removedBy!=null">
+          <div class="col">Data usunięcia:</div>
+          <div class="col">{{ gun.removedDate }}</div>
+        </div>
+        <div class="row col" v-if="gun.removedBy!=null">
+          <div class="col">Podstawa usunięcia:</div>
+          <div class="col">{{ gun.basisOfRemoved }}</div>
+        </div>
+        <div class="col" v-if="gun.removedBy!=null">
+          <div>Podpis usuwającego broń:</div>
+          <q-img contain style="max-height: 10vh; border-radius: 5px; border: 1px solid black; " class="bg-white"
+            alt="Podpis usuwającego broń" :src="(`${local}/files/getFile?uuid=${gun.removedSign}`)" />
+          <!-- <div>{{ gun.removedSign != null ? gun.removedSign : 'Brak podpisu' }}</div> -->
+        </div>
+      </q-card-section>
+      <q-card-section v-if="!close" class="col">
+        <div v-if="!mobile" class="q-pa-md text-right">
+          <q-btn dense glossy class="q-ma-xs" color="secondary" label="pokaż historię użycia" @click="gunUsedInfoDial=true"></q-btn>
+          <q-btn dense glossy class="q-ma-xs" color="negative" label="usuń z ewidencji"
+            @click=" gunUUID = gun.uuid; signRemoveGun = true" />
+          <q-btn dense glossy class="q-ma-xs" color="primary" label="edytuj" @click="
+            gunUUID = gun.uuid;
+          gunModelName = gun.modelName;
+          gunCaliber.name = gun.caliber;
+          gunType = gun.gunType;
+          gunSerialNumber = gun.serialNumber;
+          gunProductionYear = gun.productionYear;
+          gunNumberOfMagazines = gun.numberOfMagazines;
+          gunCertificateSerialNumber = gun.gunCertificateSerialNumber;
+          gunAdditionalEquipment = gun.additionalEquipment;
+          gunRecordInEvidenceBook = gun.recordInEvidenceBook;
+          gunComment = gun.comment;
+          gunBasisForPurchaseOrAssignment = gun.basisForPurchaseOrAssignment;
+          gunBarcode = gun.barcode;
+          gunDate = gun.addedDate;
+          editGun = true" />
+        </div>
+      </q-card-section>
+    </q-card>
+    <q-dialog v-model="signRemoveGun" @keypress.enter=" removeGun(); signRemoveGun = false">
+      <q-card class="bg-dark text-positive q-pa-xs" style="min-width: 70vw;">
+        <q-card-section>
+          <div class="text-h6 text-center">Podpis Usuwającego Broń</div>
+          <q-input label="podstawa wykreślenia z ewidencji" label-color="white" filled v-model="basisOfRemoved"
+            bg-color="primary" color="white" class="q-pa-xs text-bold" />
+          <q-input label="kod potwierdzający" rounded standout="" type="password" v-model="code" bg-color="warning"
+            color="Yellow" class=" text-bold" mask="####" inputmode="numeric" />
+          <div class="text-positive">
+            Pospis osoby uprawnionej
           </div>
-        </q-card-section>
-      </q-card>
-      <q-dialog v-model="acceptCode" persistent @keypress.enter=" removeGun(); acceptCode = false">
-      <q-card class="bg-red-5 text-center">
-        <q-card-section class="flex-center">
-          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
-          <div><q-input autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold"
-              mask="####"/></div>
+          <VueSignaturePad id="canvas" ref="signaturePad" style="height: 25vh;background-color: white;">
+          </VueSignaturePad>
+          <q-btn label="wyczyść" color="primary" @click="clear()"></q-btn>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn label="anuluj" color="black" v-close-popup @click=" code = null" />
-          <q-btn label="usuń" color="black" v-close-popup @click=" removeGun(); code = null" />
+          <q-btn label="anuluj" color="secondary" v-close-popup />
+          <q-btn label="potwierdź" color="primary" @click="removeGun()" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
     <q-dialog v-model="editGun">
-      <q-card style="width: 600px;" class="bg-dark text-positive">
+      <q-card style="min-width: 60vw;" class="bg-dark text-positive">
         <q-card-section class="col">
-          <div class="self-center col full-width no-outline text-center text-h6 text-bold">Edytuj informacje o broni</div>
+          <div class="self-center col full-width no-outline text-center text-h6 text-bold">Edytuj informacje o broni
+          </div>
           <q-input dense label-color="positive" input-class="text-positive" filled v-model="gunModelName"
-            label="nazwa i marka"/>
+            label="nazwa i marka" />
           <q-select dense label-color="positive" filled v-model="gunCaliber" options-selected-class="text-positive"
             input-class="text-positive" use-input hide-selected fill-input :options="calibers" options-dense
+            :option-value="opt => opt !== '' ? Object(opt.name).toString() : ''"
+            :option-label="opt => opt !== '' ? Object(opt.name).toString() : ''"
             popup-content-class="bg-dark text-positive" @filter="filter" label="kaliber">
             <template v-slot:no-option>
               <q-item>
@@ -108,34 +156,28 @@
             </template>
           </q-select>
           <q-select dense label-color="positive" input-class="text-positive" filled v-model="gunType"
-            options-selected-class="text-positive" use-input hide-selected fill-input :options="options" options-dense
-            popup-content-class="bg-dark text-positive" @filter="filterGunTypes" label="typ">
-            <template v-slot:no-option>
-              <q-item>
-                <q-item-section class="text-grey">
-                  Brak wyników
-                </q-item-section>
-              </q-item>
-            </template>
+            :option-value="opt => opt !== '' ? Object(opt.typeName).toString() : ''"
+            :option-label="opt => opt !== '' ? Object(opt.typeName).toString() : ''"
+            options-selected-class="text-positive" hide-selected fill-input :options="gunTypes" options-dense
+            popup-content-class="bg-dark text-positive" label="typ">
           </q-select>
           <q-input dense label-color="positive" filled v-model="gunSerialNumber" input-class="text-positive"
-            label="numer seryjny"/>
+            label="numer seryjny" />
           <q-input dense label-color="positive" filled onkeypress="return (event.charCode > 44 && event.charCode < 58)"
-            mask="####" v-model="gunProductionYear" input-class="text-positive" label="rok produkcji"/>
+            mask="####" v-model="gunProductionYear" input-class="text-positive" label="rok produkcji" />
           <q-input dense label-color="positive" filled onkeypress="return (event.charCode > 44 && event.charCode < 58)"
-            v-model="gunRecordInEvidenceBook" input-class="text-positive" label="pozycja z książki ewidencji"/>
+            v-model="gunRecordInEvidenceBook" input-class="text-positive" label="pozycja z książki ewidencji" />
           <q-input dense label-color="positive" filled onkeypress="return (event.charCode > 44 && event.charCode < 58)"
-            v-model="gunNumberOfMagazines" input-class="text-positive" label="ilość magazynków"/>
+            v-model="gunNumberOfMagazines" input-class="text-positive" label="ilość magazynków" />
           <q-input dense label-color="positive" filled v-model="gunCertificateSerialNumber" input-class="text-positive"
-            fill-mask="X" label="numer świadectwa"/>
+            fill-mask="X" label="numer świadectwa" />
           <q-input dense label-color="positive" filled v-model="gunBasisForPurchaseOrAssignment"
-            input-class="text-positive" label="podstawa wpisu"/>
+            input-class="text-positive" label="podstawa wpisu" />
           <q-input dense label-color="positive" filled v-model="gunAdditionalEquipment" input-class="text-positive"
-            label="wyposażenie dodatkowe"/>
-          <q-input dense label-color="positive" filled v-model="gunComment" input-class="text-positive"
-            label="uwagi"/>
+            label="wyposażenie dodatkowe" />
+          <q-input dense label-color="positive" filled v-model="gunComment" input-class="text-positive" label="uwagi" />
           <q-input dense label-color="positive" filled v-model="gunBarcode" input-class="text-positive"
-            label="kod kreskowy"/>
+            label="kod kreskowy" />
           <q-input label-color="positive" input-class="text-positive" class="full-width" filled v-model="gunDate"
             mask="####-##-##" label="data wprowadzenia na stan">
             <template v-slot:append>
@@ -153,7 +195,6 @@
         </q-card-section>
 
         <q-card-actions align="center">
-          <q-btn label="usuń zdjęcie" color="secondary" v-close-popup @click="removeGunImage(usedGunInfo.uuid)" />
           <q-btn label="zapisz" color="secondary" v-close-popup @click=" editingGun()" />
           <q-btn label="zamknij" color="primary" v-close-popup />
         </q-card-actions>
@@ -175,24 +216,82 @@
 
       </q-card>
     </q-dialog>
+    <q-dialog v-model="gunUsedInfoDial">
+      <q-card class="bg-dark text-positive" style="min-width: 75vw">
+        <q-card-actions align="right">
+          <div class="text-h6 text-center text-bold col">Historia Wydawania Broni</div>
+          <q-btn dense color="primary" icon="close" round v-close-popup></q-btn>
+        </q-card-actions>
+        <q-card-section>
+          <div class="row items-center col text-positive text-bold text-body2 q-pa-xs">
+            <div style="width: 3%;">Lp</div>
+            <div class="col">Data i<br />Godzina Wydania</div>
+            <div class="col">Marka i Model</div>
+            <div class="col">Numer i Seria</div>
+            <div class="col">Numer<br />Świadectwa Broni</div>
+            <div class="col">Imię i Nazwisko<br />Pobierającego Broń</div>
+            <div class="col">Imię i Nazwisko<br />Wydającego Broń</div>
+            <div class="col">Podpis Zdającego Broń</div>
+            <div class="col">Podpis Przyjmującego Broń</div>
+            <div class="col">Data i<br />Godzina Przyjęcia</div>
+          </div>
+          <div class="line"></div>
+        <div class="row col xyz1 items-center text-bold" v-for="(item, index) in gun.gunUsedList" :key="index"
+          @dblclick="gunUsedUUID = item.uuid; temp = item; gunUsedInfo = true">
+          <Tooltip2clickToShow />
+          <div style="width: 3%;" class="text-center">{{ index + 1 }}</div>
+          <div class="col">
+            <div>{{ item.issuanceDate }}</div>
+            <div>{{ item.issuanceTime }}</div>
+          </div>
+          <div class="col">{{ gun.modelName }}</div>
+          <div class="col">{{ gun.serialNumber }}</div>
+          <div class="col">{{ gun.gunCertificateSerialNumber }}</div>
+          <div class="col">{{ item.gunTakerName }}</div>
+          <div class="col">{{ item.issuanceBy }}</div>
+          <div class="col">{{ item.gunReturnerName }}</div>
+          <div class="col">{{ item.acceptanceBy }}</div>
+          <div class="col">
+              <div>{{ item.acceptanceDate }}</div>
+              <div>{{ item.acceptanceTime }}</div>
+            </div>
+          <div class="line"></div>
+        </div>
+        </q-card-section>
+        </q-card>
+      </q-dialog>
+      <q-dialog v-model="gunUsedInfo">
+        <GunUsedInfo :uuid="gunUsedUUID"/>
+      </q-dialog>
   </div>
 </template>
 <style src="src/style/style.scss" lang="scss"></style>
 <script>
 import App from 'src/App'
-// import { isWindows } from 'mobile-device-detect'
+import lazyLoadComponent from 'src/utils/lazyLoadComponent'
+import SkeletonBox from 'src/utils/SkeletonBox.vue'
 export default {
   created () {
     this.getGun(this.uuid)
     this.getGunTypes()
-    this.getListCalibersSelect()
+    this.getListCalibers()
+  },
+  components: {
+    Tooltip2clickToShow: lazyLoadComponent({
+      componentFactory: () => import('src/utils/Tooltip2clickToShow.vue'),
+      loading: SkeletonBox
+    }),
+    GunUsedInfo: lazyLoadComponent({
+      componentFactory: () => import('components/armory/GunUsedInfo.vue'),
+      loading: SkeletonBox
+    })
   },
   props: {
     uuid: {
       type: String,
       required: true
     },
-    armory: {
+    close: {
       type: Boolean,
       required: false,
       default: false
@@ -209,29 +308,33 @@ export default {
     return {
       mobile: App.mobile,
       backgroundDark: JSON.parse(window.localStorage.getItem('BackgroundDark')),
+      gunUsedInfoDial: false,
+      gunUsedInfo: false,
       gun: '',
-      gunModelName: null,
-      gunCaliber: null,
-      gunType: null,
-      gunSerialNumber: null,
-      gunProductionYear: null,
+      gunUsedUUID: '',
+      basisOfRemoved: '',
+      gunModelName: '',
+      gunCaliber: {},
+      gunType: '',
+      gunSerialNumber: '',
+      gunProductionYear: '',
       gunNumberOfMagazines: '',
-      gunCertificateSerialNumber: null,
-      gunAdditionalEquipment: null,
-      gunRecordInEvidenceBook: null,
+      gunCertificateSerialNumber: '',
+      gunAdditionalEquipment: '',
+      gunRecordInEvidenceBook: '',
       gunComment: '',
-      gunBarcode: null,
-      gunBasisForPurchaseOrAssignment: null,
+      gunBarcode: '',
+      gunBasisForPurchaseOrAssignment: '',
       gunDate: this.createTodayDate(),
       options: [],
       editGun: false,
       calibers: [],
       gunTypes: [],
+      signRemoveGun: false,
       code: null,
       message: '',
       failure: false,
       success: false,
-      acceptCode: false,
       local: App.host
     }
   },
@@ -274,8 +377,8 @@ export default {
           this.gun = response
         })
     },
-    getListCalibersSelect () {
-      fetch(`${this.local}/armory/calibersList`, {
+    getListCalibers () {
+      fetch(`${this.local}/armory/calibers`, {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
@@ -290,34 +393,42 @@ export default {
           this.gunTypes = response
         })
     },
-    onRejected () {
-      this.message = 'Nie można dodać, sprawdź rozmiar pliku i jego typ'
-      this.failure = true
-      this.autoClose()
-    },
     removeGun () {
-      fetch(`${this.local}/armory/remove?gunUUID=${this.gunUUID}&pinCode=${this.code}`, {
-        method: 'PUT'
-      }).then(response => {
-        if (response.status === 200) {
-          response.text().then(
-            response => {
+      const { data } = this.$refs.signaturePad.saveSignature()
+      const { isEmpty } = this.$refs.signaturePad.saveSignature()
+      const dat = {
+        imageString: data
+      }
+      if (!isEmpty) {
+        fetch(`${this.local}/armory/remove?gunUUID=${this.gunUUID}&basisOfRemoved=${this.basisOfRemoved}&pinCode=${this.code}`, {
+          method: 'PUT',
+          body: JSON.stringify(dat),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }).then(response => {
+          if (response.status === 200) {
+            response.text().then(response => {
               this.message = response
               this.success = true
-              this.showloading()
+              this.$emit('removeGun')
               this.autoClose()
-            }
-          )
-        } else {
-          response.text().then(
-            response => {
+            })
+          } else {
+            response.text().then(response => {
               this.message = response
-              this.failure = true
-              this.autoClose()
-            }
-          )
-        }
-      })
+              this.success = true
+            })
+          }
+        })
+      } else {
+        this.message = 'Podpisz się'
+        this.failure = true
+      }
+      this.autoClose()
+    },
+    clear () {
+      this.$refs.signaturePad.clearSignature()
     },
     editingGun () {
       if (this.gunNumberOfMagazines === '' || this.gunNumberOfMagazines === 0) {
@@ -381,61 +492,17 @@ export default {
         }
       })
     },
-    returnToStore (gunUUID) {
-      const list = [gunUUID]
-      fetch(`${this.local}armory/returnToStore?gunsUUID=${list}`, {
-        method: 'PATCH'
-      }).then(response => {
-        if (response.status === 200) {
-          response.text().then(response => {
-            this.getGun(gunUUID)
-            this.message = response
-            this.success = true
-            this.autoClose()
-          })
-        } else {
-          response.text().then(response => {
-            this.message = response
-            this.failure = true
-            this.autoClose()
-          })
-        }
-      })
-    },
-    addGunToRepair (gunUUID) {
-      fetch(`${this.local}/armory/addGunToRepair?gunUUID=${gunUUID}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.text().then(response => {
-            this.getGun(gunUUID)
-            this.message = response
-            this.success = true
-            this.autoClose()
-          })
-        } else {
-          response.text().then(response => {
-            this.message = response
-            this.failure = true
-            this.autoClose()
-          })
-        }
-      })
-    },
     filter (val, update) {
       if (val === '') {
         update(() => {
           const needle = val.toLowerCase()
-          this.options = this.calibers.filter(v => v.toLowerCase().indexOf(needle) > -1)
+          this.options = this.calibers.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
         })
         return
       }
       update(() => {
         const needle = val.toLowerCase()
-        this.options = this.calibers.filter(v => v.toLowerCase().indexOf(needle) > -1)
+        this.options = this.calibers.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
       })
     },
     filterGunTypes (val, update) {

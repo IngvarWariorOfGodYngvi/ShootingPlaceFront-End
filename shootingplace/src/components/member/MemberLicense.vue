@@ -35,7 +35,7 @@
           </div>
         </div>
       </q-item-section>
-      <q-btn
+      <q-btn glossy
         v-if="((shootingPatent.patentNumber != null && license.number == null && license.paid) || (!adult && license.number == null)) && main && !mobile"
         class="full-width round" color="primary" label="WYDAJ LICENCJĘ" @click="
           patentPistolPermission1 = shootingPatent.pistolPermission;
@@ -44,7 +44,7 @@
         memberAdultConfirm = adult;
         licenseConfirm = true">
       </q-btn>
-      <q-btn class="full-width round" color="primary" v-if="license.number != null && (
+      <q-btn glossy class="full-width round" color="primary" v-if="license.number != null && (
         (!license.pistolPermission && shootingPatent.pistolPermission)
         || (!license.riflePermission && shootingPatent.riflePermission)
         || (!license.shotgunPermission && shootingPatent.shotgunPermission)) && clubID === 1 && main && !mobile"
@@ -59,13 +59,13 @@
         updateLicenseConfirm = true"></q-btn>
       <div
         v-if="(license.number != null && (license.pistolPermission || license.riflePermission || license.shotgunPermission)) && clubID === 1 && license.paid === true && main && !mobile">
-        <q-btn class="full-width round" label="przedłuż licencję" color="primary" @click="
+        <q-btn glossy class="full-width round" label="przedłuż licencję" color="primary" @click="
           licensePistolPermission1 = license.pistolPermission;
         licenseRiflePermission1 = license.riflePermission;
         licenseShotgunPermission1 = license.shotgunPermission;
         license.canProlong && license.paid ? prolongLicenseConfirm = true : noDomesticStarts = true" />
       </div>
-      <q-btn v-if="(((license.paid === false && clubID === 1))) && main && !mobile && active" class="full-width round"
+      <q-btn glossy v-if="(((license.paid === false && clubID === 1))) && main && !mobile && active" class="full-width round"
         label="opłać licencję" color="secondary" text-color="white" @click="licensePayment = true"
         :loading="loading[0]" />
       <q-expansion-item dense default-opened class="bg-dark text-center text-positive"
@@ -126,7 +126,7 @@
     <q-dialog v-model="editLicense" @keypress.esc="editLicense = false">
       <q-card class="bg-dark text-positive q-pa-md">
         <q-card-actions align="right" class="q-pa-xs q-ma-xs">
-          <div class="text-h5 text-bold text-center col">Edytuj Licencję</div>
+          <div class="text-h6 text-bold text-center col">Edytuj Licencję</div>
           <q-btn icon="close" color="primary" round dense v-close-popup @click="editLicensePaid = null" />
         </q-card-actions>
         <div class="text-h6 text-center">Uwaga! Wprowadzając zmiany bądź pewny tego co robisz</div>
@@ -168,7 +168,7 @@
               :label="editLicensePaid == null ? 'Nie dokonuj zmian w oznaczaniu płatności' : editLicensePaid ? 'Oznacz Licencję jako opłaconą' : 'Oznacz Licencję jako nieopłaconą'" />
           </div>
           <div class="q-pa-md row full-width">
-            <q-btn dense class="full-width" label="wprowadź zmiany" color="primary" v-close-popup
+            <q-btn glossy dense class="full-width" label="wprowadź zmiany" color="primary" v-close-popup
               @click="editLicenseCode = true" />
           </div>
         </q-card-section>
@@ -190,8 +190,8 @@
             </q-item>
           </q-card-section>
           <q-card-actions align="right">
-            <q-btn text-color="white" label="anuluj" color="secondary" v-close-popup />
-            <q-btn text-color="white" label="zapisz" color="primary" v-close-popup
+            <q-btn glossy text-color="white" label="anuluj" color="secondary" v-close-popup />
+            <q-btn glossy text-color="white" label="zapisz" color="primary" v-close-popup
               @click="addLicense(memberUUID, license.number, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission)" />
           </q-card-actions>
         </q-card>
@@ -213,8 +213,8 @@
             </q-item>
           </q-card-section>
           <q-card-actions align="right">
-            <q-btn label="anuluj" color="secondary" v-close-popup />
-            <q-btn label="Przedłuż" color="primary" v-close-popup
+            <q-btn glossy label="anuluj" color="secondary" v-close-popup />
+            <q-btn glossy label="Przedłuż" color="primary" v-close-popup
               @click="prolongLicense(memberUUID, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission)" />
           </q-card-actions>
         </q-card>
@@ -242,8 +242,8 @@
             </q-item>
           </q-card-section>
           <q-card-actions align="right">
-            <q-btn label="anuluj" color="secondary" v-close-popup />
-            <q-btn label="Dodaj" color="primary" v-close-popup
+            <q-btn glossy label="anuluj" color="secondary" v-close-popup />
+            <q-btn glossy label="Dodaj" color="primary" v-close-popup
               @click="addLicense(memberUUID, newLicenseNumber, licensePistolPermission, licenseRiflePermission, licenseShotgunPermission)" />
           </q-card-actions>
         </q-card>
@@ -254,7 +254,7 @@
         <h4 class="text-bold text-center">Klubowicz nie ma zaliczonej wymaganej ilości startów </h4>
         <h4 class="text-bold text-center">Upewnij się, że klubowicz może udokumentować swoje starty</h4>
         <q-card-actions align="right">
-          <q-btn text-color="positive" label="OK" color="primary" v-close-popup @click="prolongLicenseConfirm = true" />
+          <q-btn glossy text-color="positive" label="OK" color="primary" v-close-popup @click="prolongLicenseConfirm = true" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -265,8 +265,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn label="anuluj" color="secondary" v-close-popup />
-          <q-btn label="Tak" color="primary" v-close-popup @click="licensePaymentCode = true" />
+          <q-btn glossy label="anuluj" color="secondary" v-close-popup />
+          <q-btn glossy label="Tak" color="primary" v-close-popup @click="licensePaymentCode = true" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -281,8 +281,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn label="anuluj" color="black" v-close-popup @click="code = null" />
-          <q-btn label="OK" color="black" v-close-popup @click="licensePaymentCode = false; simulateProgress(0)" />
+          <q-btn glossy label="anuluj" color="black" v-close-popup @click="code = null" />
+          <q-btn glossy label="OK" color="black" v-close-popup @click="licensePaymentCode = false; simulateProgress(0)" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -315,11 +315,11 @@
           </div>
           <div class="row full-width">
             <div class="col q-pa-md">
-              <q-btn dense class="full-width" label="wprowadź zmiany" color="primary" v-close-popup
+              <q-btn glossy dense class="full-width" label="wprowadź zmiany" color="primary" v-close-popup
                 @click="editLicensePaymentCode = true" />
             </div>
             <div class="col q-pa-md">
-              <q-btn dense class="full-width" label="Usuń wpłatę" color="red" v-close-popup
+              <q-btn glossy dense class="full-width" label="Usuń wpłatę" color="red" v-close-popup
                 @click="deleteLicensePaymentCode = true" />
             </div>
           </div>
@@ -334,11 +334,11 @@
         </q-card-section>
 
         <q-card-actions align="center">
-          <q-btn label="nie" color="secondary" v-close-popup
+          <q-btn glossy label="nie" color="secondary" v-close-popup
             @click="condition = false; toggleHistoryPaymentCode = true" />
-          <q-btn label="tak" color="primary" v-close-popup
+          <q-btn glossy label="tak" color="primary" v-close-popup
             @click="condition = true; toggleHistoryPaymentCode = true" />
-          <q-btn label="anuluj" color="secondary" v-close-popup />
+          <q-btn glossy label="anuluj" color="secondary" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -353,8 +353,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn label="anuluj" color="black" v-close-popup @click="code = null" />
-          <q-btn label="OK" color="black" v-close-popup @click="changeHistoryPayment(paymentUUID, condition)" />
+          <q-btn glossy label="anuluj" color="black" v-close-popup @click="code = null" />
+          <q-btn glossy label="OK" color="black" v-close-popup @click="changeHistoryPayment(paymentUUID, condition)" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -386,8 +386,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn label="anuluj" color="black" v-close-popup @click="code = null" />
-          <q-btn label="OK" color="black" v-close-popup
+          <q-btn glossy label="anuluj" color="black" v-close-popup @click="code = null" />
+          <q-btn glossy label="OK" color="black" v-close-popup
             @click="forceUpdateLicence(memberUUID, editLicenseNumber, editLicenseDate, pistolPermissionChange, riflePermissionChange, shotgunPermissionChange, editLicensePaid)" />
         </q-card-actions>
       </q-card>
@@ -404,8 +404,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn label="anuluj" color="black" v-close-popup @click="code = null" />
-          <q-btn label="Wprowadź zmiany" color="black" v-close-popup
+          <q-btn glossy label="anuluj" color="black" v-close-popup @click="code = null" />
+          <q-btn glossy label="Wprowadź zmiany" color="black" v-close-popup
             @click="editLicenseHistoryPayment(); code = null" />
         </q-card-actions>
       </q-card>
@@ -424,8 +424,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn label="anuluj" color="black" v-close-popup @click="code = null" />
-          <q-btn id="3" label="Wprowadź zmiany" color="black" v-close-popup
+          <q-btn glossy label="anuluj" color="black" v-close-popup @click="code = null" />
+          <q-btn glossy label="Wprowadź zmiany" color="black" v-close-popup
             @click="deleteLicenseHistoryPayment(paymentUUID); code = null" />
         </q-card-actions>
       </q-card>

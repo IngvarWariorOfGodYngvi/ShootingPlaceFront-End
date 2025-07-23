@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-btn color="secondary" class="col" label="przeczytaj RODO" @click="shootingplaceRODO = true"></q-btn>
+    <q-btn glossy color="secondary" class="col" label="przeczytaj RODO" @click="shootingplaceRODO = true"></q-btn>
     <q-dialog v-model="shootingplaceRODO">
       <q-page-container class="bg-dark text-positive" style="min-width: 75vw">
         <q-card-section class="text-center">
@@ -103,12 +103,12 @@
           umów.</p>
         <q-page-sticky expand position="top">
           <q-card-actions align="right">
-          <q-btn color="secondary" v-close-popup label="zamknij"></q-btn>
+          <q-btn glossy color="secondary" v-close-popup label="zamknij"></q-btn>
         </q-card-actions>
           </q-page-sticky>
         </q-card-section>
         <q-card-actions align="right">
-          <q-btn color="secondary" v-close-popup label="zamknij"></q-btn>
+          <q-btn glossy color="secondary" v-close-popup label="zamknij"></q-btn>
         </q-card-actions>
       </q-page-container>
     </q-dialog>

@@ -1,9 +1,10 @@
 <template>
   <q-page padding>
     <div>
-      <Experimental class="col"></Experimental>
-      <SuperUser v-if="main"></SuperUser>
-      <Users v-if="main"></Users>
+      <UpdateProgram v-if="main"/>
+      <Experimental class="col"/>
+      <!-- <SuperUser v-if="main"/> -->
+      <Users v-if="main"/>
       <q-dialog position="top" v-model="success">
         <q-card>
           <q-card-section>
@@ -27,18 +28,19 @@
 import App from 'src/App.vue'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox'
+import { ref } from 'vue'
 export default {
   components: {
     Users: lazyLoadComponent({
       componentFactory: () => import('components/settings/Users.vue'),
       loading: SkeletonBox
     }),
-    SuperUser: lazyLoadComponent({
-      componentFactory: () => import('components/settings/SuperUser.vue'),
-      loading: SkeletonBox
-    }),
     Experimental: lazyLoadComponent({
       componentFactory: () => import('components/settings/Experimental.vue'),
+      loading: SkeletonBox
+    }),
+    UpdateProgram: lazyLoadComponent({
+      componentFactory: () => import('components/settings/UpdateProgram.vue'),
       loading: SkeletonBox
     })
   },
@@ -53,8 +55,7 @@ export default {
       policeStreet: '',
       policeStreetNumber: '',
       policeAddressError: false,
-      acceptCodeUser1: false,
-      code: null,
+      updating: false,
       url: '',
       city: null,
       clubName: null,
@@ -71,6 +72,22 @@ export default {
       main: App.main
     }
   },
+  setup () {
+    const loading = ref([
+      false
+    ])
+    function progressUpdate () {
+      loading.value[0] = true
+      this.updateProgram()
+      setTimeout(() => {
+        loading.value[0] = false
+      }, 0)
+    }
+    return {
+      progressUpdate,
+      loading
+    }
+  },
   methods: {
     showloading () {
       this.$q.loading.show({ message: 'Dzieje się coś ważnego... Poczekaj' })
@@ -79,7 +96,16 @@ export default {
         this.timer = 0
       }, 1000)
     },
-
+    updateProgram () {
+      this.updating = true
+      this.message = 'Rozpoczęto aktualizację programu - nastąpi przeładowanie plików na serwerze. Może to potrwać kilka minut. Po tym czasie odśwież stronę'
+      fetch(`${this.local}/settings/update`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+    },
     createMotherClub () {
       const data = {
         name: this.clubName,
@@ -121,10 +147,6 @@ export default {
         this.message = null
         this.failure = false
         this.success = false
-        this.barCode = null
-        this.code = null
-        this.master = false
-        this.acceptCodeUser1 = false
         this.accept = false
       }, 1500)
     },

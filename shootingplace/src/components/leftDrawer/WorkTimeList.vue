@@ -7,7 +7,7 @@
                 label="Przetwarzanie..."
                 color="primary"/>
         <q-input id="workTime" name="workTime" v-model="number" class="text-white" :disable="dis" type="password" dense label-color="white"
-        label="Czas pracy - zeskanuj swoją kartę tutaj" input-class="text-white" filled
+        label="Czas pracy - zeskanuj swoją kartę tutaj" input-class="text-white" standout="" rounded bg-color="primary"
         @keypress.enter="dis=true;goToWork(number)"/>
         <div v-for="(item, index) in usersInWork" :key="index" class="full-width" style="height: auto">
           <q-item dense style="padding:0 0 0 5%;font-size:small;font-weight: 500;">

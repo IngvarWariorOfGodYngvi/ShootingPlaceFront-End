@@ -112,8 +112,6 @@ export default {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
-          console.log(this.nameOther)
-          // console.log(this.nameMember)
           this.packets = response
         })
     },
