@@ -4,23 +4,20 @@
       <q-btn v-if="!mobile" dense color="primary" class="q-pa-none q-ma-none brand" :icon="icon" id="closedListBtn"
         @click="toggleShowClosedList = !toggleShowClosedList; toggleShowClosedList ? getClosedEvidence(pageNumber) : ''"
         @mousemove="!toggleShowClosedList ? icon = 'arrow_left' : icon = 'arrow_right'" @mouseleave="icon = 'menu'">
-        <q-tooltip content-class="bg-secondary text-h6" content-style="opacity: 93%;">{{ toggleShowClosedList ? 'Ukryj'
-          : 'Pokaż' }} zamknięte listy</q-tooltip></q-btn>
+        <q-tooltip content-class="bg-secondary text-h6" content-style="opacity: 93%;">
+          {{ toggleShowClosedList ? 'Ukryj': 'Pokaż' }} zamknięte listy</q-tooltip>
+          </q-btn>
     </div>
     <div :class="!mobile ? 'row' : 'col'">
       <q-card class="col bg-dark text-positive">
         <div class="row">
           <div class="full-width row" style="display: flex;">
-            <q-btn v-if="AddGroupAmmoExp" :class="mobile ? 'col-6' : 'col-3'" label="Dodaj Amunicję" color="primary"
-              @click="open = !open"></q-btn>
-            <q-btn v-if="AddSingleAmmoExp" :class="mobile ? 'col-6' : 'col-3'" label="Dodaj osobę do listy"
+            <AddAmmunition v-on:addMemberAndAmmoToCaliber="getAmmoData()"/>
+            <q-btn glossy v-if="AddSingleAmmoExp" :class="mobile ? 'col-6' : 'col-3'" label="Dodaj osobę do listy"
               color="primary" @click="getOther(); addAmmo = true">
             </q-btn>
             <AddGunToList v-on:addGunToList="getAmmoData();getGunListAmmoList()"></AddGunToList>
-            <ShootingPackets v-if="AddShootingPacketExp" :class="mobile ? 'col-6' : 'col-3'"
-              :nameMember="{ firstName: '0', secondName: '0', legitimationNumber: '0' }"
-              :nameOther="{ firstName: '0', secondName: '0', id: '0' }" v-on:addMemberAndAmmoToCaliber="getAmmoData()">
-            </ShootingPackets>
+            <ShootingPackets v-if="AddShootingPacketExp" :class="mobile ? 'col-6' : 'col-3'" v-on:addMemberAndAmmoToCaliber="getAmmoData()"/>
           </div>
           <div v-if="ammoList != null && ammoList.forceOpen" class="col-9">
             <div class=" q-pa-md bg-red-3 text-center text-black text-bold">UWAGA! LISTA OTWARTA PONOWNIE. NA KONIEC
@@ -43,9 +40,8 @@
             </q-item>
             <q-item v-if="main">
               <q-item-section side top>
-                <q-btn color="primary" @click="uuid = ammoList.uuid; confirmation = true" icon="lock">
-                  <q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">Zamknij
-                    listę
+                <q-btn glossy color="primary" @click="uuid = ammoList.uuid; confirmation = true" icon="lock">
+                  <q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">Zamknij listę
                   </q-tooltip>
                 </q-btn>
               </q-item-section>
@@ -105,7 +101,7 @@
           </div>
         </div>
       </q-card>
-      <q-card v-if="GunListExp" class="col-4 bg-dark">
+      <q-card v-if="GunListExp" class="col-3 bg-dark">
         <div>
           <q-item>
             <q-item-label class="text-h5 text-bold text-positive">
@@ -132,15 +128,15 @@
             </q-item-label>
           </q-item>
           <div class="row full-width bg-secondary q-mb-xs">
-            <q-btn icon="arrow_left" @click="pageNumber = pageNumber - 1; getClosedEvidence(pageNumber)"
+            <q-btn glossy icon="arrow_left" @click="pageNumber = pageNumber - 1; getClosedEvidence(pageNumber)"
               :disable="pageNumber === 0" class="col-2" text-color="positive" color="primary"></q-btn>
             <div class="self-center text-bold text-center text-white col">STRONA {{ pageNumber + 1 }}</div>
-            <q-btn icon="arrow_right"
+            <q-btn glossy icon="arrow_right"
               @click="pageNumber = ammoListClose.length === 25 ? pageNumber + 1 : pageNumber; getClosedEvidence(pageNumber)"
               :disabled="ammoListClose.length !== 25" class="col-2" text-color="positive" color="primary"></q-btn>
           </div>
           <div v-for="(item, index) in ammoListClose" :key="index">
-            <q-btn class="full-width q-mb-xs" dense text-color="white" color="primary"
+            <q-btn glossy class="full-width q-mb-xs" dense text-color="white" color="primary"
               @click="date = item.date; number = item.number; uuid = item.evidenceUUID; getEvidence(); ammunitionListInfo = true">
               <div class="col q-pa-none q-ma-none">
                 <q-item-label>{{ item.number + ' ' }}</q-item-label>
@@ -163,18 +159,21 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model="ammunitionListInfo">
-      <q-card class="bg-dark text-positive">
-        <q-card-section class="col">
-          <div class="col q-pa-xs">
-            <div class="text-h6">Informacje dla listy z dnia {{ date }}</div>
-            <div class="text-h6">Lista numer {{ number }}</div>
+      <q-card class="bg-dark text-positive" style="min-width: 50vw;">
+        <q-card-actions align="right">
+          <div class="text-center text-bold text-h6 col">
+            <div>Informacje dla listy z dnia {{ date }}</div>
+            <div>Lista numer {{ number }}</div>
           </div>
+          <q-btn icon="close" color="primary" round dense v-close-popup />
+        </q-card-actions>
+        <q-card-section class="col">
           <div class="col q-pa-md">
             <div class="row bg-accent round text-black">
               <div class="col h6 text-bold text-center">Kaliber</div>
               <div class="col h6 text-bold text-center">Suma</div>
             </div>
-            <div v-for="(item, uuid) in ammunitionListEvidence.ammoInEvidenceEntityList" :key="uuid"
+            <div v-for="(item, uuid) in ammunitionListEvidence.ammoInEvidenceDTOList" :key="uuid"
               class="full-width col">
               <div class="row">
                 <div class="col text-bold text-center">{{ item.caliberName }}</div>
@@ -183,9 +182,9 @@
             </div>
           </div>
           <div class="row">
-            <AmmoListDownloadBtn :uuid="uuid" :date="date" class="col full-height" />
-            <q-item></q-item>
-            <q-btn :disable="ammunitionListEvidence.locked" color="primary" class="col full-width full-height"
+            <AmmoListDownloadBtn :uuid="uuid" :date="date"/>
+            <ShowClosedListDetails :uuid="uuid"/>
+            <q-btn glossy :disable="ammunitionListEvidence.locked" color="primary" class="col"
               icon="lock_open" @click="openList = true">
               <q-tooltip v-if="!ammunitionListEvidence.locked" anchor="top middle" :offset="[35, 35]"
                 content-class="text-body1 bg-secondary">Otwórz listę
@@ -196,7 +195,6 @@
             </q-btn>
           </div>
         </q-card-section>
-
         <q-card-actions align="right">
           <q-btn label="zamknij" color="primary" v-close-popup />
         </q-card-actions>
@@ -262,7 +260,7 @@
           <q-input v-model="ammoQuantity" class="full-width col" color="positive" label-color="positive"
             input-class="text-positive" dense filled label="Ilość Amunicji"
             onkeypress="return (event.charCode > 44 && event.charCode < 58)" placeholder="Tylko cyfry" type="number"
-            @keypress.enter="dis = true; simulateProgress(0)"></q-input>
+            @keypress.enter="dis = true; simulateProgress()"></q-input>
           <q-card-actions class="row" align="right">
             <q-item>
               <q-btn class="full-width col" color="primary" icon="close" @click="memberName = ''; otherName = ''"
@@ -271,7 +269,7 @@
             <q-item>
               <q-btn class="full-width col" color="primary" :loading="loading[0]" icon="done"
                 :disable="dis || ammoQuantity.length === 0 || caliberUUID == null"
-                @click="dis = true; simulateProgress(0);"></q-btn>
+                @click="dis = true; simulateProgress();"></q-btn>
             </q-item>
           </q-card-actions>
         </div>
@@ -338,18 +336,7 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model="memberDial" style="min-width: 80vw">
-      <q-card style="min-width: 80vw" class="bg-dark">
-        <q-card-section class="flex-center">
-          <Member :member-number-legitimation="legitimationNumber"></Member>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn text-color="white" label="zamknij" color="primary" v-close-popup @click="code = null" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-    <q-dialog v-model="open" id="1">
-      <AddAmmunition v-on:addMemberAndAmmoToCaliber="getAmmoData()" :open="open"></AddAmmunition>
+      <Member :member-number-legitimation="legitimationNumber"></Member>
     </q-dialog>
   </q-page>
 </template>
@@ -367,19 +354,17 @@ export default {
     const loading = ref([
       false
     ])
-    const progress = ref(false)
 
-    function simulateProgress (number) {
-      loading.value[number] = true
+    function simulateProgress () {
+      loading.value[0] = true
       this.addMemberAndAmmoToCaliber()
       setTimeout(() => {
-        loading.value[number] = false
+        loading.value[0] = false
       }, 0)
     }
 
     return {
       loading,
-      progress,
       simulateProgress
     }
   },
@@ -388,8 +373,12 @@ export default {
       componentFactory: () => import('components/member/Member.vue'),
       loading: SkeletonBox
     }),
+    ShowClosedListDetails: lazyLoadComponent({
+      componentFactory: () => import('src/components/ammoList/ShowClosedListDetails.vue'),
+      loading: SkeletonBox
+    }),
     AmmoListDownloadBtn: lazyLoadComponent({
-      componentFactory: () => import('components/ammoList/ammoListDownloadBtn.vue'),
+      componentFactory: () => import('src/components/ammoList/AmmoListDownloadBtn.vue'),
       loading: SkeletonBox
     }),
     AddNewOtherPerson: lazyLoadComponent({
@@ -419,9 +408,7 @@ export default {
       pageNumber: 0,
       mobile: App.mobile,
       toggleShowClosedList: false,
-      open: false,
       AddShootingPacketExp: JSON.parse(window.localStorage.getItem('AddShootingPacket')),
-      AddGroupAmmoExp: JSON.parse(window.localStorage.getItem('AddGroupAmmo')),
       AddSingleAmmoExp: JSON.parse(window.localStorage.getItem('AddSingleAmmo')),
       GunListExp: JSON.parse(window.localStorage.getItem('GunList')),
       memberDial: false,

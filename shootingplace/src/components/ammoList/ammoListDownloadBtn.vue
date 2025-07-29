@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <q-btn color="secondary" :loading="loading[0]" class="col full-width full-height" @click="simulateProgress(0);showloading();getAmmoListPDF(uuid, date)" icon="file_download">
+  <div class="col">
+    <q-btn glossy color="secondary" :loading="loading[0]" class="full-width" @click="simulateProgress(0);showloading();getAmmoListPDF(uuid, date)" icon="file_download">
       <q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">Pobierz listę
       </q-tooltip>
     </q-btn>
@@ -20,7 +20,7 @@ import App from 'src/App'
 import { ref } from 'vue'
 
 export default {
-  name: 'ammoListDownloadBtn.vue',
+  name: 'AmmoListDownloadBtn.vue',
   data () {
     return {
       download: false,

@@ -1,46 +1,55 @@
 <template>
-  <div style="min-width: 50vw;">
-    <q-card class="bg-dark">
-      <q-card-actions align="right" class="q-pa-xs q-ma-xs">
-        <div class="text-h5 text-bold text-center col text-positive">Stwórz nowy pakiet strzelecki</div>
-        <q-btn icon="close" color="primary" round dense v-close-popup @click=" code = null "/>
-      </q-card-actions>
-      <q-card-section class="flex-center text-positive">
-        <div>
-          <q-item>
-            <q-input v-model="packetName" label="Nazwa Pakietu" class="col" label-color="positive"
-          input-class="text-positive" dense filled/>
-            <q-input v-model="price" label="Cena" type="number" onkeypress="return (event.charCode > 44 && event.charCode < 58)" class="col" label-color="positive"
-          input-class="text-positive" dense filled suffix="zł"/>
-          </q-item>
-          <q-item dense v-for="(item, uuid) in calibers" :key="uuid" :val="item.uuid" style="">
-            <div><q-checkbox v-model="item.active" class="text-white" color="primary" keep-color></q-checkbox></div>
-            <div class="text-positive text-center col" style="display: flex;justify-content: center;align-content: center;flex-direction: column;">{{ item.name }}</div>
-            <q-input :disable="!item.active" v-model="item.counter" class="col" label-color="positive"
-          input-class="text-positive" dense filled label="ilość amunicji w pakiecie"
-          onkeypress="return (event.charCode > 44 && event.charCode < 58)" type="number" :max="item.quantity"/>
-          </q-item>
-        </div>
-      </q-card-section>
-      <q-card-actions align="right">
-        <q-btn :disable="packetName==''||price==''" text-color="white" label="zapisz" color="primary" @click="code = null;addNewPacketCode=true" />
-        <q-btn text-color="white" label="anuluj" color="secondary" v-close-popup @click="code = null" />
-      </q-card-actions>
-    </q-card>
-    <q-dialog v-model=" addNewPacketCode " persistent>
+  <div class="col">
+    <q-btn glossy @click="open = true" label="konfiguruj nowy pakiet" color="primary" class="full-width" />
+    <q-dialog v-model="open">
+      <q-card class="bg-dark text-positive" style="min-width: 60vw;">
+        <q-card-actions align="right" class="q-pa-xs q-ma-xs">
+          <div class="text-h5 text-bold text-center col text-positive">Stwórz nowy pakiet strzelecki</div>
+          <q-btn icon="close" color="primary" round dense v-close-popup @click=" code = null" />
+        </q-card-actions>
+        <q-card-section class="flex-center text-positive">
+          <div>
+            <q-item>
+              <q-input v-model="packetName" label="Nazwa Pakietu" class="col" label-color="positive"
+                input-class="text-positive" dense filled />
+              <q-input v-model="price" label="Cena" type="number"
+                onkeypress="return (event.charCode > 44 && event.charCode < 58)" class="col" label-color="positive"
+                input-class="text-positive" dense filled suffix="zł" />
+            </q-item>
+            <q-item dense v-for="(item, uuid) in calibers" :key="uuid" :val="item.uuid" style="">
+              <div><q-checkbox v-model="item.active" class="text-white" color="primary" keep-color></q-checkbox></div>
+              <div class="text-positive text-center col"
+                style="display: flex;justify-content: center;align-content: center;flex-direction: column;">{{ item.name
+                }}</div>
+              <q-input :disable="!item.active" v-model="item.counter" class="col" label-color="positive"
+                input-class="text-positive" dense filled label="ilość amunicji w pakiecie"
+                onkeypress="return (event.charCode > 44 && event.charCode < 58)" type="number" :max="item.quantity" />
+            </q-item>
+          </div>
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn glossy text-color="white" label="anuluj" color="secondary" v-close-popup @click="code = null" />
+          <q-btn glossy :disable="packetName == '' || price == ''" text-color="white" label="zapisz" color="primary"
+            @click="code = null; addNewPacketCode = true" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="addNewPacketCode" persistent>
       <q-card class="bg-red-5 text-center">
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
           <div>
-            <q-input @keypress.enter=" addNewPacket(packetName, mapCalibers (calibers),price,code); code = null; addNewPacketCode = false " autofocus
-              type="password" v-model=" code " filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input>
+            <q-input
+              @keypress.enter=" addNewPacket(packetName, mapCalibers(calibers), price, code); code = null; addNewPacketCode = false"
+              autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold"
+              mask="####"></q-input>
           </div>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn label="anuluj" color="black" v-close-popup @click=" code = null " />
+          <q-btn label="anuluj" color="black" v-close-popup @click=" code = null" />
           <q-btn :disable="dis" id="3" label="Wprowadź zmiany" color="black" v-close-popup
-            @click="dis=true; addNewPacket(packetName, mapCalibers (calibers),price,code); code = null " />
+            @click="dis = true; addNewPacket(packetName, mapCalibers(calibers), price, code); code = null" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -71,6 +80,7 @@ export default {
       code: null,
       calibers: [],
       active: false,
+      open: false,
       dis: false,
       addNewPacketCode: false,
       packetName: '',

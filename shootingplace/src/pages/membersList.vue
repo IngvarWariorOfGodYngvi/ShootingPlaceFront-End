@@ -149,7 +149,7 @@
       </div>
     </q-card>
     </q-card>
-    <Member v-if="temp!=null" :member-number-legitimation="temp"></Member>
+    <Member v-if="temp!=null" :member-number-legitimation="temp"/>
     <div v-if="temp === null" class="full-width">
       <div v-if="memberDTOArg.length < 1" class="text-center text-bold text-h5 text-positive">
         <CircularLoadingBox></CircularLoadingBox>
@@ -326,7 +326,6 @@ import App from 'src/App.vue'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox.vue'
 import axios from 'axios'
-// import { isWindows } from 'mobile-device-detect'
 export default {
   data () {
     return {

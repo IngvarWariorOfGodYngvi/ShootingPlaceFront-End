@@ -1,17 +1,17 @@
 <template>
   <div>
-    <q-btn v-if="GunListExp" :class="mobile ? 'col-6' : 'col-3'" label="Dodaj broń do listy" color="primary"
+    <q-btn glossy v-if="GunListExp" :class="mobile ? 'col-6' : 'col-3'" label="Dodaj broń do listy" color="primary"
       @click="addGun = true">
     </q-btn>
     <q-dialog v-model="addGun" @hide="temp = null; gun = null"
       @show="getGunList(); gunDate = createTodayDate(); gunTime = createTodayTime()"
-      @keypress.enter="simulateProgressGun(0, gun, gunDate, gunTime)">
+      @keypress.enter="simulateProgressGun(gun, gunDate, gunTime)">
       <q-card class="bg-dark text-positive" style="min-width: 50vw">
           <q-card-actions class="row" align="right">
             <div class="self-center col text-center text-h6 text-bold">Dodaj broń do listy</div>
             <q-btn color="primary" dense round icon="close" v-close-popup/>
           </q-card-actions>
-        <q-card-section class="row">
+        <q-card-section class="col">
           <q-select label="Wybierz broń" popup-content-class="bg-primary text-positive"
             :option-label="opt => opt !== '' ? (Object(opt.modelName + ' ' + opt.serialNumber).toString()) : ''"
             emit-value map-options options-dense bg-color="primary" rounded standout="" input-class="text-white" label-color="white"
@@ -32,9 +32,9 @@
           <div class="col">{{ temp.serialNumber }}</div>
         </q-card-section>
           <q-card-actions class="row" align="right">
-            <q-btn color="secondary" label="anuluj" v-close-popup @click="temp = null"></q-btn>
-            <q-btn color="primary" :loading="loading[0]" label="wydaj broń" :disable="dis"
-              @click="dis = true; simulateProgressGun(0, gun, gunDate, gunTime);"></q-btn>
+            <q-btn glossy color="secondary" label="anuluj" v-close-popup @click="temp = null"></q-btn>
+            <q-btn glossy color="primary" :loading="loading[0]" label="wydaj broń" :disable="dis"
+              @click="dis = true; simulateProgressGun(gun, gunDate, gunTime);"></q-btn>
           </q-card-actions>
       </q-card>
     </q-dialog>
@@ -64,21 +64,18 @@ export default {
     const loading = ref([
       false
     ])
-    const progress = ref(false)
-
-    function simulateProgressGun (number, gun, date, time) {
-      loading.value[number] = true
+    function simulateProgressGun (gun, date, time) {
+      loading.value[0] = true
       const gunUUIDList = []
       gunUUIDList.push(gun.uuid)
       this.addGunToList(gunUUIDList, date, time)
       setTimeout(() => {
-        loading.value[number] = false
+        loading.value[0] = false
       }, 0)
     }
 
     return {
       loading,
-      progress,
       simulateProgressGun
     }
   },

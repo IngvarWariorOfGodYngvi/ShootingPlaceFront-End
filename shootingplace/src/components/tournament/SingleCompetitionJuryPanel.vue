@@ -148,15 +148,14 @@
     </q-virtual-scroll>
     <q-dialog v-model="setScorePlayer">
       <q-card style="min-width: 95vw;min-height: 90vh; margin-bottom: 10vh" class="bg-dark" id="1">
+        <q-card-actions align="right">
+          <div class="text-h6 text-positive text-bold text-center col">{{ temp.secondName }} {{ temp.firstName }} nr
+            {{ startNumber }}
+          </div>
+          <q-btn icon="close" color="primary" round dense v-close-popup/>
+        </q-card-actions>
         <q-card-section class="full-width">
-          <div>
-            <div class="text-h5 text-positive text-bold text-center">{{ temp.secondName }} {{ temp.firstName }} nr
-              {{ startNumber }}
-            </div>
-          </div>
-          <div>
-            <div class="text-h5 text-positive text-bold text-center">{{ competitionTemp.name }}</div>
-          </div>
+          <div class="text-h6 text-positive text-bold text-center">{{ competitionTemp.name }}</div>
           <!-- NORMAL -->
           <div v-if="competitionTemp.countingMethod === 'NORMAL'">
             <q-input input-class="text-center text-positive text-h6"
@@ -489,20 +488,20 @@
           <!-- END Dynamika Dziesiątka -->
           <!-- CLOSING -->
           <div class="row full-width q-pb-sm">
-            <q-btn class="col-6" text-color="white" label="Anuluj" color="primary" v-close-popup/>
-            <q-btn class="col-6" color="primary" label="Zapisz" text-color="white" v-close-popup
+            <q-btn glossy class="col-6" text-color="white" label="Anuluj" color="primary" v-close-popup/>
+            <q-btn glossy class="col-6" color="primary" label="Zapisz" text-color="white" v-close-popup
             @click="setScore(scoreUUID, scoreLabel, innerTen, outerTen, alfa, charlie, delta, procedures, miss, series)"/>
           </div>
           <!-- TOGGLE -->
           <div v-if="player!=null" class="col full-width">
-            <q-btn color="primary" dense class="full-width" style="border: solid 2px black"
+            <q-btn glossy color="primary" dense class="full-width" style="border: solid 2px black"
                    @click="toggleDnfScore();player.dnf=!player.dnf">
               {{ player.dnf ? 'usuń' : 'przyznaj' }} DNF
             </q-btn>
-            <q-btn color="primary" dense class="full-width" style="border: solid 2px black"
+            <q-btn glossy color="primary" dense class="full-width" style="border: solid 2px black"
                    @click="toggleDsqScore();player.dsq=!player.dsq">{{ player.dsq ? 'usuń' : 'przyznaj' }} DSQ
             </q-btn>
-            <q-btn color="primary" dense class="full-width" style="border: solid 2px black"
+            <q-btn glossy color="primary" dense class="full-width" style="border: solid 2px black"
                    @click="togglePkScore();player.pk=!player.pk">{{ player.pk ? 'usuń' : 'przyznaj' }} PK
             </q-btn>
           </div>

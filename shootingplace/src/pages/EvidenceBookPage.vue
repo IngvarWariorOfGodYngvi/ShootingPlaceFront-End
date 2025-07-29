@@ -16,7 +16,7 @@
           <q-input v-model="phone" label-color="white" standout="" bg-color="primary" rounded class="col" @input="phone.length > 10? getOtherbyPhone(phone) : otherPerson = null" dense input-class="text-white" label="Jeśli zostawiłeś nam numer telefonu to wpisz go tutaj" type="tel" mask="### ### ###" onkeypress="return (event.charCode > 47 && event.charCode < 58)"></q-input>
           <q-btn glossy class="q-ml-xs" color="primary" rounded label="resetuj" @click="reset()"></q-btn>
         </div>
-        <div v-if="member!=null && !nonMember" class="row round" :class="member.active?'bg-green':'bg-red'">
+        <div v-if="member!=null && !nonMember" class="row rounded" :class="member.active?'bg-green-3':'bg-red-3'">
           <div style="min-height: 10vh;" @click="visible=false" class="col-3" v-if="member.image!=null">
             <q-img contain fit=none style="max-height: 30vh;" class="text-body1" alt="zdjęcie profilowe"
           :src="(`${local}/files/getFile?uuid=${member.image}`)" />
@@ -43,13 +43,13 @@
           </div>
         </div>
         <div v-if="member==null && otherPerson==null && nonMember" class="col">
-          <q-input v-model="nonMemberFirstName" filled label="imię *" dense input-class="text-positive" label-color="positive"/>
+          <q-input v-model="nonMemberFirstName" filled label="Imię *" dense input-class="text-positive" label-color="positive"/>
           <q-input v-model="nonMemberSecondName" filled label="Nazwisko *" dense input-class="text-positive" label-color="positive"/>
           <q-checkbox v-model="rememberMe" @input="nonMemberClubName=null;nonMemberPhoneNumber=null" class="text-positive full-width">Zapamiętaj Mnie - twoje dane będą przechowywane w celach rejestracji pobytu na strzelnicy i startu w zawodach klubowych</q-checkbox>
-          <q-checkbox v-model="rodo" class="text-positive full-width">zgoda na przetwarzanie danych osobowych</q-checkbox>
+          <q-checkbox v-model="rodo" class="text-positive full-width">Zgoda na przetwarzanie danych osobowych</q-checkbox>
           <div v-if="rememberMe" class="row">
           <div class="col">
-            <q-select v-model="nonMemberClubName" style="border: 1px solid green" filled label="Wybierz Klub" @popup-hide="getAllClubsToTournament()" dense options-dense popup-content-class="bg-dark text-positive" class="col" input-class="text-positive" label-color="positive" @new-value="createValue" hide-selected use-chips
+            <q-select v-model="nonMemberClubName" style="border: 1px solid green" filled label="Wybierz Klub" @popup-hide="getAllClubsToTournament()" dense options-dense popup-content-class="bg-dark text-positive" class="col" input-class="text-positive" label-color="positive" hide-selected use-chips
             use-input fill-input input-debounce="0" :options="filterOptions"
             @filter="filterFna">
           <template v-slot:no-option>
@@ -81,24 +81,28 @@
         </div>
       </q-card-section>
       <div v-if="member != null || phone.length > 10 || (nonMemberFirstName!=null&&nonMemberSecondName!=null&&nonMemberZipCode!=null&&nonMemberPostOfficeCity!=null&&nonMemberStreet!=null&&nonMemberStreetNumber!=null)|| (nonMemberWeaponPermissionNumber!=null&&nonMemberWeaponPermissionNumber.length>8)">
-      <div class="text-positive full-width text-h6 text-center ">Podpisz poniżej</div>
+        <div class="text-positive full-width text-h6 text-center ">Podpisz poniżej</div>
       <q-card-section>
-        <div style="padding-left: 12.5vw; padding-right: 12.5vw;">
+        <div style="padding-left: 12.5vw; padding-right: 12.5vw;" align="right">
           <VueSignaturePad id="canvas" ref="signaturePad" height="25vh" style="background-color: white;"/>
+          <q-btn glossy @click="clear()" class="q-ma-md" label="wyczyść" color="secondary"></q-btn>
         </div>
-        <q-checkbox v-model="statementOnReadingTheShootingPlaceRegulations" class="text-positive col">Zapoznałem się z regulaminem strzelnicy i polityką prywatności</q-checkbox>
       </q-card-section>
       <div>
         <div class="row">
-        <q-card-actions align="left" class="text-positive col">
-          <label>
+          <q-card-actions align="left" class="text-positive col">
+            <label>
               Chcesz mieć program u siebie? Napisz do mnie: i.zebrowski.ul@gmail.com
-          </label>
-        </q-card-actions>
-          <q-card-actions align="right" class="row">
-            <q-btn glossy @click="clear()" label="wyczyść" color="secondary"></q-btn>
-            <q-btn glossy v-if="statementOnReadingTheShootingPlaceRegulations && rodo && (member!=null || otherPerson!=null || (nonMemberFirstName!=null&&nonMemberSecondName))" @click="nonMember?saveNonMember():save()" label="zapisz" color="primary"></q-btn>
-            <q-btn glossy v-else label="zapisz" color="grey"><q-tooltip v-if="!statementOnReadingTheShootingPlaceRegulations || !rodo" content-class="text-h6 bg-primary" :offset="[0,35]" self="bottom middle" anchor="top middle">{{!statementOnReadingTheShootingPlaceRegulations ? '-> Zaakceptuj zapoznanie się z regulaminem na strzelnicy':''}} <br/> {{!rodo ? '-> Zaakceptuj politykę prywatności':''}}</q-tooltip></q-btn>
+            </label>
+          </q-card-actions>
+          <q-card-actions align="right" class="flex column text-right">
+            <div class="full-width">
+              <q-checkbox color="primary" keep-color left-label v-model="statementOnReadingTheShootingPlaceRegulations" class="text-positive">Zapoznałem się z regulaminem strzelnicy i polityką prywatności</q-checkbox>
+            </div>
+            <div class="full-width">
+              <q-btn glossy v-if="statementOnReadingTheShootingPlaceRegulations && rodo && (member!=null || otherPerson!=null || (nonMemberFirstName!=null&&nonMemberSecondName))" @click="nonMember?saveNonMember():save()" label="zapisz" color="primary"></q-btn>
+              <q-btn glossy v-else label="zapisz" color="grey"><q-tooltip v-if="!statementOnReadingTheShootingPlaceRegulations || !rodo" content-class="text-h6 bg-primary" :offset="[0,35]" self="bottom middle" anchor="top middle">{{!statementOnReadingTheShootingPlaceRegulations ? '-> Zaakceptuj zapoznanie się z regulaminem na strzelnicy':''}} <br/> {{!rodo ? '-> Zaakceptuj politykę prywatności':''}}</q-tooltip></q-btn>
+            </div>
           </q-card-actions>
         </div>
 
@@ -274,30 +278,6 @@ export default {
           )
         }
       })
-    },
-    createValue (val, done) {
-      if (val.length > 0) {
-        const model = (this.clubName || []).slice()
-
-        val
-          .split(/[,;|]+/)
-          .map(v => v.trim())
-          .filter(v => v.length > 0)
-          .forEach(v => {
-            if (this.clubs.includes(v) === false) {
-              this.clubs.push(v)
-            }
-            if (model.includes(v) === false) {
-              model.push(v)
-            }
-          })
-
-        done(null)
-        this.clubName = model
-      }
-      this.message = 'dodano do listy'
-      this.success = true
-      this.autoClose()
     },
     save () {
       const { data } = this.$refs.signaturePad.saveSignature()

@@ -48,8 +48,8 @@
             <div class="col">
               {{ item1.time.split(".")[0] }}
             </div>
-            <q-btn v-if="!item1.locked" class="col-2" @click="caliberTemp = item1;ammoInEvidenceUUID = item1.uuid; signCaliber = true" label="podpisz" color="primary" rounded />
-            <q-btn v-else class="col-2" disable label="zablokowane" color="secondary" rounded />
+            <q-btn v-if="!item1.locked" glossy class="col-2" @click="caliberTemp = item1;ammoInEvidenceUUID = item1.uuid; signCaliber = true" label="podpisz" color="primary" rounded />
+            <q-btn v-else glossy class="col-2" disable label="zablokowane" color="secondary" rounded />
           </div>
         </div>
         <div class="line text-primary"></div>
@@ -64,7 +64,7 @@
           </q-card-section>
         </q-expansion-item>
     </q-card-section>
-    <q-dialog v-model="signCaliber" @keypress.enter="save(), signCaliber = false" @show="signCaliberTime = caliberTemp.time.split('.')[0]">
+    <q-dialog v-model="signCaliber" @keypress.enter="code == null || code.length <4?'':save(), signCaliber = false" @show="signCaliberTime = caliberTemp.time.split('.')[0]">
       <q-card class="bg-dark text-positive" style="min-width: 75vw;">
           <q-card-actions align="right">
             <div class="self-center col text-center text-h6 text-bold">Podpisywanie Wydawania amunicji</div>
@@ -97,16 +97,16 @@
             Pospis osoby uprawnionej
           </div>
           <q-item>
-            <VueSignaturePad id="canvas" ref="signaturePad" height="20vh" style="background-color: white;"/>
+            <VueSignaturePad id="canvas" ref="signaturePad" height="25vh" style="background-color: white;"/>
           </q-item>
-          <q-btn label="wyczyść" color="primary" @click="clear()"></q-btn>
+          <q-btn glossy label="wyczyść" color="primary" @click="clear()"></q-btn>
           <q-input dense label="kod potwierdzający" @keypress.enter="save()" rounded standout="" type="password" inputmode="numeric"
             v-model="code" bg-color="warning" color="Yellow" class=" text-bold" mask="####" />
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn label="anuluj" color="secondary" v-close-popup />
-          <q-btn label="dodaj" color="primary" v-close-popup @click="save();" />
+          <q-btn glossy label="anuluj" color="secondary" v-close-popup />
+          <q-btn glossy label="dodaj" :disable="code == null || code.length <4" color="primary" v-close-popup @click="save();" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -301,7 +301,6 @@ export default {
         this.failure = false
         this.message = null
         this.barcode = null
-        this.code = null
       }, 2000)
     }
   }

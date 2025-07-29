@@ -2,7 +2,7 @@
   <div>
     <q-btn glossy color="secondary" class="col" label="przeczytaj reglamin" @click="shootingplaceStatute=true"></q-btn>
     <q-dialog v-model=" shootingplaceStatute ">
-      <q-page-container class="bg-dark text-positive" style="min-width: 75vw">
+      <q-page-container class="bg-dark text-positive full-width" style="min-width: 80vw">
         <q-card-section class="text-center">
           <h4>REGULAMIN<br/>BEZPIECZNEGO FUNKCJONOWANIA STRZELNICY</h4>
           <h6>ŁÓDZKIEGO TOWARZYSTWA STRZELECKIEGO -<br/>BRACTWO KURKOWE</h6>

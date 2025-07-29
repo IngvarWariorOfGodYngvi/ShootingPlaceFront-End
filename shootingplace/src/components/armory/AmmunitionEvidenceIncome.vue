@@ -159,10 +159,10 @@
             Pospis osoby uprawnionej
           </div>
           <q-item>
-            <VueSignaturePad id="canvas" ref="signaturePad" height="20vh" style="background-color: white;" />
+            <VueSignaturePad id="canvas" ref="signaturePad" height="25vh" style="background-color: white;" />
           </q-item>
           <q-btn glossy label="wyczyść" color="primary" @click="clear()"></q-btn>
-          <q-input dense label="kod potwierdzający" @keypress.enter="save()" rounded standout="" type="password"
+          <q-input dense label="kod potwierdzający" @keypress.enter="code == null || code.length <4?'':save()" rounded standout="" type="password"
             v-model="code" bg-color="warning" color="Yellow" class="q-ma-md text-bold" mask="####"
             inputmode="numeric" />
         </q-card-section>
@@ -170,7 +170,7 @@
         <q-card-actions align="right">
           <q-btn glossy label="anuluj" color="secondary" v-close-popup
             @click=" caliberUUID = null; ammoQuantity = null; ammoDescription = null" />
-          <q-btn glossy label="dodaj" color="primary" v-close-popup @click="save();" />
+          <q-btn glossy :disable="code == null || code.length <4" label="dodaj" color="primary" v-close-popup @click="save();" />
         </q-card-actions>
       </q-card>
     </q-dialog>

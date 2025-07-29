@@ -153,7 +153,7 @@ if (App.main) {
         {
           path: '/evidenceBook',
           name: 'Książka',
-          component: () => import('src/pages/EvidenceBookPage.vue')
+          component: () => import(/* webpackChunkName: "Rejestr Pobytu" */'src/pages/EvidenceBookPage.vue')
         },
         {
           path: '/member',
@@ -197,6 +197,10 @@ if (App.main) {
         {
           path: '',
           component: () => import(/* webpackChunkName: "Index" */'pages/Index.vue')
+        },
+        {
+          path: '/settings',
+          component: () => import(/* webpackChunkName: "Ustawienia" */'pages/settings.vue')
         },
         {
           path: '/evidenceBook',

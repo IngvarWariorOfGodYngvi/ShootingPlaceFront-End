@@ -5,7 +5,7 @@
         <div class="q-pa-md text-left col full-width no-outline text-h5 text-bold text-positive">Ilość osób {{ list.length }}
         </div>
         <div class="q-pa-md text-right">
-          <q-btn v-if="!mobile" dense color="primary" @click="memberName='WSZYSCY - którzy mają zaznaczone opłacono w PZSS'; prolongLicenseAlertAll=true"
+          <q-btn v-if="!mobile" :disable="licenseList.length<1" glossy dense color="primary" @click="memberName='WSZYSCY - którzy mają zaznaczone opłacono w PZSS'; prolongLicenseAlertAll=true"
                  label="przedłuż zaznaczone">({{ licenseList.length }})
           </q-btn>
         </div>
@@ -43,10 +43,10 @@
             </div>
             <div class="col-2">
               <q-tooltip v-if="!item.license.paid && !item.active" content-class="bg-red text-subtitle2" anchor="top middle">UREGULUJ SKŁADKI</q-tooltip>
-            <q-btn dense disable color="grey-8" v-if="!item.license.paid && !item.active" class="fit"
+            <q-btn glossy dense disable color="grey-8" v-if="!item.license.paid && !item.active" class="fit"
                    label="opłać licencję">
             </q-btn>
-            <q-btn dense color="secondary" v-if="!item.license.paid && item.active" class="fit"
+            <q-btn glossy dense color="secondary" v-if="!item.license.paid && item.active" class="fit"
                    @click="memberName = item.firstName + item.secondName;memberUUID = item.uuid;paymentLicenseAlert = true">
               opłać licencję
             </q-btn>

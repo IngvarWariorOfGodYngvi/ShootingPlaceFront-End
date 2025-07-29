@@ -1,21 +1,9 @@
 <template>
-  <div class="full-width rounded">
-    <q-btn glossy :loading="loading[0]" :disable="dis" class="full-width" @click="dialog = true" color="secondary">
-      Pobierz Plik .csv
-    </q-btn>
-    <q-dialog v-model="dialog" @keypress.enter="dis=true; dialog = false; simulationGetCSVFile()">
-      <q-card class="bg-dark text-positive">
-        <q-card-section class="row items-center">
-          <span class="text-h6">Czy na pewno chcesz pobrać Plik?</span>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn glossy text-color="white" label="anuluj" color="secondary" v-close-popup />
-          <q-btn glossy text-color="white" label="Pobierz" color="primary" v-close-popup
-            @click="dis = true; simulationGetCSVFile()" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+  <div>
+    <q-item>
+      <q-btn glossy @click="dis = true; simulationGetJudgeFromTournament()" :loading="loading[0]"
+        :disable="dis" class="full-width ghover1" label="pobierz listę sędziów" color="primary" />
+    </q-item>
     <q-dialog position="standard" v-model="failure">
       <q-card class="bg-warning">
         <q-card-section>
@@ -32,20 +20,20 @@
     </q-dialog>
   </div>
 </template>
-
+<style src="src/style/style.scss" lang="scss"></style>
 <script>
-import App from 'src/App'
 import axios from 'axios'
+import App from 'src/App.vue'
 import { ref } from 'vue'
 export default {
-  name: 'MemberCSVFile.vue',
+  name: 'DownloadJuryListBtn',
   setup () {
     const loading = ref([
       false
     ])
-    function simulationGetCSVFile () {
+    function simulationGetJudgeFromTournament () {
       loading.value[0] = true
-      this.getCSVFile()
+      this.getJudgeFromTournament()
       setTimeout(() => {
         loading.value[0] = false
       }, 0)
@@ -53,21 +41,15 @@ export default {
 
     return {
       loading,
-      simulationGetCSVFile
-    }
-  },
-  data () {
-    return {
-      dis: false,
-      dialog: false,
-      message: null,
-      success: false,
-      failure: false,
-      local: App.host
+      simulationGetJudgeFromTournament
     }
   },
   props: {
     uuid: {
+      type: String,
+      required: true
+    },
+    date: {
       type: String,
       required: true
     },
@@ -76,18 +58,35 @@ export default {
       required: true
     }
   },
+  watch: {
+    uuid (newValue, oldValue) {
+      if (newValue !== oldValue) {
+        this.simulationGetJudgeFromTournament()
+      }
+    }
+  },
+  data () {
+    return {
+      dis: false,
+      message: null,
+      success: false,
+      failure: false,
+      shootingPlace: App.shootingPlace,
+      local: App.host
+    }
+  },
   methods: {
-    getCSVFile () {
+    getJudgeFromTournament () {
       axios({
-        url: `${this.local}/files/downloadCSVFile/${this.uuid}`,
+        url: `${this.local}/files/downloadJudge/${this.uuid}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
-        this.message = 'Pobrano plik .csv'
+        this.message = 'Pobrano Dokument'
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
-        fileLink.setAttribute('download', this.name + '.csv')
+        fileLink.setAttribute('download', `Lista sędziów na zawodach ${this.name} ${this.date}.pdf`)
         document.body.appendChild(fileLink)
         fileLink.click()
         this.success = true
@@ -99,10 +98,9 @@ export default {
         this.dis = false
         this.message = null
         this.success = false
+        this.failure = false
       }, 2000)
     }
   }
 }
 </script>
-
-<style scoped></style>

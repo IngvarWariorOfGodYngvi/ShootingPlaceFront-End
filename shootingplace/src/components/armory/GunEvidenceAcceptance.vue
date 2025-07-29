@@ -34,10 +34,10 @@
         <div class="col">{{ item.gun.gunCertificateSerialNumber }}</div>
         <div class="col">{{ item.gunTakerName }}</div>
         <div class="col">{{ item.issuanceBy }}</div>
-        <q-btn v-if="item.gunReturnerSign == null" class="col" dense rounded color="secondary"
+        <q-btn glossy v-if="item.gunReturnerSign == null" class="col" dense rounded color="secondary"
           @click="temp = item; singReturnerGunUsed = true">podpisz</q-btn>
           <div v-else class="col">{{ item.gunReturnerName }}</div>
-        <q-btn v-if="item.acceptanceSign == null" class="col" dense rounded color="primary"
+        <q-btn glossy v-if="item.acceptanceSign == null" class="col" dense rounded color="primary"
           @click="temp = item; singAcceptanceGunUsed = true">podpisz</q-btn>
           <div v-else class="col">{{ item.acceptanceBy }}</div>
         <div class="line"></div>
@@ -107,7 +107,7 @@
           <div class="text-positive">
             Pospis osoby pobierającej broń
           </div>
-          <VueSignaturePad id="canvas" ref="signaturePad1" height="20vh" style="background-color: white;"/>
+          <VueSignaturePad id="canvas" ref="signaturePad1" height="25vh" style="background-color: white;"/>
           <q-btn label="wyczyść" color="primary" @click="clear()"></q-btn>
         </q-card-section>
 
@@ -180,16 +180,16 @@
             Pospis osoby uprawnionej
           </div>
           <q-item>
-            <VueSignaturePad id="canvas" ref="signaturePad1" style="height: 25vh;background-color: white;"/>
+            <VueSignaturePad id="canvas" ref="signaturePad1" height="25vh" style="background-color: white;"/>
           </q-item>
           <q-btn label="wyczyść" color="primary" @click="clear()"></q-btn>
-          <q-input dense label="kod potwierdzający" @keypress.enter="save()" rounded standout="" type="password"
+          <q-input dense label="kod potwierdzający" @keypress.enter="code == null || code.length <4?'':save()" rounded standout="" type="password"
             v-model="code" bg-color="warning" color="Yellow" class=" text-bold" mask="####" inputmode="numeric"/>
         </q-card-section>
 
         <q-card-actions align="right">
           <q-btn label="anuluj" color="secondary" v-close-popup />
-          <q-btn label="potwierdź" color="primary" @click="save()" v-close-popup />
+          <q-btn :disable="code == null || code.length <4" label="potwierdź" color="primary" @click="save()" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>

@@ -11,9 +11,9 @@
           style="border: 2px solid white;">
           <div v-if="mailingList.length > 0" class="bg-secondary text-white"
             style="border-radius: 5% 5% 0 0; margin-right: 15vw; font-size: small; width: 18vw">
-            <q-btn dense class="text-caption full-width" align="center" label="wyczyść listę" color="primary"
+            <q-btn glossy dense class="text-caption full-width" align="center" label="wyczyść listę" color="primary"
               icon="delete" rounded @click="clearMailingList()" />
-            <q-btn dense class="text-caption full-width" align="center"
+            <q-btn glossy dense class="text-caption full-width" align="center"
               :label="'kopiuj ' + mailingList.length + ' do schowka'" color="primary" icon="content_copy" rounded
               @click="unsecuredCopyToClipboard(mailingList)" />
             <q-virtual-scroll :items="mailingList" class="text-center" style="height: auto;max-height: 40vh;width: auto">
@@ -32,7 +32,7 @@
         <div class="q-pa-md text-left col full-width no-outline text-h5 text-bold text-positive">Ilość osób {{ list.length }}
         </div>
         <div class="q-pa-md text-right">
-          <q-btn v-if="!mobile" dense color="primary" @click="prolongLicenseAlert=true" label="Przedłuż wybrane Licencje">
+          <q-btn v-if="!mobile" :disable="licenseList.length<1" glossy dense color="primary" @click="prolongLicenseAlert=true" label="Przedłuż zaznaczone">
             ({{ licenseList.length }})
           </q-btn>
         </div>
@@ -70,15 +70,15 @@
             <div class="col-2">
               {{ convertDate(item.license.validThru) }}
             </div>
-            <q-btn dense color="grey-8" v-if="!item.license.paid && !item.active" class="col-2"
+            <q-btn glossy dense color="grey-8" v-if="!item.license.paid && !item.active" class="col-2"
                    label="opłać licencję">
               <q-tooltip content-class="bg-red text-subtitle2" anchor="top middle">UREGULUJ SKŁADKI</q-tooltip>
             </q-btn>
-            <q-btn dense color="secondary" v-if="!item.license.paid && item.active" class="col-2"
+            <q-btn glossy dense color="secondary" v-if="!item.license.paid && item.active" class="col-2"
                    @click="memberName = item.firstName + item.secondName;memberUUID = item.uuid;paymentLicenseAlert = true">
               opłać licencję
             </q-btn>
-            <q-btn dense color="primary" v-if="item.license.paid" disable class="col-2" label="opłacona"/>
+            <q-btn glossy dense color="primary" v-if="item.license.paid" disable class="col-2" label="opłacona"/>
           </div>
           </div>
           <q-inner-loading

@@ -70,8 +70,8 @@
               @keypress.enter="scoreUUID = item.uuid; forceSetScore(item.uuid,forceScore)" :label="'wynik'"
               input-class="text-center text-positive" />
             <div class="q-pa-xs text-center">
-              <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
-              <q-btn color="primary" label="Zapisz" v-close-popup
+              <q-btn glossy color="primary" label="Anuluj" v-close-popup></q-btn>
+              <q-btn glossy color="primary" label="Zapisz" v-close-popup
                 @click="scoreUUID = item.uuid; forceSetScore(item.uuid,forceScore)"></q-btn>
             </div>
           </q-popup-edit>
@@ -118,8 +118,8 @@
               @keypress.enter="scoreUUID = item.uuid; onEnter(item.uuid)" :label="'Seria ' + (index + 1)"
               input-class="text-center text-positive" />
             <div class="q-pa-xs text-center">
-              <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
-              <q-btn color="primary" label="Zapisz" v-close-popup
+              <q-btn glossy color="primary" label="Anuluj" v-close-popup></q-btn>
+              <q-btn glossy color="primary" label="Zapisz" v-close-popup
                 @click="scoreUUID = item.uuid; setScore(item.uuid, scoreLabel, innerTen, outerTen, alfa, charlie, delta, procedures, miss, series)"></q-btn>
             </div>
           </q-popup-edit>
@@ -171,8 +171,8 @@
               label="procedury" label-color="positive"
               onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
             <div class="q-pa-xs text-center">
-              <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
-              <q-btn color="primary" label="Zapisz" v-close-popup
+              <q-btn glossy color="primary" label="Anuluj" v-close-popup></q-btn>
+              <q-btn glossy color="primary" label="Zapisz" v-close-popup
                 @click="scoreUUID = item.uuid; setScore(item.uuid, scoreLabel, innerTen, outerTen, alfa, charlie, delta, procedures, miss, series)"></q-btn>
             </div>
           </q-popup-edit>
@@ -218,8 +218,8 @@
               @keypress.enter="scoreUUID = item.uuid; onEnter(scoreUUID)" dense autofocus stack-label label="procedury"
               label-color="positive" onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
             <div class="q-pa-xs text-center">
-              <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
-              <q-btn color="primary" label="Zapisz" v-close-popup
+              <q-btn glossy color="primary" label="Anuluj" v-close-popup></q-btn>
+              <q-btn glossy color="primary" label="Zapisz" v-close-popup
                 @click="scoreUUID = item.uuid; setScore(item.uuid, scoreLabel, innerTen, outerTen, alfa, charlie, delta, procedures, miss, series)"></q-btn>
             </div>
           </q-popup-edit>
@@ -258,8 +258,8 @@
               v-model="miss" class="col" stack-label label="miss" label-color="positive"
               onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
             <div class="q-pa-xs text-center">
-              <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
-              <q-btn color="primary" label="Zapisz" v-close-popup
+              <q-btn glossy color="primary" label="Anuluj" v-close-popup></q-btn>
+              <q-btn glossy color="primary" label="Zapisz" v-close-popup
                 @click="scoreUUID = item.uuid; setScore(item.uuid, scoreLabel, innerTen, outerTen, alfa, charlie, delta, procedures, miss, series)"></q-btn>
             </div>
           </q-popup-edit>
@@ -324,8 +324,8 @@
               v-model="miss" class="col" stack-label label="miss" label-color="positive"
               onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
             <div class="q-pa-xs text-center">
-              <q-btn color="primary" label="Anuluj" v-close-popup></q-btn>
-              <q-btn color="primary" label="Zapisz" v-close-popup
+              <q-btn glossy color="primary" label="Anuluj" v-close-popup></q-btn>
+              <q-btn glossy color="primary" label="Zapisz" v-close-popup
                 @click="scoreUUID = item.uuid; setScore(item.uuid, scoreLabel, innerTen, outerTen, alfa, charlie, delta, procedures, miss, series)"></q-btn>
             </div>
           </q-popup-edit>
@@ -371,7 +371,7 @@
       </div>
     </div>
     <q-dialog v-model="toggleDSQDNF">
-      <q-card class="bg-dark text-positive">
+      <q-card class="bg-dark text-positive" style="min-width: 40vw">
         <q-card-actions align="right" class="q-pa-xs q-ma-xs">
           <div class="text-h5 text-bold text-center col">Kary dla zawodnika</div>
           <q-btn icon="close" color="primary" round dense v-close-popup />
@@ -380,11 +380,11 @@
         <div class="text-h6 text-center">Numer startowy {{ metric }}</div>
         <q-card-section>
           <div class="col q-pa-md">
-            <q-btn color="primary" class="full-width q-pa-md" @click="toggleDnfScore()">przyznaj DNF</q-btn>
+            <q-btn glossy color="primary" class="full-width q-pa-md" @click="toggleDnfScore()">przyznaj DNF</q-btn>
             <p></p>
-            <q-btn color="primary" class="full-width q-pa-md" @click="toggleDsqScore()">przyznaj DSQ</q-btn>
+            <q-btn glossy color="primary" class="full-width q-pa-md" @click="toggleDsqScore()">przyznaj DSQ</q-btn>
             <p></p>
-            <q-btn color="primary" class="full-width q-pa-md" @click="togglePkScore()">przyznaj PK</q-btn>
+            <q-btn glossy color="primary" class="full-width q-pa-md" @click="togglePkScore()">przyznaj PK</q-btn>
           </div>
         </q-card-section>
       </q-card>
@@ -425,7 +425,7 @@
                   <div v-if="ammoQuantity === null || ammoQuantity === ''">wprowadź ilość</div>
                 </div>
               </q-btn>
-              <q-btn v-if="caliberUUID !== null && ammoQuantity !== null && ammoQuantity !== ''" class="col full-width"
+              <q-btn glossy v-if="caliberUUID !== null && ammoQuantity !== null && ammoQuantity !== ''" class="col full-width"
                 color="primary" label="wydaj amunicję" @click="addAmmoConfirm = true"></q-btn>
             </div>
           </div>
@@ -438,7 +438,7 @@
         </q-card-section> -->
         <q-card-section>
           <div class="text-bold text-center text-h6">WYDAWANIE PAKIETU AMUNICJI</div>
-          <q-btn label="Wydaj Pakiet" color="primary" class="full-width" @click="setPacket=true"></q-btn>
+          <q-btn glossy label="Wydaj Pakiet" color="primary" class="full-width" @click="setPacket=true"></q-btn>
         </q-card-section>
         <q-card-actions align="right">
           <q-btn text-color="white" label="zamknij" color="primary" v-close-popup />
@@ -467,14 +467,14 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn text-color="white" label="anuluj" color="secondary" v-close-popup />
-          <q-btn text-color="white" label="Wydaj" color="primary" v-close-popup
+          <q-btn glossy text-color="white" label="anuluj" color="secondary" v-close-popup />
+          <q-btn glossy text-color="white" label="Wydaj" color="primary" v-close-popup
             @click="addMemberAndAmmoToCaliber(); addAmmoConfirm = false; ammoQuantity = null; addAmmo = false" />
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="metricsInfo">
-      <q-card @hook:destroyed="infoScore = []; infoScore1 = []" class="bg-dark text-positive">
+    <q-dialog v-model="metricsInfo" @hide="infoScore = []; infoScore1 = []">
+      <q-card class="bg-dark text-positive">
         <q-card-actions align="right">
           <q-btn icon="close" color="primary" round dense v-close-popup/>
         </q-card-actions>
@@ -490,15 +490,15 @@
             <q-checkbox class="hover1" v-model="a5rotate" :value="a5rotate" label="rozmiar A5"></q-checkbox>
           </div>
           <div class="row q-pa-xs">
-            <q-btn v-if="memberExist" dense @click="memberDial = true" class="col q-pa-xs" color="primary">
+            <q-btn glossy v-if="memberExist" dense @click="memberDial = true" class="col q-pa-xs" color="primary">
               wyświetl profil
             </q-btn>
             <q-item></q-item>
-            <q-btn dense @click="getMemberMetrics(compList); compList = []" class="col q-pa-xs" color="secondary">
+            <q-btn glossy dense @click="getMemberMetrics(compList); compList = []" class="col q-pa-xs" color="secondary">
               wydrukuj wybrane metryki
             </q-btn>
             <q-item></q-item>
-            <q-btn dense @click="getMemberMetrics(infoScore1); compList = []" class="col q-pa-xs" color="primary">
+            <q-btn glossy dense @click="getMemberMetrics(infoScore1); compList = []" class="col q-pa-xs" color="primary">
               wydrukuj
               wszystkie metryki
             </q-btn>

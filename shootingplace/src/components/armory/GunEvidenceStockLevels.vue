@@ -252,7 +252,7 @@
             Pospis osoby uprawnionej
           </div>
           <q-item>
-            <VueSignaturePad id="canvas" ref="signaturePad" height="20vh" style="background-color: white;"/>
+            <VueSignaturePad id="canvas" ref="signaturePad" height="25vh" style="background-color: white;"/>
           </q-item>
           <q-btn label="wyczyść" color="primary" @click="clear()"></q-btn>
           <q-input label="kod potwierdzający" rounded standout="" type="password"

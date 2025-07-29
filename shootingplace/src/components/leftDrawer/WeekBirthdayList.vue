@@ -6,15 +6,7 @@
       {{ index +1 }}  {{ item.secondName }} {{ item.firstName }} {{ item.legitimationNumber }} {{ item.adult?'ogólna':'młodzież' }}
     </q-item-label>
     <q-dialog v-model="memberDial" >
-    <q-card style="min-width: 80vw" class="bg-dark">
-      <q-card-section class="flex-center">
-        <Member :member-number-legitimation="legitimationNumber"></Member>
-      </q-card-section>
-
-      <q-card-actions align="right">
-        <q-btn label="zamknij" color="primary" v-close-popup/>
-      </q-card-actions>
-    </q-card>
+      <Member :member-number-legitimation="legitimationNumber"/>
   </q-dialog>
   </div>
 </template>

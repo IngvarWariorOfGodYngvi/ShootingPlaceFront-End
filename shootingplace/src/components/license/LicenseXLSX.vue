@@ -1,6 +1,6 @@
 <template>
   <div>
-<q-btn label="pobierz .xlsx osób z licencją" color="green" @click="download()">
+<q-btn glossy label="pobierz .xlsx osób z licencją" color="green" @click="download()">
   </q-btn>
   </div>
 </template>

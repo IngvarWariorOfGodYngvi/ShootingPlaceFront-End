@@ -33,7 +33,7 @@
           {{ list.length }}
         </div>
         <div class="q-pa-md text-right">
-          <q-btn v-if="!mobile" dense color="primary" @click="paymentLicenseAlertPZSS=true" label="Oznacz wybrane jako opłacone w pzss">
+          <q-btn glossy v-if="!mobile" :disable="payPZSSList.length<1" dense color="primary" @click="paymentLicenseAlertPZSS=true" label="Oznacz wybrane jako opłacone w pzss">
             ({{ payPZSSList.length }})
           </q-btn>
         </div>

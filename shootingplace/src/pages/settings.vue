@@ -1,8 +1,11 @@
 <template>
   <q-page padding>
     <div>
-      <UpdateProgram v-if="main"/>
-      <Experimental class="col"/>
+      <div class="row">
+        <UpdateProgram v-if="main"/>
+        <OnOfMain/>
+      </div>
+      <Experimental v-if="main != null" class="col"/>
       <!-- <SuperUser v-if="main"/> -->
       <Users v-if="main"/>
       <q-dialog position="top" v-model="success">
@@ -31,6 +34,10 @@ import SkeletonBox from 'src/utils/SkeletonBox'
 import { ref } from 'vue'
 export default {
   components: {
+    OnOfMain: lazyLoadComponent({
+      componentFactory: () => import('components/settings/OnOfMain.vue'),
+      loading: SkeletonBox
+    }),
     Users: lazyLoadComponent({
       componentFactory: () => import('components/settings/Users.vue'),
       loading: SkeletonBox

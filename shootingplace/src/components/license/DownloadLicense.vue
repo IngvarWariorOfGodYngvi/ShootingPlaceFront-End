@@ -1,6 +1,6 @@
 <template>
     <div>
-  <q-btn label="pobierz listę osób z licencją" color="primary" @click="download()">
+  <q-btn glossy label="pobierz listę osób z licencją" color="primary" @click="download()">
     </q-btn>
     </div>
 </template>
@@ -8,7 +8,6 @@
 <script>
 import axios from 'axios'
 import App from 'src/App.vue'
-// import { isWindows } from 'mobile-device-detect'
 export default {
   name: 'downloadBtn',
   data () {
@@ -29,22 +28,6 @@ export default {
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
         fileLink.setAttribute('download', 'Lista_klubowiczów_z_licencją.pdf')
-        document.body.appendChild(fileLink)
-        fileLink.click()
-        // this.downloaded = true
-        // this.autoClose()
-      })
-    },
-    download1 () {
-      axios({
-        url: `${this.local}/files/simpleDocx`,
-        method: 'GET',
-        responseType: 'blob'
-      }).then(response => {
-        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        const fileLink = document.createElement('a')
-        fileLink.href = fileURL
-        fileLink.setAttribute('download', 'simpleDocx.docx')
         document.body.appendChild(fileLink)
         fileLink.click()
         // this.downloaded = true

@@ -89,18 +89,6 @@
 
       </q-card>
     </q-dialog>
-    <q-dialog v-model="prolongLicenseAlert">
-      <q-card class="bg-dark text-positive">
-        <q-card-section>
-          <div class="text-h6">Czy przedłużyć licencje?</div>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn text-color="white" label="anuluj" color="primary" v-close-popup/>
-          <q-btn text-color="white" label="Przedłuż" color="primary" v-close-popup @click="pinProlongLicense = true"/>
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
   </div>
 </template>
 

@@ -52,11 +52,20 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog position="top" v-model="download">
+    <q-dialog position="standard" v-model="failure">
+      <q-card class="bg-warning">
+        <q-card-section>
+          <div v-if="message != null" class="text-h6">{{ message }}</div>
+        </q-card-section>
+
+      </q-card>
+    </q-dialog>
+    <q-dialog position="top" v-model="success">
       <q-card>
         <q-card-section>
-          <div class="text-h6">Pobrano Wniosek</div>
+          <div v-if="message != null" class="text-h6">{{ message }}</div>
         </q-card-section>
+
       </q-card>
     </q-dialog>
   </div>
@@ -70,7 +79,8 @@ export default {
   name: 'ApplicationForFirearmsLicense.vue',
   data () {
     return {
-      download: false,
+      success: false,
+      failure: false,
       thirdName: null,
       birthPlace: '',
       fatherName: '',
@@ -79,6 +89,7 @@ export default {
       issuingAuthority: '',
       IDDate: null,
       licenseDate: null,
+      message: null,
       dialog: false,
       shootingPlace: App.shootingPlace,
       city: 'Łódź',
@@ -119,13 +130,22 @@ export default {
         },
         responseType: 'blob'
       }).then(response => {
-        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        const fileLink = document.createElement('a')
-        fileLink.href = fileURL
-        fileLink.setAttribute('download', `Wniosek o pozwolenie na broń ${this.name}.pdf`)
-        document.body.appendChild(fileLink)
-        fileLink.click()
-        this.download = true
+        console.log(response)
+        console.log(response.status)
+        if (response.status === 200) {
+          this.message = 'Pobrano Dokument'
+          const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+          const fileLink = document.createElement('a')
+          fileLink.href = fileURL
+          fileLink.setAttribute('download', `Wniosek o pozwolenie na broń ${this.name}.pdf`)
+          document.body.appendChild(fileLink)
+          fileLink.click()
+          this.success = true
+          this.autoClose()
+        }
+      }).catch(() => {
+        this.message = 'Coś poszło nie tak - uzupełnij dane'
+        this.failure = true
         this.autoClose()
       })
     },
@@ -134,7 +154,9 @@ export default {
     },
     autoClose () {
       setTimeout(() => {
-        this.download = false
+        this.success = false
+        this.failure = false
+        this.message = null
       }, 2000)
     }
   }

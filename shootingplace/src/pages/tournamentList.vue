@@ -4,9 +4,10 @@
       <q-btn v-if="!mobile && ClosedCompetitionTabEXP" dense color="primary" class="q-pa-none q-ma-none brand"
         :icon="icon"
         @click="toggleShowClosedCompetitions = !toggleShowClosedCompetitions; toggleShowClosedCompetitions ? getClosedTournaments(pageNumber) : ''"
-        @mousemove="!toggleShowClosedCompetitions ? icon = 'arrow_left' : icon = 'arrow_right'" @mouseleave="icon = 'menu'">
-        <q-tooltip content-class="bg-secondary text-h6"
-          content-style="opacity: 93%;">{{ toggleShowClosedCompetitions ? 'Ukryj' : 'Pokaż' }} zamknięte
+        @mousemove="!toggleShowClosedCompetitions ? icon = 'arrow_left' : icon = 'arrow_right'"
+        @mouseleave="icon = 'menu'">
+        <q-tooltip content-class="bg-secondary text-h6" content-style="opacity: 93%;">{{ toggleShowClosedCompetitions ?
+          'Ukryj' : 'Pokaż' }} zamknięte
           zawody</q-tooltip></q-btn>
     </div>
     <div class="row">
@@ -23,28 +24,23 @@
             <q-item-section class="col q-pa-md">
               <div class="col">
                 <q-item-label>{{ tournament.name }} {{ convertDatToNative(tournament.date) }}</q-item-label>
-                <q-item-label caption lines="2" class="text-positive">zawody{{ !tournament.wzss ? ' nie' : '' }} wpisane do
+                <q-item-label caption lines="2" class="text-positive">zawody{{ !tournament.wzss ? ' nie' : '' }} wpisane
+                  do
                   kalendarza Wojewódzkiego Związku Strzelectwa Sportowego
                 </q-item-label>
               </div>
             </q-item-section>
           </div>
           <div class="col-3">
+            <DownloadResultsBtn :uuid="tournament.uuid" :date="tournament.date" />
+            <DownloadJuryListBtn :uuid="tournament.uuid" :date="tournament.date" :name="tournament.name" />
             <q-item>
-              <q-btn v-close-popup
-                @click="tournamentUUID = tournament.uuid; date = tournament.date; name = tournament.name; dis = true;simulationGetAnnouncementFromCompetitionXLSX()" :loading="loading[0]" :disable="dis"
-                class="full-width ghover1" label="pobierz rezultaty" color="primary" />
-            </q-item>
-            <q-item>
-              <q-btn color="primary" class="full-width ghover1" label="pobierz listę Sędziów" :loading="loading[1]" :disable="dis"
-                @click="loading[1] = true;dis = true; getJudgeFromTournament(tournament.uuid, tournament.name, tournament.date)" />
-            </q-item>
-            <q-item>
-              <q-btn color="white" class="text-black full-width ghover1" v-if="tournament.open" label="dodaj sędziów"
+              <q-btn glossy color="white" class="text-black full-width ghover1" v-if="tournament.open"
+                label="dodaj sędziów"
                 @click="tournamentUUID = tournament.uuid; getArbiters(); getOtherArbiters(); addArbitersConfirmbtn = true" />
             </q-item>
             <q-item v-if="tournament.open">
-              <q-btn color="white" class="text-black full-width ghover1" label="dodaj konkurencje"
+              <q-btn glossy color="white" class="text-black full-width ghover1" label="dodaj konkurencje"
                 @click="getCompetitions(); tournamentUUID = tournament.uuid; addCompetitionConfirmbtn = true" />
             </q-item>
             <q-dialog v-model="addCompetitionConfirmbtn">
@@ -114,16 +110,16 @@
           </div>
           <div class="col-3">
             <q-item>
-              <q-btn class="full-width ghover1" color="primary" label="Aktualizuj"
+              <q-btn glossy class="full-width ghover1" color="primary" label="Aktualizuj"
                 @click="tournamentUUID = tournament.uuid; tournamentUpdateConfirm = true" />
             </q-item>
             <q-item>
-              <q-btn class="full-width ghover1" color="primary" label="Statystyki"
+              <q-btn glossy class="full-width ghover1" color="primary" label="Statystyki"
                 @click="tournamentUUID = tournament.uuid; getStatistics(); statistics = true" />
             </q-item>
             <q-item
               v-if="(tournament.mainArbiter != null || tournament.otherMainArbiter != null) && (tournament.commissionRTSArbiter != null || tournament.otherCommissionRTSArbiter != null)">
-              <q-btn class="full-width ghover1" color="secondary" label="Zamknij zawody"
+              <q-btn glossy class="full-width ghover1" color="secondary" label="Zamknij zawody"
                 @click="tournamentUUID = tournament.uuid; (tournamentCloseConfirm = true)" />
             </q-item>
             <q-item v-else>
@@ -210,7 +206,8 @@
                   </q-item>
                   <q-expansion-item label="Rozwiń Listę" dense>
                     <q-item dense v-for="(arbitersRTSList, uuid) in tournament.arbitersRTSList" :key="uuid"
-                      style="cursor: pointer;" @dblclick="memberLeg = arbitersRTSList.legitimationNumber; memberDial = true">
+                      style="cursor: pointer;"
+                      @dblclick="memberLeg = arbitersRTSList.legitimationNumber; memberDial = true">
                       <Tooltip2clickToShow></Tooltip2clickToShow>
                       <div class="self-center full-width text-positive">
                         {{ arbitersRTSList.firstName }} {{ arbitersRTSList.secondName }}
@@ -228,14 +225,14 @@
               </div>
             </div>
             <div class="col-6 text-center q-pr-md q-pl-xs q-pt-md">
-              <q-btn-dropdown label="Lista Konkurencji" class="text-bold full-width ghover1" text-color="black"
+              <q-btn-dropdown glossy label="Lista Konkurencji" class="text-bold full-width ghover1" text-color="black"
                 color="grey-4">
                 <div class="text-positive" :class="backgroundDark ? 'bg-dark' : 'bg-grey-3'" dense>
                   <q-list>
                     <div class="row ghover2" v-for="(item, uuid) in tournament.competitionsList" :key="uuid">
                       <div class="self-center col no-outline text-positive">{{ item.name }} ({{ item.countingMethod }})
                       </div>
-                      <q-btn dense v-if="item.scoreList < 1" color="warning" text-color="white" class="col-2 q-ma-xs"
+                      <q-btn glossy dense v-if="item.scoreList < 1" color="warning" text-color="white" class="col-2 q-ma-xs"
                         label="usuń"
                         @click="competitionListUUID = item.uuid; tournamentUUID = tournament.uuid; deleteListFromTournament()" />
                     </div>
@@ -266,7 +263,7 @@
                         @click="name = option.opt.name">
                         <div class="container">
                           <div class="background text-caption text-right">{{ !option.opt.declarationLOK &&
-                            shootingPlace === 'prod' ?'Brak Podpisanej Deklaracji LOK':'' }}</div>
+                            shootingPlace === 'prod' ? 'Brak Podpisanej Deklaracji LOK' : '' }}</div>
                           <div>{{ option.opt.secondName }} {{ option.opt.firstName }}
                             {{ option.opt.legitimationNumber }} {{ option.opt.adult ? 'Ogólna' : 'Młodzież' }} {{
                               option.opt.active ? '' : '- BRAK SKŁADEK' }}
@@ -300,7 +297,7 @@
                       <div class="rotate" style="width: 50vw;height: 50vh">AAAAAAAAAAAAAAAA!!!</div>
                     </q-tooltip>
                   </q-btn>
-                  <q-btn v-else
+                  <q-btn v-else glossy
                     @click="tournamentUUID = tournament.uuid; getCompetitionsInTournament(); getAllUsersInWork(); competitionsInfo = true"
                     class="fit" color="primary" text-color="white" label="wybierz konkurencje" />
                 </div>
@@ -341,15 +338,17 @@
                   </template>
                 </q-select>
                 <div class="col">
-                  <q-btn :disable="memberName.secondName === '0' && otherName.secondName === '0'" class="fit"
+                  <q-btn glossy :disable="memberName.secondName === '0' && otherName.secondName === '0'" class="fit"
                     label="Drukuj metryki" color="secondary"
                     @click="tournamentUUID = tournament.uuid; memberName.secondName != '0' ? name = memberName.name : otherName.name; date = tournament.date; getMemberUUIDFromLegitimationNumber(); getMetricNumber()" />
                 </div>
               </q-card-section>
             </div>
-            <div class="full-width text-right q-pa-md"><q-btn @click="openAll = !openAll" color="primary">{{ openAll ?
-              'zwiń' :
-                'rozwiń' }} wszystko</q-btn></div>
+            <div class="full-width text-right q-pa-md">
+              <q-btn glossy @click="openAll = !openAll" color="primary">{{ openAll ?
+                'zwiń' :
+                'rozwiń' }} wszystko</q-btn>
+            </div>
             <div v-for="(item, index) in tournament.competitionsList" :key="index" class="q-pl-md q-pr-md">
               <q-expansion-item :label="`${item.name} ${item.countingMethod}`" class="col"
                 :header-class="index % 2 === 0 ? 'bg-grey text-black' : ''" :value="openAll">
@@ -367,15 +366,16 @@
           </q-item-label>
         </q-item>
         <div class="row full-width bg-secondary q-mb-xs">
-          <q-btn icon="arrow_left" :disable="pageNumber === 0"
-            @click="showloading(); pageNumber = pageNumber - 1; getClosedTournaments(pageNumber)" class="col-2"
-            color="primary"></q-btn>
+          <q-btn glossy icon="arrow_left" :disable="pageNumber === 0"
+          @click="visible = true; pageNumber = pageNumber - 1; getClosedTournaments(pageNumber)" class="col-2"
+          color="primary"></q-btn>
           <div class="self-center text-bold text-center text-white col">STRONA {{ pageNumber + 1 }}</div>
-          <q-btn icon="arrow_right"
-            @click="showloading(); pageNumber = tournamentsClosed.length === 15 ? pageNumber + 1 : pageNumber; getClosedTournaments(pageNumber)"
-            :disabled="tournamentsClosed.length !== 15" class="col-2" color="primary"></q-btn>
+          <q-btn glossy icon="arrow_right"
+          @click="visible = true; pageNumber = tournamentsClosed.length === 15 ? pageNumber + 1 : pageNumber; getClosedTournaments(pageNumber)"
+          :disabled="tournamentsClosed.length !== 15" class="col-2" color="primary"></q-btn>
         </div>
         <div>
+          <q-inner-loading :showing="visible" label="Przetwarzanie..." color="primary" />
           <div v-for="(item, index) in tournamentsClosed" :key="index">
             <q-btn class="full-width q-mb-xs" text-color="white" color="primary"
               :label="'#' + ((index + 1) + (pageNumber * 15)) + ' ' + item.date"
@@ -388,7 +388,7 @@
       </q-drawer>
     </div>
     <q-dialog v-model="tournamentUpdateConfirm">
-      <q-card style="width: 40vw" class="bg-dark text-positive">
+      <q-card style="width: 50vw" class="bg-dark text-positive">
         <q-card-section class="col items-center">
           <q-item>
             <q-input v-model="tournamentName" dense class="full-width" label-color="positive"
@@ -442,7 +442,7 @@
                         :class="option.opt.active ? '' : 'bg-warning rounded'">
                         <div class="container">
                           <div class="background text-caption text-right">{{ !option.opt.declarationLOK &&
-                            shootingPlace === 'prod' ?'Brak Podpisanej Deklaracji LOK':'' }}</div>
+                            shootingPlace === 'prod' ? 'Brak Podpisanej Deklaracji LOK' : '' }}</div>
                           {{ option.opt.secondName }} {{ option.opt.firstName }}
                           {{ option.opt.arbiterClass }} {{ option.opt.active ? '' : ' - BRAK SKŁADEK' }}
                         </div>
@@ -503,7 +503,7 @@
                         :class="option.opt.active ? '' : 'bg-warning rounded'">
                         <div class="container">
                           <div class="background text-caption text-right">{{ !option.opt.declarationLOK &&
-                            shootingPlace === 'prod' ?'Brak Podpisanej Deklaracji LOK':'' }}</div>
+                            shootingPlace === 'prod' ? 'Brak Podpisanej Deklaracji LOK' : '' }}</div>
                           {{ option.opt.secondName }} {{ option.opt.firstName }}
                           {{ option.opt.arbiterClass }} {{ option.opt.active ? '' : ' - BRAK SKŁADEK' }}
                         </div>
@@ -554,10 +554,6 @@
             <div class="q-pa-md col-6 text-positive">
               <div class="text-center full-width q-pa-md">Sędziowie stanowiskowi</div>
               <div>
-                <!-- <q-input @input="otherArbitersList = '0 0'" label-color="positive" input-class="text-positive" color="secondary" class="full-width" filled type="password"
-                  v-model="otherArbiter" use-input hide-selected fill-input input-debounce="0" style="width: 350px"
-                  label="Zeskanuj Kartę" @keypress.enter="addOtherArbiterToTournament(otherArbiter)">
-                </q-input> -->
                 <q-select @input="otherArbitersList = ''" dense label="Dodaj sędziego z klubu" color="secondary"
                   label-color="positive" input-class="text-positive" class="full-width" filled use-input hide-selected
                   fill-input input-debounce="0" :options="options" popup-content-class="bg-dark text-positive"
@@ -571,7 +567,7 @@
                         :class="option.opt.active ? '' : 'bg-warning rounded'">
                         <div class="container">
                           <div class="background text-caption text-right">{{ !option.opt.declarationLOK &&
-                            shootingPlace === 'prod' ?'Brak Podpisanej Deklaracji LOK':'' }}</div>
+                            shootingPlace === 'prod' ? 'Brak Podpisanej Deklaracji LOK' : '' }}</div>
                           {{ option.opt.secondName }} {{ option.opt.firstName }}
                           {{ option.opt.arbiterClass }} {{ option.opt.active ? '' : ' - BRAK SKŁADEK' }}
                         </div>
@@ -634,11 +630,6 @@
             <div class="q-pa-md col-6 text-positive">
               <div class="text-center full-width q-pa-md">Sędziowie biura obliczeń</div>
               <div>
-                <!-- <q-input @input="otherRTSArbitersList = '0 0'" label-color="positive" input-class="text-positive" color="secondary" class="full-width" filled
-                  v-model="otherRTSArbiter" use-input hide-selected fill-input input-debounce="0" type="password"
-                  style="width: 350px" label="Zeskanuj kartę"
-                  @keypress.enter="addOtherRTSArbiterToTournament(otherRTSArbiter)">
-                </q-input> -->
                 <q-select @input="otherRTSArbitersList = ''" dense label="Dodaj sędziego z klubu" color="secondary"
                   label-color="positive" input-class="text-positive" class="full-width" filled use-input hide-selected
                   fill-input input-debounce="0" :options="options" popup-content-class="bg-dark text-positive"
@@ -652,7 +643,7 @@
                         :class="option.opt.active ? '' : 'bg-warning rounded'">
                         <div class="container">
                           <div class="background text-caption text-right">{{ !option.opt.declarationLOK &&
-                            shootingPlace === 'prod' ?'Brak Podpisanej Deklaracji LOK':'' }}</div>
+                            shootingPlace === 'prod' ? 'Brak Podpisanej Deklaracji LOK' : '' }}</div>
                           {{ option.opt.secondName }} {{ option.opt.firstName }}
                           {{ option.opt.arbiterClass }} {{ option.opt.active ? '' : ' - BRAK SKŁADEK' }}
                         </div>
@@ -758,7 +749,7 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model="addNewTournament" persistent>
-      <q-card style="width: 400px" class="bg-dark text-positive">
+      <q-card style="width: 50vw" class="bg-dark text-positive">
         <q-card-section class="col items-center">
           <q-item>
             <q-item-label class="text-h6 text-center full-width">Nazwa zawodów</q-item-label>
@@ -803,14 +794,6 @@
         <q-card-section>
           <div class="text-h6">{{ message }}</div>
         </q-card-section>
-      </q-card>
-    </q-dialog>
-    <q-dialog position="top" v-model="gunAdded" @keypress.enter="gunAdded = false">
-      <q-card>
-        <q-card-section class="row items-center">
-          <span class="q-ml-sm text-h6 text-bold">Broń została przydzielona</span>
-        </q-card-section>
-
       </q-card>
     </q-dialog>
     <q-dialog v-model="deleteTournamentAlert" persistent>
@@ -885,10 +868,10 @@
             </div>
           </div>
           <div class="row q-pa-md">
-            <q-btn class="col full-width" color="red" label="Usuń z listy *"
+            <q-btn glossy class="col full-width" color="red" label="Usuń z listy *"
               @click="removeMemberFromCompetition()"></q-btn>
-            <q-btn class="col full-width" color="secondary" :loading="loading[0]" :disable="dis" label="Dodaj do listy"
-              @click="dis = true; simulateProgress(0)"></q-btn>
+            <q-btn glossy class="col full-width" color="secondary" :loading="loading[0]" :disable="dis"
+              label="Dodaj do listy" @click="dis = true; simulateProgress(0)"></q-btn>
           </div>
           <div class="row">
             <div class="q-pa-sm col-6">
@@ -905,8 +888,8 @@
         </q-card-section>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="metricsInfo">
-      <q-card @hook:destroyed="infoScore = []; infoScore1 = []" class="bg-dark text-positive">
+    <q-dialog v-model="metricsInfo" @hide="infoScore = []; infoScore1 = []">
+      <q-card class="bg-dark text-positive">
         <q-card-actions align="right">
           <div class="text-h6 text-center text-bold col">Pobierz Metryki Startowe Zawodnika</div>
           <q-btn icon="close" color="primary" round dense v-close-popup
@@ -925,16 +908,16 @@
               label="rozmiar A5"></q-checkbox>
           </div>
           <div class="row q-pa-xs">
-            <q-btn v-if="memberExist" dense @click="memberDial = true, memberLeg = memberName.legitimationNumber"
+            <q-btn glossy v-if="memberExist" dense @click="memberDial = true, memberLeg = memberName.legitimationNumber"
               class="col q-pa-xs" color="primary">
               wyświetl profil
             </q-btn>
             <q-item></q-item>
-            <q-btn @click="getMemberMetrics(compList); compList = []" class="col q-pa-xs" color="secondary">
+            <q-btn glossy @click="getMemberMetrics(compList); compList = []" class="col q-pa-xs" color="secondary">
               wydrukuj wybrane metryki zawodnika
             </q-btn>
             <q-item></q-item>
-            <q-btn @click="getMemberMetrics(infoScore1); compList = []" class="col q-pa-xs" color="primary">wydrukuj
+            <q-btn glossy @click="getMemberMetrics(infoScore1); compList = []" class="col q-pa-xs" color="primary">wydrukuj
               wszystkie metryki zawodnika
             </q-btn>
           </div>
@@ -943,10 +926,15 @@
     </q-dialog>
     <q-dialog v-model="closedTournamentInfo">
       <q-card class="bg-dark text-positive">
+        <q-card-actions align="right">
+          <div>
+            <div class="q-ml-sm text-h6 text-center text-bold">INFORMACJE O ZAMKNIĘTYCH ZAWODACH</div>
+            <div class="q-ml-sm text-h6 text-center text-bold">{{ tournamentClosedName }} {{ date }}</div>
+            <div class="q-ml-sm text-h6 text-center text-bold">STATYSTYKI ZAWODÓW</div>
+          </div>
+          <q-btn icon="close" dense round color="primary" v-close-popup />
+        </q-card-actions>
         <q-card-section class="col">
-          <div class="q-ml-sm text-h6 text-center text-bold">INFORMACJE O ZAMKNIĘTYCH ZAWODACH</div>
-          <div class="q-ml-sm text-h6 text-center text-bold">{{ tournamentClosedName }} {{ date }}</div>
-          <div class="q-ml-sm text-h6 text-center text-bold">STATYSTYKI ZAWODÓW</div>
           <div class="text-bold">
             <div>ilość konkurencji : {{ statistic[0] }}</div>
             <div>ilość zawodników : {{ statistic[1] }}</div>
@@ -955,21 +943,13 @@
             <div>ile razy była pobrana broń : {{ statistic[4] }}</div>
           </div>
           <div>
+            <DownloadResultsBtn :uuid="tournamentUUID" :date="date" />
+            <DownloadJuryListBtn :uuid="tournamentUUID" :date="date" :name="tournamentClosedName" />
             <q-item>
-              <q-btn v-close-popup @click="dis = true;simulationGetAnnouncementFromCompetitionXLSX()" :loading="loading[0]" :disable="dis" dense class="full-width"
-                label="pobierz rezultaty" color="primary"></q-btn>
+              <q-btn glossy @click="getScores(tournamentUUID)" class="full-width" color="primary">zobacz wyniki</q-btn>
             </q-item>
           </div>
           <div>
-            <q-item>
-              <q-btn @click="getJudgeFromTournament(tournamentUUID, tournamentClosedName, date)" class="full-width"
-                color="primary">pobierz listę sędziów</q-btn>
-            </q-item>
-          </div>
-          <div>
-            <q-item>
-              <q-btn @click="getScores(tournamentUUID)" class="full-width" color="primary">zobacz wyniki</q-btn>
-            </q-item>
           </div>
           <div v-if="tournament == null">
             <q-item>
@@ -977,25 +957,15 @@
             </q-item>
           </div>
         </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn label="zamknij" color="primary" v-close-popup />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-    <q-dialog position="top" v-model="listDownload">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Pobrano Dokument</div>
-        </q-card-section>
       </q-card>
     </q-dialog>
     <q-dialog v-model="showCompetition">
       <q-card class="text-center bg-dark text-positive" style="min-width: 60vw">
         <q-card-section class="row text-center">
-          <div class="text-h5 text-bold text-center full-width">Starty zawodnika w {{ tournamentClosedName }} z {{ date }}
+          <div class="text-h5 text-bold text-center full-width">Starty zawodnika w {{ tournamentClosedName }} z {{ date
+          }}
           </div>
-          <div v-for="(item, index) in test" :key="index" class="full-width">
+          <div v-for="(item, index) in scores" :key="index" class="full-width">
             <div class="text-h6 text-bold">{{ item.name }}</div>
             <div v-for="(item1, index1) in item.scoreList" :key="index1" class="text-left row full-width">
               <div class="full-width row" v-if="item1.member != null">
@@ -1102,6 +1072,14 @@ const { setVerticalScrollPosition } = scroll
 export default {
   name: 'tournament',
   components: {
+    DownloadResultsBtn: lazyLoadComponent({
+      componentFactory: () => import('components/tournament/DownloadResultsBtn.vue'),
+      loading: SkeletonBox
+    }),
+    DownloadJuryListBtn: lazyLoadComponent({
+      componentFactory: () => import('components/tournament/DownloadJuryListBtn.vue'),
+      loading: SkeletonBox
+    }),
     SingleCompetition: lazyLoadComponent({
       componentFactory: () => import('components/tournament/SingleCompetition.vue'),
       loading: SkeletonBox
@@ -1125,7 +1103,6 @@ export default {
   },
   setup () {
     const loading = ref([
-      false,
       false
     ])
     const progress = ref(false)
@@ -1137,19 +1114,11 @@ export default {
         loading.value[number] = false
       }, 0)
     }
-    function simulationGetAnnouncementFromCompetitionXLSX () {
-      loading.value[0] = true
-      this.getAnnouncementFromCompetitionXLSX()
-      setTimeout(() => {
-        loading.value[0] = false
-      }, 0)
-    }
 
     return {
       loading,
       progress,
-      simulateProgress,
-      simulationGetAnnouncementFromCompetitionXLSX
+      simulateProgress
     }
   },
   data () {
@@ -1160,7 +1129,7 @@ export default {
         shotgun: true,
         other: true
       },
-      test: [],
+      scores: [],
       showCompetition: false,
       dis: false,
       usersInWork: [],
@@ -1184,18 +1153,14 @@ export default {
       code: null,
       barcode: null,
       openList: false,
-      listDownload: false,
       tournamentUUID: null,
       tournamentConfirm: false,
       tournamentCloseConfirm: false,
       tournamentUpdateConfirm: false,
-      addMemberConfirm: false,
       addNewTournament: false,
       addCompetitionConfirmbtn: false,
       addArbitersConfirmbtn: false,
       addCompetitionConfirm: false,
-      competitionName: null,
-      countingMethods: [],
       options2: [],
       tournament: null,
       competitions: [],
@@ -1206,8 +1171,6 @@ export default {
       statistic: [],
       infoScore: [],
       infoScore1: [],
-      gunsUsed: [],
-      caliberUUID: null,
       tournamentName: '',
       tournamentDate: '',
       options: [],
@@ -1226,7 +1189,6 @@ export default {
         secondName: '0',
         id: 0
       },
-      gunAdded: false,
       statistics: false,
       metricsInfo: false,
       startNumber: '',
@@ -1246,7 +1208,6 @@ export default {
       tournamentClosedName: null,
       competitionListUUID: '',
       wzss: true,
-      filterOptions: [],
       openAll: false,
       visible: true,
       message: null,
@@ -1324,7 +1285,7 @@ export default {
       }).then(response => response.json())
         .then(response => {
           this.showloading()
-          this.test = response
+          this.scores = response
           this.showCompetition = true
         })
     },
@@ -1361,14 +1322,6 @@ export default {
       if (this.addAllAmmo) {
         this.listOfAddAmmo.push(uuid)
       }
-    },
-    getCountingMethods () {
-      fetch(`${this.local}/competition/getCountingMethods`, {
-        method: 'GET'
-      }).then(response => response.json())
-        .then(response => {
-          this.countingMethods = response
-        })
     },
     getAllUsersInWork () {
       fetch(`${this.local}/work/`, {
@@ -1462,18 +1415,22 @@ export default {
       const memberlegNumber = this.memberName.legitimationNumber
       fetch(`${this.local}/member/ID/${memberlegNumber}`, {
         method: 'GET'
-      }).then(response => response.text())
-        .then(response => {
-          if (response.length > 0) {
-            this.memberUUID = response
-            this.memberExist = true
-          } else {
-            this.message = response
-            this.failure = true
-            this.memberExist = false
-            this.autoClose()
-          }
-        })
+      }).then(response => {
+        if (response.status === 200) {
+          response.text().then(
+            response => {
+              this.memberUUID = response
+              this.memberExist = true
+            }
+          )
+        } else {
+          this.memberExist = false
+        }
+      }).catch(() => {
+        this.message = 'Coś się nie udało'
+        this.failure = true
+        this.autoClose()
+      })
     },
     getScoreInfoByLegitimation () {
       if (this.memberName === '' || this.otherName === '') {
@@ -1539,14 +1496,6 @@ export default {
       }).then(response => response.json())
         .then(response => {
           this.filtersOtherArbiters = response
-        })
-    },
-    getGunInTournament () {
-      fetch(`${this.local}/tournament/getGunInTournament?tournamentUUID=${this.tournamentUUID}`, {
-        method: 'GET'
-      }).then(response => response.json())
-        .then(response => {
-          this.gunsUsed = response
         })
     },
     createNewTournament (name, date) {
@@ -2100,38 +2049,6 @@ export default {
         this.options = this.filtersArbiters.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
       })
     },
-    getAnnouncementFromCompetitionXLSX () {
-      axios({
-        url: `${this.local}/files/downloadAnnouncementFromCompetitionXLSX/${this.tournamentUUID}`,
-        method: 'GET',
-        responseType: 'blob'
-      }).then(response => {
-        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        const fileLink = document.createElement('a')
-        fileLink.href = fileURL
-        fileLink.setAttribute('download', `rezultaty${this.shootingPlace === 'prod' ? 'DZIESIĄTKA' : 'RSCPANASZEW'}${this.date.replaceAll('-', '')}.xlsx`)
-        document.body.appendChild(fileLink)
-        fileLink.click()
-        this.listDownload = true
-        this.autoClose()
-      })
-    },
-    getJudgeFromTournament (uuid, name, date) {
-      axios({
-        url: `${this.local}/files/downloadJudge/${uuid}`,
-        method: 'GET',
-        responseType: 'blob'
-      }).then(response => {
-        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
-        const fileLink = document.createElement('a')
-        fileLink.href = fileURL
-        fileLink.setAttribute('download', `Lista sędziów na zawodach ${name} ${date}.pdf`)
-        document.body.appendChild(fileLink)
-        fileLink.click()
-        this.listDownload = true
-        this.autoClose()
-      })
-    },
     getMemberMetrics (info) {
       if (info.length < 1) {
         this.message = 'lista jest pusta - dodaj coś'
@@ -2145,45 +2062,20 @@ export default {
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
+        this.message = 'Pobrano Dokument'
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
         fileLink.setAttribute('download', `metryki ${name} ${date}.pdf`)
         document.body.appendChild(fileLink)
         fileLink.click()
-        this.listDownload = true
+        this.success = true
         this.autoClose()
-      })
-    },
-    addGunToTournament (barcode) {
-      fetch(`${this.local}/tournament/addGunToTournament?barcode=${barcode}&tournamentUUID=${this.tournamentUUID}`, {
-        method: 'POST'
-      }).then(response => {
-        if (response.status === 200) {
-          response.json().then(
-            response => {
-              this.success = true
-              this.message = response
-              this.showloading()
-              this.autoClose()
-            }
-          )
-        } else {
-          response.json().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.autoClose()
-            }
-          )
-        }
       })
     },
     autoClose () {
       this.visible = false
       setTimeout(() => {
-        this.gunAdded = false
-        this.listDownload = false
         this.listOfCompetitions = []
         this.listOfAddAmmo = []
         this.competitionAddToTournamentList = []
@@ -2197,7 +2089,6 @@ export default {
         this.failure = false
         this.barcode = null
         this.loading[0] = false
-        this.loading[1] = false
       }, 2000)
     }
   }

@@ -1,10 +1,5 @@
 <template>
   <div>
-    <!-- <div class="col-6">
-      <q-uploader class="fit" method="POST" :url="(`${local}/files/upload/csvOthers`)" label="dodaj z csv - Format: NAZWISKO;Imię;Klub"
-        max-file-size="40960000" accept=".csv" @rejected="onRejected" field-name="file"
-        @uploaded="message = 'OK';success=true;getOther();autocClose()"/>
-    </div> -->
     <div class="col bg-dark text-positive" >
       <div class="q-pa-md text-center col full-width no-outline text-h5 text-bold">Lista osób spoza klubu</div>
         <q-input debounce="500" v-model="searchName" class="col q-pb-xs q-pt-xs" @keypress.enter="getSearchName(searchName)"

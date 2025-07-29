@@ -2,16 +2,17 @@
   <div class="bg-dark text-positive">
     <q-card-section>
       <div class="col row">
-        <q-btn class="col" dense rounded color="secondary" @click="open = !open">{{ open ? 'zwiń' : 'rozwiń' }}
+        <q-btn glossy class="col" dense rounded color="secondary" @click="open = !open">{{ open ? 'zwiń' : 'rozwiń' }}
           wszystko</q-btn>
         <div class="col"></div>
-        <q-btn class="col" dense rounded color="primary" :disable="selection.length < 1" @click="addGuns = true">wydaj
-          Broń
-          <br />({{ selection.length }} szt.)</q-btn>
-        <q-btn class="col" dense rounded color="primary" :disable="gunsInUsed.length < 1"
-          @click="gunsList = true">podpisz wydaną broń<br />({{ gunsInUsed.length }} szt.)</q-btn>
+        <q-btn glossy class="col" dense rounded color="primary" :disable="selection.length < 1" @click="addGuns = true">wydaj
+          Broń ({{ selection.length }} szt.)
+         </q-btn>
+        <q-btn glossy class="col" dense rounded color="primary" :disable="gunsInUsed.length < 1"
+          @click="gunsList = true">podpisz wydaną bro({{ gunsInUsed.length }} szt.)</q-btn>
       </div>
       <div class="row items-center col text-positive text-bold text-center text-body2 q-pa-xs">
+        <div style="width: 3%;"></div>
         <div style="width: 3%;">Lp</div>
         <div class="col-3 text-left">marka i model</div>
         <div class="col">kaliber</div>
@@ -26,7 +27,7 @@
           class="text-caption q-pl-sm q-pr-sm hover1" style="border-bottom: 0.1em solid white;"
           :class="item.available ? '' : 'bg-red'">
           <div class="row col text-bold text-center items-center">
-            <q-checkbox dense class="q-pr-xs" keep-color color="primary" v-model="selection" :val="item.uuid" />
+            <q-checkbox style="width: 3%" dense class="q-pr-xs" keep-color color="primary" v-model="selection" :val="item.uuid" />
             <div style="width: 3%;;" class="self-center">{{ index + 1 }}</div>
             <div class="text-left col-3">{{ item.modelName }}</div>
             <div class="col">{{ item.caliber }}</div>
@@ -194,7 +195,7 @@
           <div class="text-positive">
             Pospis osoby pobierającej broń
           </div>
-          <VueSignaturePad id="canvas" ref="signaturePad1" height="20vh" style="background-color: white;"/>
+          <VueSignaturePad id="canvas" ref="signaturePad1" height="25vh" style="background-color: white;"/>
           <q-btn label="wyczyść" color="primary" @click="clear()"></q-btn>
         </q-card-section>
 
@@ -264,7 +265,7 @@
               </template>
             </q-input>
           </q-item>
-          <q-input dense v-model="adnotation" bg-color="primary" label-color="white" label="uwagi" input-class="text-white"
+          <q-input dense v-model="adnotation" @keypress.enter="code == null || code.length <4?'':save()" bg-color="primary" label-color="white" label="uwagi" input-class="text-white"
             rounded standout=""></q-input>
             <div class="text-positive">
               Pospis osoby uprawnionej
@@ -278,8 +279,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn label="anuluj" color="secondary" v-close-popup />
-          <q-btn label="potwierdź" color="primary" @click="save()" v-close-popup />
+          <q-btn glossy  label="anuluj" color="secondary" v-close-popup />
+          <q-btn glossy :disable="code == null || code.length <4" label="potwierdź" color="primary" @click="save()" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>

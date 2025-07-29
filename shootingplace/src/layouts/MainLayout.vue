@@ -165,11 +165,7 @@ export default {
     this.getEnv()
   },
   created () {
-    if (window.localStorage.getItem('BackgroundDark') == null) {
-      window.localStorage.setItem('BackgroundDark', 'false')
-    } else {
-      this.changeColor()
-    }
+    this.changeColor()
     if (window.sessionStorage.getItem('SiteName') == null) {
       window.sessionStorage.setItem('SiteName', 'Strona Główna')
     }
@@ -342,6 +338,7 @@ export default {
           if (response.status === 200) {
             response.text().then(response => {
               window.localStorage.setItem('shootingPlace', response)
+              this.changeColor()
             })
           }
         })
@@ -349,12 +346,10 @@ export default {
     },
     stata () {
       const network = reactive(useNetwork())
-
       return network.type
     },
     funRotateCLicksIncrease () {
       this.funRotateCLicks++
-      console.log(this.funRotateCLicks)
       if (this.funRotateCLicks % 4 === 0) {
         this.funRotate = !this.funRotate
       }
@@ -385,8 +380,6 @@ export default {
               }
               if (window.localStorage.getItem('usrPerm') != null) {
                 if (JSON.parse(window.localStorage.getItem('usrPermTime')) < new Date().getTime()) {
-                  // window.localStorage.setItem('usrPerm', null)
-                  // window.localStorage.setItem('usrPerm', null)
                   window.localStorage.removeItem('usrPerm')
                   window.localStorage.removeItem('usrPermTime')
                 }
@@ -479,8 +472,6 @@ export default {
           case 'rp':
             colors.setBrand('primary', '#be141e')
             colors.setBrand('secondary', '#151510')
-            // colors.setBrand('secondary', '#be141e')
-            // colors.setBrand('primary', '#151510')
             break
 
           default:

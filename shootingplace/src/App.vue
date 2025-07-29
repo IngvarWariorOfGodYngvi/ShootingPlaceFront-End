@@ -12,7 +12,6 @@ export default {
   created () {
   },
   beforeMount () {
-    // this.getFs()
     this.getEnv()
     this.createMain()
   },
@@ -44,8 +43,6 @@ export default {
   name: 'App',
   siteName: window.sessionStorage.getItem('SiteName'),
   shootingPlace: window.localStorage.getItem('shootingPlace'),
-  // mobile: navigator.userAgent,
-  // mobile: !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
   mobile: isWindows || isMacOs ? false : true,
   main: JSON.parse(window.localStorage.getItem('main')), // dev //
   // prod: '192.168.1.30:8080/strzelnica/#/', // test //

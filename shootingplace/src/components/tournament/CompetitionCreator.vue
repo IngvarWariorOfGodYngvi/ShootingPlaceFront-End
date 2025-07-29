@@ -1,14 +1,9 @@
 <template>
   <div>{{ getCompetitionName() }}
-    <q-btn color="secondary" label="Kreator konkurencji" @click="load();createNewCompetiton = true"/>
+    <q-btn glossy color="secondary" label="Kreator konkurencji" @click="load();createNewCompetiton = true"/>
   <q-dialog v-model="createNewCompetiton">
     <q-card class="bg-dark text-positive" style="min-width: 65vw; height: 80vh">
         <q-card-section class="col items-center">
-          <!-- <div class="col">
-            <b>Rodzaj Konkurencji</b><br/>
-            <q-radio v-model="type" @input="countingMethod=='IPSC'?countingMethod='NORMAL':''; discipline=''; disciplines=[]" :val="true" label="Statyczna" />
-            <q-radio v-model="type" @input="countingMethod='COMSTOCK'; discipline=''; disciplines=[]" :val="false" label="Dynamiczna"/>
-          </div> -->
           <div class="col">
             <b>Odległość {{ range }}m</b>
             <q-slider v-model="range" :min="0" :max="300" :step="1" marker-labels snap label color="primary" class="q-pa-md">
@@ -21,14 +16,6 @@
             <b>Metoda Liczenia</b><br/>
             <q-radio v-model="countingMethod" class="q-pl-xs" v-for="(item,index) in countingMethods" :key="index" :val="item" :label="item" color="primary"/>
           </div>
-          <!-- <div v-if="!type">
-            <b>Metoda Liczenia</b><br/>
-            <q-radio @input="countingMethod=='IPSC'?competitionType='MINOR':''"  class="q-pl-xs" v-model="countingMethod" v-for="(item,index) in countingMethods.filter(f=>f!='NORMAL')" :key="index" :val="item" :label="item" color="primary"/>
-          </div> -->
-          <!-- <div v-if="type">
-            <b>Dyscyplina (wybierz 1)</b><br/>
-            <q-radio dense v-model="discipline" class="q-pl-xs" v-for="(item,index) in disciplinesList" :key="index" :val="item" :label="item"/>
-          </div> -->
           <div>
             <b>Dyscypliny</b><br/>
             <q-checkbox dense v-model="disciplines" class="q-pl-xs" v-for="(item,index) in disciplinesList" :key="index" :val="item" :label="item"/>
@@ -36,17 +23,6 @@
           <div>
             <q-checkbox dense v-model="helperDisciplines" class="q-pl-xs" v-for="(item,index) in disciplinesHelpers" :key="index" :val="item" :label="item"/>
           </div>
-          <!-- <div class="col">
-            <div v-if="disciplines == 'Pistolet'" >
-              <q-checkbox dense v-model="helperPistol" class="q-pl-xs" v-for="(item,index) in helpersPistol" :key="index" :val="item" :label="item"/>
-            </div>
-            <div v-if="disciplines == 'Karabin'" >
-              <q-checkbox dense v-model="helperRifle" class="q-pl-xs" v-for="(item,index) in helpersRifle" :key="index" :val="item" :label="item"/>
-            </div>
-            <div v-if="disciplines == 'Strzelba'" >
-              <q-checkbox dense v-model="helperShotgun" class="q-pl-xs" v-for="(item,index) in helpersShotgun" :key="index" :val="item" :label="item"/>
-            </div>
-          </div> -->
           <div v-if="disciplines.length<2">
             <b>Kaliber</b>
             <q-select label="Wybierz kaliber" color="white" input-class="text-white" label-color="white"
@@ -160,7 +136,6 @@ export default {
       calibers: [],
       range: 0,
       countingMethod: '',
-      // discipline: '',
       disciplines: [],
       caliber: '',
       numberOfShots: 0,
@@ -225,27 +200,11 @@ export default {
     },
     getCompetitionName () {
       if (!this.stop) {
-        // if (this.type && this.discipline === 'Pistolet') {
-        //   this.name = `${this.range > 0 ? this.range + 'm' : ''} ${this.helperPistol.includes('rewolwer') ? 'Rewolwer' : this.discipline} ${this.helperPistol.includes('rewolwer') ? this.helperPistol.filter(f => f !== 'rewolwer').toString().replaceAll(/,/gi, ' ') : this.helperPistol.toString().replaceAll(/,/gi, ' ')} ${this.numberOfShots > 0 ? this.numberOfShots + ' strzałów' : ''} ${this.competitionType}`
-        // }
-        // if (this.type && this.discipline === 'Karabin') {
-        //   this.name = `${this.range > 0 ? this.range + 'm' : ''} ${this.discipline} ${this.helperRifle.toString().replaceAll(/,/gi, ' ')} ${this.numberOfShots > 0 ? this.numberOfShots + ' strzałów' : ''} ${this.competitionType}`
-        // }
-        // if (this.type && this.discipline === 'Strzelba') {
-        //   this.name = `${this.range > 0 ? this.range + 'm' : ''} ${this.discipline} ${this.helperShotgun.toString().replaceAll(/,/gi, ' ')} ${this.numberOfShots > 0 ? this.numberOfShots + ' strzałów' : ''} ${this.competitionType}`
-        // }
-        // if (this.disciplines.length > 0) {
         this.name = `${this.range > 0 ? this.range + 'm' : ''} ${this.disciplines.toString().replaceAll(/,/g, ' ')} ${this.helperDisciplines.toString().replaceAll(/,/g, ' ')} ${this.numberOfShots > 0 ? this.numberOfShots + ' strzałów' : ''} ${this.competitionType}`
-        // }
       }
     },
     createCompetition () {
       const name = this.name
-      // if (this.type) {
-      //   this.disciplines = []
-      // }
-      // if (!this.type) {
-      // this.discipline = null
       if (this.disciplines.length > 1) {
         this.caliber = null
         this.numberOfShots = 0
@@ -253,7 +212,6 @@ export default {
       }
       const data = {
         name: name,
-        // discipline: this.discipline !== null ? this.discipline.replace(/ /g, '') : this.discipline,
         disciplineList: this.disciplines,
         numberOfShots: this.numberOfShots,
         practiceShots: this.practiceShots,

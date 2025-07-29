@@ -1,5 +1,8 @@
 <template>
-  <div class="bg-dark text-positive" style="min-width: 50vw;">
+  <div class="col">
+          <q-btn glossy label="wydaj pakiet" @click="open = true" color="primary" class="full-width" />
+<q-dialog v-model="open" @hide="reset()">
+  <q-card class="bg-dark text-positive" style="min-width: 60vw;">
     <q-card-actions align="right" class="q-pa-xs q-ma-xs">
       <div class="text-h5 text-bold text-center col">Wydaj Pakiet</div>
       <q-btn icon="close" color="primary" round dense v-close-popup @click="memberName = ''; otherName = ''" />
@@ -56,9 +59,9 @@
     <div class="row">
       <div v-for="(item, index) in packets" :key="index" class="col-3">
         <div class="q-pa-xs text-center">
-          <q-btn class="fit" style="min-height: 4em;"
-            @click="dis = true; singlePacket = item; simulateProgress(0, memberName.legitimationNumber, otherName.id)"
-            :disable="dis || (memberName.legitimationNumber === '0' && otherName.id === '0')" :loading="loading[0]"
+          <q-btn glossy class="fit" style="min-height: 4em;"
+            @click="dis = true; singlePacket = item; simulateProgress(index, memberName.legitimationNumber, otherName.id)"
+            :disable="dis || (memberName.legitimationNumber === 0 || otherName.id === 0)" :loading="loading[index]"
             color="primary" :label="item.name">
             <q-tooltip v-if="!mobile && !(memberName.legitimationNumber === '0' && otherName.id === '0')"
               content-class="bg-secondary text-body1" transition-hide="none" content-style="opacity: 95%;">
@@ -76,6 +79,8 @@
         </div>
       </div>
     </div>
+    </q-card>
+    </q-dialog>
     <q-dialog position="top" v-model="success">
       <q-card>
         <q-card-section>
@@ -106,16 +111,17 @@
 }
 </style>
 <script>
-import { ref } from 'vue'
 import App from 'src/App.vue'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox.vue'
-// import { isWindows } from 'mobile-device-detect'
 export default {
   created () {
     this.getPacketList()
     this.getMembersNames()
     this.getOther()
+    for (let i = 0; i < this.packets.length; i++) {
+      this.loading[i] = false
+    }
   },
   components: {
     AddNewOtherPerson: lazyLoadComponent({
@@ -123,26 +129,26 @@ export default {
       loading: SkeletonBox
     })
   },
-  props: {
-    nameMember: {
-      type: Object,
-      required: false
-    },
-    nameOther: {
-      type: Object,
-      required: false
-    }
-  },
   data () {
     return {
-      memberName: this.nameMember,
-      otherName: this.nameOther,
+      memberName: {
+        firstName: '0',
+        secondName: '0',
+        legitimationNumber: 0
+      },
+      otherName: {
+        firstName: '0',
+        secondName: '0',
+        id: 0
+      },
       filters: [],
+      loading: [],
       filtersOther: [],
       options: [],
       options1: [],
       packets: [],
       singlePacket: {},
+      open: false,
       dis: false,
       message: null,
       success: false,
@@ -153,32 +159,17 @@ export default {
     }
   },
   setup () {
-    const loading = ref([
-      false
-    ])
-    const progress = ref(false)
-
     function simulateProgress (number, memberNumberLegitimation, otherID) {
-      loading.value[number] = true
+      this.loading[number] = true
       if (this.dis || !this.memberName === '' || !this.otherName === '') {
         this.addMemberAndAmmoToCaliber(this.mapCalibers(this.singlePacket.calibers), memberNumberLegitimation, otherID)
       }
       setTimeout(() => {
-        loading.value[number] = false
-      }, 0)
-    }
-    function simulateProgressGun (number, evidenceUUID, barcode) {
-      loading.value[number] = true
-      this.addGunToList(evidenceUUID, barcode)
-      setTimeout(() => {
-        loading.value[number] = false
+        this.loading[number] = false
       }, 0)
     }
     return {
-      loading,
-      progress,
-      simulateProgress,
-      simulateProgressGun
+      simulateProgress
     }
   },
   methods: {
@@ -187,10 +178,20 @@ export default {
         method: 'GET'
       }).then(response => response.json())
         .then(response => {
-          console.log(this.nameOther)
-          // console.log(this.nameMember)
           this.packets = response
         })
+    },
+    reset () {
+      this.memberName = {
+        firstName: '0',
+        secondName: '0',
+        legitimationNumber: 0
+      }
+      this.otherName = {
+        firstName: '0',
+        secondName: '0',
+        id: 0
+      }
     },
     getMembersNames () {
       fetch(`${this.local}/member/getAllNames`, {
@@ -238,6 +239,7 @@ export default {
               this.getAmmoData()
             })
             this.$emit('addMemberAndAmmoToCaliber')
+            this.reset()
             this.autoClose()
           })
         } else {
