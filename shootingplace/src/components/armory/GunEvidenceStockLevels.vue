@@ -286,8 +286,10 @@
         <div class="self-center col full-width no-outline text-center text-h5 text-bold">Nadawanie nowego Typu Broni
         </div>
         <div>
-          <q-item><q-input label-color="positive" input-class="text-positive" filled class="full-width col"
-              v-model="newGunTypeName" label="Nowa nazwa"></q-input></q-item>
+          <q-item>
+            <q-input label-color="positive" color="primary" bg-color="primary" autofocus standout="" rounded input-class="text-positive" class="full-width col"
+              v-model="newGunTypeName" label="Nowa nazwa"/>
+            </q-item>
         </div>
         <q-card-section class="col">
         </q-card-section>

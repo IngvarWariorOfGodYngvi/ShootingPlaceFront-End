@@ -37,8 +37,8 @@
               </template>
             </q-input>
           </q-item>
-          <div @click=" getSum()" class="q-pa-md" align="right">
-            <q-btn color="primary">Wyszukaj</q-btn>
+          <div class="q-pa-md" align="left">
+            <q-btn glossy color="primary" text-color="white" @click="getSum()">Wyszukaj</q-btn>
           </div>
         </q-card-section>
         <q-card-section class="col-8 bg-dark text-positive">

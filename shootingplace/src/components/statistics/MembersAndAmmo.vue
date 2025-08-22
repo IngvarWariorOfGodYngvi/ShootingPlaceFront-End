@@ -36,7 +36,7 @@
             </q-input>
           </q-item>
           <div class="q-pa-md">
-            <q-btn color="primary" text-color="white" @click="memberAmmoTakesInTime ()">Wyszukaj</q-btn>
+            <q-btn glossy color="primary" text-color="white" @click="memberAmmoTakesInTime ()">Wyszukaj</q-btn>
           </div>
         </q-card-section>
         <q-card-section class="col">

@@ -1,6 +1,6 @@
 <template>
   <div class="col">
-    <q-btn glossy color="secondary" :loading="loading[0]" class="full-width" @click="simulateProgress(0);showloading();getAmmoListPDF(uuid, date)" icon="file_download">
+    <q-btn glossy color="secondary" :loading="loading[0]" class="full-width" @click="simulateProgress(0);getAmmoListPDF(uuid, date)" icon="file_download">
       <q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">Pobierz listę
       </q-tooltip>
     </q-btn>
@@ -41,7 +41,6 @@ export default {
     const loading = ref([
       false
     ])
-    const progress = ref(false)
     function simulateProgress (number) {
       loading.value[number] = true
       setTimeout(() => {
@@ -51,18 +50,10 @@ export default {
 
     return {
       loading,
-      progress,
       simulateProgress
     }
   },
   methods: {
-    showloading () {
-      this.$q.loading.show({ message: 'Dzieje się coś ważnego... Poczekaj' })
-      this.timer = setTimeout(() => {
-        this.$q.loading.hide()
-        this.timer = 0
-      }, 1000)
-    },
     getAmmoListPDF (uuid, date) {
       axios({
         url: `${this.local}/files/downloadAmmunitionList/${uuid}`,

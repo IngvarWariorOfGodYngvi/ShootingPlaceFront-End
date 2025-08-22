@@ -1,14 +1,14 @@
 <template>
   <div class="col-4 bg-dark text-positive">
-    <q-card-section class="items-center" :style="mobile ? '' : 'height: 80vh'">
+    <q-card-section class="items-center q-pt-none" :style="mobile ? '' : 'height: 100%'">
       <q-item-section class="col">
         <div class="full-width text-center">
           <div @dblclick="main && !mobile ? editLicense = true : ''" class="col q-pa-md hover">
             <Tooltip2clickTip></Tooltip2clickTip>
-            <div class="self-center full-width text-center">Licencja</div>
+            <div class="col text-center text-h6 text-bold">Licencja</div>
           </div>
           <div class="row hover1">
-            <div @dblclick="main && !mobile ? editLicense = true : ''" class="col text-left "
+            <div @dblclick="main && !mobile ? editLicense = true : ''" class="col text-left"
               v-if="license.number != null">
               <Tooltip2clickTip></Tooltip2clickTip>
               <label>Numer Licencji i Ważność</label>
@@ -21,7 +21,7 @@
           <div
             v-if="shootingPatent.pistolPermission === true || shootingPatent.riflePermission === true || shootingPatent.shotgunPermission === true"
             class="row">
-            <div class="col text-positive text-left">
+            <div class="col text-positive text-left q-pa-xs">
               <label>Dyscypliny</label>
               <div class="row">
                 <div v-if="license.pistolPermission" class="self-center text-center col-4">Pistolet
@@ -37,14 +37,14 @@
       </q-item-section>
       <q-btn glossy
         v-if="((shootingPatent.patentNumber != null && license.number == null && license.paid) || (!adult && license.number == null)) && main && !mobile"
-        class="full-width round" color="primary" label="WYDAJ LICENCJĘ" @click="
+        class="full-width" rounded color="primary" label="WYDAJ LICENCJĘ" @click="
           patentPistolPermission1 = shootingPatent.pistolPermission;
         patentRiflePermission1 = shootingPatent.riflePermission;
         patentShotgunPermission1 = shootingPatent.shotgunPermission;
         memberAdultConfirm = adult;
         licenseConfirm = true">
       </q-btn>
-      <q-btn glossy class="full-width round" color="primary" v-if="license.number != null && (
+      <q-btn glossy class="full-width" rounded color="primary" v-if="license.number != null && (
         (!license.pistolPermission && shootingPatent.pistolPermission)
         || (!license.riflePermission && shootingPatent.riflePermission)
         || (!license.shotgunPermission && shootingPatent.shotgunPermission)) && clubID === 1 && main && !mobile"
@@ -59,13 +59,13 @@
         updateLicenseConfirm = true"></q-btn>
       <div
         v-if="(license.number != null && (license.pistolPermission || license.riflePermission || license.shotgunPermission)) && clubID === 1 && license.paid === true && main && !mobile">
-        <q-btn glossy class="full-width round" label="przedłuż licencję" color="primary" @click="
+        <q-btn glossy class="full-width" rounded label="przedłuż licencję" color="primary" @click="
           licensePistolPermission1 = license.pistolPermission;
         licenseRiflePermission1 = license.riflePermission;
         licenseShotgunPermission1 = license.shotgunPermission;
         license.canProlong && license.paid ? prolongLicenseConfirm = true : noDomesticStarts = true" />
       </div>
-      <q-btn glossy v-if="(((license.paid === false && clubID === 1))) && main && !mobile && active" class="full-width round"
+      <q-btn glossy v-if="(((license.paid === false && clubID === 1))) && main && !mobile && active" class="full-width" rounded
         label="opłać licencję" color="secondary" text-color="white" @click="licensePayment = true"
         :loading="loading[0]" />
       <q-expansion-item dense default-opened class="bg-dark text-center text-positive"
@@ -434,7 +434,6 @@
 </template>
 <script>
 import App from 'src/App'
-// import { isWindows } from 'mobile-device-detect'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox.vue'
 import { ref } from 'vue'
@@ -450,18 +449,16 @@ export default {
     const loading = ref([
       false
     ])
-    const progress = ref(false)
 
     function simulateProgress (number) {
       loading.value[number] = true
       this.addLicenseHistoryPayment(this.memberUUID, this.code)
       setTimeout(() => {
         loading.value[number] = false
-      }, 0)
+      }, 500)
     }
     return {
       loading,
-      progress,
       simulateProgress
     }
   },
@@ -469,7 +466,6 @@ export default {
     return {
       mobile: App.mobile,
       main: App.main,
-      load: false,
       license: '',
       licensePaymentHistory: [],
       code: null,

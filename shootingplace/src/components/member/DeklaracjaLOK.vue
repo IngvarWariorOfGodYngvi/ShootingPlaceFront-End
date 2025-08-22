@@ -1,11 +1,7 @@
 <template>
   <div class="full-width">
-    <q-btn glossy class="full-width round" :disable="disable" @click="dialog=true" color="secondary" label="Pobierz deklarację członkowską LOK">
-      &nbsp;&nbsp;<q-avatar>
-        <div v-if="loading " class="text-center"><q-circular-progress color="white" indeterminate><img src="~assets/logo_LOK.png"></q-circular-progress></div>
-        <img v-else src="~assets/logo_LOK.png">
-      </q-avatar></q-btn>
-    <q-dialog v-model="dialog" @keypress.enter="dialog=false;membershipDeclarationLOKPDF()">
+    <q-btn glossy class="full-width" rounded :disable="dis" :loading="loading[0]" @click="dialog=true" color="secondary" label="Pobierz deklarację członkowską LOK"/>
+    <q-dialog v-model="dialog">
       <q-card class="bg-dark text-positive">
         <q-card-section class="row items-center">
           <span class="text-h6">Czy na pewno chcesz pobrać Deklarację LOK?</span>
@@ -13,14 +9,21 @@
 
         <q-card-actions align="right">
           <q-btn glossy text-color="white" label="anuluj" color="secondary" v-close-popup />
-          <q-btn glossy text-color="white" label="Pobierz" color="primary" v-close-popup @click="loading=true;membershipDeclarationLOKPDF()" />
+          <q-btn glossy text-color="white" label="Pobierz" color="primary" v-close-popup @click="dis=true;simulateProgress()" />
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog position="top" v-model="download">
+    <q-dialog position="top" v-model="success">
       <q-card>
         <q-card-section>
-          <div class="text-h6">Pobrano składkę {{name}}</div>
+          <div class="text-h6">{{ message }}</div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+    <q-dialog position="top" v-model="failure" class="bg-warning">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">{{ message }}</div>
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -36,12 +39,26 @@ export default {
   data () {
     return {
       dialog: false,
-      download: false,
+      dis: false,
       failure: false,
       success: false,
       message: null,
-      loading: false,
+      loading: [false],
       local: App.host
+    }
+  },
+  setup () {
+    function simulateProgress () {
+      this.loading[0] = true
+      if (this.dis) {
+        this.membershipDeclarationLOKPDF()
+      }
+      setTimeout(() => {
+        this.loading[0] = false
+      }, 500)
+    }
+    return {
+      simulateProgress
     }
   },
   props: {
@@ -61,27 +78,34 @@ export default {
   },
   methods: {
     membershipDeclarationLOKPDF () {
-      console.log(this.uuid)
       axios({
         url: `${this.local}/files/membershipDeclarationLOK?uuid=${this.uuid}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
+        console.log(response)
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
         fileLink.setAttribute('download', `Deklaracja Członkowska LOK ${this.name}.pdf`)
         document.body.appendChild(fileLink)
         fileLink.click()
-        this.download = true
+        this.message = `Pobrano Deklarację ${this.name}`
+        this.success = true
         this.autoClose()
         this.$emit('membershipDeclarationLOKPDF')
+      }).catch(() => {
+        this.message = 'coś poszło nie tak'
+        this.failure = true
+        this.autoClose()
       })
     },
     autoClose () {
       setTimeout(() => {
-        this.download = false
-        this.loading = false
+        this.dis = false
+        this.failure = false
+        this.success = false
+        this.loading = [false]
       }, 2000)
     }
   }

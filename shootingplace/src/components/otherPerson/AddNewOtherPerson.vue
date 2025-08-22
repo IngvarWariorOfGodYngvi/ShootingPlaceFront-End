@@ -13,7 +13,8 @@
             v-model="otherSecondName" label="Nazwisko *" />
             <hr>
             <div class="self-center full-width">poniżej można zostawić puste</div>
-          <div class="row"><q-checkbox left-label color="primary" false-value="" true-value="BRAK" v-model="clubName" :val="'BRAK'"
+          <div class="row">
+            <q-checkbox left-label color="primary" false-value="" true-value="BRAK" v-model="clubName" :val="'BRAK'"
               label="Brak Klubu"/>
             <q-select stack-label dense options-dense popup-content-class="bg-dark text-positive" class="col" input-class="text-positive" label-color="positive" v-if="clubName !== 'BRAK'" new-value-mode="add-uniqe" hide-selected use-chips
               filled v-model="clubName" use-input fill-input input-debounce="0" :options="filterOptions"

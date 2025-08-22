@@ -44,6 +44,7 @@ export default {
   name: 'WorkTimeList',
   created () {
     this.getAllUsersInWork()
+    this.checkingChanges()
   },
   data () {
     return {
@@ -104,6 +105,12 @@ export default {
         .then(response => {
           this.usersInWork = response
         })
+    },
+    checkingChanges () {
+      this.getAllUsersInWork()
+      setInterval(() => {
+        this.getAllUsersInWork()
+      }, 30000)
     },
     autoClose () {
       setTimeout(() => {

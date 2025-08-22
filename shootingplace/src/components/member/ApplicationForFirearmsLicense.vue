@@ -1,22 +1,21 @@
 <template>
   <div class="full-width rounded">
-    <q-btn glossy class="full-width" :disable="disable" @click="dialog=true" color="secondary">Pobierz wniosek o pozwolenie na broń
-    </q-btn>
+    <q-btn glossy class="full-width" :disable="disable" @click="dialog=true" color="secondary" label="Pobierz wniosek o pozwolenie na broń"/>
     <q-dialog v-model="dialog">
       <q-card style="width: 60vw;" class="bg-dark text-positive">
         <q-card-section class="row items-center">
           <div class="q-ml-sm full-width text-h5 text-bold text-center">Uzupełnij dane aby wygenerować wniosek</div>
         </q-card-section>
-        <q-card-section class="row items-center">
+        <q-card-section class="col items-center">
           <q-select class="full-width" dense v-model="city" filled input-class="text-positive"
                     use-input hide-selected fill-input :options="cities" label-color="positive" popup-content-class="bg-dark text-positive"
                     label="wybierz miasto"></q-select>
-          <q-input v-model="thirdName" class="full width" dense label="Drugie Imię (jeśli posiada)" label-color="positive" input-class="text-positive"></q-input>
-          <q-input v-model="birthPlace" class="full width" dense label="Miejsce urodzenia" label-color="positive" input-class="text-positive"></q-input>
-          <q-input v-model="fatherName" class="full width" dense label="Imię Ojca" label-color="positive" input-class="text-positive"></q-input>
-          <q-input v-model="motherName" class="full width" dense label="Imię Matki" label-color="positive" input-class="text-positive"></q-input>
-          <q-input v-model="motherMaidenName" class="full width" dense label="Nazwisko Rodowe Matki" label-color="positive" input-class="text-positive"></q-input>
-          <q-input v-model="issuingAuthority" class="full width" dense label="Organ Wydający Dowód Osobisty" label-color="positive" input-class="text-positive"></q-input>
+          <q-input v-model="thirdName" class="full width" dense label="Drugie Imię (jeśli posiada)" label-color="positive" input-class="text-positive" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode === 32"></q-input>
+          <q-input v-model="birthPlace" class="full width" dense label="Miejsce urodzenia" label-color="positive" input-class="text-positive" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode === 32"></q-input>
+          <q-input v-model="fatherName" class="full width" dense label="Imię Ojca" label-color="positive" input-class="text-positive" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode === 32"></q-input>
+          <q-input v-model="motherName" class="full width" dense label="Imię Matki" label-color="positive" input-class="text-positive" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode === 32"></q-input>
+          <q-input v-model="motherMaidenName" class="full width" dense label="Nazwisko Rodowe Matki" label-color="positive" input-class="text-positive" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode === 32"></q-input>
+          <q-input v-model="issuingAuthority" class="full width" dense label="Organ Wydający Dowód Osobisty" label-color="positive" input-class="text-positive" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode === 32"></q-input>
           <q-input v-model="IDDate" class="full width" dense label="Data Wydania Dowodu Osobistego" label-color="positive" input-class="text-positive">
             <template v-slot:append>
                   <q-icon name="event" class="cursor-pointer" color="positive">

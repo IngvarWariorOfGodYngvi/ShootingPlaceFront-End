@@ -141,13 +141,13 @@ export default {
       if (val === '') {
         update(() => {
           const needle = val.toLowerCase()
-          this.options = this.gunList.filter(v => v.modelName.toLowerCase().indexOf(needle) > -1)
+          this.options = this.gunList.filter(v => v.fullName.toLowerCase().indexOf(needle) > -1)
         })
         return
       }
       update(() => {
         const needle = val.toLowerCase()
-        this.options = this.gunList.filter(v => v.modelName.toLowerCase().indexOf(needle) > -1)
+        this.options = this.gunList.filter(v => v.fullName.toLowerCase().indexOf(needle) > -1)
       })
     },
     createTodayDate () {

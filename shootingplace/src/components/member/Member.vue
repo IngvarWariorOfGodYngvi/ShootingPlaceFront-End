@@ -5,22 +5,24 @@
         <div class="col text-h6 text-bold text-center text-positive">{{ member.fullName }}</div>
         <q-btn icon="close" color="primary" round dense v-close-popup />
       </q-card-actions>
-      <q-card-section class="text-h6 text-center bg-warning" v-if="shootingPlace === 'prod' && !member.declarationLOK">Brak
+      <q-card-section class="text-h6 text-center bg-warning"
+        v-if="shootingPlace === 'prod' && !member.declarationLOK">Brak
         Podpisanej
         Deklaracji LOK</q-card-section>
-      <q-card-section :class="!mobile ? `row bg-${member.active ? 'green' : 'red'}-3` : `col bg-${member.active ? 'green' : 'red'}-3`"
-        :style="`rotate: -${rotateFun}deg; height: ${mobile ? '30vh' : ''}`" @dblclick="rotateFun += 0.25"
+      <q-card-section
+        :class="`${!mobile ? 'row' : 'col'}`"
+        :style="`rotate: -${rotateFun}deg; height: ${mobile ? '30vh' : ''};background-image: linear-gradient(to right, var(--${member.active ? 'green' : 'red'}-10), var(--${member.active ? 'green' : 'red'}-4), var(--${member.active ? 'green' : 'red'}-10))`" @dblclick="rotateFun += 0.25"
         @click.ctrl="rotateFun = 0" @click.shift.left="rotateFun += 25">
         <div v-if="member.imageUUID != null" avatar :class="mobile ? 'q-pa-none q-ma-none' : 'col-3'">
           <q-img contain fit=none style="max-height: 30vh; border-radius: 5px" class="text-body1"
             alt="zdjęcie profilowe" :src="(`${local}/files/getFile?uuid=${member.imageUUID}`)" />
         </div>
         <div v-else avatar class="col-4">
-          <q-uploader class="fit" method="POST" :url="(`${local}/files/member/${member.uuid}`)" label="Dodaj zdjęcie"
-            max-file-size="40960000" accept=".jpg, image/*" @rejected="onRejected" field-name="file"
-            @uploaded="getMemberByUUID(member.uuid)" />
+          <q-uploader class="q-ma-md" method="POST" :url="(`${local}/files/member/${member.uuid}`)"
+            label="Dodaj zdjęcie" max-file-size="40960000" accept=".jpg, image/*" @rejected="onRejected"
+            field-name="file" @uploaded="getMemberByUUID(member.uuid)" />
         </div>
-        <div class="col">
+        <div class="col q-pa-xs">
           <q-item-label class="text-h6">{{ member.secondName }} {{ member.firstName }}</q-item-label>
           <q-item-label class="text-bold text-center bg-secondary text-white" caption style="border-radius: 1em;">{{
             member.club.shortName }}</q-item-label>
@@ -44,9 +46,9 @@
             </q-btn>
           </div>
         </div>
-        <div class="col text-bold">
+        <div class="col text-bold q-pa-xs">
           <q-item-label class="text-h6" :id="member.legitimationNumber">Numer Legitymacji: {{ member.legitimationNumber
-          }}</q-item-label>
+            }}</q-item-label>
           <q-item-label>Numer PESEL: {{ member.pesel }}</q-item-label>
           <q-item-label>Data Urodzenia: {{ convertDate(member.birthDate) }}</q-item-label>
           <q-item-label>Data Zapisu do Klubu: {{ convertDate(member.joinDate) }}</q-item-label>
@@ -65,8 +67,8 @@
       </q-card-section>
       <q-card-section bordered :style="`rotate: ${rotateFun}deg;`" :class="mobile ? 'col bg-dark' : 'row bg-dark'">
         <div class="col-3">
-          <div class="col q-pa-md text-positive">
-            <div class="self-center full-width text-center">Historia Składek</div>
+          <div class="col q-pa-md text-positive hover">
+            <div class="col text-center text-h6 text-bold">Składki</div>
           </div>
           <div v-if="!mobile">
             <div v-if="shootingPlace === 'prod'" class="col q-pa-md text-positive">
@@ -87,16 +89,14 @@
               </div>
             </div>
             <div v-if="!member.erased && main && !mobile">
-              <div>
-                <q-btn glossy class="full-width round" color="green" label="Przedłuż składkę"
+                <q-btn glossy class="full-width" rounded color="green" label="Przedłuż składkę"
                   :disable="contributionCount == 0 && shootingPlace === 'prod'"
                   @click="memberUUID = member.uuid; name = member.secondName + ' ' + member.firstName; contribution = true; rotateFun += 0.125"
                   :loading="loading[0]" />
-              </div>
             </div>
           </div>
           <q-expansion-item dense default-opened class="bg-dark full-width q-pa-none text-center text-positive"
-            label="Daty Składek">
+            label="Historia Składek">
             <q-virtual-scroll class="full-width q-pa-none" :style="mobile ? '' : 'height: 65vh;'"
               :items="member.history.contributionList">
               <template class="row" v-slot="{ item }">
@@ -299,7 +299,7 @@
               </q-item-section>
             </template>
             <q-expansion-item dense v-if="!member.erased"
-              :label="member.shootingPatent.patentNumber !== null ? (helpersDefault[0] + ': ' + member.shootingPatent.patentNumber) : helpersDefault[0]"
+              :label="member.shootingPatent.patentNumber !== null ? ('Patent: ' + member.shootingPatent.patentNumber) : 'Patent'"
               group="right-right-card" class="text-positive" icon="list">
               <q-btn glossy class="full-width round" color="primary" v-if="member.shootingPatent.patentNumber !== null"
                 label="AKTUALIZUJ PATENT" @click="
@@ -321,7 +321,7 @@
               </q-item>
             </q-expansion-item>
             <q-expansion-item dense v-if="member.adult && !member.erased"
-              :label="member.weaponPermission.exist ? (helpersDefault[1] + ': ' + member.weaponPermission.number) : helpersDefault[1]"
+              :label="member.weaponPermission.exist ? ('Pozwolenie na Broń: ' + member.weaponPermission.number) : 'Pozwolenie na Broń'"
               group="right-right-card" icon="list">
               <div class="row">
                 <q-input dense @keypress.enter=" changeWeaponPermission(member.uuid, weaponPermissionNumber, isExist)"
@@ -490,6 +490,25 @@
                   :uuid="member.uuid" :name="(member.secondName + ' ' + member.firstName)"
                   :disable="member.club.id !== 1" />
               </q-item>
+            </q-expansion-item>
+            <q-expansion-item dense label="Dodaj Kartę" group="right-right-card" icon="credit_card">
+              <div class="row">
+                <q-input @keypress.enter="addCard = true" v-model="cardNumber" filled class="col" bg-color="grey-3" dense label="wprowadź numer karty"/>
+                <q-btn @click="addCard = true" class="col" dense label="dodaj" text-color="white" color="primary"/>
+              </div>
+              <div v-if="member.barCodeCardList.length > 0">Lista Przypisanych Kart</div>
+              <div class="row">
+                <div class="col">Numer Karty</div>
+                <div class="col">Aktywna od</div>
+                <div class="col">Status Karty</div>
+              </div>
+              <div v-for="(item, index) in member.barCodeCardList" :key="index" class="ghover" @dblclick="barCode = item.barCode;deactivateCard = true">
+                <div class="row">
+                  <div class="col">{{item.barCode}}</div>
+                  <div class="col">{{item.activatedDay}}</div>
+                  <div class="col">{{item.active? 'Aktywna' : 'Nieaktywna'}}</div>
+              </div>
+              </div>
             </q-expansion-item>
             <q-expansion-item dense label="Pokaż statystyki" group="right-right-card"
               @show=" uuid = member.uuid; getPersonalStatistics(uuid)" icon="timeline">
@@ -743,34 +762,29 @@
           </q-expansion-item>
         </div>
         <div :class="mobile ? 'col bg-dark text-positive' : 'row full-width bg-dark text-positive'">
-          <div :class="`col-${main && !mobile ? '3' : '6'}`" style="height:100%;">
-            <div class="full-height text-positive">
-              <div style="height: 55%">
-                <q-item-label class="text-center">
-                  <q-icon name="person_search" size="1.5rem" />
-                  Dane Podstawowe
-                </q-item-label>
-                <q-item-label class="text-positive" caption lines="2">Identyfikator:</q-item-label>
-                <q-item-label class="text-positive" caption lines="2">{{ member.uuid }}</q-item-label>
-                <q-item-label class="text-positive" caption lines="2">Imię: {{ member.firstName }}</q-item-label>
-                <q-item-label class="text-positive" caption lines="2">Nazwisko: {{ member.secondName }}</q-item-label>
-                <q-item-label class="text-positive" caption lines="2">Data Zapisu do Klubu: {{
-                  convertDate(member.joinDate)
-                }}</q-item-label>
-                <q-item-label class="text-positive" caption lines="2">Pesel: {{ member.pesel }}</q-item-label>
-                <q-item-label class="text-positive" caption lines="2">Numer Dowodu: {{ member.idcard }}</q-item-label>
-                <p></p>
+          <div :class="`col-${main && !mobile ? '3' : '6'}`">
+              <q-item-label class="text-center">
+                <q-icon name="person_search" size="1.5rem" />
+                Dane Podstawowe
+              </q-item-label>
+              <q-item-label class="text-positive" caption lines="2">Identyfikator:</q-item-label>
+              <q-item-label class="text-positive" caption lines="2">{{ member.uuid }}</q-item-label>
+              <q-item-label class="text-positive" caption lines="2">Imię: {{ member.firstName }}</q-item-label>
+              <q-item-label class="text-positive" caption lines="2">Nazwisko: {{ member.secondName }}</q-item-label>
+              <q-item-label class="text-positive" caption lines="2">Data Zapisu do Klubu: {{
+                convertDate(member.joinDate)
+              }}</q-item-label>
+              <q-item-label class="text-positive" caption lines="2">Pesel: {{ member.pesel }}</q-item-label>
+              <q-item-label class="text-positive" caption lines="2">Numer Dowodu: {{ member.idcard }}</q-item-label>
+              <p></p>
+              <div class="col">
+                <q-btn glossy rounded class="full-width" v-if="!member.erased && main" label="Zmień Dane Podstawowe" color="secondary"
+                @click=" memberUUID = member.uuid; memberIdCard = member.idcard; memberFirstName = member.firstName; memberSecondName = member.secondName; basicDataConfirm = true" />
               </div>
-              <div>
-                <q-btn glossy rounded class="full-width" square v-if="!member.erased && main"
-                  label="Zmień Dane Podstawowe" color="secondary"
-                  @click=" memberUUID = member.uuid; memberIdCard = member.idcard; memberFirstName = member.firstName; memberSecondName = member.secondName; basicDataConfirm = true" />
-              </div>
-            </div>
           </div>
           <div :class="`col-${main && !mobile ? '4' : '6'}`">
-            <div class="full-height text-positive">
-              <div style="height: 55%">
+            <div class="text-positive">
+              <div>
                 <q-item-label class="text-center">
                   <q-icon name="contact_mail" size="1.5rem" />
                   Dane Kontaktowe
@@ -786,10 +800,20 @@
                     ' '
                     + member.phoneNumber.toString().substring(6, 9) + ' ' + member.phoneNumber.substring(9, 12) }}
                 </q-item-label>
-                <q-item-label class="text-positive text-center">
+                <q-item-label caption lines="2">
+                </q-item-label>
+                <q-item-label caption lines="2">
+                </q-item-label>
+                <q-item-label caption lines="2">
+                </q-item-label>
+                <q-item-label caption lines="2">
+                </q-item-label>
+                <q-item-label caption lines="2">
+                </q-item-label>
+                <!-- <q-item-label class="text-positive text-center">
                   <q-icon name="location_city" size="1.5rem" />
                   Adres Zamieszkania
-                </q-item-label>
+                </q-item-label> -->
                 <q-item-label v-if="member.address.postOfficeCity != null" class="text-positive" caption
                   lines="2">Miasto:
                   {{ member.address.postOfficeCity }}
@@ -886,6 +910,20 @@
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
           <q-input @keypress.enter=" simulateProgress(); contributionCode = false" autofocus type="password"
+            v-model="code" filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn glossy label="anuluj" color="black" v-close-popup @click=" code = null" />
+          <q-btn glossy label="Przedłuż" color="black" v-close-popup @click=" simulateProgress(); code = null" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="addCard" persistent>
+      <q-card class="bg-green-5 text-center">
+        <q-card-section class="flex-center">
+          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
+          <q-input @keypress.enter=" addBarcodeToMember(member.uuid, cardNumber, code); addCard = false" autofocus type="password"
             v-model="code" filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input>
         </q-card-section>
 
@@ -1056,6 +1094,18 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <q-dialog v-model="deactivateCard">
+      <q-card class="bg-dark text-positive">
+        <q-card-section class="row text-h6 text-bold text-center">
+          <span class="q-ml-sm">Czy na pewno dezaktywować Kartę?</span>
+        </q-card-section>
+
+        <q-card-actions align="center">
+          <q-btn glossy label="anuluj" color="secondary" v-close-popup />
+          <q-btn glossy label="dezaktywuj" color="primary" v-close-popup @click=" deactivateCardCode = true" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
     <q-dialog v-model="backConfirm">
       <q-card class="bg-dark text-positive">
         <q-card-section class="row text-h6 text-bold text-center">
@@ -1079,6 +1129,20 @@
         <q-card-actions align="right">
           <q-btn glossy label="anuluj" color="black" v-close-popup @click=" code = null" />
           <q-btn glossy label="Przenieś" color="black" v-close-popup @click=" changeActive(memberUUID); code = null" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="deactivateCardCode" persistent>
+      <q-card class="bg-red-5 text-center">
+        <q-card-section class="flex-center">
+          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
+          <q-input @keypress.enter=" deactivateCardFunc(barCode, code); deactivateCardCode = false" autofocus type="password"
+            v-model="code" filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn glossy label="anuluj" color="black" v-close-popup @click=" code = null" />
+          <q-btn glossy label="dezaktywuj" color="black" v-close-popup @click="deactivateCardFunc(barCode, code); code = null" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -1549,7 +1613,9 @@
     </q-dialog>
   </div>
 </template>
-<style src="src/style/style.scss" lang="scss"></style>
+<style src="src/style/style.scss" lang="scss">
+
+</style>
 <script src="print.js"></script>
 <script>
 import axios from 'axios'
@@ -1622,12 +1688,15 @@ export default {
       main: App.main,
       shootingPlace: App.shootingPlace,
       member: null,
+      cardNumber: null,
+      addCard: false,
       memberUUID: null,
       editContribution: false,
       editContributionPaymentDate: null,
       editContributionValidThruDate: null,
       editContributionCode: false,
       memberName: '',
+      barCode: '',
       name: null,
       name2: null,
       value: false,
@@ -1641,6 +1710,8 @@ export default {
       eraseCode: false,
       backConfirm: false,
       activeCode: false,
+      deactivateCard: false,
+      deactivateCardCode: false,
       contributionUUID: null,
       basicDataConfirm: false,
       basicDataConfirm1: false,
@@ -1662,6 +1733,7 @@ export default {
       contributionCode: false,
       contributionHistoryCode: false,
       deactivate: false,
+      deactivateCard: false,
       eraseWeapon: false,
       eraseAssest: false,
       instructorConfirm: false,
@@ -1672,7 +1744,6 @@ export default {
       failure: false,
       success: false,
       message: null,
-      barcode: null,
       legNumber: null,
       patentNumber: null,
       patentNumber1: null,
@@ -2623,9 +2694,6 @@ export default {
       }).then(response => response.json())
         .then(response => {
           this.clubs = response
-          // for (let i = 0; i < response.length; i++) {
-          //   this.clubs.push(response[i])
-          // }
         })
     },
     getFile (uuid, name) {
@@ -2646,14 +2714,9 @@ export default {
           this.autoClose()
         })
     },
-    addBarcodeToMember (uuid, barcode) {
-      const data = {
-        barCode: barcode,
-        belongsTo: uuid
-      }
-      fetch(`${this.local}/barCode/`, {
+    addBarcodeToMember (uuid, barCode, code) {
+      fetch(`${this.local}/barCode/?barCode=${barCode}&uuid=${uuid}&pinCode=${code}`, {
         method: 'POST',
-        body: JSON.stringify(data),
         headers: {
           'Content-Type': 'application/json'
         }
@@ -2665,6 +2728,38 @@ export default {
               this.message = response
               this.showloading()
               this.getMemberByUUID(uuid)
+              this.autoClose()
+            }
+          )
+        } else {
+          response.text().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            }
+          )
+        }
+      }).catch(() => {
+          this.message = 'coś poszło nie tak'
+          this.failure = true
+          this.autoClose()
+        })
+    },
+    deactivateCardFunc (barCode, code) {
+      fetch(`${this.local}/barCode/?barCode=${barCode}&pinCode=${code}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          response.text().then(
+            response => {
+              this.success = true
+              this.message = response
+              this.showloading()
+              this.getMemberByUUID(this.uuid)
               this.autoClose()
             }
           )
@@ -2697,7 +2792,7 @@ export default {
       try {
         document.execCommand('copy')
       } catch (err) {
-        console.error('Unable to copy to clipboard', err)
+        console.error('Nie można skopiować', err)
       }
       document.body.removeChild(textArea)
       this.message = 'Skopiowano do schowka'
@@ -2710,7 +2805,7 @@ export default {
         this.failure = false
         this.success = false
         this.message = null
-        this.barcode = null
+        this.cardNumber = null
         this.clubChoice = null
         this.clubChoiceToggle = false
         this.contributionAlert = false

@@ -14,6 +14,7 @@
             - W trakcie aktualizacji plików program przestanie działać.<br/>
             - Po pomyślnym zainstalowaniu plików strona zostanie zrestartowana.<br/>
             - W razie problemów z aktualizacją skontaktuj się z twórcą programu.<br/>
+            <span>- ŻADNE TWOJE DANE NIE SĄ WYSYŁANE POZA TWÓJ KLUB</span><br/>
           </div>
         </q-card-section>
         <q-card-actions class="full-width">

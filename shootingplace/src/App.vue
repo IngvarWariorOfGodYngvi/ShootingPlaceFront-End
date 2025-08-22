@@ -10,6 +10,7 @@ import { scripts } from 'src/scripts/SetLocalStorageVariables.js'
 
 export default {
   created () {
+    this.shootingPlace = window.localStorage.getItem('shootingPlace')
   },
   beforeMount () {
     this.getEnv()

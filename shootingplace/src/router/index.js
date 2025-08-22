@@ -2,7 +2,6 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import routes from './routes'
 
-// import App from 'src/App.vue'
 Vue.use(VueRouter)
 
 /*
@@ -15,32 +14,6 @@ Vue.use(VueRouter)
  */
 
 export default function (/* { store, ssrContext } */) {
-  // const local = App.host
-  // let userLicense = null
-  // Router.beforeResolve((to, from, next) => {
-  //   fetch('http://' + local + '/settings/termsAndLicense', {
-  //     method: 'GET'
-  //   }).then(
-  //     response => {
-  //       if (response.status === 200) {
-  //         response.text().then(() => {
-  //           userLicense = true
-  //         })
-  //       } else {
-  //         userLicense = false
-  //       }
-
-  //       if ((to.name === 'dodawanie' || to.name === 'zawody' || to.name === 'amunicja' || to.name === 'zbrojownia' || to.name === 'statystyki' || to.name === 'pozostałe funkcje' || to.name === 'licencje') && !userLicense) {
-  //         next({
-  //           path: '/licenseend',
-  //           replace: true
-  //         })
-  //       } else {
-  //         next()
-  //       }
-  //     }
-  //   )
-  // })
   return new VueRouter({
     scrollBehavior: () => ({
       x: 0,

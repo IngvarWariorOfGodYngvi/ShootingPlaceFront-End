@@ -1,5 +1,5 @@
 <template>
-  <q-layout class="bg-none" view="lHh LpR fFf"
+  <q-layout class="bg-dark" view="lHh LpR fFf"
     :class="[funRotate ? 'fun2' : '', this.funRotateCLicks > 3 ? 'fun' : '']">
     <q-header elevated>
       <q-page-sticky v-if="mobile" position="top-right" :offset="[5, -50]" style="z-index: 100">
@@ -11,7 +11,7 @@
           @mouseleave="icon = 'menu'" />
         <q-toggle v-model="backgroundDark" :val="true" :value="true" color="dark" keep-color
           :class="changesInfo[1] === false ? ' pulse' : ''" :icon="backgroundDark ? 'dark_mode' : 'light_mode'"
-          @input="changeColor(); changesInfo[1] === false ? check(1) : ''" class="fun"><q-tooltip
+          @input="changeColor(); changesInfo[1] === false ? check(1) : ''"><q-tooltip
             content-class="bg-secondary text-body2">{{ backgroundDark ? 'Wyłącz' : 'Włącz' }} ciemny
             motyw</q-tooltip></q-toggle>
         <div style="border-radius: 2em; padding: 0 1em"
@@ -19,16 +19,17 @@
           {{ siteNameChange() }} {{ networkStatusvar != null && networkStatusvar ? '' : '&nbsp; Brak Połączenia Z Bazą'
           }}</div>
         <div class="col row reverse">
-          <div v-if="main != null" class="row" :class="changesInfo[0] === false ? ' pulse' : ''"
+          <div class="row" :class="changesInfo[0] === false ? ' pulse' : ''"
             @click="changesInfo[0] === false ? check(0) : ''">
             <q-avatar text-color="white" size="3.5em" color="secondary" rounded
-              style="border: solid 1px white; border-radius: 50%" class="lighterbtn rotating" icon="settings"
+              style="border: solid 1px white; border-radius: 50%" class="lighterbtn rotating bg-secondary" icon="settings"
               @click="openSettings = !openSettings">
               <q-tooltip class="bg-primary" content-class="bg-primary text-h6 text-center">Ustawienia</q-tooltip>
               <q-popup-edit v-model="openSettings" :offset="[0, 0]" content-class="bg-primary text-white col" :cover="false"
                 :content-style="mobile ? '' : 'width:20vw'">
                 <Experimental v-if="main || main === false"/>
-                <UpdateProgram v-if="main" class="q-pa-md text-center"/>
+                <UpdateProgram v-if="main" class="q-pa-xs text-center"/>
+                <OnOfMain class="q-pa-xs text-center"/>
                 <SignInByPin v-if="mobile"/>
               </q-popup-edit>
             </q-avatar>
@@ -75,13 +76,12 @@
     </q-header>
     <q-drawer v-model="leftDrawerOpen" bordered content-class="bg-secondary" class="bg-secondary"
       @hide="setDrawer(false)">
-      <q-item @click="showloading(); changeTitle('STRONA GŁÓWNA')"
-        class="flex flex-center q-pa-md bg-primary text-white" clickable tag="a" target="_self" :href="hrefTarget"
+      <q-item @click="showloading(); changeTitle('Strona Główna')" style="height: 20vh;"
+        class="bg-primary text-white q-pa-none q-ma-none" clickable tag="a" target="_self" :href="hrefTarget"
         width="max">
-        <div class="text-h6 text-bold text-center">
-          <div>PROGRAM KLUB</div>
-          <div>STRONA GŁÓWNA</div>
-        </div>
+          <q-img v-if="!mobile && shootingPlace === 'test'" draggable="false" class="fit" alt="logo" src="~assets/logo1_long.jpg" loading="lazy"/>
+          <q-img v-if="!mobile && shootingPlace === 'prod'" draggable="false" class="fit" alt="logo" src="~assets/logo_long.jpg" loading="lazy"/>
+          <q-img v-if="!mobile && shootingPlace === 'rcs'" draggable="false" class="fit" alt="logo" src="~assets/logo2_long.jpg" loading="lazy"/>
       </q-item>
       <div @click="showloading()">
         <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link" :title="link.title"
@@ -91,7 +91,7 @@
       </MembersQuantities>
       <WeekBirthdayList v-if="MembersBirthday" class="bg-secondary">
       </WeekBirthdayList>
-      <WorkTimeList v-if="!mobile && main" style="margin: auto;height:auto" class="bg-secondary">
+      <WorkTimeList v-if="!mobile && main" style="margin: auto; height: auto" class="bg-secondary">
       </WorkTimeList>
     </q-drawer>
 
@@ -111,6 +111,7 @@ import { useNetwork } from '@vueuse/core'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox'
 import { checking } from 'src/scripts/ChangesInfo.js'
+
 export default {
   name: 'MainLayout',
   visible2: false,
@@ -155,6 +156,10 @@ export default {
       componentFactory: () => import('components/settings/SignInByPin.vue'),
       loading: SkeletonBox
     }),
+    OnOfMain: lazyLoadComponent({
+      componentFactory: () => import('components/settings/OnOfMain.vue'),
+      loading: SkeletonBox
+    }),
     Experimental: lazyLoadComponent({
       componentFactory: () => import('components/settings/Experimental.vue'),
       loading: SkeletonBox
@@ -165,7 +170,6 @@ export default {
     this.getEnv()
   },
   created () {
-    this.changeColor()
     if (window.sessionStorage.getItem('SiteName') == null) {
       window.sessionStorage.setItem('SiteName', 'Strona Główna')
     }
@@ -205,7 +209,7 @@ export default {
       quantities: [],
       hrefTarget: App.prod,
       local: App.host,
-      shootingPlace: App.shootingPlace,
+      shootingPlace: window.localStorage.getItem('shootingPlace'),
       essentialLinks: [
         {
           title: 'Rejestr Pobytu na Strzelnicy',
@@ -220,7 +224,7 @@ export default {
           visible: (App.main || !App.main) && App.main != null
         },
         {
-          title: 'Licencje',
+          title: 'Licencje Zawodnicze',
           icon: 'person',
           link: App.prod + 'license',
           visible: App.main
@@ -337,6 +341,7 @@ export default {
         }).then(response => {
           if (response.status === 200) {
             response.text().then(response => {
+              this.shootingPlace = response
               window.localStorage.setItem('shootingPlace', response)
               this.changeColor()
             })
@@ -375,6 +380,7 @@ export default {
               } else {
                 if (window.sessionStorage.getItem('buildDateTime') !== response) {
                   window.sessionStorage.setItem('buildDateTime', response)
+                  this.changeColor()
                   window.location.reload()
                 }
               }
@@ -426,64 +432,62 @@ export default {
         window.localStorage.setItem('BackgroundDark', 'true')
         colors.setBrand('dark-separator', '$grey-6')
         switch (this.shootingPlace) {
+          case 'test': {
+            colors.setBrand('primary', '#FD4D21')
+            colors.setBrand('secondary', '#091123')
+            colors.setBrand('dark', '#1D1D1D')
+            break
+          }
           case 'prod': {
             colors.setBrand('primary', '#871421')
             colors.setBrand('secondary', '#374550')
+            colors.setBrand('dark', '#1D1D1D')
             break
           }
           case 'rcs': {
             colors.setBrand('primary', '#008000')
             colors.setBrand('secondary', '#A00000')
+            colors.setBrand('dark', '#1D1D1D')
             break
           }
-          case 'rp':
+          case 'rp': {
             colors.setBrand('primary', '#be141e')
             colors.setBrand('secondary', '#151510')
-            // colors.setBrand('secondary', '#be141e')
-            // colors.setBrand('primary', '#151510')
+            colors.setBrand('dark', '#1D1D1D')
             break
-
-          default:
-            alert('Default color case')
+          }
         }
-        // this.shootingPlace === 'prod' ? colors.setBrand('primary', '#871421') : this.shootingPlace === 'rcs' ? colors.setBrand('primary', '#008000') : colors.setBrand('primary', '#008000')// Dziesiątka
-        // this.shootingPlace === 'prod' ? colors.setBrand('secondary', '#374550') : this.shootingPlace === 'rcs' ? colors.setBrand('secondary', '#A00000') : colors.setBrand('secondary', '#A00000')// Dziesiątka
-        // colors.setBrand('primary', '#871421') // DZIESIĄTKA
-        // colors.setBrand('primary', '#008000') // Panaszew
-        // colors.setBrand('secondary', '#374550') // Dziesiątka
-        // colors.setBrand('secondary', '#A00000') // Panaszew
-        colors.setBrand('dark', '#1D1D1D')
         colors.setBrand('positive', '#FFFFFF')
         colors.setBrand('accent', '#A0A0A0')
       } else {
         window.localStorage.setItem('BackgroundDark', 'false')
         colors.setBrand('dark-separator', '$grey-2')
         switch (this.shootingPlace) {
+          case 'test': {
+            colors.setBrand('primary', '#FD4D21')
+            colors.setBrand('secondary', '#091123')
+            colors.setBrand('dark', '#F2F1E6')
+            break
+          }
           case 'prod': {
             colors.setBrand('primary', '#871421')
             colors.setBrand('secondary', '#374550')
+            colors.setBrand('dark', '#FFFFFF')
             break
           }
           case 'rcs': {
             colors.setBrand('primary', '#008000')
             colors.setBrand('secondary', '#A00000')
+            colors.setBrand('dark', '#FFFFFF')
             break
           }
-          case 'rp':
+          case 'rp': {
             colors.setBrand('primary', '#be141e')
             colors.setBrand('secondary', '#151510')
+            colors.setBrand('dark', '#FFFFFF')
             break
-
-          default:
-            alert('Default case')
+          }
         }
-        // this.shootingPlace === 'prod' ? colors.setBrand('primary', '#871421') : this.shootingPlace === 'rcs' ? colors.setBrand('primary', '#008000') : colors.setBrand('primary', '#008000')// Dziesiątka
-        // this.shootingPlace === 'prod' ? colors.setBrand('secondary', '#374550') : this.shootingPlace === 'rcs' ? colors.setBrand('secondary', '#A00000') : colors.setBrand('secondary', '#A00000')// Dziesiątka
-        // colors.setBrand('primary', '#871421') // DZIESIĄTKA
-        // colors.setBrand('primary', '#008000') // Panaszew
-        // colors.setBrand('secondary', '#374550') // Dziesiątka
-        // colors.setBrand('secondary', '#A00000') // Panaszew
-        colors.setBrand('dark', '#FFFFFF')
         colors.setBrand('positive', '#000000')
         colors.setBrand('accent', '#f3f3f3')
       }

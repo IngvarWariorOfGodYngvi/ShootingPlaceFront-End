@@ -377,7 +377,7 @@
         <div>
           <q-inner-loading :showing="visible" label="Przetwarzanie..." color="primary" />
           <div v-for="(item, index) in tournamentsClosed" :key="index">
-            <q-btn class="full-width q-mb-xs" text-color="white" color="primary"
+            <q-btn glossy class="full-width q-mb-xs" text-color="white" color="primary"
               :label="'#' + ((index + 1) + (pageNumber * 15)) + ' ' + item.date"
               @click="tournamentClosedName = item.name; tournamentUUID = item.tournamentUUID; date = item.date; closedTournamentInfo = true; getStatistics()"><q-tooltip
                 content-class="bg-primary text-h6 text-bold" anchor="top middle">
@@ -978,10 +978,11 @@
                 <div class="col">
                   {{ item1.member.club.shortName }}
                 </div>
-                <div class="col text-right" v-if="item1.dnf">DNF</div>
-                <div class="col text-right" v-if="item1.dsq">DSQ</div>
-                <div class="col text-right" v-if="item1.dnf">PK</div>
-                <div class="col text-right" v-else>{{ item1.score }}</div>
+                <div class="col">
+                  <div class="col text-right" v-if="item1.dnf">DNF ({{ item1.score }})</div>
+                  <div class="col text-right" v-if="item1.dsq">DSQ ({{ item1.score }})</div>
+                  <div class="col text-right" v-if="item1.dnf">PK ({{ item1.score }})</div>
+                </div>
               </div>
               <div class="full-width row" v-if="item1.otherPersonEntity != null">
                 <div class="col-1 text-center">
@@ -993,10 +994,12 @@
                 <div class="col">
                   {{ item1.otherPersonEntity.club.shortName }}
                 </div>
-                <div class="col text-right" v-if="item1.dnf">DNF</div>
-                <div class="col text-right" v-if="item1.dsq">DSQ</div>
-                <div class="col text-right" v-if="item1.dnf">PK</div>
-                <div class="col text-right" v-else>{{ item1.score }}</div>
+                <div class="col">
+                  <div class="col text-right" v-if="item1.dnf">DNF ({{ item1.score }})</div>
+                  <div class="col text-right" v-if="item1.dsq">DSQ ({{ item1.score }})</div>
+                  <div class="col text-right" v-if="item1.dnf">PK ({{ item1.score }})</div>
+                  <div class="col text-right" v-else>{{ item1.score }}</div>
+                </div>
               </div>
             </div>
           </div>

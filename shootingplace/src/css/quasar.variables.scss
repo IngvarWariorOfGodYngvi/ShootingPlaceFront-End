@@ -12,19 +12,54 @@
 // to match your app's branding.
 // Tip: Use the "Theme Builder" on Quasar's documentation website.
 
-// $primary   : #871421;
-$primary   : #009900;
-// $secondary : #374550;
-$secondary : #B00000;
+// $primary   : #871421; // Dziesiątka
+// $secondary : #374550; // Dziesiątka
+// $primary   : #009900; // Panaszew
+// $secondary : #B00000; // Panaszew
+$primary   :  #1D1D1D;
+$secondary :  #1D1D1D;
 $accent    : #f3f3f3;
 
 //$dark      : #1D1D1D;
 $dark      : #FFFFFF;
 
-$positive  : #000000;
+$positive  : #1D1D1D;
 $negative  : #C10015;
 // $info      : #31CCEC;
 $info      : #3FA25E;
 $warning   : #CE931E;
 
-
+:root {
+  --warning-4 : #ffc248;
+  --warning-10 : #CE931E;
+  --red : #f44336;
+  --red-1 : #ffebee;
+  --red-2 : #ffcdd2;
+  --red-3 : #ef9a9a;
+  --red-4 : #e57373;
+  --red-5 : #ef5350;
+  --red-6 : #f44336;
+  --red-7 : #e53935;
+  --red-8 : #d32f2f;
+  --red-9 : #c62828;
+  --red-10 : #b71c1c;
+  --red-11 : #ff8a80;
+  --red-12 : #ff5252;
+  --red-13 : #ff1744;
+  --red-14 : #d50000;
+  --green : #4caf50;
+  --green-1 : #e8f5e9;
+  --green-2 : #c8e6c9;
+  --green-3 : #a5d6a7;
+  --green-4 : #81c784;
+  --green-5 : #66bb6a;
+  --green-6 : #4caf50;
+  --green-7 : #43a047;
+  --green-8 : #388e3c;
+  --green-9 : #2e7d32;
+  --green-10 : #1b5e20;
+  --green-11 : #b9f6ca;
+  --green-12 : #69f0ae;
+  --green-13 : #00e676;
+  --green-14 : #00c853;
+}

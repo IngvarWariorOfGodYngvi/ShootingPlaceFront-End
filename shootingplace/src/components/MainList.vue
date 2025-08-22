@@ -25,11 +25,11 @@
           </div>
         </q-item>
       </div>
-      <div v-if="main" @click="showloading(); changeTitle('Licencje')" class="q-pa-xs">
+      <div v-if="main" @click="showloading(); changeTitle('Licencje Zawodnicze')" class="q-pa-xs">
         <q-item class="q-pa-none xyz2" clickable tag="a" target="_self" :href="app + 'license'" width="max">
           <div class="row text-grey-7 text-left">
             <q-icon class="q-pa-md text-h5" name="person" />
-            <div class="self-center text-black">Licencje</div>
+            <div class="self-center text-black">Licencje Zawodnicze</div>
           </div>
         </q-item>
       </div>
@@ -135,7 +135,7 @@ export default {
     }
   },
   created () {
-    this.getFs()
+    // this.getFs()
     this.check()
   },
   methods: {
@@ -146,14 +146,14 @@ export default {
         this.timer = 0
       }, 500)
     },
-    getFs () {
-      fetch(`${this.local}/conf/fs`, {
-        method: 'GET'
-      }).then(response => response.json())
-        .then(response => {
-          this.fs = response
-        })
-    },
+    // getFs () {
+    //   fetch(`${this.local}/conf/fs`, {
+    //     method: 'GET'
+    //   }).then(response => response.json())
+    //     .then(response => {
+    //       this.fs = response
+    //     })
+    // },
     changeTitle (title) {
       document.title = 'Strzelnica - ' + title
       window.sessionStorage.setItem('SiteName', title)

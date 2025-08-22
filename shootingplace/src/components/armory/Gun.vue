@@ -92,9 +92,9 @@
       <q-card-section v-if="!close" class="col">
         <div v-if="!mobile" class="q-pa-md text-right">
           <q-btn dense glossy class="q-ma-xs" color="secondary" label="pokaż historię użycia" @click="gunUsedInfoDial=true"></q-btn>
-          <q-btn dense glossy class="q-ma-xs" color="negative" label="usuń z ewidencji"
+          <q-btn dense glossy v-if="gun.removedBy==null" class="q-ma-xs" color="negative" label="usuń z ewidencji"
             @click=" gunUUID = gun.uuid; signRemoveGun = true" />
-          <q-btn dense glossy class="q-ma-xs" color="primary" label="edytuj" @click="
+          <q-btn dense glossy v-if="gun.removedBy==null" class="q-ma-xs" color="primary" label="edytuj" @click="
             gunUUID = gun.uuid;
           gunModelName = gun.modelName;
           gunCaliber.name = gun.caliber;

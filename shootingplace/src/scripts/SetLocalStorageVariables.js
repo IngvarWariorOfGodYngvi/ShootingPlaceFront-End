@@ -1,7 +1,7 @@
 import { changesInfo } from 'src/scripts/ChangesInfo.js'
 export function scripts () {
   if (window.localStorage.getItem('main') == null) {
-    window.localStorage.setItem('main', null)
+    window.localStorage.setItem('main', false)
   }
   if (window.localStorage.getItem('mailingList') == null) {
     window.localStorage.setItem('mailingList', JSON.stringify([]))

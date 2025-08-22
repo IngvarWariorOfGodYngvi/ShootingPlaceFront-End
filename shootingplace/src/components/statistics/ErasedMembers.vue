@@ -4,11 +4,11 @@
     <div :class="mobile?'col':'row'">
       <q-card-section class="col-3">
         <q-item class="col">
-          <q-input class="full-width" color="positive" input-class="text-positive" label-color="positive" dense filled v-model="firstDateErased" mask="####-##-##" label="Data początkowa">
+          <q-input class="full-width" color="positive" input-class="text-positive" label-color="positive" dense filled v-model="firstDate" mask="####-##-##" label="Data początkowa">
             <template v-slot:append>
               <q-icon name="event" color="positive" class="cursor-pointer">
                 <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                  <q-date @input="getSumErased ()" v-model="firstDateErased" mask="YYYY-MM-DD" class="bg-dark text-positive">
+                  <q-date @input="getSumErased ()" v-model="firstDate" mask="YYYY-MM-DD" class="bg-dark text-positive">
                     <div class="row items-center justify-end">
                       <q-btn v-close-popup label="Zamknij" color="primary"/>
                     </div>
@@ -19,11 +19,11 @@
           </q-input>
         </q-item>
         <q-item class="col">
-          <q-input class="full-width" color="positive" input-class="text-positive" label-color="positive" dense filled v-model="secondDateErased" mask="####-##-##" label="Data końcowa">
+          <q-input class="full-width" color="positive" input-class="text-positive" label-color="positive" dense filled v-model="secondDate" mask="####-##-##" label="Data końcowa">
             <template v-slot:append>
               <q-icon name="event" color="positive" class="cursor-pointer">
                 <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                  <q-date @input="getSumErased ()" v-model="secondDateErased" mask="YYYY-MM-DD" class="bg-dark text-positive">
+                  <q-date @input="getSumErased ()" v-model="secondDate" mask="YYYY-MM-DD" class="bg-dark text-positive">
                     <div class="row items-center justify-end">
                       <q-btn v-close-popup label="Zamknij" color="primary"/>
                     </div>
@@ -34,10 +34,9 @@
           </q-input>
         </q-item>
         <div class="q-pa-md">
-          <q-btn color="primary" text-color="positive" @click="getSumErased ()">Wyszukaj</q-btn>
+          <q-btn glossy color="primary" text-color="positive" @click="getSumErased ()">Wyszukaj</q-btn>
           <p></p>
-          <q-btn v-if="firstDateErased!=null&&secondDateErased!=null" @click="getSumErasedXLSXFile()" label="pobierz plik xlsx" color="green-3" text-color="black"></q-btn>
-          <q-btn v-else label="pobierz plik xlsx" color="green-3" disabled text-color="black"></q-btn>
+          <q-btn glossy :loading="loading[0]" :disable="dis||firstDate==null||secondDate==null" @click="dis=true;simulateProgress()" label="pobierz plik .xlsx" color="green" text-color="white"></q-btn>
         </div>
       </q-card-section>
       <q-card-section class="col">
@@ -79,6 +78,20 @@
       </q-card-actions>
     </q-card>
   </q-dialog>
+  <q-dialog position="top" v-model="success">
+    <q-card>
+      <q-card-section>
+        <div v-if="message!=null" class="text-h6">{{ message }}</div>
+      </q-card-section>
+    </q-card>
+  </q-dialog>
+  <q-dialog position="standard" v-model="failure">
+      <q-card class="bg-warning">
+        <q-card-section>
+          <div v-if="message!=null" class="text-h6">{{ message }}</div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
 </div>
 </template>
 <style src="src/style/style.scss" lang="scss">
@@ -94,14 +107,31 @@ export default {
   data () {
     return {
       memberDial: false,
-      firstDateErased: null,
-      secondDateErased: this.createTodayDate(),
+      firstDate: null,
+      secondDate: this.createTodayDate(),
       quantitySumErased: [],
       legitimationNumber: null,
+      loading: [false],
+      dis: false,
       success: false,
+      failure: false,
       message: null,
       mobile: App.mobile,
       local: App.host
+    }
+  },
+  setup () {
+    function simulateProgress () {
+      this.loading[0] = true
+      if (this.dis) {
+        this.getSumErasedXLSXFile()
+      }
+      setTimeout(() => {
+        this.loading[0] = false
+      }, 0)
+    }
+    return {
+      simulateProgress
     }
   },
   components: {
@@ -132,7 +162,7 @@ export default {
       return date.getFullYear() + '/' + month + '/' + day
     },
     getSumErased () {
-      fetch(`${this.local}/statistics/erasedSum?firstDate=${this.firstDateErased.replace(/\//gi, '-')}&secondDate=${this.secondDateErased.replace(/\//gi, '-')}`, {
+      fetch(`${this.local}/statistics/erasedSum?firstDate=${this.firstDate.replace(/\//gi, '-')}&secondDate=${this.secondDate.replace(/\//gi, '-')}`, {
         method: 'GET'
       }).then(response => {
         response.json().then(response => {
@@ -142,23 +172,30 @@ export default {
     },
     getSumErasedXLSXFile () {
       axios({
-        url: `${this.local}/files/erasedSum?firstDate=${this.firstDateErased.replace(/\//gi, '-')}&secondDate=${this.secondDateErased.replace(/\//gi, '-')}`,
+        url: `${this.local}/files/erasedSum?firstDate=${this.firstDate.replace(/\//gi, '-')}&secondDate=${this.secondDate.replace(/\//gi, '-')}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
-        fileLink.setAttribute('download', 'lista skreślonych.xlsx')
+        fileLink.setAttribute('download', `lista skreślonych od ${this.firstDate.replace(/\//gi, '-')} do ${this.secondDate.replace(/\//gi, '-')}.xlsx`)
         document.body.appendChild(fileLink)
         fileLink.click()
-        this.listDownload = true
+        this.message = 'Pobrano plik'
+        this.success = true
+        this.autoClose()
+      }).catch(() => {
+        this.message = 'Coś poszło nie tak'
+        this.failure = true
         this.autoClose()
       })
     },
     autoClose () {
       setTimeout(() => {
+        this.dis = false
         this.success = false
+        this.failure = false
         this.message = null
       }, 2000)
     }

@@ -33,10 +33,9 @@
             </template>
           </q-input>
         </q-item>
-          <q-btn color="primary" text-color="positive" @click="getSumJoinDate()" label="Wyszukaj"></q-btn>
+          <q-btn glossy color="primary" text-color="positive" @click="getSumJoinDate()" label="Wyszukaj"></q-btn>
           <p></p>
-          <q-btn v-if="firstDateJoinDate!=null&&secondDateJoinDate!=null" @click="getSumJoinDateXLSXFile()" label="pobierz plik xlsx" color="green-3" text-color="black"></q-btn>
-          <q-btn v-else-if="!mobile" label="pobierz plik xlsx" color="green-3" disabled text-color="black"></q-btn>{{ loading }}
+          <q-btn glossy :loading="loading[0]" :disable="dis || firstDateJoinDate==null||secondDateJoinDate==null" @click="dis=true;simulateProgress()" label="pobierz plik .xlsx" color="green" text-color="white"/>
       </q-card-section>
       <q-inner-loading
               :showing="visible"
@@ -86,6 +85,20 @@
       </q-card-actions>
     </q-card>
   </q-dialog>
+    <q-dialog position="top" v-model="success">
+      <q-card>
+        <q-card-section>
+          <div v-if="message!=null" class="text-h6">{{ message }}</div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+  <q-dialog position="standard" v-model="failure">
+      <q-card class="bg-warning">
+        <q-card-section>
+          <div v-if="message!=null" class="text-h6">{{ message }}</div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
 </div>
 </template>
 <style src="src/style/style.scss" lang="scss">
@@ -121,11 +134,27 @@ export default {
       sortDate: false,
       sortStatus: false,
       sortGroup: false,
-      loading: null,
+      loading: [false],
+      dis: false,
+      failure: false,
       success: false,
       message: null,
       mobile: App.mobile,
       local: App.host
+    }
+  },
+  setup () {
+    function simulateProgress () {
+      this.loading[0] = true
+      if (this.dis) {
+        this.getSumJoinDateXLSXFile()
+      }
+      setTimeout(() => {
+        this.loading[0] = false
+      }, 0)
+    }
+    return {
+      simulateProgress
     }
   },
   methods: {
@@ -157,7 +186,6 @@ export default {
       })
     },
     getSumJoinDateXLSXFile () {
-      this.loading = 'pobieranie'
       axios({
         url: `${this.local}/files/joinDateSum?firstDate=${this.firstDateJoinDate.replace(/\//gi, '-')}&secondDate=${this.secondDateJoinDate.replace(/\//gi, '-')}`,
         method: 'GET',
@@ -173,7 +201,9 @@ export default {
         this.success = true
         this.autoClose()
       }).catch(() => {
-        this.loading = null
+        this.message = 'Coś poszło nie tak'
+        this.failure = true
+        this.autoClose()
       })
     },
     sortF (type) {
@@ -237,9 +267,10 @@ export default {
     },
     autoClose () {
       setTimeout(() => {
+        this.dis = false
         this.success = false
+        this.failure = false
         this.message = null
-        this.loading = null
       }, 2000)
     }
   }

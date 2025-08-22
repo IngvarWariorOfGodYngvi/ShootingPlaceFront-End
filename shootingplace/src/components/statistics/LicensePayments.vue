@@ -34,7 +34,7 @@
           </q-input>
         </q-item>
         <div class="q-pa-md">
-          <q-btn color="primary" text-color="positive" @click="getSumLicensed ()" >Wyszukaj</q-btn>
+          <q-btn glossy color="primary" text-color="positive" @click="getSumLicensed ()" >Wyszukaj</q-btn>
         </div>
         <div class="row">
           <q-radio @input="paid = null; newLicense = null; getSumLicensed ()" v-model="allLicense" :val="true">Wszystkie</q-radio>
@@ -43,7 +43,7 @@
           <q-radio @input="allLicense = false; paid = null; rearrangeSumLicensedTable ()" v-model="newLicense" :val="true">Nowe</q-radio>
         </div>
         <div v-if="licenseArray.length > 0" class="row">
-          <q-btn color="primary" @click="toggleLicenseAlert = true">Zatwierdź opłacenie zaznaczonych</q-btn>
+          <q-btn glossy color="primary" @click="toggleLicenseAlert = true">Zatwierdź opłacenie zaznaczonych</q-btn>
         </div>
       </q-card-section>
       <q-card-section class="col">

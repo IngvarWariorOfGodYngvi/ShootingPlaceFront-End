@@ -6,7 +6,7 @@
 </template>
 <script>
 export default {
-  name: 'circular progress',
+  name: 'CircularProgress',
   props: {
     color: {
       type: String,

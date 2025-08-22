@@ -3,6 +3,10 @@
     <q-btn glossy color="secondary" label="Kreator konkurencji" @click="load();createNewCompetiton = true"/>
   <q-dialog v-model="createNewCompetiton">
     <q-card class="bg-dark text-positive" style="min-width: 65vw; height: 80vh">
+      <q-card-actions align="right">
+        <div class="text-bold text-h6 text-center col">Kreator Konkurencji</div>
+        <q-btn icon="close" round color="primary" dense v-close-popup/>
+      </q-card-actions>
         <q-card-section class="col items-center">
           <div class="col">
             <b>Odległość {{ range }}m</b>
@@ -72,8 +76,8 @@
         </q-card-section>
         <q-card-section>
           <div>
-            <q-btn color="primary" label="zapisz" @click="createCompetition()" v-close-popup :disable="disciplines.length === 0"/>
-            <q-btn color="secondary" label="anuluj" v-close-popup/>
+            <q-btn glossy color="primary" label="zapisz" @click="createCompetition()" v-close-popup :disable="disciplines.length === 0"/>
+            <q-btn glossy color="secondary" label="anuluj" v-close-popup/>
           </div>
         </q-card-section>
     </q-card>
@@ -96,36 +100,7 @@
 </template>
 <script>
 import App from 'src/App.vue'
-import { ref } from 'vue'
 export default {
-  setup () {
-    const loading = ref([
-      false
-    ])
-    const progress = ref(false)
-
-    function simulateProgress (number) {
-      loading.value[number] = true
-      this.addMemberToCompetition()
-      setTimeout(() => {
-        loading.value[number] = false
-      }, 0)
-    }
-    function simulateProgressGun (number, evidenceUUID, barcode) {
-      loading.value[number] = true
-      this.addGunToList(evidenceUUID, barcode)
-      setTimeout(() => {
-        loading.value[number] = false
-      }, 0)
-    }
-
-    return {
-      loading,
-      progress,
-      simulateProgress,
-      simulateProgressGun
-    }
-  },
   data () {
     return {
       name: '',

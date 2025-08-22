@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <q-stepper header-nav v-model="step" ref="stepper" active-color="secondary" class="bg-dark" animated>
+    <q-stepper header-nav v-model="step" ref="stepper" active-color="primary" class="bg-dark" animated>
       <q-step :name="1" title="Podstawowe dane" caption="Wymagane" icon="settings" :done="step > 1">
         <q-card class="row bg-dark text-positive">
           <q-card-section class="col-6">
@@ -454,7 +454,6 @@ export default {
     const loading = ref([
       false
     ])
-    const progress = ref(false)
 
     function simulateProgress (number) {
       loading.value[number] = true
@@ -479,7 +478,6 @@ export default {
 
     return {
       loading,
-      progress,
       simulateProgress
     }
   },

@@ -49,9 +49,18 @@
     <q-dialog v-model="singReturnerGunUsed" @hide="temp = null;" @show="getMembersNames()">
       <q-card class="bg-dark text-positive" style="min-width: 75vw;" v-if="temp != null">
         <q-card-actions align="right">
-          <div class="text-h6 text-center text-bold col">Podpis Pobierającego Broń</div>
+          <div class="text-h6 text-center text-bold col">Podpis Zdającego Broń</div>
           <q-btn dense color="primary" icon="close" round v-close-popup></q-btn>
         </q-card-actions>
+        <q-card-section class="row">
+          <div class="col-9"></div>
+          <q-input v-model="cardNumber" dense class="col" label="Zeskanuj Kartę" type="password" @input="find()" color="primary" bg-color="primary" label-color="white" rounded standout="">
+          <template v-slot:append>
+              <q-icon :color="fin?'secondary':'primary'" :name="fin?'done':'cancel'"></q-icon>
+            </template>
+          </q-input>
+          <q-btn icon="arrow_right" round color="primary q-ml-md" @click="find()"><q-tooltip anchor="top middle" content-class="bg-secondary text-positive text-h6">wyszukaj</q-tooltip></q-btn>
+        </q-card-section>
         <q-card-section>
           <div class="row items-center col text-positive text-bold text-body2 q-pa-xs">
             <div class="col">Data i<br />Godzina Wydania</div>
@@ -78,8 +87,8 @@
           <q-checkbox v-model="isMember" color="primary" keep-color label="Pobierający to Klubowicz"></q-checkbox>
           <q-select v-if="isMember" label="Wybierz osobę" color="primary" input-class="text-white" label-color="white"
           popup-content-class="bg-dark text-positive" rounded standout=""
-          :option-value="opt => opt !== '' ? Object(opt.name).toString() : ''"
-          :option-label="opt => opt !== '' ? Object(opt.name).toString() : ''"
+          option-value="name"
+          option-label="name"
           emit-value map-options options-dense options-selected-class="bg-negative text-positive" v-model="gunReturnerName"
           bg-color="primary" dense use-input hide-selected fill-input :options="options" @filter="filter">
           <template v-slot:option="option">
@@ -107,13 +116,17 @@
           <div class="text-positive">
             Pospis osoby pobierającej broń
           </div>
-          <VueSignaturePad id="canvas" ref="signaturePad1" height="25vh" style="background-color: white;"/>
-          <q-btn label="wyczyść" color="primary" @click="clear()"></q-btn>
+          <q-item>
+            <VueSignaturePad id="canvas" ref="signaturePad1" height="25vh" style="background-color: white;"/>
+          </q-item>
+          <q-item>
+            <q-btn glossy label="wyczyść" color="primary" @click="clear()"/>
+          </q-item>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn label="anuluj" color="secondary" v-close-popup />
-          <q-btn label="potwierdź" :disable="gunReturnerName == ''" color="primary" @click="save1()" v-close-popup />
+          <q-btn glossy label="anuluj" color="secondary" v-close-popup />
+          <q-btn glossy label="potwierdź" :disable="gunReturnerName == ''" color="primary" @click="save1()" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -182,14 +195,16 @@
           <q-item>
             <VueSignaturePad id="canvas" ref="signaturePad1" height="25vh" style="background-color: white;"/>
           </q-item>
-          <q-btn label="wyczyść" color="primary" @click="clear()"></q-btn>
+          <q-item>
+            <q-btn glossy label="wyczyść" color="primary" @click="clear()"></q-btn>
+          </q-item>
           <q-input dense label="kod potwierdzający" @keypress.enter="code == null || code.length <4?'':save()" rounded standout="" type="password"
             v-model="code" bg-color="warning" color="Yellow" class=" text-bold" mask="####" inputmode="numeric"/>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn label="anuluj" color="secondary" v-close-popup />
-          <q-btn :disable="code == null || code.length <4" label="potwierdź" color="primary" @click="save()" v-close-popup />
+          <q-btn glossy label="anuluj" color="secondary" v-close-popup />
+          <q-btn glossy :disable="code == null || code.length <4" label="potwierdź" color="primary" @click="save()" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -220,6 +235,7 @@ Vue.use(VueSignature)
 export default {
   data () {
     return {
+      member: null,
       temp: null,
       code: null,
       gunUsedUUID: null,
@@ -227,6 +243,7 @@ export default {
       acceptanceTime: null,
       acceptanceDate: null,
       gunReturnerName: '',
+      fin: false,
       gunUsedInfo: false,
       singReturnerGunUsed: false,
       singAcceptanceGunUsed: false,
@@ -278,6 +295,23 @@ export default {
         .then(response => {
           this.gunsInUsed = response
         })
+    },
+    find () {
+      fetch(`${this.local}/barCode/?cardNumber=${this.cardNumber}`, {
+        method: 'GET'
+      }).then(response => {
+        if (response.status === 200) {
+          response.json().then(response => {
+            this.member = response
+            this.gunReturnerName = response.name
+            this.memberLeg = response.legitimationNumber
+            this.fin = true
+          })
+        } else {
+          this.member = null
+          this.fin = false
+        }
+      })
     },
     createTodayDate () {
       const date = new Date()

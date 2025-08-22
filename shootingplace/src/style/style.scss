@@ -12,14 +12,13 @@
   background-clip: padding-box;
 
 }
+.rounded > * {
+  border-radius: 1em;;
+}
 .line {
   border-bottom: 2px solid;
   width: 100%;
   height: 4px;
-}
-.lighterbtn:hover {
-  transition: 0.2s linear;
-  filter: brightness(125%);
 }
 .background {
   position: absolute;
@@ -64,13 +63,9 @@
   cursor: pointer;
 
 }
-.rounded * {
+.rounded {
   border-radius: 10px;
   border: none;
-}
-.full {
-  width: 100%;
-  height: 100%;
 }
 .hover {
   background-color: none;
@@ -121,13 +116,6 @@ label {
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* Internet Explorer/Edge */
   font-size: 0.75em;
-}
-.noSelect {
-  user-select: none; /* supported by Chrome and Opera */
-  -webkit-user-select: none; /* Safari */
-  -khtml-user-select: none; /* Konqueror HTML */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* Internet Explorer/Edge */
 }
 .box {
   color: black;
@@ -185,12 +173,6 @@ label {
   border-width: 0.5em;
   border-color: grey;
 }
-.border1 {
-  border-bottom: 2px solid $secondary;
-}
-.border-warning {
-  border: 2px solid $warning;
-}
 .rotate {
   animation: rotation 4s infinite linear;
 }
@@ -225,47 +207,6 @@ label {
 		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
 	}
 }
-.pulsing:hover {
-  animation: pulsing 2s infinite;
-  border-radius: 50%;
-}
-.pulsing1 {
-  animation: pulsing1 2s infinite;
-  border-radius: 50%;
-}
-
-@keyframes pulsing {
-	0% {
-		transform: scale(0.95);
-		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
-	}
-
-	50% {
-		transform: scale(1.05);
-		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
-	}
-
-	100% {
-		transform: scale(0.95);
-		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
-	}
-}
-@keyframes pulsing1 {
-	0% {
-		transform: scale(0.95);
-		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
-	}
-
-	50% {
-		transform: scale(1.50);
-		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
-	}
-
-	100% {
-		transform: scale(0.95);
-		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
-	}
-}
 .fun {
   // transition: ease-in;
   // transition-duration: 2s;
@@ -292,10 +233,10 @@ label {
   border-radius: 2em;
   border: none;
 }
-body {
-  background-color: black;
-}
 
 #canvas {
   border: 1px solid black;
+}
+.green {
+  background-image: linear-gradient(green, var(--q-green-3));
 }

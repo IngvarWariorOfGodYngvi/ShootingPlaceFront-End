@@ -9,7 +9,7 @@
           Broń ({{ selection.length }} szt.)
          </q-btn>
         <q-btn glossy class="col" dense rounded color="primary" :disable="gunsInUsed.length < 1"
-          @click="gunsList = true">podpisz wydaną bro({{ gunsInUsed.length }} szt.)</q-btn>
+          @click="gunsList = true">podpisz wydaną broń({{ gunsInUsed.length }} szt.)</q-btn>
       </div>
       <div class="row items-center col text-positive text-bold text-center text-body2 q-pa-xs">
         <div style="width: 3%;"></div>
@@ -117,10 +117,10 @@
             <div class="col">{{ item.gun.serialNumber }}</div>
             <div class="col">{{ item.gun.numberOfMagazines }}</div>
             <div class="col">{{ item.gun.gunCertificateSerialNumber }}</div>
-            <q-btn v-if="item.issuanceSign == null" class="col" dense rounded color="primary"
+            <q-btn glossy v-if="item.issuanceSign == null" class="col" dense rounded color="primary"
               @click="temp = item; singIssuanceGunUsed = true">podpisz</q-btn>
             <div v-else class="col text-center">{{ item.issuanceBy }}</div>
-            <q-btn v-if="item.gunTakerSign == null" class="col" dense rounded color="secondary"
+            <q-btn glossy v-if="item.gunTakerSign == null" class="col" dense rounded color="secondary"
               @click="temp = item; signTakerGunUsed = true">podpisz</q-btn>
             <div v-else class="col text-center">{{ item.gunTakerName }}</div>
             <div class="line"></div>
@@ -137,6 +137,15 @@
           <div class="text-h6 text-center text-bold col">Podpis Pobierającego Broń</div>
           <q-btn dense color="primary" icon="close" round v-close-popup></q-btn>
         </q-card-actions>
+        <q-card-section class="row">
+          <div class="col-9"></div>
+          <q-input v-model="cardNumber" dense class="col" label="Zeskanuj Kartę" type="password" @input="find()" color="primary" :bg-color="fin?'primary':'secondary'" label-color="white" rounded standout="">
+            <template v-slot:append>
+              <q-icon :color="fin?'secondary':'primary'" :name="fin?'done':'cancel'"></q-icon>
+            </template>
+          </q-input>
+          <q-btn icon="arrow_right" round color="primary q-ml-md" @click="find()"><q-tooltip anchor="top middle" content-class="bg-secondary text-positive text-h6">wyszukaj</q-tooltip></q-btn>
+        </q-card-section>
         <q-card-section>
           <div class="row items-center col text-positive text-bold text-body2 q-pa-xs">
             <div class="col">Data i<br />Godzina Wydania</div>
@@ -163,8 +172,7 @@
           <q-checkbox v-model="isMember" color="primary" keep-color label="Pobierający to Klubowicz"></q-checkbox>
           <q-select v-if="isMember" label="Wybierz osobę" color="primary" input-class="text-white" label-color="white"
             popup-content-class="bg-dark text-positive" rounded standout=""
-            :option-value="opt => opt !== '' ? Object(opt.name).toString() : ''"
-            :option-label="opt => opt !== '' ? Object(opt.name).toString() : ''" emit-value map-options options-dense
+            option-value="name" option-label="name" emit-value map-options options-dense
             options-selected-class="bg-negative text-positive" v-model="gunTakerName" bg-color="primary" dense use-input
             hide-selected fill-input :options="options" @filter="filter" @input="allMember = false">
             <template v-slot:option="option">
@@ -195,8 +203,12 @@
           <div class="text-positive">
             Pospis osoby pobierającej broń
           </div>
-          <VueSignaturePad id="canvas" ref="signaturePad1" height="25vh" style="background-color: white;"/>
-          <q-btn label="wyczyść" color="primary" @click="clear()"></q-btn>
+          <q-item>
+            <VueSignaturePad id="canvas" ref="signaturePad1" height="25vh" style="background-color: white;"/>
+          </q-item>
+          <q-item>
+            <q-btn glossy label="wyczyść" color="primary" @click="clear()"></q-btn>
+          </q-item>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -273,7 +285,9 @@
             <q-item>
               <VueSignaturePad id="canvas" ref="signaturePad1" height="25vh" style="background-color: white;"/>
             </q-item>
-            <q-btn label="wyczyść" color="primary" @click="clear()"></q-btn>
+            <q-item>
+              <q-btn glossy label="wyczyść" color="primary" @click="clear()"></q-btn>
+            </q-item>
             <q-input dense label="kod potwierdzający" rounded standout="" type="password" v-model="code" bg-color="warning"
               color="Yellow" class="text-bold" mask="####" inputmode="numeric" />
         </q-card-section>
@@ -339,10 +353,13 @@ export default {
   },
   data () {
     return {
+      member: null,
+      fin: false,
       open: false,
       addGuns: false,
       singIssuanceGunUsed: false,
       signTakerGunUsed: false,
+      cardNumber: '',
       gunTakerName: '',
       adnotation: '',
       gunsList: false,
@@ -375,6 +392,23 @@ export default {
         .then(response => {
           this.allGuns = response
         })
+    },
+    find () {
+      fetch(`${this.local}/barCode/?cardNumber=${this.cardNumber}`, {
+        method: 'GET'
+      }).then(response => {
+        if (response.status === 200) {
+          response.json().then(response => {
+            this.member = response
+            this.gunTakerName = response.name
+            this.memberLeg = response.legitimationNumber
+            this.fin = true
+          })
+        } else {
+          this.member = null
+          this.fin = false
+        }
+      })
     },
     AddListOfGunToList (selection, date, time) {
       fetch(`${this.local}/armory/addGunToList?date=${date}&time=${time}`, {

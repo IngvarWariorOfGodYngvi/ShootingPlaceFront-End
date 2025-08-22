@@ -22,7 +22,7 @@
       </q-page-sticky>
       <q-page-sticky position="top-right" :offset="[0, 0]" style="z-index: 11;" v-if="visible">
         <div style="min-height: 10vh;" @click="visible=false">
-          <q-img :src="url" spinner-color="white" contain height="20vh" width="15vw"/>
+          <q-img :src="url" spinner-color="primary" contain height="20vh" width="15vw"/>
         </div>
       </q-page-sticky>
     <q-card :class="mobile ? 'col bg-dark' : 'row bg-dark'" flat>
@@ -86,10 +86,10 @@
         <q-checkbox class="text-positive" v-model="advancedSearch" dense keep-color color="primary">szukanie niestandardowe</q-checkbox>
       </div>
       <div v-if="!mobile" class=" col-8">
-        <q-card class="bg-accent q-pa-xs row">
+        <q-card class="bg-accent q-pa-xs row rounded">
           <div class="col">
-          <div class="col">
-              <q-checkbox dense
+          <div class="col q-ml-md">
+              <q-checkbox dense class="full-width"
                 @input="memberName = ''; temp = null; adult = null; active = null; erase = false; getMembersNames(); getAllMemberDTO()"
                 v-model="allMember" label="Zapisani" />
                 <!-- <q-radio @input="member = null; allMember = false; getMembersNames(); rearrangeMemberDTO()" color="green"
@@ -100,10 +100,10 @@
                   color="green" v-model="active" :val="true" label="Aktywni" />
                 <q-radio @input="member = null; allMember = false; getMembersNames(); rearrangeMemberDTO()"
                   color="warning" v-model="active" :val="false" label="Nieaktywni" /> -->
+                  <q-checkbox dense class="full-width"
+                    @input="memberDTOArgRearrangeTable=[];memberName = ''; temp = null; allMember = !erase; active = false; getMembersNames(); getAllMemberDTOWithArgs(); erasedType = erasedTypes[0]"
+                    color="red" v-model="erase" :val="false" label="Skreśleni" />
             </div>
-            <q-checkbox dense
-              @input="memberDTOArgRearrangeTable=[];memberName = ''; temp = null; allMember = !erase; active = false; getMembersNames(); getAllMemberDTOWithArgs(); erasedType = erasedTypes[0]"
-              color="red" v-model="erase" :val="false" label="Skreśleni" />
           <div class="row text-bold text-center text-caption">
             <q-item dense v-if="!erase">
               Zapisani Ogółem : {{ quantities[0] + quantities[3] }}
@@ -205,7 +205,7 @@
             @mouseenter="item.image!=null?getUrl (item.image):visible=false"
             @click.ctrl="pushOrRemoveEmailToList(item.legitimationNumber)"
             @click.exact="showloading(), allMember = false; memberName = item; temp = item.legitimationNumber;visible = false">
-            <td style="width:25%;" :class="item.club.id === 1 && (!item.declarationLOK && shootingPlace==='prod')? 'xyz bg-warning' : item.club.id === 1 && (item.declarationLOK && shootingPlace==='prod')? 'xyz' : item.club.id != 1? 'xyz bg-secondary':'xyz text-positive'">
+            <td style="width:25%;" :class="item.club.id === 1 && (!item.declarationLOK && shootingPlace==='prod')? 'xyz bg-warning' : item.club.id === 1 && (item.declarationLOK && shootingPlace==='prod')? 'xyz' : item.club.id != 1? 'xyz bg-secondary text-white':'xyz text-positive'">
             <!-- <td style="width:25%;" :class="item.club.id === 1 && (!item.declarationLOK && shootingPlace==='prod')? 'xyz bg-warning' : item.club.id === 1 && (item.declarationLOK && shootingPlace==='prod')? 'xyz' : 'xyz text-white'"> -->
               <div><b>{{ index + 1 + ' ' }}</b>{{item.fullName}}  {{ !item.declarationLOK && shootingPlace === 'prod'? ' - Brak Deklaracji LOK' : ''}}</div>
               <div v-if="item.club.id != 1">{{ item.club.name }}</div>

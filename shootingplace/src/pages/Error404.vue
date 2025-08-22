@@ -1,18 +1,18 @@
 <template>
-  <div class="fullscreen bg-blue text-white text-center q-pa-md flex flex-center">
+  <div class="fullscreen bg-secondary text-white text-center q-pa-md flex flex-center">
     <div>
-      <div style="font-size: 30em">
+      <div style="font-size: 20vh">
         !!! 404 !!!
       </div>
 
-      <div class="text-h2" style="opacity:.4">
+      <div class="text-h2" style="opacity:.5">
         Uuups. Nic tu nie ma...
       </div>
 
       <q-btn
         class="q-mt-xl"
         color="white"
-        text-color="blue"
+        text-color="primary"
         unelevated
         :to="fs ? '/firstStart' : '/'"
         label="Strona główna"
@@ -43,7 +43,6 @@ export default {
         if (response.status === 200) {
           response.text().then(response => {
             this.fs = JSON.parse(response)
-            console.log(this.fs)
           })
         }
       })

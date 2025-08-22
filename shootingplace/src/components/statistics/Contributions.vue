@@ -34,9 +34,9 @@
           </q-input>
         </q-item>
         <div>
-          <q-btn color="primary" text-color="white" @click="getSum()">Wyszukaj</q-btn>
+          <q-btn glossy color="primary" text-color="white" @click="getSum()">Wyszukaj</q-btn>
           <p></p>
-          <q-btn :disable="list.length < 1" color="green" text-color="white" @click="getXlsFile()" >pobierz plik .xls</q-btn> {{ loading }}
+          <q-btn glossy :disable="list.length < 1 || dis" :loading="loading[0]" color="green" text-color="white" @click="dis=true;simulateProgress()" label="pobierz plik .xls"/>
         </div>
       </q-card-section>
       <q-inner-loading
@@ -92,7 +92,13 @@
         <q-card-section>
           <div v-if="message!=null" class="text-h6">{{ message }}</div>
         </q-card-section>
-
+      </q-card>
+    </q-dialog>
+  <q-dialog position="standard" v-model="failure">
+      <q-card class="bg-warning">
+        <q-card-section>
+          <div v-if="message!=null" class="text-h6">{{ message }}</div>
+        </q-card-section>
       </q-card>
     </q-dialog>
 </div>
@@ -123,8 +129,10 @@ export default {
       sortStatus: false,
       sortGroup: false,
       success: false,
+      failure: false,
+      dis: false,
       message: null,
-      loading: null,
+      loading: [false],
       mobile: App.mobile,
       local: App.host
     }
@@ -138,6 +146,20 @@ export default {
       componentFactory: () => import('src/utils/Tooltip2clickToShow.vue'),
       loading: SkeletonBox
     })
+  },
+  setup () {
+    function simulateProgress () {
+      this.loading[0] = true
+      if (this.dis) {
+        this.getXlsFile()
+      }
+      setTimeout(() => {
+        this.loading[0] = false
+      }, 500)
+    }
+    return {
+      simulateProgress
+    }
   },
   methods: {
     createTodayDate () {
@@ -171,7 +193,6 @@ export default {
       })
     },
     getXlsFile () {
-      this.loading = 'pobieranie'
       axios({
         url: `${this.local}/files/contributions?firstDate=${this.firstDate.replace(/\//gi, '-')}&secondDate=${this.secondDate.replace(/\//gi, '-')}`,
         method: 'GET',
@@ -187,7 +208,9 @@ export default {
         this.success = true
         this.autoClose()
       }).catch(() => {
-        this.loading = null
+        this.message = 'Coś poszło nie tak'
+        this.failure = true
+        this.autoClose()
       })
     },
     sortF (type) {
@@ -239,9 +262,10 @@ export default {
     },
     autoClose () {
       setTimeout(() => {
+        this.dis = true
         this.success = false
+        this.failure = false
         this.message = null
-        this.loading = null
       }, 2000)
     }
   }
