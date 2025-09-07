@@ -4,7 +4,8 @@
       <q-card-section>
         <div class="row">
           <q-checkbox v-model="nonMember" dense class="text-positive self-center col"
-            @input="pesel = '', member = null, phone = '', otherPerson = null" label="Nie Jestem Klubowiczem" />
+            @input="pesel = '', member = null, phone = '', otherPerson = null, acceptNote = true"
+            label="Nie Jestem Klubowiczem" />
           <ShootingPlaceStatutePanaszew v-if="shootingPlace === 'rcs'" class="q-pa-xs"></ShootingPlaceStatutePanaszew>
           <ShootingPlaceStatuteDziesiątka v-if="shootingPlace === 'prod'" class="q-pa-xs">
           </ShootingPlaceStatuteDziesiątka>
@@ -21,69 +22,97 @@
               <q-icon :name="isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer" @click="isPwd = !isPwd" />
             </template>
           </q-input>
-          <q-btn-dropdown  unelevated v-model="openKeyboard" class="q-mb-xs col-1" content-class="bg-dark rounded" content-style="border: none" color="primary" glossy rounded >
-                  <template v-slot:label>
-        <div class="col items-left">
-          <q-icon left name="keyboard"  class="col"/>
-        </div>
-      </template>
+          <q-btn-dropdown unelevated v-model="openKeyboard" class="q-mb-xs col-1" content-class="bg-dark rounded"
+            content-style="border: none" color="primary" glossy rounded>
+            <template v-slot:label>
+              <div class="col items-left">
+                <q-icon left name="keyboard" class="col" />
+              </div>
+            </template>
             <div class="row">
-              <q-btn @click="addNumberToPesel(7)" size="1.5em" color="primary" glossy rounded style="width: 10vw" class="col q-ma-xs">7</q-btn>
-              <q-btn @click="addNumberToPesel(8)" size="1.5em" color="primary" glossy rounded style="width: 10vw" class="col q-ma-xs">8</q-btn>
-              <q-btn @click="addNumberToPesel(9)" size="1.5em" color="primary" glossy rounded style="width: 10vw" class="col q-ma-xs">9</q-btn>
+              <q-btn @click="addNumberToPesel(7)" size="1.5em" color="primary" glossy rounded style="width: 10vw"
+                class="col q-ma-xs">7</q-btn>
+              <q-btn @click="addNumberToPesel(8)" size="1.5em" color="primary" glossy rounded style="width: 10vw"
+                class="col q-ma-xs">8</q-btn>
+              <q-btn @click="addNumberToPesel(9)" size="1.5em" color="primary" glossy rounded style="width: 10vw"
+                class="col q-ma-xs">9</q-btn>
             </div>
             <div class="row">
-              <q-btn @click="addNumberToPesel(4)" size="1.5em" color="primary" glossy rounded style="width: 10vw" class="col q-ma-xs">4</q-btn>
-              <q-btn @click="addNumberToPesel(5)" size="1.5em" color="primary" glossy rounded style="width: 10vw" class="col q-ma-xs">5</q-btn>
-              <q-btn @click="addNumberToPesel(6)" size="1.5em" color="primary" glossy rounded style="width: 10vw" class="col q-ma-xs">6</q-btn>
+              <q-btn @click="addNumberToPesel(4)" size="1.5em" color="primary" glossy rounded style="width: 10vw"
+                class="col q-ma-xs">4</q-btn>
+              <q-btn @click="addNumberToPesel(5)" size="1.5em" color="primary" glossy rounded style="width: 10vw"
+                class="col q-ma-xs">5</q-btn>
+              <q-btn @click="addNumberToPesel(6)" size="1.5em" color="primary" glossy rounded style="width: 10vw"
+                class="col q-ma-xs">6</q-btn>
             </div>
             <div class="row">
-              <q-btn @click="addNumberToPesel(1)" size="1.5em" color="primary" glossy rounded style="width: 10vw" class="col q-ma-xs">1</q-btn>
-              <q-btn @click="addNumberToPesel(2)" size="1.5em" color="primary" glossy rounded style="width: 10vw" class="col q-ma-xs">2</q-btn>
-              <q-btn @click="addNumberToPesel(3)" size="1.5em" color="primary" glossy rounded style="width: 10vw" class="col q-ma-xs">3</q-btn>
+              <q-btn @click="addNumberToPesel(1)" size="1.5em" color="primary" glossy rounded style="width: 10vw"
+                class="col q-ma-xs">1</q-btn>
+              <q-btn @click="addNumberToPesel(2)" size="1.5em" color="primary" glossy rounded style="width: 10vw"
+                class="col q-ma-xs">2</q-btn>
+              <q-btn @click="addNumberToPesel(3)" size="1.5em" color="primary" glossy rounded style="width: 10vw"
+                class="col q-ma-xs">3</q-btn>
             </div>
             <div class="row">
-              <q-btn @click="substractNumberFromPesel()" size="1.5em" color="red" glossy rounded style="width: 10vw" class="col q-ma-xs">C</q-btn>
-              <q-btn @click="addNumberToPesel(0)" size="1.5em" color="primary" glossy rounded style="width: 10vw" class="col q-ma-xs">0</q-btn>
-              <q-btn @click="reset()" size="1.5em" color="secondary" glossy rounded style="width: 10vw" class="col q-ma-xs">reset</q-btn>
+              <q-btn @click="substractNumberFromPesel()" size="1.5em" color="red" glossy rounded style="width: 10vw"
+                class="col q-ma-xs">C</q-btn>
+              <q-btn @click="addNumberToPesel(0)" size="1.5em" color="primary" glossy rounded style="width: 10vw"
+                class="col q-ma-xs">0</q-btn>
+              <q-btn @click="reset()" size="1.5em" color="secondary" glossy rounded style="width: 10vw"
+                class="col q-ma-xs">reset</q-btn>
             </div>
           </q-btn-dropdown>
           <q-btn glossy class="q-ml-xs text-body1" color="primary" rounded label="resetuj" @click="reset()"></q-btn>
         </div>
         <div v-if="nonMember" class="row q-mb-xs">
-          <q-input v-model="phone" :disable="rememberMe" label-color="white" standout="" bg-color="secondary" rounded class="col"
-            @input="phone.length > 10 ? getOtherbyPhone(phone) : otherPerson = null" input-class="text-white"
-            :label="rememberMe? 'Wypełnij pola poniżej' :'Jeśli zostawiłeś nam numer telefonu to wpisz go tutaj'" mask="### ### ###"
-            :type="isPwd ? 'password' : 'tel'" onkeypress="return (event.charCode > 47 && event.charCode < 58)">
+          <q-input v-model="phone" :disable="rememberMe" label-color="white" standout="" bg-color="secondary" rounded
+            class="col" @input="phone.length > 10 ? getOtherbyPhone(phone) : otherPerson = null"
+            input-class="text-white"
+            :label="rememberMe ? 'Wypełnij pola poniżej' : 'Jeśli zostawiłeś nam numer telefonu to wpisz go tutaj'"
+            mask="### ### ###" :type="isPwd ? 'password' : 'tel'"
+            onkeypress="return (event.charCode > 47 && event.charCode < 58)">
             <template v-slot:append>
               <q-icon :name="isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer" @click="isPwd = !isPwd" />
             </template>
           </q-input>
-<q-btn-dropdown  unelevated v-model="openKeyboard" class="q-mb-xs col-1" content-class="bg-dark rounded" content-style="border: none" color="secondary" glossy rounded >
-                  <template v-slot:label>
-        <div class="col items-left">
-          <q-icon left name="keyboard"  class="col"/>
-        </div>
-      </template>
+          <q-btn-dropdown unelevated v-model="openKeyboard" class="q-mb-xs col-1" content-class="bg-dark rounded"
+            content-style="border: none" color="secondary" glossy rounded>
+            <template v-slot:label>
+              <div class="col items-left">
+                <q-icon left name="keyboard" class="col" />
+              </div>
+            </template>
             <div class="row">
-              <q-btn @click="addNumberToPhone(7)" size="1.5em" color="primary" glossy rounded style="width: 10vw" class="col q-ma-xs">7</q-btn>
-              <q-btn @click="addNumberToPhone(8)" size="1.5em" color="primary" glossy rounded style="width: 10vw" class="col q-ma-xs">8</q-btn>
-              <q-btn @click="addNumberToPhone(9)" size="1.5em" color="primary" glossy rounded style="width: 10vw" class="col q-ma-xs">9</q-btn>
+              <q-btn @click="addNumberToPhone(7)" size="1.5em" color="primary" glossy rounded style="width: 10vw"
+                class="col q-ma-xs">7</q-btn>
+              <q-btn @click="addNumberToPhone(8)" size="1.5em" color="primary" glossy rounded style="width: 10vw"
+                class="col q-ma-xs">8</q-btn>
+              <q-btn @click="addNumberToPhone(9)" size="1.5em" color="primary" glossy rounded style="width: 10vw"
+                class="col q-ma-xs">9</q-btn>
             </div>
             <div class="row">
-              <q-btn @click="addNumberToPhone(4)" size="1.5em" color="primary" glossy rounded style="width: 10vw" class="col q-ma-xs">4</q-btn>
-              <q-btn @click="addNumberToPhone(5)" size="1.5em" color="primary" glossy rounded style="width: 10vw" class="col q-ma-xs">5</q-btn>
-              <q-btn @click="addNumberToPhone(6)" size="1.5em" color="primary" glossy rounded style="width: 10vw" class="col q-ma-xs">6</q-btn>
+              <q-btn @click="addNumberToPhone(4)" size="1.5em" color="primary" glossy rounded style="width: 10vw"
+                class="col q-ma-xs">4</q-btn>
+              <q-btn @click="addNumberToPhone(5)" size="1.5em" color="primary" glossy rounded style="width: 10vw"
+                class="col q-ma-xs">5</q-btn>
+              <q-btn @click="addNumberToPhone(6)" size="1.5em" color="primary" glossy rounded style="width: 10vw"
+                class="col q-ma-xs">6</q-btn>
             </div>
             <div class="row">
-              <q-btn @click="addNumberToPhone(1)" size="1.5em" color="primary" glossy rounded style="width: 10vw" class="col q-ma-xs">1</q-btn>
-              <q-btn @click="addNumberToPhone(2)" size="1.5em" color="primary" glossy rounded style="width: 10vw" class="col q-ma-xs">2</q-btn>
-              <q-btn @click="addNumberToPhone(3)" size="1.5em" color="primary" glossy rounded style="width: 10vw" class="col q-ma-xs">3</q-btn>
+              <q-btn @click="addNumberToPhone(1)" size="1.5em" color="primary" glossy rounded style="width: 10vw"
+                class="col q-ma-xs">1</q-btn>
+              <q-btn @click="addNumberToPhone(2)" size="1.5em" color="primary" glossy rounded style="width: 10vw"
+                class="col q-ma-xs">2</q-btn>
+              <q-btn @click="addNumberToPhone(3)" size="1.5em" color="primary" glossy rounded style="width: 10vw"
+                class="col q-ma-xs">3</q-btn>
             </div>
             <div class="row">
-              <q-btn @click="substractNumberFromPhone()" size="1.5em" color="red" glossy rounded style="width: 10vw" class="col q-ma-xs">C</q-btn>
-              <q-btn @click="addNumberToPhone(0)" size="1.5em" color="primary" glossy rounded style="width: 10vw" class="col q-ma-xs">0</q-btn>
-              <q-btn @click="reset()" size="1.5em" color="secondary" glossy rounded style="width: 10vw" class="col q-ma-xs">reset</q-btn>
+              <q-btn @click="substractNumberFromPhone()" size="1.5em" color="red" glossy rounded style="width: 10vw"
+                class="col q-ma-xs">C</q-btn>
+              <q-btn @click="addNumberToPhone(0)" size="1.5em" color="primary" glossy rounded style="width: 10vw"
+                class="col q-ma-xs">0</q-btn>
+              <q-btn @click="reset()" size="1.5em" color="secondary" glossy rounded style="width: 10vw"
+                class="col q-ma-xs">reset</q-btn>
             </div>
           </q-btn-dropdown>
           <q-btn glossy class="q-ml-xs text-body1" color="primary" rounded label="resetuj" @click="reset()"></q-btn>
@@ -94,32 +123,37 @@
             <q-img contain fit=none style="max-height: 25vh;" class="text-body1" alt="zdjęcie profilowe"
               :src="(`${local}/files/getFile?uuid=${member.image}`)" />
           </div>
-          <div class="col text-bold text-black" :class="member.active ? 'col' : 'col-6'">
+          <div class="col text-bold text-black" :class="member.active ? 'col' : 'col-5'">
             <div class="q-mt-xs q-pl-md text-h6">{{ member.firstName }} {{ member.secondName }}</div>
             <div class="q-mt-xs q-pl-md">Numer Legitymacji: {{ member.legitimationNumber }}</div>
             <div class="q-mt-xs q-pl-md" :class="member.active ? '' : 'text-bold text-h6 bg-warning rounded pulse'">
               Składka ważna do: {{
-              convertDate(member.history.contributionList[0].validThru) }}</div>
+                convertDate(member.history.contributionList[0].validThru) }}</div>
             <div class="q-mt-xs q-pl-md" v-if="member.shootingPatent.patentNumber != null">Patent numer: {{
               member.shootingPatent.patentNumber }} {{ member.shootingPatent.pistolPermission ? 'P' : '' }}{{
-              member.shootingPatent.riflePermission ? 'K' : '' }}{{ member.shootingPatent.shotgunPermission ? 'S' : ''
+                member.shootingPatent.riflePermission ? 'K' : '' }}{{ member.shootingPatent.shotgunPermission ? 'S' : ''
               }}
             </div>
             <div class="q-mt-xs q-pl-md" v-if="member.license.number != null"
               :class="member.license.valid ? '' : 'bg-red rounded pulse'">Licencja numer: {{ member.license.number }}
               Ważna do: {{
-              convertDate(member.license.validThru) }}</div>
+                convertDate(member.license.validThru) }}</div>
             <div class="q-mt-xs q-pl-md" v-if="member.weaponPermission.number != null">Pozwolenie numer: {{
               member.weaponPermission.number }}</div>
             <div class="q-mt-xs q-pl-md">Ilość startów: Pistolet: {{ member.history.pistolCounter }} Karabin: {{
               member.history.rifleCounter }} Strzelba: {{ member.history.shotgunCounter }}</div>
           </div>
-          <div v-if="member != null" class="self-center text-center" :class="member.active ? '' : 'col-3'">
-            <div v-if="!member.active" class="text-bold text-h6" style="display: flex; justify-content: center;">
-              Ureguluj swoje składki członkowskie!</div>
+          <div v-if="member != null" class="self-center text-left col-4">
+            <div v-if="!member.active" class="text-bold text-h6" style="display: flex; justify-content: left;">
+              - Ureguluj swoje składki członkowskie!</div>
             <div v-if="member.license.number != null && !member.license.valid" class="text-bold text-h6"
-              style="display: flex; justify-content: center;">
-              Masz nieaktualną licencję zadowniczą!</div>
+              style="display: flex; justify-content: left;">
+              - Masz nieaktualną licencję zadowniczą!</div>
+            <div v-if="member.note != null" class="text-bold text-h6 col" style="display: flex; justify-content: left;">
+              <div class="col">
+                <q-btn label="odczytaj notatkę" color="secondary" class="pulse" rounded @click="note = true" />
+              </div>
+            </div>
           </div>
         </div>
         <div v-if="otherPerson != null">
@@ -137,14 +171,15 @@
         <div v-if="member == null && otherPerson == null && nonMember" class="col">
           <q-checkbox v-model="rememberMe"
             @input="nonMemberClubName = ''; nonMemberPhoneNumber = ''; getAllClubsToTournament()"
-            class="text-positive full-width" label="Zapamiętaj Mnie - twoje dane będą przechowywane w celach rejestracji pobytu na strzelnicy i startu w zawodach klubowych"/>
+            class="text-positive full-width"
+            label="Zapamiętaj Mnie - twoje dane będą przechowywane w celach rejestracji pobytu na strzelnicy i startu w zawodach klubowych" />
           <q-input class="rounded q-pl-md" v-model="nonMemberFirstName" filled label="Imię *" dense
             input-class="text-positive" label-color="positive"
-            :style="`${nonMemberFirstName == ''? 'border: 1px solid green;' : ''}`"
+            :style="`${nonMemberFirstName == '' ? 'border: 1px solid green;' : ''}`"
             onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode === 45" />
           <q-input class="rounded q-pl-md" v-model="nonMemberSecondName" filled label="Nazwisko *" dense
             input-class="text-positive" label-color="positive"
-            :style="`${nonMemberSecondName == ''? 'border: 1px solid green;' : ''}`"
+            :style="`${nonMemberSecondName == '' ? 'border: 1px solid green;' : ''}`"
             onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode > 210 && event.charCode < 400) || event.charCode === 45" />
           <q-checkbox v-model="rodo" class="text-positive full-width rounded"
             :style="`${!rodo ? 'border: 1px solid green;' : ''}`">Zgoda na przetwarzanie danych
@@ -170,7 +205,7 @@
                 </q-select>
               </div>
               <q-input v-model="nonMemberPhoneNumber" label="Numer Telefonu *" filled
-                :style="`${nonMemberPhoneNumber == '' || nonMemberPhoneNumber.length <11 ? 'border: 1px solid green;' : ''}`"
+                :style="`${nonMemberPhoneNumber == '' || nonMemberPhoneNumber.length < 11 ? 'border: 1px solid green;' : ''}`"
                 dense input-class="text-positive" class="rounded" mask="### ### ###" label-color="positive" />
             </div>
             <div class="col self-center text-positive text-h6 text-bold q-pl-md"
@@ -179,23 +214,23 @@
           </div>
           <div class="row text-positive rounded">
             <q-radio v-model="address" @input="permission = false" val="true" color="primary"
-              :style="`${!address && !permission? 'border: 1px solid green;' : ''}`"
+              :style="`${!address && !permission ? 'border: 1px solid green;' : ''}`"
               class="text-positive self-center rounded q-pr-md q-pl-md">Adres zamieszkania *</q-radio>
             <div class="self-center text-white">&nbsp; / &nbsp;</div>
             <q-radio v-model="permission" @input="address = false" val="true" color="primary"
-              :style="`${!address && !permission? 'border: 1px solid green;' : ''}`"
+              :style="`${!address && !permission ? 'border: 1px solid green;' : ''}`"
               class="text-positive self-center rounded q-pr-md q-pl-md">Numer Pozwolenia na Broń *</q-radio>
           </div>
           <div v-if="address">
             <q-input class="rounded q-pl-md" filled v-model="nonMemberPostOfficeCity" label="Miasto *" dense
               input-class="text-positive" label-color="positive"
-              :style="`${nonMemberPostOfficeCity == ''? 'border: 1px solid green;' : ''}`" />
+              :style="`${nonMemberPostOfficeCity == '' ? 'border: 1px solid green;' : ''}`" />
             <q-input class="rounded q-pl-md" filled v-model="nonMemberZipCode" label="Kod Pocztowy *" mask="##-###"
               dense input-class="text-positive" label-color="positive"
-              :style="`${nonMemberZipCode == '' || nonMemberZipCode.length < 6? 'border: 1px solid green;' : ''}`" />
+              :style="`${nonMemberZipCode == '' || nonMemberZipCode.length < 6 ? 'border: 1px solid green;' : ''}`" />
             <q-input class="rounded q-pl-md" filled v-model="nonMemberStreet" label="Ulica *" dense
               input-class="text-positive" label-color="positive"
-              :style="`${nonMemberStreet == ''? 'border: 1px solid green;' : ''}`" />
+              :style="`${nonMemberStreet == '' ? 'border: 1px solid green;' : ''}`" />
             <q-input class="rounded q-pl-md" filled v-model="nonMemberStreetNumber"
               @input="nonMemberStreetNumber.length === 0 ? nonMemberStreetNumber = '' : ''" label="Numer Ulicy *" dense
               input-class="text-positive" label-color="positive"
@@ -223,31 +258,47 @@
         </q-card-section>
         <q-card-section class="q-pa-none q-ma-none">
           <div class="row">
-            <q-card-actions align="left" class="text-positive col">
+            <div class="full-width" align="right">
+              <q-checkbox color="primary" keep-color left-label v-model="statementOnReadingTheShootingPlaceRegulations"
+                class="text-positive q-mr-xl">Zapoznałem się z
+                regulaminem strzelnicy i {{shootingPlace === 'rcs' ? 'RODO' : 'polityką prywatności'}}</q-checkbox>
+            </div>
+            <q-card-actions align="left" class="text-positive col-3">
               <label>
                 Chcesz mieć program u siebie? Napisz do mnie: i.zebrowski.ul@gmail.com
               </label>
             </q-card-actions>
-            <q-card-actions align="right" class="flex column text-right">
-              <div class="full-width">
-                <q-checkbox color="primary" keep-color left-label
-                  v-model="statementOnReadingTheShootingPlaceRegulations" class="text-positive q-mr-xl">Zapoznałem się z
-                  regulaminem strzelnicy i polityką prywatności</q-checkbox>
-              </div>
-              <div class="full-width">
-                <q-btn glossy :loading="loading[0]" :disable="dis" class="q-mr-xl"
-                  v-if="statementOnReadingTheShootingPlaceRegulations && rodo && (member != null || otherPerson != null || (nonMemberFirstName != '' && nonMemberSecondName != ''))"
-                  @click="dis = true; simulateProgress()" label="zapisz" color="primary"></q-btn>
-                <q-btn glossy v-else label="zapisz" color="grey" class="q-mr-xl">
-                  <q-tooltip v-if="!statementOnReadingTheShootingPlaceRegulations || !rodo || nonMemberClubName == ''"
-                    content-class="text-h6 bg-primary" :offset="[0, 35]" self="bottom middle" anchor="top middle">
-                    <div v-if="!statementOnReadingTheShootingPlaceRegulations">-> Zaakceptuj zapoznanie się z
-                      regulaminem na strzelnicy</div>
-                    <div v-if="!rodo">-> Zaakceptuj politykę prywatności</div>
-                    <div v-if="nonMemberClubName == '' && nonMember && rememberMe">-> Wybierz Klub (Wybierz "BRAK" jeśli
-                      nie ma przynależności)</div>
-                  </q-tooltip>
-                </q-btn>
+            <q-card-actions align="right" class="col text-right">
+              <div class="col row text-positive">
+                <div v-if="member != null && member.note != null && !acceptNote" class="text-caption text-center col">{{
+                  !acceptNote ? 'Notatka'
+                    : ''
+                }}</div>
+                <div class="text-caption text-center col">{{ !rodo ? 'RODO' :
+                  '' }}
+                </div>
+                <div class="text-caption text-center col">{{
+                  !statementOnReadingTheShootingPlaceRegulations ?
+                    'Regulamin' : '' }}</div>
+                <div class="col">
+                  <q-btn glossy :loading="loading[0]" :disable="dis" class="q-mr-xl"
+                    v-if="statementOnReadingTheShootingPlaceRegulations && acceptNote && rodo && (member != null || otherPerson != null || (nonMemberFirstName != '' && nonMemberSecondName != ''))"
+                    @click="dis = true; simulateProgress()" label="zapisz" color="primary"></q-btn>
+                  <q-btn glossy v-else label="zapisz" color="grey" class="q-mr-xl">
+                    <q-tooltip
+                      v-if="!statementOnReadingTheShootingPlaceRegulations || !rodo || !acceptNote || nonMemberClubName == ''"
+                      content-class="text-h6 bg-primary" :offset="[0, 35]" self="bottom middle" anchor="top middle">
+                      <div v-if="!statementOnReadingTheShootingPlaceRegulations">-> Zaakceptuj zapoznanie się z
+                        regulaminem na strzelnicy</div>
+                      <div v-if="!rodo">-> Zaakceptuj politykę prywatności</div>
+                      <div v-if="nonMemberClubName == '' && nonMember && rememberMe">-> Wybierz Klub (Wybierz "BRAK"
+                        jeśli nie
+                        ma przynależności)</div>
+                      <div v-if="member != null && member.note != null && !acceptNote">-> Potwierdź odczytanie notatki
+                      </div>
+                    </q-tooltip>
+                  </q-btn>
+                </div>
               </div>
             </q-card-actions>
           </div>
@@ -283,6 +334,28 @@
 
       </q-card>
     </q-dialog>
+    <q-dialog v-model="note" :persistent="!acceptNote" v-if="member != null">
+      <q-card class="bg-dark text-positive rounded" style="min-width: 50vw;">
+        <q-card-actions align="right">
+          <div class="text-h5 text-center text-bold col">Notatka dla Klubowicza</div>
+          <q-btn v-if="!acceptNote" class="col-3" @click="reset()" label="zamknij i zresetuj" color="primary" rounded />
+          <q-btn v-if="acceptNote" icon="close" @click="note = false" color="primary" round v-close-popup />
+        </q-card-actions>
+        <q-card-section>
+          <div class="text-h6 text-center">{{ member.note }}</div>
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn @click="acceptNote = true, note = false" glossy rounded :color="!acceptNote ? 'secondary' : 'green'"
+            v-close-popup>
+            <div>
+              <div class="col">
+                {{ !acceptNote ? 'Potwierdź odczytanie notatki' : 'Potwierdzono - Zamknij' }}
+              </div>
+            </div>
+          </q-btn>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 <style src="../style/style.scss" lang="scss"></style>
@@ -310,7 +383,6 @@ export default {
       componentFactory: () => import('components/RODO/RCSPanaszewRODO'),
       loading: SkeletonBox
     })
-
   },
   setup () {
     function simulateProgress () {
@@ -334,6 +406,8 @@ export default {
   data () {
     return {
       loading: [false],
+      acceptNote: false,
+      note: false,
       openKeyboard: false,
       isPwd: true,
       dis: false,
@@ -379,6 +453,11 @@ export default {
           response.json().then(response => {
             this.rodo = true
             this.member = response
+            if (this.member.note == null) {
+              this.acceptNote = true
+            } else {
+              this.note = true
+            }
           })
         } else {
           response.text().then(response => {
@@ -402,6 +481,8 @@ export default {
       setVerticalScrollPosition(window, window.outerHeight, 500)
     },
     reset () {
+      this.nonMember = false
+      this.acceptNote = false
       this.isPwd = true
       this.member = null
       this.otherPerson = null
@@ -428,6 +509,7 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           response.json().then(response => {
+            this.acceptNote = true
             this.rodo = true
             this.otherPerson = response
           })
@@ -485,6 +567,9 @@ export default {
         }).then(response => {
           if (response.status === 200) {
             response.text().then(response => {
+              if (this.member.note != null) {
+                this.addNote(this.member.uuid, null)
+              }
               this.reset()
               this.clear()
               this.message = response
@@ -561,6 +646,15 @@ export default {
     },
     clear () {
       this.$refs.signaturePad.clearSignature()
+    },
+    addNote (uuid, note) {
+      fetch(`${this.local}/member/note?uuid=${uuid}&note=${note}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(note)
+      })
     },
     addNumberToPesel (number) {
       this.pesel = this.pesel + number

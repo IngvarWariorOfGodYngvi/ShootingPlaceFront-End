@@ -57,9 +57,9 @@
             <div>{{ item.issuanceDate }}</div>
             <div>{{ item.issuanceTime }}</div>
           </div>
-          <div class="col">{{ item.gun.modelName }}</div>
-          <div class="col">{{ item.gun.serialNumber }}</div>
-          <div class="col">{{ item.gun.gunCertificateSerialNumber }}</div>
+          <div class="col">{{ item.gunRepresentation.modelName }}</div>
+          <div class="col">{{ item.gunRepresentation.serialNumber }}</div>
+          <div class="col">{{ item.gunRepresentation.gunCertificateSerialNumber }}</div>
           <div class="col">{{ item.gunTakerName }}</div>
           <div class="col">{{ item.issuanceBy }}</div>
           <div class="col">{{ item.gunReturnerName }}</div>

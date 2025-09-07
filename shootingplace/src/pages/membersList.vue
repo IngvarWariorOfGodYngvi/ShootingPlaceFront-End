@@ -34,7 +34,7 @@
           emit-value map-options options-dense options-selected-class="bg-negative text-positive" v-model="memberName"
           bg-color="primary" dense use-input hide-selected fill-input :options="options" @filter="filter"
           @input="allMember = false">
-          <template v-slot:option="option">
+          <template v-slot:option="option" >
             <q-item class="rounded" dense style="padding: 0; margin: 0;" v-bind="option['itemProps']"
               v-on="option.itemEvents">
               <q-item-section style="padding: 0.5em; margin: 0;" :class="option.opt.active ? '' : 'bg-warning rounded'"
@@ -92,14 +92,6 @@
               <q-checkbox dense class="full-width"
                 @input="memberName = ''; temp = null; adult = null; active = null; erase = false; getMembersNames(); getAllMemberDTO()"
                 v-model="allMember" label="Zapisani" />
-                <!-- <q-radio @input="member = null; allMember = false; getMembersNames(); rearrangeMemberDTO()" color="green"
-                  v-model="adult" :val="true" label="Grupa Ogólna" />
-                <q-radio @input="member = null; allMember = false; getMembersNames(); rearrangeMemberDTO()"
-                  color="warning" v-model="adult" :val="false" label="Grupa Młodzieżowa" />
-                <q-radio @input="member = null; allMember = false; erase = false; getMembersNames(); rearrangeMemberDTO()"
-                  color="green" v-model="active" :val="true" label="Aktywni" />
-                <q-radio @input="member = null; allMember = false; getMembersNames(); rearrangeMemberDTO()"
-                  color="warning" v-model="active" :val="false" label="Nieaktywni" /> -->
                   <q-checkbox dense class="full-width"
                     @input="memberDTOArgRearrangeTable=[];memberName = ''; temp = null; allMember = !erase; active = false; getMembersNames(); getAllMemberDTOWithArgs(); erasedType = erasedTypes[0]"
                     color="red" v-model="erase" :val="false" label="Skreśleni" />
@@ -186,7 +178,7 @@
                 <q-icon size="2em" :name="sortLicense ? 'arrow_drop_up' : 'arrow_drop_down'" />
                 Licencja
               </th>
-              <th class="text-center" @click="sortF('adult')">
+              <th v-if="!erase" class="text-center" @click="sortF('adult')">
                 <q-icon size="2em" :name="sortAdult ? 'arrow_drop_up' : 'arrow_drop_down'" />
                 Grupa
               </th>
@@ -205,19 +197,18 @@
             @mouseenter="item.image!=null?getUrl (item.image):visible=false"
             @click.ctrl="pushOrRemoveEmailToList(item.legitimationNumber)"
             @click.exact="showloading(), allMember = false; memberName = item; temp = item.legitimationNumber;visible = false">
-            <td style="width:25%;" :class="item.club.id === 1 && (!item.declarationLOK && shootingPlace==='prod')? 'xyz bg-warning' : item.club.id === 1 && (item.declarationLOK && shootingPlace==='prod')? 'xyz' : item.club.id != 1? 'xyz bg-secondary text-white':'xyz text-positive'">
-            <!-- <td style="width:25%;" :class="item.club.id === 1 && (!item.declarationLOK && shootingPlace==='prod')? 'xyz bg-warning' : item.club.id === 1 && (item.declarationLOK && shootingPlace==='prod')? 'xyz' : 'xyz text-white'"> -->
+            <td class="rounded xyz" style="width:25%;" :class="item.club.id === 1 && (!item.declarationLOK && shootingPlace==='prod')? 'bg-warning text-white' : item.club.id === 1 && (item.declarationLOK && shootingPlace==='prod')? '' : item.club.id != 1? 'bg-secondary text-white':'text-positive'">
               <div><b>{{ index + 1 + ' ' }}</b>{{item.fullName}}  {{ !item.declarationLOK && shootingPlace === 'prod'? ' - Brak Deklaracji LOK' : ''}}</div>
               <div v-if="item.club.id != 1">{{ item.club.name }}</div>
             </td>
             <td style="width:10%;" class="text-center">
               {{ convertDate(item.joinDate) }}
             </td>
-            <td style="width:5%;"
+            <td style="width:5%;" class="rounded"
               :class="item.pzss ? 'bg-green-3 text-center text-black' : 'bg-warning text-center text-black'">
               <q-icon :name="item.pzss ? 'done' : 'cancel'" :color="item.pzss ? '' : 'primary'" size="1rem" />
             </td>
-            <td style="width:5%;"
+            <td style="width:5%;" class="rounded"
               :class="item.image != null ? 'bg-green-3 text-center text-black' : 'text-center text-black'">
               <q-icon :name="item.image != null ? 'done' : 'cancel'" :color="item.image != null ? '' : 'primary'"
                 size="1rem" />
@@ -225,24 +216,18 @@
             <td style="width:10%;" class="text-center text-bold">
               {{ item.legitimationNumber }}
             </td>
-            <td style="width:15%;" v-if="item.license.number != null"
-              :class="item.license.valid ? 'bg-green-3 text-center text-black' : 'bg-warning text-center text-black'">
-              <q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">
+            <td style="width:15%;" class="rounded text-center"
+              :class="item.license.number != null ? item.license.valid ? 'bg-green-3 text-black' : 'bg-warning text-black' : ''">
+              <div v-if="item.license.number != null">{{ item.license.number }}</div>
+              <div v-if="item.license.number == null" class="text-center"><q-icon v-for="i in 5" :key="i" name="density_large">{{ i }}</q-icon></div>
+              <q-tooltip v-if="item.license.number != null" anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">
                 {{item.license.valid ? 'Aktualna' : `Nieakutalna - ważna do: ${convertDate(item.license.validThru)}`}}
               </q-tooltip>
-              <div>{{ item.license.number }}</div>
-            </td>
-            <td style="width:15%;" v-if="item.license.number == null" class="text-center">
-              <q-icon name="density_large" />
-              <q-icon name="density_large" />
-              <q-icon name="density_large" />
-              <q-icon name="density_large" />
-              <q-icon name="density_large" />
             </td>
             <td style="width: 15%" class="text-center">
               {{ item.adult ? 'Ogólna' : 'Młodzieżowa' }}
             </td>
-            <td :class="item.active ? 'bg-green-3 text-center text-black' : 'bg-red-3 text-center text-black'">
+            <td :class="item.active ? 'bg-green-3 text-center text-black' : 'bg-red-3 text-center text-black'" class="rounded">
               {{ item.active ? 'Klubowicz Aktywny' : 'Klubowicz Nieaktywny' }}
             </td>
           </tr>
@@ -257,31 +242,13 @@
             <td style="width:10%;" class="text-center text-bold">
               {{ item.legitimationNumber }}
             </td>
-            <td v-if="item.license.number != null && item.license.valid" class="bg-green-3 text-center">
-              <q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">
-                Aktualna
+            <td style="width:15%;" class="rounded text-center text-positive"
+              :class="item.license.number != null ? item.license.valid ? 'bg-green-3 text-black' : 'bg-warning text-black' : ''">
+              <div v-if="item.license.number != null">{{ item.license.number }}</div>
+              <div v-if="item.license.number == null" class="text-center"><q-icon v-for="i in 5" :key="i" name="density_large">{{ i }}</q-icon></div>
+              <q-tooltip v-if="item.license.number != null" anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">
+                {{item.license.valid ? 'Aktualna' : `Nieakutalna - ważna do: ${convertDate(item.license.validThru)}`}}
               </q-tooltip>
-              <div>{{ item.license.number }}</div>
-            </td>
-            <td v-if="item.license.number != null && item.license.valid" class="bg-green-3 text-center">
-              <q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">
-                Aktualna
-              </q-tooltip>
-              <div>{{ item.license.number }}</div>
-            </td>
-            <td v-if="item.license.number != null && !item.license.valid" class="bg-warning text-center">
-              <q-tooltip anchor="top middle" :offset="[35, 35]" content-class="text-body1 bg-secondary">
-                Nieaktualna -
-                ważna do: {{ convertDate(item.license.validThru) }}
-              </q-tooltip>
-              <div>{{ item.license.number }}</div>
-            </td>
-            <td v-if="item.license.number == null" class="text-center">
-              <q-icon name="density_large" />
-              <q-icon name="density_large" />
-              <q-icon name="density_large" />
-              <q-icon name="density_large" />
-              <q-icon name="density_large" />
             </td>
             <td>
               <div class="self-center full-width text-center">

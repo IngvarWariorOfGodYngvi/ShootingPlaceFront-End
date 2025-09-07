@@ -312,7 +312,7 @@ export default {
         this.message = 'Coś poszło nie tak'
         this.failure = true
       } else {
-        fetch(`${this.local}/users/createUser?firstName=${this.userFirstName}&secondName=${this.userSecondName}&subType=${this.userSubTypeSelect}&pinCode=${this.userCode}&superPinCode=${this.code}&memberUUID=${this.memberUUID}&otherID=${this.otherID}`, {
+        fetch(`${this.local}/users/createUser?firstName=${this.userFirstName}&secondName=${this.userSecondName}&userPermissionsList=${this.userSubTypeSelect}&pinCode=${this.userCode}&superPinCode=${this.code}&memberUUID=${this.memberUUID}&otherID=${this.otherID}`, {
           method: 'POST'
         }).then(response => {
           if (response.status === 201) {

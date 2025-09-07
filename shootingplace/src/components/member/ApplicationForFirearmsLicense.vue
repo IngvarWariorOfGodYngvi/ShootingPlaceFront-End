@@ -1,6 +1,6 @@
 <template>
   <div class="full-width rounded">
-    <q-btn glossy class="full-width" :disable="disable" @click="dialog=true" color="secondary" label="Pobierz wniosek o pozwolenie na broń"/>
+    <q-btn glossy class="full-width" :disable="disable" @click="dialog=true" color="secondary" rounded label="Pobierz wniosek o pozwolenie na broń"/>
     <q-dialog v-model="dialog">
       <q-card style="width: 60vw;" class="bg-dark text-positive">
         <q-card-section class="row items-center">
@@ -147,9 +147,6 @@ export default {
         this.failure = true
         this.autoClose()
       })
-    },
-    darkSet () {
-      return JSON.parse(window.localStorage.getItem('BackgroundDark'))
     },
     autoClose () {
       setTimeout(() => {

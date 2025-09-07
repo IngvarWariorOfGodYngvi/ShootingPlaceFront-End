@@ -12,12 +12,20 @@
             <q-btn color="primary" dense round icon="close" v-close-popup/>
           </q-card-actions>
         <q-card-section class="col">
-          <q-select label="Wybierz broń" popup-content-class="bg-primary text-positive"
-            :option-label="opt => opt !== '' ? (Object(opt.modelName + ' ' + opt.serialNumber).toString()) : ''"
-            emit-value map-options options-dense bg-color="primary" rounded standout="" input-class="text-white" label-color="white"
-            dark v-model="gun" fill-input dense use-input hide-selected input-debounce="0" :options="options"
-            @input="temp = gun" @filter="filterFn" class="bg-dark text-positive col">
-          </q-select>
+          <q-select label="Wybierz broń" color="primary" input-class="text-white" label-color="white"
+          popup-content-class="bg-dark text-positive" rounded standout=""
+          :option-label="opt => opt.modelName + ' ' + opt.serialNumber"
+          emit-value map-options options-dense options-selected-class="bg-negative text-positive" v-model="gun"
+          bg-color="primary" dense use-input hide-selected fill-input :options="options"
+           @input="temp = gun" @filter="filterFn" class="bg-dark text-positive col">
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">
+                Brak wyników
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
         </q-card-section>
         <q-card-section class="row col q-pl-md q-pr-md text-bold" v-if="temp != null">
           <div class="col">Rodzaj</div>

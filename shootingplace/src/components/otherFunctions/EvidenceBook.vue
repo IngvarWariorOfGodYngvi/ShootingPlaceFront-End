@@ -32,9 +32,9 @@
             </template>
           </q-input>
         <div class="q-pa-md">
-          <q-btn class="q-mr-md" color="primary" @click="getRecordsFromBook(firstDate, secondDate)"
+          <q-btn glossy rounded class="q-mr-md" color="primary" @click="getRecordsFromBook(firstDate, secondDate)"
             label="Wyszukaj"/>
-          <q-btn color="primary" label="pobierz listę" @click="getJudgingReport(firstDate, secondDate)"/>
+          <q-btn glossy rounded color="primary" label="pobierz listę" @click="getReport(firstDate, secondDate)"/>
         </div>
       </q-card-section>
       <q-card-section >
@@ -63,6 +63,13 @@
           </template>
         </q-virtual-scroll>
       </q-card-section>
+      <q-dialog position="top" v-model="success">
+        <q-card>
+          <q-card-section class="col">
+            <div class="text-center text-h5 text-bold">Pobrano Listę</div>
+          </q-card-section>
+        </q-card>
+      </q-dialog>
   </div>
 </template>
 
@@ -91,7 +98,7 @@ export default {
           this.evidenceBookList = response
         })
     },
-    getJudgingReport (firstDate, secondDate) {
+    getReport (firstDate, secondDate) {
       if (firstDate != null && secondDate != null) {
         axios({
           url: `${this.local}/files/downloadEvidenceBook?firstDate=${firstDate}&secondDate=${secondDate}`,
@@ -101,10 +108,10 @@ export default {
           const fileURL = window.URL.createObjectURL(new Blob([response.data]))
           const fileLink = document.createElement('a')
           fileLink.href = fileURL
-          fileLink.setAttribute('download', 'Książka pobytu na strzelnicy od ' + firstDate + ' do ' + secondDate + '.pdf')
+          fileLink.setAttribute('download', 'Książka rejestru pobytu na strzelnicy od ' + firstDate + ' do ' + secondDate + '.pdf')
           document.body.appendChild(fileLink)
           fileLink.click()
-          this.listDownload = true
+          this.success = true
           this.autoClose()
         })
       }
@@ -118,9 +125,6 @@ export default {
         this.$q.loading.hide()
         this.timer = 0
       }, 2000)
-    },
-    darkSet () {
-      return JSON.parse(window.localStorage.getItem('BackgroundDark'))
     },
     createTodayDate () {
       const date = new Date()

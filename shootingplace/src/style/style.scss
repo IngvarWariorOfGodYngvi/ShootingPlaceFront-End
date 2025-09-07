@@ -10,10 +10,6 @@
   background-repeat: no-repeat;
   background-position: center;
   background-clip: padding-box;
-
-}
-.rounded > * {
-  border-radius: 1em;;
 }
 .line {
   border-bottom: 2px solid;
@@ -64,7 +60,7 @@
 
 }
 .rounded {
-  border-radius: 10px;
+  border-radius: 1em;
   border: none;
 }
 .hover {
@@ -189,7 +185,6 @@ label {
 }
 .pulse {
   animation: pulse 2s infinite;
-  border-radius: 50%;
 }
 @keyframes pulse {
 	0% {
@@ -229,11 +224,6 @@ label {
   transition-duration: 20s;
   transition-delay: 5s;
 }
-.rounded {
-  border-radius: 2em;
-  border: none;
-}
-
 #canvas {
   border: 1px solid black;
 }

@@ -5,7 +5,7 @@
         <div class="full-width text-center">
           <div @dblclick="main && !mobile ? editLicense = true : ''" class="col q-pa-md hover">
             <Tooltip2clickTip></Tooltip2clickTip>
-            <div class="col text-center text-h6 text-bold">Licencja</div>
+            <div class="col text-center text-h6 text-bold text-positive">Licencja</div>
           </div>
           <div class="row hover1">
             <div @dblclick="main && !mobile ? editLicense = true : ''" class="col text-left"

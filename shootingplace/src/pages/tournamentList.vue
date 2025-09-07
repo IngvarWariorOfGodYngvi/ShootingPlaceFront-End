@@ -2059,9 +2059,9 @@ export default {
         this.autoClose()
         return
       }
-      const { local, tournamentUUID, otherID, memberUUID, name, date } = this
+      const { local, tournamentUUID, otherID, memberUUID, name, date, startNumber, a5rotate } = this
       axios({
-        url: `${local}/files/downloadMetric/${tournamentUUID}?otherID=${otherID}&memberUUID=${memberUUID}&competitions=${info}&startNumber=${this.startNumber}&a5rotate=${this.a5rotate}`,
+        url: `${local}/files/downloadMetric/${tournamentUUID}?otherID=${otherID}&memberUUID=${memberUUID}&competitions=${info}&startNumber=${startNumber}&a5rotate=${a5rotate}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {

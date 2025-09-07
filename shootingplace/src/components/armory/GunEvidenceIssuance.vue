@@ -37,7 +37,7 @@
         </div>
       </q-expansion-item>
     </q-card-section>
-    <q-dialog v-model="addGuns" @show="gunDate = createTodayDate(); gunTime = createTodayTime()"
+    <q-dialog v-model="addGuns" @show="gunDate = temp.usedDate; gunTime = temp.usedTime"
       @keypress.enter="AddListOfGunToList(selection, gunDate, gunTime)">
       <q-card class="bg-dark text-positive" style="min-width: 50vw">
         <q-card-actions align="right">
@@ -139,7 +139,7 @@
         </q-card-actions>
         <q-card-section class="row">
           <div class="col-9"></div>
-          <q-input v-model="cardNumber" dense class="col" label="Zeskanuj Kartę" type="password" @input="find()" color="primary" :bg-color="fin?'primary':'secondary'" label-color="white" rounded standout="">
+          <q-input v-model="cardNumber" dense class="col" label="Zeskanuj Kartę" type="password" inputmode="numeric" @input="find()" color="primary" :bg-color="fin?'primary':'secondary'" label-color="white" rounded standout="">
             <template v-slot:append>
               <q-icon :color="fin?'secondary':'primary'" :name="fin?'done':'cancel'"></q-icon>
             </template>
@@ -162,12 +162,12 @@
             </div>
             <div class="col">{{ temp.gun.modelName }}</div>
             <div class="col">
-              <div>{{ temp.gun.caliber }}</div>
-              <div>{{ temp.gun.productionYear }}</div>
+              <div>{{ temp.gunRepresentation.caliber }}</div>
+              <div>{{ temp.gunRepresentation.productionYear }}</div>
             </div>
-            <div class="col">{{ temp.gun.serialNumber }}</div>
-            <div class="col">{{ temp.gun.numberOfMagazines }}</div>
-            <div class="col">{{ temp.gun.gunCertificateSerialNumber }}</div>
+            <div class="col">{{ temp.gunRepresentation.serialNumber }}</div>
+            <div class="col">{{ temp.gunRepresentation.numberOfMagazines }}</div>
+            <div class="col">{{ temp.gunRepresentation.gunCertificateSerialNumber }}</div>
           </div>
           <q-checkbox v-model="isMember" color="primary" keep-color label="Pobierający to Klubowicz"></q-checkbox>
           <q-select v-if="isMember" label="Wybierz osobę" color="primary" input-class="text-white" label-color="white"
@@ -212,13 +212,13 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn label="anuluj" color="secondary" v-close-popup />
-          <q-btn label="potwierdź" :disable="gunTakerName == ''" color="primary" @click="save1()" v-close-popup />
+          <q-btn glossy label="anuluj" color="secondary" v-close-popup />
+          <q-btn glossy label="potwierdź" :disable="gunTakerName == ''" color="primary" @click="save1()" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
     <q-dialog v-model="singIssuanceGunUsed" @hide="temp = null;"
-      @show="temp.gunDate = gunDate, temp.gunTimem = gunTime">
+      @show="gunDate = temp.issuanceDate">
       <q-card class="bg-dark text-positive" style="min-width: 75vw;" v-if="temp != null">
         <q-card-actions align="right">
           <div class="text-bold text-h6 text-center col">Podpis Wydającego Broń</div>
@@ -294,7 +294,9 @@
 
         <q-card-actions align="right">
           <q-btn glossy  label="anuluj" color="secondary" v-close-popup />
-          <q-btn glossy :disable="code == null || code.length <4" label="potwierdź" color="primary" @click="save()" v-close-popup />
+          <q-btn glossy :disable="code == null || code.length <4 || gunTime == null" label="potwierdź" color="primary" @click="save()" v-close-popup >
+            <q-tooltip content-class="bg-primary text-white text-h6" v-if="gunTime == null">Uzupełnij godzinę wydania</q-tooltip>
+          </q-btn>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -373,8 +375,8 @@ export default {
       allGuns: [],
       gunsInUsed: [],
       selection: [],
-      gunDate: this.createTodayDate(),
-      gunTime: this.createTodayTime(),
+      gunDate: null,
+      gunTime: null,
       mobile: App.mobile,
       code: null,
       message: null,
@@ -490,7 +492,7 @@ export default {
           } else {
             response.text().then(response => {
               this.message = response
-              this.success = true
+              this.failure = true
             })
           }
         })
@@ -521,7 +523,7 @@ export default {
           } else {
             response.text().then(response => {
               this.message = response
-              this.success = true
+              this.failure = true
             })
           }
         })

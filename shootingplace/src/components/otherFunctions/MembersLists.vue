@@ -5,13 +5,17 @@
         <q-radio label="dorośli" v-model="condition" :val="true" />
         <q-radio label="młodzież" v-model="condition" :val="false" />
       </div>
-      <q-btn color="primary"
+      <q-btn glossy rounded color="primary"
         :label="condition ? 'pobierz listę wszystkich klubowiczów dorosłych PDF' : 'pobierz listę wszystkich klubowiczów młodzieżowych PDF'"
         @click=" showloading(); getAllMembersList()" />
       <p></p>
-      <q-btn color="green-3" text-color="black"
+      <q-btn glossy rounded color="green-6" text-color="black"
         :label="condition ? 'pobierz listę wszystkich klubowiczów dorosłych XLSX' : 'pobierz listę wszystkich klubowiczów młodzieżowych XLSX'"
         @click=" showloading(); getAllMembersListXLSXFile()" />
+      <p></p>
+      <q-btn glossy rounded color="green-6" text-color="black"
+        label="pobierz .csv wszystkich klubowiczów"
+        @click=" showloading(); getAllMembersEmailCSVFile()" />
     </div>
     <q-dialog position="top" v-model="listDownload">
       <q-card>
@@ -89,6 +93,22 @@ export default {
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
         fileLink.setAttribute('download', `Lista_klubowiczów_na_dzień ${this.nowDate}.pdf`)
+        document.body.appendChild(fileLink)
+        fileLink.click()
+        this.listDownload = true
+        this.autoClose()
+      })
+    },
+    getAllMembersEmailCSVFile () {
+      axios({
+        url: `${this.local}/files/downloadMemberEmailCSV`,
+        method: 'GET',
+        responseType: 'blob'
+      }).then(response => {
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        const fileLink = document.createElement('a')
+        fileLink.href = fileURL
+        fileLink.setAttribute('download', 'maile do klubowiczów.csv')
         document.body.appendChild(fileLink)
         fileLink.click()
         this.listDownload = true

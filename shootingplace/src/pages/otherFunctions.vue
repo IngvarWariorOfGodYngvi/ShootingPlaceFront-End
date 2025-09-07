@@ -29,19 +29,20 @@
       group="list">
       <q-card class="text-body2 text-positive bg-dark">
         <q-card-section>
-          <div class="q-pa-md text-center col full-width no-outline text-h5 text-bold">Dodatkowe Funkcje</div>
-          <q-select class="full-width" dense options-dense :dark="darkSet()" filled fill-input label-color="positive"
-            color="positive" input-class="text-positive" popup-content-class="bg-dark text-positive"
-            options-selected-class="bg-dark text-positive" :options-dark="darkSet()" v-model="choose"
-            :options="chooseSelect" label="Wybierz Opcję">
-            <template v-slot:no-option>
-              <q-item>
-                <q-item-section class="text-grey">
-                  Brak wyników
-                </q-item-section>
-              </q-item>
-            </template>
-          </q-select>
+          <div class="q-pa-md text-center col no-outline text-h5 text-bold">Dodatkowe Funkcje</div>
+          <q-select label="Wybierz Opcję" color="primary" input-class="text-white" label-color="white"
+          popup-content-class="bg-dark text-positive" rounded standout="" v-model="choose"
+          emit-value map-options options-dense options-selected-class="bg-negative text-positive"
+          bg-color="primary" dense use-input hide-selected fill-input :options="chooseSelect"
+          class="bg-dark text-positive col q-mb-md">
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">
+                Brak wyników
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
           <div v-if="choose === chooseSelect[0]" class="q-pa-md">
             <MembersLists></MembersLists>
           </div>
@@ -55,19 +56,16 @@
             <MembersErasedList></MembersErasedList>
           </div>
           <div v-if="choose === chooseSelect[4]" class="q-pa-md" style="height: 50vh">
-            <q-btn color="primary" label="pobierz listę obecności klubowiczów" @click="getAllMembersListToElection()" />
+            <q-btn glossy rounded color="primary" label="pobierz listę obecności klubowiczów .pdf" @click="getAllMembersListToElection()" />
           </div>
           <div v-if="choose === chooseSelect[5]" class="q-pa-md">
             <JudgingReport></JudgingReport>
           </div>
-          <div v-if="choose === chooseSelect[6]" class="q-pa-none row">
+          <div v-if="choose === chooseSelect[6]" class="q-pa-md">
             <WorkTimeReport></WorkTimeReport>
           </div>
           <div v-if="choose === chooseSelect[7]" class="q-pa-md">
             <EvidenceBook></EvidenceBook>
-          </div>
-          <div v-if="choose === chooseSelect[8]" class="q-pa-md">
-            <MembersToReportToPolice2></MembersToReportToPolice2>
           </div>
         </q-card-section>
       </q-card>
@@ -152,16 +150,12 @@ export default {
     MembersErasedList: lazyLoadComponent({
       componentFactory: () => import('components/otherFunctions/MembersErasedList.vue'),
       loading: SkeletonBox
-    }),
-    MembersToReportToPolice2: lazyLoadComponent({
-      componentFactory: () => import('components/otherFunctions/MembersToReportToPolice2.vue'),
-      loading: SkeletonBox
     })
   },
   data () {
     return {
       choose: null,
-      chooseSelect: ['Listy Klubowiczów', 'Lista do zgłoszenia na Policję', 'Lista do skreślenia', 'Lista skreślonych', 'Lista Obecności', 'Raport Sędziowania', 'Raport Czasu Pracy', 'Książka rejestru pobytu na strzelnicy', 'Lista do zgłoszenia na Policję2'],
+      chooseSelect: ['Listy Klubowiczów', 'Lista do zgłoszenia na Policję', 'Lista do skreślenia', 'Lista skreślonych', 'Lista Obecności', 'Raport Sędziowania', 'Raport Czasu Pracy', 'Książka rejestru pobytu na strzelnicy'],
       access: false,
       accessCode: '',
       accessMessage: '',

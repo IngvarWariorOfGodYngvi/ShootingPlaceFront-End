@@ -1,12 +1,11 @@
 <template>
   <div class="full-width">
-    <q-btn glossy class="full-width" rounded :disable="dis" :loading="loading[0]" @click="dialog=true" color="secondary" label="Pobierz deklarację członkowską LOK"/>
-    <q-dialog v-model="dialog">
+    <q-btn glossy class="full-width" rounded :disable="dis" :loading="loading[0]" @click="dialog=true" color="secondary" label="Pobierz kartę członkowską Klubowicza"/>
+    <q-dialog v-model="dialog" @keypress.enter="dis = true;dialog=false;simulateProgress()">
       <q-card class="bg-dark text-positive">
         <q-card-section class="row items-center">
-          <span class="text-h6">Czy na pewno chcesz pobrać Deklarację LOK?</span>
+          <span class="text-h6">Czy na pewno chcesz pobrać kartę Klubowicza?</span>
         </q-card-section>
-
         <q-card-actions align="right">
           <q-btn glossy text-color="white" label="anuluj" color="secondary" v-close-popup />
           <q-btn glossy text-color="white" label="Pobierz" color="primary" v-close-popup @click="dis=true;simulateProgress()" />
@@ -32,10 +31,10 @@
 
 <script>
 import axios from 'axios'
-import App from 'src/App.vue'
+import App from 'src/App'
 
 export default {
-  name: 'DeklaracjaLOK.vue',
+  name: 'PersonalCardPDF.vue',
   data () {
     return {
       dialog: false,
@@ -51,11 +50,11 @@ export default {
     function simulateProgress () {
       this.loading[0] = true
       if (this.dis) {
-        this.membershipDeclarationLOKPDF()
+        this.getPersonalCardPDF()
       }
       setTimeout(() => {
         this.loading[0] = false
-      }, 500)
+      }, 1000)
     }
     return {
       simulateProgress
@@ -69,31 +68,24 @@ export default {
     name: {
       type: String,
       required: true
-    },
-    disable: {
-      type: Boolean,
-      required: false,
-      default: false
     }
   },
   methods: {
-    membershipDeclarationLOKPDF () {
+    getPersonalCardPDF () {
       axios({
-        url: `${this.local}/files/membershipDeclarationLOK?uuid=${this.uuid}`,
+        url: `${this.local}/files/downloadPersonalCard/${this.uuid}`,
         method: 'GET',
         responseType: 'blob'
       }).then(response => {
-        console.log(response)
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
-        fileLink.setAttribute('download', `Deklaracja Członkowska LOK ${this.name}.pdf`)
+        fileLink.setAttribute('download', `Karta Członkowska - ${this.name}.pdf`)
         document.body.appendChild(fileLink)
         fileLink.click()
-        this.message = `Pobrano Deklarację ${this.name}`
+        this.message = `Pobrano Kartę Członkowską ${this.name}`
         this.success = true
         this.autoClose()
-        this.$emit('membershipDeclarationLOKPDF')
       }).catch(() => {
         this.message = 'coś poszło nie tak'
         this.failure = true
@@ -111,3 +103,7 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+
+</style>

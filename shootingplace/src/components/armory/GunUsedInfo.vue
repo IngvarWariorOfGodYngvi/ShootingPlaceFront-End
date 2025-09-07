@@ -21,14 +21,14 @@
               <div>{{ gunUsed.issuanceDate }}</div>
               <div>{{ gunUsed.issuanceTime }}</div>
             </div>
-            <div class="col">{{ gunUsed.gun.modelName }}</div>
+            <div class="col">{{ gunUsed.gunRepresentation.modelName }}</div>
             <div class="col">
-              <div>{{ gunUsed.gun.caliber }}</div>
-              <div>{{ gunUsed.gun.productionYear }}</div>
+              <div>{{ gunUsed.gunRepresentation.caliber }}</div>
+              <div>{{ gunUsed.gunRepresentation.productionYear }}</div>
             </div>
-            <div class="col">{{ gunUsed.gun.serialNumber }}</div>
-            <div class="col">{{ gunUsed.gun.numberOfMagazines }}</div>
-            <div class="col">{{ gunUsed.gun.gunCertificateSerialNumber }}</div>
+            <div class="col">{{ gunUsed.gunRepresentation.serialNumber }}</div>
+            <div class="col">{{ gunUsed.gunRepresentation.numberOfMagazines }}</div>
+            <div class="col">{{ gunUsed.gunRepresentation.gunCertificateSerialNumber }}</div>
             <div class="col">
               <div>{{ gunUsed.acceptanceDate }}</div>
               <div>{{ gunUsed.acceptanceTime }}</div>
@@ -44,25 +44,25 @@
         <div class="row col items-center text-bold">
           <div class="col-2">Imię i Nazwisko<br />Pobierającego Broń</div>
           <div class="col">{{ gunUsed.gunTakerName }}</div>
-          <q-img contain style="max-height: 10vh; border-radius: 5px; border: 1px solid black; " class="col-4 bg-white"
+          <q-img v-if="gunUsed.gunTakerSign !=null" contain style="max-height: 10vh; border-radius: 5px; border: 1px solid black; " class="col-4 bg-white"
             alt="zdjęcie osoby pobierającej broń" :src="(`${local}/files/getFile?uuid=${gunUsed.gunTakerSign}`)" />
         </div>
         <div class="row col items-center text-bold">
           <div class="col-2">Imię i Nazwisko<br />Wydającego Broń</div>
           <div class="col">{{ gunUsed.issuanceBy }}</div>
-          <q-img contain style="max-height: 10vh; border-radius: 5px; border: 1px solid black; " class="col-4 bg-white"
+          <q-img v-if="gunUsed.issuanceSign !=null" contain style="max-height: 10vh; border-radius: 5px; border: 1px solid black; " class="col-4 bg-white"
             alt="zdjęcie osoby pobierającej broń" :src="(`${local}/files/getFile?uuid=${gunUsed.issuanceSign}`)" />
         </div>
         <div class="row col items-center text-bold">
           <div class="col-2">Imię i Nazwisko<br />Zdającego Broń</div>
           <div class="col">{{ gunUsed.gunReturnerName }}</div>
-          <q-img contain style="max-height: 10vh; border-radius: 5px; border: 1px solid black; " class="col-4 bg-white"
+          <q-img v-if="gunUsed.gunReturnerSign !=null" contain style="max-height: 10vh; border-radius: 5px; border: 1px solid black; " class="col-4 bg-white"
             alt="zdjęcie osoby pobierającej broń" :src="(`${local}/files/getFile?uuid=${gunUsed.gunReturnerSign}`)" />
         </div>
         <div class="row col items-center text-bold">
           <div class="col-2">Imię i Nazwisko<br />Odbierającego Broń</div>
           <div class="col">{{ gunUsed.acceptanceBy }}</div>
-          <q-img contain style="max-height: 10vh; border-radius: 5px; border: 1px solid black; " class="col-4 bg-white"
+          <q-img v-if="gunUsed.acceptanceSign !=null" contain style="max-height: 10vh; border-radius: 5px; border: 1px solid black; " class="col-4 bg-white"
             alt="zdjęcie osoby odbierającej broń" :src="(`${local}/files/getFile?uuid=${gunUsed.acceptanceSign}`)" />
         </div>
       </q-card-section>

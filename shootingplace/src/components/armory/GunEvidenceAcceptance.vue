@@ -54,7 +54,7 @@
         </q-card-actions>
         <q-card-section class="row">
           <div class="col-9"></div>
-          <q-input v-model="cardNumber" dense class="col" label="Zeskanuj Kartę" type="password" @input="find()" color="primary" bg-color="primary" label-color="white" rounded standout="">
+          <q-input v-model="cardNumber" dense class="col" label="Zeskanuj Kartę" type="password" inputmode="numeric" @input="find()" color="primary" bg-color="primary" label-color="white" rounded standout="">
           <template v-slot:append>
               <q-icon :color="fin?'secondary':'primary'" :name="fin?'done':'cancel'"></q-icon>
             </template>
@@ -75,14 +75,14 @@
               <div>{{ temp.usedDate }}</div>
               <div>{{ temp.usedTime }}</div>
             </div>
-            <div class="col">{{ temp.gun.modelName }}</div>
+            <div class="col">{{ temp.gunRepresentation.modelName }}</div>
             <div class="col">
-              <div>{{ temp.gun.caliber }}</div>
-              <div>{{ temp.gun.productionYear }}</div>
+              <div>{{ temp.gunRepresentation.caliber }}</div>
+              <div>{{ temp.gunRepresentation.productionYear }}</div>
             </div>
-            <div class="col">{{ temp.gun.serialNumber }}</div>
-            <div class="col">{{ temp.gun.numberOfMagazines }}</div>
-            <div class="col">{{ temp.gun.gunCertificateSerialNumber }}</div>
+            <div class="col">{{ temp.gunRepresentation.serialNumber }}</div>
+            <div class="col">{{ temp.gunRepresentation.numberOfMagazines }}</div>
+            <div class="col">{{ temp.gunRepresentation.gunCertificateSerialNumber }}</div>
           </div>
           <q-checkbox v-model="isMember" color="primary" keep-color label="Pobierający to Klubowicz"></q-checkbox>
           <q-select v-if="isMember" label="Wybierz osobę" color="primary" input-class="text-white" label-color="white"
@@ -359,7 +359,7 @@ export default {
           } else {
             response.text().then(response => {
               this.message = response
-              this.success = true
+              this.failure = true
             })
           }
         })
@@ -390,7 +390,7 @@ export default {
           } else {
             response.text().then(response => {
               this.message = response
-              this.success = true
+              this.failure = true
             })
           }
         })

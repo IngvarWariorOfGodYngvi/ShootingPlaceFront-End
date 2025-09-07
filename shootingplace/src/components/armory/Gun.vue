@@ -68,8 +68,8 @@
             <div class="col">{{ gun.removedBy != null ? gun.removedBy : 'Nie wskazano' }}</div>
           </div>
         </div>
-        <div class="col">
-          <div>Podpis wprowadzającego broń:</div>
+        <div class="col" v-if="gun.addedSign != null">
+          <div >Podpis wprowadzającego broń:</div>
             <q-img contain style="max-height: 10vh; border-radius: 5px; border: 1px solid black; " class="bg-white"
             alt="Podpis wprowadzającego broń" :src="(`${local}/files/getFile?uuid=${gun.addedSign}`)" />
           <!-- <div>{{ gun.addedSign != null ? gun.addedSign : 'Brak podpisu' }}</div> -->

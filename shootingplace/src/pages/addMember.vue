@@ -430,15 +430,15 @@ import { ref } from 'vue'
 export default {
   components: {
     PersonalCardPDF: lazyLoadComponent({
-      componentFactory: () => import('components/member/PersonalCardPDF.vue'),
+      componentFactory: () => import('src/components/member/DownloadPersonalCardPDF.vue'),
       loading: SkeletonBox
     }),
     DeklaracjaLOK: lazyLoadComponent({
-      componentFactory: () => import('components/member/DeklaracjaLOK.vue'),
+      componentFactory: () => import('src/components/member/DownloadDeklaracjaLOK.vue'),
       loading: SkeletonBox
     }),
     LastContributionPDF: lazyLoadComponent({
-      componentFactory: () => import('components/member/LastContributionPDF.vue'),
+      componentFactory: () => import('src/components/member/DownloadLastContributionPDF.vue'),
       loading: SkeletonBox
     }),
     CSVFile: lazyLoadComponent({

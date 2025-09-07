@@ -2,9 +2,9 @@
   <div>
     <q-inner-loading :showing="visible" label="Przetwarzanie..." color="primary" />
     <div class="row full-width">
-      <div class="q-pa-md col"><q-btn class="full-width" color="primary" label="wyświetl listę osób"
+      <div class="q-pa-md col"><q-btn glossy rounded class="full-width" color="primary" label="wyświetl listę osób"
           @click="getMembersToReportToThePolice()" /></div>
-      <div class="q-pa-md col"><q-btn class="full-width" color="primary" label="pobierz listę .pdf"
+      <div class="q-pa-md col"><q-btn glossy rounded class="full-width" color="primary" label="pobierz listę .pdf"
           @click="generateListOfMembersToReportToPolice()" /></div>
     </div>
     <div>
