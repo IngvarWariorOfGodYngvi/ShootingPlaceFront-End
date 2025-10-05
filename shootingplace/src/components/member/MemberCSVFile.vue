@@ -1,6 +1,6 @@
 <template>
   <div class="full-width rounded">
-    <q-btn glossy class="full-width" rounded :disable="dis" :loading="loading[0]" @click="dialog=true" color="secondary" label="Pobierz Plik .csv"/>
+    <q-btn glossy class="full-width" rounded :disable="dis" :loading="loading[0]" @click="dialog=true" color="secondary" label="Pobierz Plik .csv"><q-tooltip v-if="dis">Wyłączone tymczasowo przez zmiany w SOZ</q-tooltip></q-btn>
     <q-dialog v-model="dialog" @keypress.enter="dis = true;dialog = false; simulateProgress()">
       <q-card class="bg-dark text-positive">
         <q-card-section class="row items-center">
@@ -37,7 +37,7 @@ export default {
   data () {
     return {
       dialog: false,
-      dis: false,
+      dis: true,
       failure: false,
       success: false,
       message: null,

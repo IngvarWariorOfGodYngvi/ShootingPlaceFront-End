@@ -1,108 +1,119 @@
 <template>
-<div>
-  <div class="text-body2 bg-dark text-positive" style="border: 0">
-    <div class="col">
-      <q-card-section class="col-3">
-        <q-item class="col">
-          <q-input class="full-width" color="positive" input-class="text-positive" label-color="positive" dense filled v-model="firstDateJoinDate" mask="####-##-##" label="Data początkowa">
-            <template v-slot:append>
-              <q-icon name="event" color="positive" class="cursor-pointer">
-                <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                  <q-date @input="getSumJoinDate ()" v-model="firstDateJoinDate" mask="YYYY-MM-DD" class="bg-dark text-positive">
-                    <div class="row items-center justify-end">
-                      <q-btn v-close-popup label="Zamknij" color="primary"/>
-                    </div>
-                  </q-date>
-                </q-popup-proxy>
-              </q-icon>
-            </template>
-          </q-input>
-        </q-item>
-        <q-item class="col">
-          <q-input class="full-width" color="positive" input-class="text-positive" label-color="positive" dense filled v-model="secondDateJoinDate" mask="####-##-##" label="Data końcowa">
-            <template v-slot:append>
-              <q-icon name="event" color="positive" class="cursor-pointer">
-                <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                  <q-date @input="getSumJoinDate ()" v-model="secondDateJoinDate" mask="YYYY-MM-DD" class="bg-dark text-positive">
-                    <div class="row items-center justify-end">
-                      <q-btn v-close-popup label="Zamknij" color="primary"/>
-                    </div>
-                  </q-date>
-                </q-popup-proxy>
-              </q-icon>
-            </template>
-          </q-input>
-        </q-item>
+  <div>
+    <div class="text-body2 bg-dark text-positive" style="border: 0">
+      <div class="col">
+        <q-card-section class="col-3">
+          <q-item class="col">
+            <q-input class="full-width" bg-color="primary" standout="" rounded input-class="text-positive"
+              label-color="positive" dense v-model="firstDateJoinDate" mask="####-##-##" label="Data początkowa">
+              <template v-slot:append>
+                <q-icon name="event" color="positive" class="cursor-pointer">
+                  <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                    <q-date @input="getSumJoinDate()" v-model="firstDateJoinDate" mask="YYYY-MM-DD"
+                      class="bg-dark text-positive">
+                      <div class="row items-center justify-end">
+                        <q-btn v-close-popup label="Zamknij" color="primary" />
+                      </div>
+                    </q-date>
+                  </q-popup-proxy>
+                </q-icon>
+              </template>
+            </q-input>
+          </q-item>
+          <q-item class="col">
+            <q-input class="full-width" bg-color="secondary" standout="" rounded input-class="text-positive"
+              label-color="positive" dense v-model="secondDateJoinDate" mask="####-##-##" label="Data końcowa">
+              <template v-slot:append>
+                <q-icon name="event" color="positive" class="cursor-pointer">
+                  <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                    <q-date @input="getSumJoinDate()" v-model="secondDateJoinDate" mask="YYYY-MM-DD"
+                      class="bg-dark text-positive">
+                      <div class="row items-center justify-end">
+                        <q-btn v-close-popup label="Zamknij" color="primary" />
+                      </div>
+                    </q-date>
+                  </q-popup-proxy>
+                </q-icon>
+              </template>
+            </q-input>
+          </q-item>
           <q-btn glossy color="primary" text-color="positive" @click="getSumJoinDate()" label="Wyszukaj"></q-btn>
           <p></p>
-          <q-btn glossy :loading="loading[0]" :disable="dis || firstDateJoinDate==null||secondDateJoinDate==null" @click="dis=true;simulateProgress()" label="pobierz plik .xlsx" color="green" text-color="white"/>
-      </q-card-section>
-      <q-inner-loading
-              :showing="visible"
-              label="Przetwarzanie..."
-              color="primary"/>
-      <q-card-section class="col">
-        <div v-if="list.length < 1" class="q-pa-md self-center col full-width text-bold text-center text-h6">Brak wyników zapisów - Wybierz daty</div>
-        <div v-if="list.length > 0" class="q-pa-md col text-bold text-center text-h6">Ilość Zapisów : {{list.length}}</div>
-        <div class="row text-caption" style="cursor: pointer">
-        <div class="col" @click="sortF('name')">lp <q-icon size="2em" :name="sortName ? 'arrow_drop_up' : 'arrow_drop_down'" />Nazwisko i imię</div>
-        <div class="col-2 text-center" @click="sortF('legitimation')"><q-icon size="2em" :name="sortLegitimation ? 'arrow_drop_up' : 'arrow_drop_down'" />Numer<br> Legitymacji</div>
-        <div class="col-2" @click="sortF('date')"><q-icon size="2em" :name="sortDate ? 'arrow_drop_up' : 'arrow_drop_down'" />Data Zapisu</div>
-        <div class="col-2" @click="sortF('group')"><q-icon size="2em" :name="sortGroup ? 'arrow_drop_up' : 'arrow_drop_down'" />Grupa</div>
-        <div class="col-2 text-center" @click="sortF('status')"><q-icon size="2em" :name="sortStatus ? 'arrow_drop_up' : 'arrow_drop_down'" />Status</div>
-      </div>
-      <q-scroll-area style="height: 50vh">
-          <div v-for="(item, index) in list" :key="index" class="row hover1 items-center" @dblclick="legitimationNumber = item.legitimation_number;memberDial=true">
-            <Tooltip2clickToShow></Tooltip2clickToShow>
-            <div class="col">{{index + 1}}&nbsp;
-              {{ item.second_name }} {{ item.first_name }}
-            </div>
-            <div class="col-2 text-center">
-              {{ item.legitimation_number }}
-            </div>
-            <div class="col-2">
-              {{ item.join_date }}
-            </div>
-            <div class="col-2">
-              {{ item.adult?'Grupa Ogólna':'Grupa Młodzieżowa'}}
-            </div>
-            <div :class="`col-2 ${item.active?'bg-green-4':'bg-red-4'} text-black text-center`" style="border-radius: 2px">
-              {{ item.active?'Aktywny':'Nieaktywny'}}
-            </div>
+          <q-btn glossy :loading="loading[0]" :disable="dis || firstDateJoinDate == null || secondDateJoinDate == null"
+            @click="dis = true; simulateProgress()" label="pobierz plik .xlsx" color="green" text-color="white" />
+        </q-card-section>
+        <q-inner-loading :showing="visible" label="Przetwarzanie..." color="primary" />
+        <q-card-section class="col">
+          <div v-if="list.length < 1" class="q-pa-md self-center col full-width text-bold text-center text-h6">Brak
+            wyników
+            zapisów - Wybierz daty</div>
+          <div v-if="list.length > 0" class="q-pa-md col text-bold text-center text-h6">Ilość Zapisów : {{ list.length }}
           </div>
-      </q-scroll-area>
-      </q-card-section>
+          <div class="row text-caption" style="cursor: pointer">
+            <div class="col" @click="sortF('name')">lp <q-icon size="2em"
+                :name="sortName ? 'arrow_drop_up' : 'arrow_drop_down'" />Nazwisko i imię</div>
+            <div class="col-2 text-center" @click="sortF('legitimation')"><q-icon size="2em"
+                :name="sortLegitimation ? 'arrow_drop_up' : 'arrow_drop_down'" />Numer<br> Legitymacji</div>
+            <div class="col-2" @click="sortF('date')"><q-icon size="2em"
+                :name="sortDate ? 'arrow_drop_up' : 'arrow_drop_down'" />Data Zapisu</div>
+            <div class="col-2" @click="sortF('group')"><q-icon size="2em"
+                :name="sortGroup ? 'arrow_drop_up' : 'arrow_drop_down'" />Grupa</div>
+            <div class="col-2 text-center" @click="sortF('status')"><q-icon size="2em"
+                :name="sortStatus ? 'arrow_drop_up' : 'arrow_drop_down'" />Status</div>
+          </div>
+          <q-scroll-area style="height: 50vh">
+            <div v-for="(item, index) in list" :key="index" class="row hover1 items-center"
+              @dblclick="legitimationNumber = item.legitimation_number; memberDial = true">
+              <Tooltip2clickToShow></Tooltip2clickToShow>
+              <div class="col">{{ index + 1 }}&nbsp;
+                {{ item.second_name }} {{ item.first_name }}
+              </div>
+              <div class="col-2 text-center">
+                {{ item.legitimation_number }}
+              </div>
+              <div class="col-2">
+                {{ item.join_date }}
+              </div>
+              <div class="col-2">
+                {{ item.adult ? 'Grupa Ogólna' : 'Grupa Młodzieżowa' }}
+              </div>
+              <div :class="`col-2 ${item.active ? 'bg-green-4' : 'bg-red-4'} text-black text-center`"
+                style="border-radius: 2px">
+                {{ item.active ? 'Aktywny' : 'Nieaktywny' }}
+              </div>
+            </div>
+          </q-scroll-area>
+        </q-card-section>
+      </div>
     </div>
-  </div>
-  <q-dialog v-model="memberDial">
-    <q-card class="bg-dark" style="min-width: 80vw">
-      <q-card-section class="flex-center">
-        <Member :member-number-legitimation="legitimationNumber"></Member>
-      </q-card-section>
+    <q-dialog v-model="memberDial">
+      <q-card class="bg-dark" style="min-width: 80vw">
+        <q-card-section class="flex-center">
+          <Member :member-number-legitimation="legitimationNumber"></Member>
+        </q-card-section>
 
-      <q-card-actions align="right">
-        <q-btn text-color="white" label="zamknij" color="primary" v-close-popup/>
-      </q-card-actions>
-    </q-card>
-  </q-dialog>
+        <q-card-actions align="right">
+          <q-btn text-color="white" label="zamknij" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
     <q-dialog position="top" v-model="success">
       <q-card>
         <q-card-section>
-          <div v-if="message!=null" class="text-h6">{{ message }}</div>
+          <div v-if="message != null" class="text-h6">{{ message }}</div>
         </q-card-section>
       </q-card>
     </q-dialog>
-  <q-dialog position="standard" v-model="failure">
+    <q-dialog position="standard" v-model="failure">
       <q-card class="bg-warning">
         <q-card-section>
-          <div v-if="message!=null" class="text-h6">{{ message }}</div>
+          <div v-if="message != null" class="text-h6">{{ message }}</div>
         </q-card-section>
       </q-card>
     </q-dialog>
-</div>
+  </div>
 </template>
-<style src="src/style/style.scss" lang="scss">
-</style>
+<style src="src/style/style.scss" lang="scss"></style>
 <script>
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox'
@@ -183,6 +194,8 @@ export default {
         }).then(() => {
           this.visible = false
         })
+      }).catch(() => {
+        this.visible = false
       })
     },
     getSumJoinDateXLSXFile () {
@@ -277,6 +290,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -2,26 +2,32 @@
   <q-page padding>
     <q-expansion-item label="Lista osób spoza klubu" dense class="text-left text-h6 text-bold bg-grey-3 q-mb-md"
       group="list">
-      <OtherList class="bg-dark text-positive text-body2"></OtherList>
+      <OtherList class="bg-dark text-positive text-body2"/>
     </q-expansion-item>
     <q-expansion-item label="Lista klubów PZSS" dense class="text-left text-h6 text-bold bg-grey-3 q-mb-md"
       group="list">
-      <PZSSClubs class="bg-dark text-positive text-body2"></PZSSClubs>
+      <PZSSClubs class="bg-dark text-positive text-body2"/>
     </q-expansion-item>
     <q-expansion-item label="Lista znanych klubów" dense class="text-left text-h6 text-bold bg-grey-3 q-mb-md"
       group="list">
-      <Clubs class="bg-dark text-positive text-body2"></Clubs>
+      <Clubs class="bg-dark text-positive text-body2"/>
     </q-expansion-item>
     <q-expansion-item label="Lista konkurencji" dense class="text-left text-h6 text-bold bg-grey-3 q-mb-md" group="list">
-      <Competitions class="bg-dark text-positive text-body2"></Competitions>
+      <Competitions class="bg-dark text-positive text-body2"/>
     </q-expansion-item>
-    <q-expansion-item label="Lista pakietów" dense class="text-left text-h6 text-bold bg-grey-3" group="list">
-      <PacketEdit class="bg-dark text-positive text-body2"></PacketEdit>
+    <q-expansion-item label="Lista pakietów" dense class="text-left text-h6 text-bold bg-grey-3 q-mb-md" group="list">
+      <PacketEdit class="bg-dark text-positive text-body2"/>
+    </q-expansion-item>
+    <q-expansion-item label="Lista wiadomości e-mail zaplanowane do wysłania" dense class="text-left text-h6 text-bold bg-grey-3 q-mb-md" group="list">
+      <EmailScheduledManage class="bg-dark text-positive text-body2"/>
+    </q-expansion-item>
+    <q-expansion-item label="Lista wysłanych wiadomości e-mail" dense class="text-left text-h6 text-bold bg-grey-3 q-mb-md" group="list">
+      <EmailSentManage class="bg-dark text-positive text-body2"/>
     </q-expansion-item>
     <hr>
     <div v-if="!access">
       <q-input dense input-class="text-positive" standout="" label-color="white" bg-color="primary" color="primary" rounded v-model="accessCode"
-        label="Wprowadź kod" type="password" mask="####" @keypress.enter="getAccess(accessCode)"></q-input>
+        label="Wprowadź kod" type="password" inputmode="numeric" mask="####" @keypress.enter="getAccess(accessCode)"></q-input>
       <q-item dense>{{ accessMessage }}</q-item>
       <q-btn color="primary" text-color="white" dense label="wprowadź" @click="getAccess(accessCode)"></q-btn>
     </div>
@@ -133,6 +139,14 @@ export default {
     }),
     EvidenceBook: lazyLoadComponent({
       componentFactory: () => import('components/otherFunctions/EvidenceBook.vue'),
+      loading: SkeletonBox
+    }),
+    EmailScheduledManage: lazyLoadComponent({
+      componentFactory: () => import('src/components/otherFunctions/EmailScheduledManage.vue'),
+      loading: SkeletonBox
+    }),
+    EmailSentManage: lazyLoadComponent({
+      componentFactory: () => import('src/components/otherFunctions/EmailSentManage.vue'),
       loading: SkeletonBox
     }),
     MembersLists: lazyLoadComponent({

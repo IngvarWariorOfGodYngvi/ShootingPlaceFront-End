@@ -57,6 +57,7 @@
                 </q-card-actions>
               </q-popup-edit>
             </q-btn>
+            <!-- <SendEmail/> -->
           </div>
         </div>
         <div class="col text-bold q-pa-xs">
@@ -85,7 +86,7 @@
             <div class="col text-center text-h6 text-bold">Składki</div>
           </div>
           <div v-if="!mobile">
-            <div v-if="shootingPlace === 'prod'" class="col q-pa-md text-positive">
+            <div v-if="shootingPlace === 'prod' || shootingPlace === 'test'" class="col q-pa-md text-positive">
               <div class="text-center text-positive">Ilość Składek</div>
               <div class="row col">
                 <q-radio v-model="contributionCount" :val="1" label="1" color="primary" class="col"><q-tooltip
@@ -117,7 +118,7 @@
                 <div class="row full-width hover1" @dblclick="contributionUUID = item.uuid, name = (member.secondName + ' ' + member.firstName);
                 !main && !mobile ? '' : (contributionUUID = item.uuid, memberUUID = member.uuid, editContributionPaymentDate = item.paymentDay
                   , editContributionValidThruDate = item.validThru, main && !mobile ? editContribution = true : '')">
-                  <Tooltip2clickTip></Tooltip2clickTip>
+                  <Tooltip2clickTip/>
                   <div class="col text-center">
                     <label v-if="item.acceptedBy != null" class="q-pa-xs">{{ (item.edited ? 'Edytowano' :
                       'Zaakceptowano') }}
@@ -447,7 +448,7 @@
                 </div>
               </q-expansion-item>
             </q-expansion-item>
-            <q-expansion-item dense v-if="!member.erased" label="Portal PZSS" group="right-right-card">
+            <q-expansion-item dense v-if="!member.erased" label="SYSTEM SOZ" group="right-right-card">
               <template v-slot:header>
                 <q-item-section avatar>
                   <q-icon v-if="!member.pzss && member.club.id == 1" class="pulse" name="warning" color="warning" />
@@ -456,14 +457,14 @@
                   </q-icon>
                 </q-item-section>
                 <q-item-section>
-                  Portal PZSS
+                  SYSTEM SOZ
                 </q-item-section>
               </template>
               <q-item dense>
                 <q-btn glossy rounded dense class="col" text-color="black"
                   @click=" main && !mobile ? (memberUUID = member.uuid, pzssPortal = true) : ''"
                   :color="!member.pzss ? 'red-3' : 'green-3'"
-                  :label="!member.pzss ? 'Nie Wprowadzony do Portalu !' : 'Wprowadzony do portalu'">
+                  :label="!member.pzss ? 'Nie Wprowadzony do Systemu SOZ !' : 'Wprowadzony do Systemu SOZ'">
                   <q-tooltip content-class="bg-dark text-positive" anchor="top middle" :delay="750">kliknij aby
                   edytować</q-tooltip>
                 </q-btn>
@@ -472,8 +473,8 @@
                 <CSVFile :uuid="member.uuid" :name="(member.secondName + ' ' + member.firstName)"></CSVFile>
               </q-item>
               <q-item dense>
-                <q-btn glossy rounded class="full-width" type="a" href="https://portal.pzss.org.pl/CLub/Player"
-                  target="_blank" label="Przejdź do portalu PZSS" color="primary"
+                <q-btn glossy rounded class="full-width" type="a" href="https://soz.pzss.org.pl/"
+                  target="_blank" label="Przejdź do SOZ PZSS" color="primary"
                   @click="!member.pzss ? (memberUUID = member.uuid, pzssPortal = true):''" />
               </q-item>
             </q-expansion-item>
@@ -665,16 +666,33 @@
             </q-expansion-item>
             <q-expansion-item dense label="Przypisane dokumenty" class="text-center"
               @show=" personalFiles = []; getAllMemberFiles(member.uuid)" icon="attach_file">
-              <q-virtual-scroll class="full-width q-pa-none" :items="personalFiles" style="height: 20vh;">
+              <q-virtual-scroll class="full-width q-pa-none" :items="personalFiles" style="height: 40vh;">
                 <template v-slot="{ item }">
                   <div @dblclick=" showloading(); getFile(item.uuid, item.name)"
                     class="cursor-pointer full-width row text-center q-ma-xs"
                     style="padding-bottom: 3px;border: 1px solid; border-radius: 1em">
                     <div class="col-10">{{ item.name }}</div>
                     <div class="col-2">{{ item.date }}</div>
-                    <q-tooltip content-class="text-h6 bg-red" anchor="top middle" self="bottom middle"
+                    <Tooltip2clickToShow/>
+                    <!-- <q-tooltip content-class="text-h6 bg-red" anchor="top middle" self="bottom middle"
                       :offset="[12, 12]">Kliknij 2 razy aby pobrać plik
-                    </q-tooltip>
+                    </q-tooltip> -->
+                  </div>
+                </template>
+              </q-virtual-scroll>
+            </q-expansion-item>
+            <q-expansion-item dense label="Wysłane wiadomości e-mail" class="text-center" icon="mail">
+              <q-virtual-scroll class="full-width q-pa-none" :items="member.history.sentEmailsHistory" style="height: 40vh;">
+                <template v-slot="{ item }">
+                  <div @dblclick=" showloading();"
+                    class="cursor-pointer full-width row text-center q-ma-xs"
+                    style="padding-bottom: 3px;border: 1px solid; border-radius: 1em">
+                    <div class="col-10">{{ item.mailType }}</div>
+                    <div class="col-2">{{ item.sentAt.substring(0,19).replace('T', ' ') }}</div>
+                    <Tooltip2clickToShow/>
+                    <!-- <q-tooltip content-class="text-h6 bg-red" anchor="top middle" self="bottom middle"
+                      :offset="[12, 12]">Kliknij 2 razy aby pobrać plik
+                    </q-tooltip> -->
                   </div>
                 </template>
               </q-virtual-scroll>
@@ -1032,7 +1050,7 @@
     <q-dialog v-model="pzssPortal">
       <q-card class="bg-dark text-positive">
         <q-card-section class="row text-center text-h6">
-          <span class="q-ml-sm">Czy Klubowicz został dodany do portalu?</span>
+          <span class="q-ml-sm">Czy Klubowicz został dodany do Systemu SOZ?</span>
         </q-card-section>
 
         <q-card-actions align="center">
@@ -1670,6 +1688,10 @@ export default {
       componentFactory: () => import('components/member/ApplicationForFirearmsLicense.vue'),
       loading: SkeletonBox
     }),
+    // SendEmail: lazyLoadComponent({
+    //   componentFactory: () => import('src/utils/SendEmail.vue'),
+    //   loading: SkeletonBox
+    // }),
     Tooltip2clickTip: lazyLoadComponent({
       componentFactory: () => import('src/utils/Tooltip2clickTip.vue'),
       loading: SkeletonBox

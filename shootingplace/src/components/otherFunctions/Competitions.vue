@@ -1,60 +1,74 @@
 <template>
   <div>
-      <div class="q-pa-md text-center full-width no-outline text-h5 text-bold">Lista Konkurencji
-      </div>
-        <div class="row col bg-primary text-white" style="border-radius: 2em;">
-        <div class="text-center" style="width:3%">Lp</div>
-          <div class="col">Nazwa i Metoda Liczenia</div>
-          <div class="col-2">Kolejność na listach</div>
-          <div class="col-2 text-center">Dyscypliny</div>
-          <div class="col-2">Ilość strzałów ocenianych</div>
-          <div class="col-2">Ilość strzałów próbnych</div>
-        </div>
-      <hr>
-        <q-scroll-area class="full-width q-pa-none" style="height: 70vh;">
-          <draggable v-model="array" group="people" @start="drag=true" @end="drag=false">
-          <div v-for="(comp, index) in competitions" :key="index" class="hover1 text-positive items-center"
-            style="cursor: pointer;" @dblclick="setVariables (comp);competition = comp;compID = competition.uuid; competitionInfo = true;">
-            <div class="text-positive row text-center">
-              <Tooltip2clickTip/>
-              <div class="text-center" style="width:3%">{{index + 1 }}</div>
-              <div class="col caption text-left">
-                <div class="text-bold">{{ comp.name }}</div>
-                <div class="text-caption">{{ comp.countingMethod }}</div>
-              </div>
-              <div class="col-2">{{ comp.ordering }}</div>
-              <!-- <div class="col-2">{{ comp.disciplineList.length > 0 ? arrayToString(comp.disciplineList) : '' }}</div> -->
-              <div class="col-2">{{ comp.disciplineList.toString()}}</div>
-              <div class="col-2">{{ comp.numberOfShots }}</div>
-              <div class="col-2">{{ comp.practiceShots }}</div>
+    <div class="q-pa-md text-center full-width no-outline text-h5 text-bold">Lista Konkurencji
+    </div>
+    <div class="row col bg-primary text-white items-center" style="border-radius: 2em;">
+      <div class="text-center" style="width:3%">Lp</div>
+      <div class="col">Nazwa i Metoda Liczenia</div>
+      <div class="col-2">Kolejność na listach</div>
+      <div class="col-2 text-center">Dyscypliny</div>
+      <div class="col-2">Ilość strzałów ocenianych</div>
+      <div class="col-2">Ilość strzałów próbnych</div>
+    </div>
+    <hr>
+    <q-scroll-area class="full-width q-pa-none" style="height: 70vh;">
+      <draggable v-model="array" group="people" @start="drag = true" @end="drag = false">
+        <div v-for="(comp, index) in competitions" :key="index" class="hover1 text-positive items-center"
+          style="cursor: pointer;"
+          @dblclick="setVariables(comp); competition = comp; compID = competition.uuid; competitionInfo = true;">
+          <div class="text-positive row text-center">
+            <Tooltip2clickTip />
+            <div class="text-center" style="width:3%">{{ index + 1 }}</div>
+            <div class="col caption text-left">
+              <div class="text-bold">{{ comp.name }}</div>
+              <div class="text-caption">{{ comp.countingMethod }}</div>
             </div>
+            <div class="col-2">{{ comp.ordering }}</div>
+            <!-- <div class="col-2">{{ comp.disciplineList.length > 0 ? arrayToString(comp.disciplineList) : '' }}</div> -->
+            <div class="col-2">{{ comp.disciplineList.toString() }}</div>
+            <div class="col-2">{{ comp.numberOfShots }}</div>
+            <div class="col-2">{{ comp.practiceShots }}</div>
           </div>
-          </draggable>
-        </q-scroll-area>
+        </div>
+      </draggable>
+    </q-scroll-area>
     <q-dialog v-model="competitionInfo" @hide="getCompetitions()">
       <q-card class="bg-dark text-positive" @show="method = competition.countingMethod" style="min-width: 50vw;">
         <q-card-section class="text-bold">
           <div class="text-h6 text-center">{{ competition.name }}</div>
           <div>ID: {{ competition.uuid }}</div>
-          <div v-if="competition.disciplineList!=null&&competition.disciplineList.length>0">dyscypliny: {{ competition.disciplineList.toString() }}</div>
+          <div v-if="competition.disciplineList != null && competition.disciplineList.length > 0">dyscypliny: {{
+            competition.disciplineList.toString() }}</div>
           <!-- <div v-else>Dyscyplina: {{ competition.discipline }}</div> -->
           <div>Ilość Strzałów: {{ competition.numberOfShots }}</div>
           <div>Rodzaj: {{ competition.type }}</div>
-          <div>Metoda Liczenia: {{ competition.countingMethod === 'NORMAL'?'Normalnie' : ' COMSTOCK' }}</div>
+          <div>Metoda Liczenia: {{ competition.countingMethod === 'NORMAL' ? 'Normalnie' : ' COMSTOCK' }}</div>
           <div>Numer Kolejności na Listach: {{ competition.ordering }}</div>
           <div>Ilość Strzałów próbnych: {{ competition.practiceShots }}</div>
           <div>Kaliber: {{ competition.caliberUUID }}</div>
-          <q-input @keypress.enter="competitionInfo=false;acceptDialog=true" dense input-class="text-positive" label-color="positive" v-model="name" label="nazwa"/>
-          <q-checkbox class="col" v-for="(item,index1) in disciplines" :key="index1" :val="item" :label="item" v-model="disciplineList"/>
-          <q-input @keypress.enter="competitionInfo=false;acceptDialog=true" dense input-class="text-positive" label-color="positive" v-model="orderNumber" label="kolejność na listach" onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-          <q-input @keypress.enter="competitionInfo=false;acceptDialog=true" dense input-class="text-positive" label-color="positive" v-model="numberOfShots" label="ilość strzałów ocenianych" onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-          <q-input @keypress.enter="competitionInfo=false;acceptDialog=true" dense input-class="text-positive" label-color="positive" v-model="practiceShots" label="ilość strzałów próbnych" onkeypress="return (event.charCode > 47 && event.charCode < 58)"/>
-          <q-select dense options-dense input-class="text-positive" options-selected-class="bg-dark text-positive" clearable clear-icon="cancel" label-color="positive" popup-content-class="bg-dark text-positive" :options="countingTypes" v-model="competitionType" use-input hide-selected fill-input label="Rodzaj"/>
-          <q-select
-           :option-value="opt => opt !== '' ? Object(opt.uuid).toString() : ''"
-           :option-label="opt => opt !== '' ? Object(opt.name).toString() : ''"
-           dense options-dense input-class="text-positive" options-selected-class="bg-dark text-positive" clearable clear-icon="cancel" label-color="positive" popup-content-class="bg-dark text-positive" :options="calibersList" v-model="caliberUUID" use-input hide-selected fill-input label="identyfikator kalibru"/>
-          <q-radio v-for="(item,index) in countingMethods" :key="index" :label="item" class="col" :val="item" v-model="method"/>
+          <q-input @keypress.enter="competitionInfo = false; acceptDialog = true" dense input-class="text-positive"
+            label-color="positive" v-model="name" label="nazwa" />
+          <q-checkbox class="col" v-for="(item, index1) in disciplines" :key="index1" :val="item" :label="item"
+            v-model="disciplineList" />
+          <q-input @keypress.enter="competitionInfo = false; acceptDialog = true" dense input-class="text-positive"
+            label-color="positive" v-model="orderNumber" label="kolejność na listach"
+            onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+          <q-input @keypress.enter="competitionInfo = false; acceptDialog = true" dense input-class="text-positive"
+            label-color="positive" v-model="numberOfShots" label="ilość strzałów ocenianych"
+            onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+          <q-input @keypress.enter="competitionInfo = false; acceptDialog = true" dense input-class="text-positive"
+            label-color="positive" v-model="practiceShots" label="ilość strzałów próbnych"
+            onkeypress="return (event.charCode > 47 && event.charCode < 58)" />
+          <q-select dense options-dense input-class="text-positive" options-selected-class="bg-dark text-positive"
+            clearable clear-icon="cancel" label-color="positive" popup-content-class="bg-dark text-positive"
+            :options="countingTypes" v-model="competitionType" use-input hide-selected fill-input label="Rodzaj" />
+          <q-select :option-value="opt => opt !== '' ? Object(opt.uuid).toString() : ''"
+            :option-label="opt => opt !== '' ? Object(opt.name).toString() : ''" dense options-dense
+            input-class="text-positive" options-selected-class="bg-dark text-positive" clearable clear-icon="cancel"
+            label-color="positive" popup-content-class="bg-dark text-positive" :options="calibersList"
+            v-model="caliberUUID" use-input hide-selected fill-input label="identyfikator kalibru" />
+          <q-radio v-for="(item, index) in countingMethods" :key="index" :label="item" class="col" :val="item"
+            v-model="method" />
         </q-card-section>
         <q-card-actions align="right">
           <q-btn label="usuń" color="red" @click="deleteCopmetition = true" v-close-popup />
@@ -63,8 +77,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="deleteCopmetition"
-      @keypress.enter="deleteCopmetitionCode = true; deleteCopmetition = false">
+    <q-dialog v-model="deleteCopmetition" @keypress.enter="deleteCopmetitionCode = true; deleteCopmetition = false">
       <q-card class="bg-dark text-positive">
         <q-card-section class="items-center">
           <p class="q-ml-sm text-h6 text-center col">Czy na pewno chcesz usunąć Konkurencję?</p>
@@ -73,42 +86,39 @@
 
         <q-card-actions align="right">
           <q-btn text-color="white" label="anuluj" color="secondary" v-close-popup />
-          <q-btn text-color="white" label="usuń" color="primary" v-close-popup
-            @click="deleteCopmetitionCode=true" />
+          <q-btn text-color="white" label="usuń" color="primary" v-close-popup @click="deleteCopmetitionCode = true" />
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model=" deleteCopmetitionCode ">
+    <q-dialog v-model="deleteCopmetitionCode">
       <q-card class="bg-red-5 text-center">
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
           <div>
-            <q-input @keypress.enter=" deleteCompetition(compID, code); code = null; deleteCopmetitionCode = false " autofocus
-              type="password" v-model=" code " filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input>
+            <q-input @keypress.enter=" deleteCompetition(compID, code); code = null; deleteCopmetitionCode = false"
+              autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold"
+              mask="####"></q-input>
           </div>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn label="anuluj" color="black" v-close-popup @click=" code = null " />
+          <q-btn label="anuluj" color="black" v-close-popup @click=" code = null" />
           <q-btn id="3" label="Wprowadź zmiany" color="black" v-close-popup
-            @click="deleteCompetition(compID, code); code = null; deletePacketCode = false; code = null " />
+            @click="deleteCompetition(compID, code); code = null; deletePacketCode = false; code = null" />
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model=" acceptDialog " persistent>
+    <q-dialog v-model="acceptDialog" persistent>
       <q-card class="bg-red-5 text-center">
         <q-card-section class="flex-center">
           <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
-          <q-input
-            @keypress.enter=" updateCompetition(); acceptDialog = false "
-            autofocus type="password" v-model=" code " filled color="Yellow" class="bg-yellow text-bold"
-            mask="####"></q-input>
+          <q-input @keypress.enter=" updateCompetition(); acceptDialog = false" autofocus type="password"
+            v-model="code" filled color="Yellow" class="bg-yellow text-bold" mask="####"></q-input>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn label="anuluj" color="black" v-close-popup @click=" code = null " />
-          <q-btn label="zapisz" color="black" v-close-popup
-            @click=" updateCompetition(); code = null " />
+          <q-btn label="anuluj" color="black" v-close-popup @click=" code = null" />
+          <q-btn label="zapisz" color="black" v-close-popup @click=" updateCompetition(); code = null" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -129,8 +139,7 @@
     </q-dialog>
   </div>
 </template>
-<style src="../../style/style.scss" lang="scss">
-</style>
+<style src="../../style/style.scss" lang="scss"></style>
 <script>
 import App from 'src/App'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'

@@ -346,6 +346,10 @@ export default {
               this.changeColor()
             })
           }
+        }).catch(() => {
+          this.shootingPlace = 'test'
+          window.localStorage.setItem('shootingPlace', 'test')
+          this.changeColor()
         })
       })
     },

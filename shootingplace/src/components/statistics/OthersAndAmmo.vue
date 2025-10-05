@@ -4,7 +4,7 @@
       <div :class="mobile?'col':'row'">
         <q-card-section class="col-3">
           <q-item class="col">
-            <q-input class="full-width" color="positive" input-class="text-positive" label-color="positive" dense filled v-model="firstDateAmmo" mask="####-##-##"
+            <q-input class="full-width" bg-color="primary" standout="" rounded input-class="text-positive" label-color="positive" dense v-model="firstDateAmmo" mask="####-##-##"
                      label="Data początkowa">
               <template v-slot:append>
                 <q-icon name="event" color="positive" class="cursor-pointer">
@@ -20,7 +20,7 @@
             </q-input>
           </q-item>
           <q-item class="col">
-            <q-input class="full-width" color="positive" input-class="text-positive" label-color="positive" dense filled v-model="secondDateAmmo" mask="####-##-##"
+            <q-input class="full-width" bg-color="secondary" standout="" rounded input-class="text-positive" label-color="positive" dense v-model="secondDateAmmo" mask="####-##-##"
                      label="Data końcowa">
               <template v-slot:append>
                 <q-icon name="event" color="positive" class="cursor-pointer">

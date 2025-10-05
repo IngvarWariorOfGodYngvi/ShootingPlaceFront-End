@@ -35,6 +35,19 @@ export default {
           if (response.status === 200) {
             response.text().then(response => {
               window.localStorage.setItem('shootingPlace', response)
+              switch (response) {
+                case 'prod':
+                  window.localStorage.setItem('shootingPlaceName', 'DZIESIĄTKAŁÓDŹ')
+                  break
+                case 'rcs':
+                  window.localStorage.setItem('shootingPlaceName', 'RCSPANASZEW')
+                  break;
+                case 'test':
+                  window.localStorage.setItem('shootingPlaceName', 'TEST')
+                  break;
+                default:
+                  window.localStorage.setItem('shootingPlaceName', 'TEST')
+              }
             })
           }
         })
@@ -44,6 +57,7 @@ export default {
   name: 'App',
   siteName: window.sessionStorage.getItem('SiteName'),
   shootingPlace: window.localStorage.getItem('shootingPlace'),
+  shootingPlaceName: window.localStorage.getItem('shootingPlaceName'),
   mobile: isWindows || isMacOs ? false : true,
   main: JSON.parse(window.localStorage.getItem('main')), // dev //
   // prod: '192.168.1.30:8080/strzelnica/#/', // test //

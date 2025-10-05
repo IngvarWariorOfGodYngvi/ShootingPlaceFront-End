@@ -62,10 +62,7 @@
           </div>
         </q-scroll-area>
       </q-step>
-      <q-step :name="2" title="Tworzenie Super Użytkownika" caption="Wymagane" icon="settings" :done="step > 2">
-        <SuperUser v-if="main" v-on:createSuperUser="step = 3"></SuperUser>
-      </q-step>
-      <q-step :name="3" title="Tworzenie Użytkowników" caption="Wymagane" icon="settings" :done="step > 3">
+      <q-step :name="2" title="Tworzenie Użytkowników" caption="Wymagane" icon="settings" :done="step > 2">
         <Users v-if="main"></Users>
       </q-step>
     </q-stepper>
@@ -140,10 +137,6 @@ export default {
     this.getAllPZSSClubs()
   },
   components: {
-    SuperUser: lazyLoadComponent({
-      componentFactory: () => import('components/settings/SuperUser.vue'),
-      loading: SkeletonBox
-    }),
     Users: lazyLoadComponent({
       componentFactory: () => import('components/settings/Users.vue'),
       loading: SkeletonBox

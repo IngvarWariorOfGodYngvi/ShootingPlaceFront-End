@@ -324,11 +324,11 @@
           <q-item v-if="step > 1"><q-btn flat color="primary" @click=" $refs.stepper.previous()"
               label="Wróć" /></q-item>
           <!-- <q-item><q-btn v-if=" step > 1 " @click=" redirect() " color="primary" label="Zakończ" /></q-item> -->
-          <q-item><q-btn v-if="uuid != null && uuid !== ''" type="a" href="https://portal.pzss.org.pl/CLub/Player"
-              target="_blank" label="Przejdź do portalu PZSS" color="primary" @click=" pzssPortal = true"><q-avatar>
+          <q-item><q-btn v-if="uuid != null && uuid !== ''" type="a" href="https://soz.pzss.org.pl/"
+              target="_blank" label="Przejdź do SOZ PZSS" color="primary" @click=" pzssPortal = true"><q-avatar>
                 <img src="~assets/logo-PZSS.png">
               </q-avatar></q-btn></q-item>
-          <q-item><q-btn v-if="uuid != null && uuid !== ''" label="potwierdź zapis do portalu pzss" color="primary"
+          <q-item><q-btn v-if="uuid != null && uuid !== ''" label="potwierdź zapis do Systemu SOZ" color="primary"
               @click=" pzssPortal = true" /></q-item>
           <q-item>
             <PersonalCardPDF v-if="uuid != null && uuid !== ''" :uuid="uuid"
@@ -383,7 +383,7 @@
     <q-dialog v-model="pzssPortal">
       <q-card class="bg-dark text-positive">
         <q-card-section class="row text-center text-h6">
-          <span class="q-ml-sm">Czy Klubowicz został dodany do portalu?</span>
+          <span class="q-ml-sm">Czy Klubowicz został dodany do Systemu SOZ?</span>
         </q-card-section>
 
         <q-card-actions align="center">

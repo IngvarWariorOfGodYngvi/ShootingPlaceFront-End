@@ -14,7 +14,7 @@
       <q-card class="col bg-dark text-positive">
         <div class="row">
           <q-card-section v-if="tournament == null">
-            <q-btn color="primary" label="dodaj zawody" @click="addNewTournament = true" />
+            <q-btn glossy color="primary" label="dodaj zawody" @click="addNewTournament = true" />
           </q-card-section>
           <CompetitonCreator v-on:createCompetition="getCompetitions()" class="q-pa-md"></CompetitonCreator>
         </div>
@@ -47,7 +47,7 @@
               <q-card class="text-center bg-dark text-positive" style="min-width: 50vw;height: 75vh">
                 <q-card-actions align="right">
                   <div class="text-h6 text-center text-bold col">Dodawanie Konkurencji</div>
-                  <q-btn dense color="primary" icon="close" round v-close-popup></q-btn>
+                  <q-btn dense color="primary" icon="close" round v-close-popup/>
                 </q-card-actions>
                 <q-card-section>
                   <div>Filtruj:
@@ -100,9 +100,9 @@
                 <q-card-section>
                   <q-card-actions align="right">
                     <q-item>
-                      <q-btn label="Dodaj konkurencje" color="secondary" @click="addCompetitionConfirm = true" />
+                      <q-btn glossy label="Dodaj konkurencje" color="secondary" @click="addCompetitionConfirm = true" />
                     </q-item>
-                    <q-btn label="zamknij" color="primary" v-close-popup @click="competitionAddToTournamentList = []" />
+                    <q-btn glossy label="zamknij" color="primary" v-close-popup @click="competitionAddToTournamentList = []" />
                   </q-card-actions>
                 </q-card-section>
               </q-card>
@@ -123,7 +123,7 @@
                 @click="tournamentUUID = tournament.uuid; (tournamentCloseConfirm = true)" />
             </q-item>
             <q-item v-else>
-              <q-btn :ripple="false" class="full-width text-black" color="grey-9" label="Zamknij zawody">
+              <q-btn glossy :ripple="false" class="full-width text-black" color="grey-9" label="Zamknij zawody">
                 <q-tooltip anchor="top middle" self="bottom middle" :offset="[12, 12]">Nie można zamknąć zawodów: brak
                   ustawionych sędziów
                 </q-tooltip>
@@ -281,18 +281,18 @@
                   </template>
                 </q-select>
                 <div class="col">
-                  <q-btn v-if="memberName.secondName === '0' && otherName.secondName === '0'" color="grey-5" class="fit"
+                  <q-btn glossy v-if="memberName.secondName === '0' && otherName.secondName === '0'" color="grey-5" class="fit"
                     label="Aby wybrać konkurencje najpierw wybierz osobę">
                     <q-tooltip :delay="1500" content-class="text-subtitle2" anchor="top middle" self="bottom middle"
                       :offset="[12, 12]">wybierz kogoś
                     </q-tooltip>
-                    <q-tooltip :delay="4000" content-class="text-subtitle2" anchor="top middle" self="bottom middle"
+                    <q-tooltip :delay="3000" content-class="text-subtitle2" anchor="top middle" self="bottom middle"
                       :offset="[12, 12]">NO WYBIERZ
                     </q-tooltip>
-                    <q-tooltip :delay="6000" content-class="bg-red text-h2 text-bold" anchor="top middle"
+                    <q-tooltip :delay="5000" content-class="bg-red text-h2 text-bold" anchor="top middle"
                       self="bottom middle" :offset="[12, 12]">WYBIERAJ!!!
                     </q-tooltip>
-                    <q-tooltip :delay="8000" content-class="bg-Warnign text-h1 text-bold rotate fun" anchor="top middle"
+                    <q-tooltip :delay="6000" content-class="bg-Warnign text-h1 text-bold rotate fun" anchor="top middle"
                       self="bottom middle" :offset="[12, 12]">
                       <div class="rotate" style="width: 50vw;height: 50vh">AAAAAAAAAAAAAAAA!!!</div>
                     </q-tooltip>
@@ -412,9 +412,9 @@
           </q-item>
         </q-card-section>
         <q-card-actions align="right">
-          <q-btn label="Usuń zawody" color="warning" v-close-popup @click="deleteTournamentAlert = true"></q-btn>
-          <q-btn label="anuluj" color="secondary" v-close-popup />
-          <q-btn label="aktualizuj" color="primary" v-close-popup @click="tournamentConfirm = true" />
+          <q-btn glossy label="Usuń zawody" color="warning" v-close-popup @click="deleteTournamentAlert = true"/>
+          <q-btn glossy label="anuluj" color="secondary" v-close-popup />
+          <q-btn glossy label="aktualizuj" color="primary" v-close-popup @click="tournamentConfirm = true" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -422,7 +422,7 @@
       <q-card style="min-width: 60vw" class="bg-dark text-positive">
         <q-card-actions align="right">
           <div class="text-h6 text-center text-bold col">Dodawanie Sędziów</div>
-          <q-btn dense color="primary" icon="close" round v-close-popup></q-btn>
+          <q-btn dense color="primary" icon="close" round v-close-popup/>
         </q-card-actions>
         <q-card-section style="min-width: 500px" class="row items-center bg-dark text-positive text-bold">
           <div class="row full-width bg-dark">
@@ -480,9 +480,9 @@
                 </q-select>
               </div>
               <q-item v-if="mainArbiter !== '' || otherMainArbiterName !== ''">
-                <q-btn v-if="mainArbiter !== ''" label="Dodaj" color="primary"
+                <q-btn glossy v-if="mainArbiter !== ''" label="Dodaj" color="primary"
                   @click="addMainArbiterToTournament(mainArbiter)" />
-                <q-btn v-if="otherMainArbiterName !== ''" label="Dodaj" color="primary"
+                <q-btn glossy v-if="otherMainArbiterName !== ''" label="Dodaj" color="primary"
                   @click="addMainArbiterToTournament(otherMainArbiterName)" />
               </q-item>
               <q-item v-else></q-item>
@@ -541,9 +541,9 @@
                 </q-select>
               </div>
               <q-item v-if="countArbiter !== '' || otherRTSArbiterName !== ''">
-                <q-btn v-if="countArbiter !== ''" label="Dodaj" color="primary"
+                <q-btn glossy v-if="countArbiter !== ''" label="Dodaj" color="primary"
                   @click="addRTSArbiterToTournament(countArbiter)" />
-                <q-btn v-if="otherRTSArbiterName !== ''" label="Dodaj" color="primary"
+                <q-btn glossy v-if="otherRTSArbiterName !== ''" label="Dodaj" color="primary"
                   @click="addRTSArbiterToTournament(otherRTSArbiterName)" />
               </q-item>
               <q-item v-else>
@@ -607,9 +607,9 @@
               <div class="col">
                 <div>
                   <q-item v-if="otherArbiter !== '' || otherArbitersList !== ''">
-                    <q-btn v-if="otherArbiter !== ''" class="full-width" label="Dodaj sędziego stanowiskowego"
+                    <q-btn glossy v-if="otherArbiter !== ''" class="full-width" label="Dodaj sędziego stanowiskowego"
                       color="primary" @click="addOtherArbiterToTournament(otherArbiter)" />
-                    <q-btn v-if="otherArbitersList !== ''" class="full-width" label="Dodaj sędziego stanowiskowego"
+                    <q-btn glossy v-if="otherArbitersList !== ''" class="full-width" label="Dodaj sędziego stanowiskowego"
                       color="primary" @click="addOtherArbiterToTournament(otherArbitersList)" />
                   </q-item>
                   <q-item v-else>
@@ -617,9 +617,9 @@
                 </div>
                 <div>
                   <q-item v-if="otherArbiter !== '' || otherArbitersList !== ''">
-                    <q-btn v-if="otherArbiter !== ''" class="full-width" label="usuń sędziego stanowiskowego"
+                    <q-btn glossy v-if="otherArbiter !== ''" class="full-width" label="usuń sędziego stanowiskowego"
                       color="primary" @click="removeArbiter(otherArbiter)" />
-                    <q-btn v-if="otherArbitersList !== ''" class="full-width" label="usuń sędziego stanowiskowego"
+                    <q-btn glossy v-if="otherArbitersList !== ''" class="full-width" label="usuń sędziego stanowiskowego"
                       color="primary" @click="removeArbiter(otherArbitersList)" />
                   </q-item>
                   <q-item v-else>
@@ -684,9 +684,9 @@
               <div class="col">
                 <div>
                   <q-item v-if="otherRTSArbiter !== '' || otherRTSArbitersList !== ''">
-                    <q-btn v-if="otherRTSArbiter !== ''" class="full-width" label="Dodaj sędziego biura obliczeń"
+                    <q-btn glossy v-if="otherRTSArbiter !== ''" class="full-width" label="Dodaj sędziego biura obliczeń"
                       color="primary" @click="addOtherRTSArbiterToTournament(otherRTSArbiter)" />
-                    <q-btn v-if="otherRTSArbitersList !== ''" class="full-width" label="Dodaj sędziego biura obliczeń"
+                    <q-btn glossy v-if="otherRTSArbitersList !== ''" class="full-width" label="Dodaj sędziego biura obliczeń"
                       color="primary" @click="addOtherRTSArbiterToTournament(otherRTSArbitersList)" />
                   </q-item>
                   <q-item v-else>
@@ -694,9 +694,9 @@
                 </div>
                 <div>
                   <q-item v-if="otherRTSArbiter !== '' || otherRTSArbitersList !== ''">
-                    <q-btn v-if="otherRTSArbiter !== ''" class="full-width" label="usuń sędziego biura obliczeń"
+                    <q-btn glossy v-if="otherRTSArbiter !== ''" class="full-width" label="usuń sędziego biura obliczeń"
                       color="primary" @click="removeRTSArbiter(otherRTSArbiter)" />
-                    <q-btn v-if="otherRTSArbitersList !== ''" class="full-width" label="usuń sędziego biura obliczeń"
+                    <q-btn glossy v-if="otherRTSArbitersList !== ''" class="full-width" label="usuń sędziego biura obliczeń"
                       color="primary" @click="removeRTSArbiter(otherRTSArbitersList)" />
                   </q-item>
                   <q-item v-else>
@@ -707,7 +707,7 @@
           </div>
         </q-card-section>
         <q-card-actions align="right">
-          <q-btn label="zamknij" color="primary" v-close-popup
+          <q-btn glossy label="zamknij" color="primary" v-close-popup
             @click="mainArbiter = ''; countArbiter = ''; otherArbiter = ''; otherRTSArbiter = ''; otherMainArbiterName = ''; otherRTSArbiterName = ''; otherArbitersList = ''; otherRTSArbitersList = ''" />
         </q-card-actions>
       </q-card>
@@ -719,8 +719,8 @@
         </q-card-section>
 
         <q-card-actions align="center">
-          <q-btn label="anuluj" color="secondary" v-close-popup />
-          <q-btn label="Zmień" color="primary" v-close-popup @click="updateTournament()" />
+          <q-btn glossy label="anuluj" color="secondary" v-close-popup />
+          <q-btn glossy label="Zmień" color="primary" v-close-popup @click="updateTournament()" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -731,8 +731,8 @@
         </q-card-section>
 
         <q-card-actions align="center">
-          <q-btn label="Zamknij zawody" color="primary" v-close-popup @click="closeTournament()" />
-          <q-btn label="anuluj" color="secondary" v-close-popup />
+          <q-btn glossy label="Zamknij zawody" color="primary" v-close-popup @click="closeTournament()" />
+          <q-btn glossy label="anuluj" color="secondary" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -743,8 +743,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn label="anuluj" color="secondary" v-close-popup />
-          <q-btn label="Dodaj" color="primary" v-close-popup @click="addCompetitionToTournament()" />
+          <q-btn glossy label="anuluj" color="secondary" v-close-popup />
+          <q-btn glossy label="Dodaj" color="primary" v-close-popup @click="addCompetitionToTournament()" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -783,8 +783,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn label="anuluj" color="primary" v-close-popup />
-          <q-btn label="Dodaj" color="primary" v-close-popup
+          <q-btn glossy label="anuluj" color="primary" v-close-popup />
+          <q-btn glossy label="Dodaj" color="primary" v-close-popup
             @click="createNewTournament(tournamentName, tournamentDate)" />
         </q-card-actions>
       </q-card>
@@ -808,8 +808,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn label="anuluj" color="black" v-close-popup @click="code = null" />
-          <q-btn label="otwórz" color="black" v-close-popup @click="deleteTournament()" />
+          <q-btn glossy label="anuluj" color="black" v-close-popup @click="code = null" />
+          <q-btn glossy label="otwórz" color="black" v-close-popup @click="deleteTournament()" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -834,7 +834,7 @@
       <q-card class="bg-dark text-positive" style="min-width:60vw;" v-if="usersInWork.length > 0">
         <q-card-actions align="right">
           <div class="text-h6 text-center text-bold col">Dodawanie Konkurencji</div>
-          <q-btn dense color="primary" icon="close" round v-close-popup></q-btn>
+          <q-btn dense color="primary" icon="close" round v-close-popup/>
         </q-card-actions>
         <div class="q-ml-sm text-h6 text-center text-bold">{{ name }}</div>
         <q-card-section>
@@ -953,7 +953,7 @@
           </div>
           <div v-if="tournament == null">
             <q-item>
-              <q-btn @click="openList = true" class="full-width" color="primary">otwórz zawody</q-btn>
+              <q-btn glossy @click="openList = true" class="full-width" color="primary">otwórz zawody</q-btn>
             </q-item>
           </div>
         </q-card-section>
@@ -1006,7 +1006,7 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn label="zamknij" color="primary" v-close-popup />
+          <q-btn glossy label="zamknij" color="primary" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -1020,8 +1020,8 @@
           </div>
         </q-card-section>
         <q-card-actions align="right">
-          <q-btn label="anuluj" color="black" v-close-popup @click="code = null" />
-          <q-btn label="otwórz" color="black" v-close-popup @click="openTournament()" />
+          <q-btn glossy label="anuluj" color="black" v-close-popup @click="code = null" />
+          <q-btn glossy label="otwórz" color="black" v-close-popup @click="openTournament()" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -1039,7 +1039,7 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn text-color="white" label="zamknij" color="primary" v-close-popup />
+          <q-btn glossy text-color="white" label="zamknij" color="primary" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>

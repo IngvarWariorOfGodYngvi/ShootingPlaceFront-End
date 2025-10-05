@@ -6,8 +6,12 @@
         <OnOfMain/>
       </div>
       <Experimental v-if="main != null" class="col"/>
-      <!-- <SuperUser v-if="main"/> -->
-      <Users v-if="main"/>
+      <q-expansion-item v-if="main" dense label="Tworzenie Użytkowników" class="q-pa-xs text-positive bg-dark">
+        <Users />
+      </q-expansion-item>
+      <q-expansion-item dense label="Zarządzanie połączeniami e-mail" class="q-pa-xs text-positive bg-dark">
+       <EmailConnectManage/>
+      </q-expansion-item>
       <q-dialog position="top" v-model="success">
         <q-card>
           <q-card-section>
@@ -48,6 +52,10 @@ export default {
     }),
     UpdateProgram: lazyLoadComponent({
       componentFactory: () => import('components/settings/UpdateProgram.vue'),
+      loading: SkeletonBox
+    }),
+    EmailConnectManage: lazyLoadComponent({
+      componentFactory: () => import('components/settings/EmailConnectManage.vue'),
       loading: SkeletonBox
     })
   },

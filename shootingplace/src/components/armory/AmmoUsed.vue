@@ -4,8 +4,8 @@
       <div :class="mobile?'col':'row'">
         <q-card-section class="col-4 bg-dark">
           <q-item class="col text-positive">
-            <q-input dense class="full-width" label-color="positive" input-class="text-positive" color="positive"
-              mask="####-##-##" filled v-model="firstDate" label="Data początkowa">
+            <q-input dense class="full-width" bg-color="primary" standout="" rounded label-color="positive" input-class="text-positive" color="positive"
+              mask="####-##-##" v-model="firstDate" label="Data początkowa">
               <template v-slot:append>
                 <q-icon name="event" color="positive" class="cursor-pointer">
                   <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -21,8 +21,8 @@
             </q-input>
           </q-item>
           <q-item class="col">
-            <q-input dense class="full-width" label-color="positive" input-class="text-positive" color="positive"
-              mask="####-##-##" filled v-model="secondDate" label="Data końcowa">
+            <q-input dense class="full-width" bg-color="secondary" standout="" rounded label-color="positive" input-class="text-positive" color="positive"
+              mask="####-##-##" v-model="secondDate" label="Data końcowa">
               <template v-slot:append>
                 <q-icon name="event" color="positive" class="cursor-pointer">
                   <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">

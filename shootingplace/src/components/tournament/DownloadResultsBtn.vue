@@ -68,6 +68,7 @@ export default {
       success: false,
       failure: false,
       shootingPlace: App.shootingPlace,
+      shootingPlaceName: App.shootingPlaceName,
       local: App.host
     }
   },
@@ -82,7 +83,7 @@ export default {
         const fileURL = window.URL.createObjectURL(new Blob([response.data]))
         const fileLink = document.createElement('a')
         fileLink.href = fileURL
-        fileLink.setAttribute('download', `rezultaty${this.shootingPlace === 'prod' ? 'DZIESIĄTKA' : 'RSCPANASZEW'}${this.date.replaceAll('-', '')}.xlsx`)
+        fileLink.setAttribute('download', `rezultaty${this.shootingPlaceName}${this.date.replaceAll('-', '')}.xlsx`)
         document.body.appendChild(fileLink)
         fileLink.click()
         this.success = true
