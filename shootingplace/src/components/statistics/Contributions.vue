@@ -63,7 +63,7 @@
                 :name="sortStatus ? 'arrow_drop_up' : 'arrow_drop_down'" />Status</div>
           </div>
           <q-scroll-area style="height: 50vh">
-            <div v-for="(item, index) in list" :key="index" class="row hover1 items-center"
+            <div v-for="(item, index) in list" :key="index" class="row hover1 items-center" @click.ctrl="pushOrRemove(item.member.email)"
               @dblclick="legitimationNumber = item.member.legitimation_number; memberDial = true">
               <Tooltip2clickToShow></Tooltip2clickToShow>
               <div class="col">{{ index + 1 }}&nbsp;
@@ -121,6 +121,7 @@ import App from 'src/App'
 import axios from 'axios'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox'
+import { pushOrRemoveEmailFromList } from 'src/scripts/pushOrRemoveEmailFromList'
 
 export default {
   name: 'contributions.vue',
@@ -187,6 +188,9 @@ export default {
         day = (date.getDate())
       }
       return date.getFullYear() + '/' + month + '/' + day
+    },
+    pushOrRemove (email) {
+      pushOrRemoveEmailFromList(email)
     },
     getSum () {
       this.visible = true

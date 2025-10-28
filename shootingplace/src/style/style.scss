@@ -205,9 +205,7 @@ label {
 .fun {
   // transition: ease-in;
   // transition-duration: 2s;
-  transition: transform 10s ease,
-  border 3s ease-in-out,
-  background-color 10s ease,
+  transition: transform 10s ease
 }
 
 .fun2 {
@@ -218,11 +216,16 @@ label {
   border-radius: -50%;
   border-style: dashed;
   border-color: $primary;
-  border-width: 20em;
+  border-width: 10em;
   transform: rotate(3600deg);
   transition: ease-in-out;
   transition-duration: 20s;
   transition-delay: 5s;
+}
+.border-positive {
+  border-color: $positive;
+  border-radius: 1em;
+  border: solid;
 }
 #canvas {
   border: 1px solid black;

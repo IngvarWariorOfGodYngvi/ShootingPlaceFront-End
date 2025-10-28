@@ -1,11 +1,11 @@
 <template>
   <q-page class="text-positive">
     <q-btn label="tryb prezentacji" dense unelevated :text-color="presentationMode ? 'dark' : 'white'"
-    :color="presentationMode ? '' : 'primary'" v-if="main && !mobile && !presentationMode && tournamentCheck"
+    :color="presentationMode ? '' : 'primary'" v-if="!mobile && !presentationMode && tournamentCheck"
     @click="presentationMode = !presentationMode; presentationUUID()" class="q-ma-md"/>
     <!-- {{progress}} {{timer}} {{ time }} -->
-     <q-checkbox :class="changesInfo[2] === false ? ' pulse' : ''" v-if="!presentationMode && arbiter.length > 3" v-model="findByShooter" color="primary" keep-color label="wyszukaj po imieniu, nazwisku lub numerze startowym" @input="changesInfo[2] === false ? check(2) : ''"/>
-    <div v-if="!presentationMode && tournamentCheck">
+     <q-checkbox :class="changesInfo[2] === false ? ' pulse' : ''" v-if="main!=null && !presentationMode && arbiter.length > 3" v-model="findByShooter" color="primary" keep-color label="wyszukaj po imieniu, nazwisku lub numerze startowym" @input="changesInfo[2] === false ? check(2) : ''"/>
+    <div v-if="main!=null && !presentationMode && tournamentCheck">
       <div v-if="arbiter.length < 4" class="text-h6 q-pa-md">
         <q-input v-model="arbiterCode" @keypress.enter="checkArbiter(arbiterCode)" color="primary" type="password" label="Podaj pin" input-class="text-positive"
         label-color="positive"></q-input>
@@ -39,7 +39,7 @@
         <q-linear-progress :value="progress" :color="color" instant-feedback
           track-color="secondary" dark/>
       <label class="col-6 text-pisitive">
-        Chcesz mieć program u siebie? Napisz do mnie: i.zebrowski.ul@gmail.com
+        Chcesz mieć program u siebie? smartstrzelnica.pl
       </label>
       <div class="col"></div>
       </q-page-sticky>
@@ -54,7 +54,6 @@
         <q-card-section>
           <div v-if=" message != null " class="text-h6">{{ message }}</div>
         </q-card-section>
-
       </q-card>
     </q-dialog>
     <q-dialog position="top" v-model=" success ">
@@ -179,17 +178,15 @@ export default {
     progressBar () {
       let index = 0
       this.progress = 0.9
-      this.interval1 = setInterval(() => {
-        if (window.localStorage.getItem('SiteName') !== 'Panel Sędziego') {
-          clearInterval(this.interval1)
+      this.interval = setInterval(() => {
+        if (window.sessionStorage.getItem('SiteName') !== 'Panel Sędziego') {
+          clearInterval(this.interval)
         }
         if (this.progress > 0.2) {
           const target = document.documentElement
-          // const offset = window.screen.height * (this.progress - 0.2)
           const offset = document.documentElement.scrollHeight * (this.progress - 0.2)
           const duration = 0
           setVerticalScrollPosition(target, offset, duration)
-          // setVerticalScrollPosition(document.documentElement, document.documentElement.clientHeight * ((this.progress - 0.2)), 0)
         }
         this.setColor()
         this.progress = this.progress + 0.001
@@ -199,7 +196,6 @@ export default {
         }
         this.uuid = ''
         if (this.progress >= 1.0) {
-          console.log(this.tournament.competitionsList[index].scoreListSize)
           this.uuid = this.tournament.competitionsList[index].uuid
           index++
           this.progress = this.vol

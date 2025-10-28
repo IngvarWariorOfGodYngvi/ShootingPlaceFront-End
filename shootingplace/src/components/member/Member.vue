@@ -57,7 +57,7 @@
                 </q-card-actions>
               </q-popup-edit>
             </q-btn>
-            <!-- <SendEmail/> -->
+            <SendSingleEmail :name="member.fullName" :recipient="member.email"/>
           </div>
         </div>
         <div class="col text-bold q-pa-xs">
@@ -478,7 +478,7 @@
                   @click="!member.pzss ? (memberUUID = member.uuid, pzssPortal = true):''" />
               </q-item>
             </q-expansion-item>
-            <q-expansion-item dense v-if="!member.erased && shootingPlace === 'prod'" label="Deklaracja LOK"
+            <q-expansion-item dense v-if="!member.erased && (shootingPlace === 'prod' || shootingPlace === 'test')" label="Deklaracja LOK"
               group="right-right-card">
               <template v-slot:header>
                 <q-item-section avatar>
@@ -958,23 +958,6 @@
         <q-card-actions align="right">
           <q-btn glossy label="anuluj" color="black" v-close-popup @click=" code = null" />
           <q-btn glossy label="Przedłuż" color="black" v-close-popup @click=" simulateProgress(); code = null" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-    <q-dialog v-model="contributionHistoryCode" persistent>
-      <q-card class="bg-red-5 text-center">
-        <q-card-section class="flex-center">
-          <h3><span class="q-ml-sm">Wprowadź kod potwierdzający</span></h3>
-          <q-input
-            @keypress.enter=" addHistoryContributionRecord(memberUUID, historyContributionRecord); contributionHistoryCode = false"
-            autofocus type="password" v-model="code" filled color="Yellow" class="bg-yellow text-bold"
-            mask="####"></q-input>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn glossy label="anuluj" color="black" v-close-popup @click=" code = null" />
-          <q-btn glossy label="Przedłuż" color="black" v-close-popup
-            @click=" addHistoryContributionRecord(memberUUID, historyContributionRecord); code = null" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -1688,10 +1671,10 @@ export default {
       componentFactory: () => import('components/member/ApplicationForFirearmsLicense.vue'),
       loading: SkeletonBox
     }),
-    // SendEmail: lazyLoadComponent({
-    //   componentFactory: () => import('src/utils/SendEmail.vue'),
-    //   loading: SkeletonBox
-    // }),
+    SendSingleEmail: lazyLoadComponent({
+      componentFactory: () => import('src/utils/SendSingleEmail.vue'),
+      loading: SkeletonBox
+    }),
     Tooltip2clickTip: lazyLoadComponent({
       componentFactory: () => import('src/utils/Tooltip2clickTip.vue'),
       loading: SkeletonBox
@@ -1764,7 +1747,6 @@ export default {
       patentConfirm2: false,
       contribution: false,
       contributionCode: false,
-      contributionHistoryCode: false,
       deactivate: false,
       deactivateCard: false,
       eraseWeapon: false,
@@ -1983,38 +1965,6 @@ export default {
         month = '0' + (month)
       }
       return day + '-' + (month) + '-' + current.getFullYear()
-    },
-    addHistoryContributionRecord (uuid, date) {
-      fetch(`${this.local}/contribution/history/${uuid}?date=${date.replace(/\//gi, '-')}&pinCode=${this.code}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          response.text().then(
-            response => {
-              this.success = true
-              this.message = response
-              this.code = null
-              this.showloading()
-              this.getMemberByUUID(this.memberUUID)
-              this.autoClose()
-            })
-        } else {
-          response.text().then(
-            response => {
-              this.message = response
-              this.failure = true
-              this.code = null
-              this.autoClose()
-            })
-        }
-      }).catch(() => {
-          this.message = 'coś poszło nie tak'
-          this.failure = true
-          this.autoClose()
-        })
     },
     getMemberByUUID (uuid) {
       fetch(`${this.local}/member/uuid/${uuid}`, {

@@ -1,11 +1,14 @@
 <template>
   <q-page>
     <q-card class="bg-dark fit">
+      <label class="text-positive">
+        Chcesz mieć program u siebie? <a href="https://smartstrzelnica.pl/" target="_blank" style="text-decoration: none;" class="text-positive">smartstrzelnica.pl</a>
+      </label>
       <q-card-section>
-        <div class="row">
+        <div class="row text-positive">
           <q-checkbox v-model="nonMember" dense class="text-positive self-center col"
-            @input="pesel = '', member = null, phone = '', otherPerson = null, acceptNote = true"
-            label="Nie Jestem Klubowiczem" />
+          @input="pesel = '', member = null, phone = '', otherPerson = null, acceptNote = true"
+          label="Nie Jestem Klubowiczem" />
           <ShootingPlaceStatutePanaszew v-if="shootingPlace === 'rcs'" class="q-pa-xs"></ShootingPlaceStatutePanaszew>
           <ShootingPlaceStatuteDziesiątka v-if="shootingPlace === 'prod'" class="q-pa-xs">
           </ShootingPlaceStatuteDziesiątka>
@@ -265,7 +268,7 @@
             </div>
             <q-card-actions align="left" class="text-positive col-3">
               <label>
-                Chcesz mieć program u siebie? Napisz do mnie: i.zebrowski.ul@gmail.com
+                Chcesz mieć program u siebie? <a href="https://smartstrzelnica.pl/" target="_blank">smartstrzelnica.pl</a>
               </label>
             </q-card-actions>
             <q-card-actions align="right" class="col text-right">

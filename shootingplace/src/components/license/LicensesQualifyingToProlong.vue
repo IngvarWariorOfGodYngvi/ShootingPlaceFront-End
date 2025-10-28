@@ -20,7 +20,7 @@
       </div>
       <q-scroll-area style="height: 50vh">
         <div v-show="!visible">
-          <div v-for="(item, index) in list" :key="index" class="row hover1 items-center" @dblclick="legitimationNumber = item.legitimationNumber;memberDial=true">
+          <div v-for="(item, index) in list" :key="index" class="row hover1 items-center" @click.ctrl="pushOrRemove(item.email)" @dblclick="legitimationNumber = item.legitimationNumber;memberDial=true">
             <Tooltip2clickToShow></Tooltip2clickToShow>
             <q-checkbox dense v-if="item.license.paid" v-model="licenseList" value="" :val="item.uuid" left-label>
               {{ index + 1 }}.
@@ -160,6 +160,7 @@
 
 <script>
 import App from 'src/App.vue'
+import { pushOrRemoveEmailFromList } from 'src/scripts/pushOrRemoveEmailFromList'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox.vue'
 import Vue from 'vue'
@@ -222,8 +223,8 @@ export default {
           this.visible = false
         })
     },
-    searchText (text) {
-      console.log(text)
+    pushOrRemove (email) {
+      pushOrRemoveEmailFromList(email)
     },
     convertDate (date) {
       const current = new Date(date)

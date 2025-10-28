@@ -1,6 +1,7 @@
 <template>
   <q-layout class="bg-dark" view="lHh LpR fFf"
     :class="[funRotate ? 'fun2' : '', this.funRotateCLicks > 3 ? 'fun' : '']">
+    <SendEmail/>
     <q-header elevated>
       <q-page-sticky v-if="mobile" position="top-right" :offset="[5, -50]" style="z-index: 100">
         <q-icon class="fun" name="wifi" :color="networkStatusvar != null ? networkStatusvar ? 'green' : 'red' : ''" />
@@ -21,7 +22,17 @@
         <div class="col row reverse">
           <div class="row" :class="changesInfo[0] === false ? ' pulse' : ''"
             @click="changesInfo[0] === false ? check(0) : ''">
-            <q-avatar text-color="white" size="3.5em" color="secondary" rounded
+              <q-tooltip class="bg-primary" content-class="bg-primary text-h6 text-center">Ustawienia</q-tooltip>
+            <q-btn-dropdown dropdown-icon="settings" no-icon-animation content-class="bg-primary q-pa-xs" :content-style="mobile ? '' : 'width:20vw'" class="rotating" style="border: solid 1px white;width: 3.5em; height: 3.5em;border-radius: 50%;" rounded fab-mini color="secondary">
+              <template v-slot:icon>
+                <q-icon name="settings"></q-icon>
+              </template>
+              <Experimental v-if="main || main === false"/>
+                <UpdateProgram v-if="main" class="q-pa-xs text-center"/>
+                <OnOfMain class="q-pa-xs text-center"/>
+                <SignInByPin v-if="mobile"/>
+            </q-btn-dropdown>
+            <!-- <q-avatar text-color="white" size="3.5em" color="secondary" rounded
               style="border: solid 1px white; border-radius: 50%" class="lighterbtn rotating bg-secondary" icon="settings"
               @click="openSettings = !openSettings">
               <q-tooltip class="bg-primary" content-class="bg-primary text-h6 text-center">Ustawienia</q-tooltip>
@@ -32,7 +43,7 @@
                 <OnOfMain class="q-pa-xs text-center"/>
                 <SignInByPin v-if="mobile"/>
               </q-popup-edit>
-            </q-avatar>
+            </q-avatar> -->
           </div>
           <div v-if="main" class="row reverse">
             <q-icon class="fun" :class="networkStatusvar ? 'fun' : 'fun pulsing1'" name="wifi"
@@ -79,9 +90,7 @@
       <q-item @click="showloading(); changeTitle('Strona Główna')" style="height: 20vh;"
         class="bg-primary text-white q-pa-none q-ma-none" clickable tag="a" target="_self" :href="hrefTarget"
         width="max">
-          <q-img v-if="!mobile && shootingPlace === 'test'" draggable="false" class="fit" alt="logo" src="~assets/logo1_long.jpg" loading="lazy"/>
-          <q-img v-if="!mobile && shootingPlace === 'prod'" draggable="false" class="fit" alt="logo" src="~assets/logo_long.jpg" loading="lazy"/>
-          <q-img v-if="!mobile && shootingPlace === 'rcs'" draggable="false" class="fit" alt="logo" src="~assets/logo2_long.jpg" loading="lazy"/>
+          <q-img draggable="false" class="fit" alt="logo" :src="changeLong(shootingPlace)" loading="lazy" style="background-color: #4E607F;"/>
       </q-item>
       <div @click="showloading()">
         <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link" :title="link.title"
@@ -104,13 +113,14 @@
 </template>
 <style src="../style/style.scss" lang="scss"></style>
 <script>
-import { colors } from 'quasar'
 import App from 'src/App.vue'
 import { reactive } from 'vue'
 import { useNetwork } from '@vueuse/core'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox'
 import { checking } from 'src/scripts/ChangesInfo.js'
+import { changeColor } from 'src/scripts/ChangeColor'
+import { changeImageLong } from 'src/scripts/ChangeImages'
 
 export default {
   name: 'MainLayout',
@@ -160,6 +170,10 @@ export default {
       componentFactory: () => import('components/settings/OnOfMain.vue'),
       loading: SkeletonBox
     }),
+    SendEmail: lazyLoadComponent({
+      componentFactory: () => import('src/utils/SendEmail.vue'),
+      loading: SkeletonBox
+    }),
     Experimental: lazyLoadComponent({
       componentFactory: () => import('components/settings/Experimental.vue'),
       loading: SkeletonBox
@@ -167,7 +181,7 @@ export default {
   },
   beforeMount () {
     this.getFs()
-    this.getEnv()
+    this.changeColor()
   },
   created () {
     if (window.sessionStorage.getItem('SiteName') == null) {
@@ -209,7 +223,7 @@ export default {
       quantities: [],
       hrefTarget: App.prod,
       local: App.host,
-      shootingPlace: window.localStorage.getItem('shootingPlace'),
+      shootingPlace: App.shootingPlace,
       essentialLinks: [
         {
           title: 'Rejestr Pobytu na Strzelnicy',
@@ -275,7 +289,7 @@ export default {
           title: 'Panel Sędziego',
           icon: 'done',
           link: App.prod + 'juryPanel',
-          visible: (App.main || !App.main) && App.main != null
+          visible: true
         }
       ],
       networkStatusvar: null,
@@ -289,6 +303,9 @@ export default {
         this.$q.loading.hide()
         this.timer = 0
       }, 500)
+    },
+    changeLong (shootingPlace) {
+      return changeImageLong(shootingPlace)
     },
     getFs () {
       fetch(`${this.local}/conf/fs`, {
@@ -341,8 +358,9 @@ export default {
         }).then(response => {
           if (response.status === 200) {
             response.text().then(response => {
-              this.shootingPlace = response
-              window.localStorage.setItem('shootingPlace', response)
+              console.log(response)
+              this.shootingPlace = response[0]
+              window.localStorage.setItem('shootingPlace', response[0])
               this.changeColor()
             })
           }
@@ -432,69 +450,7 @@ export default {
       }
     },
     changeColor () {
-      if (this.backgroundDark) {
-        window.localStorage.setItem('BackgroundDark', 'true')
-        colors.setBrand('dark-separator', '$grey-6')
-        switch (this.shootingPlace) {
-          case 'test': {
-            colors.setBrand('primary', '#FD4D21')
-            colors.setBrand('secondary', '#091123')
-            colors.setBrand('dark', '#1D1D1D')
-            break
-          }
-          case 'prod': {
-            colors.setBrand('primary', '#871421')
-            colors.setBrand('secondary', '#374550')
-            colors.setBrand('dark', '#1D1D1D')
-            break
-          }
-          case 'rcs': {
-            colors.setBrand('primary', '#008000')
-            colors.setBrand('secondary', '#A00000')
-            colors.setBrand('dark', '#1D1D1D')
-            break
-          }
-          case 'rp': {
-            colors.setBrand('primary', '#be141e')
-            colors.setBrand('secondary', '#151510')
-            colors.setBrand('dark', '#1D1D1D')
-            break
-          }
-        }
-        colors.setBrand('positive', '#FFFFFF')
-        colors.setBrand('accent', '#A0A0A0')
-      } else {
-        window.localStorage.setItem('BackgroundDark', 'false')
-        colors.setBrand('dark-separator', '$grey-2')
-        switch (this.shootingPlace) {
-          case 'test': {
-            colors.setBrand('primary', '#FD4D21')
-            colors.setBrand('secondary', '#091123')
-            colors.setBrand('dark', '#F2F1E6')
-            break
-          }
-          case 'prod': {
-            colors.setBrand('primary', '#871421')
-            colors.setBrand('secondary', '#374550')
-            colors.setBrand('dark', '#FFFFFF')
-            break
-          }
-          case 'rcs': {
-            colors.setBrand('primary', '#008000')
-            colors.setBrand('secondary', '#A00000')
-            colors.setBrand('dark', '#FFFFFF')
-            break
-          }
-          case 'rp': {
-            colors.setBrand('primary', '#be141e')
-            colors.setBrand('secondary', '#151510')
-            colors.setBrand('dark', '#FFFFFF')
-            break
-          }
-        }
-        colors.setBrand('positive', '#000000')
-        colors.setBrand('accent', '#f3f3f3')
-      }
+      changeColor(this.backgroundDark, this.shootingPlace)
     }
   }
 }

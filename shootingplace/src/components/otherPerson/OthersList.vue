@@ -69,7 +69,7 @@
               :val="'BRAK'" label="Brak Klubu"/>
             <q-select v-if="clubName !== 'BRAK'" dense options-dense popup-content-class="bg-dark text-positive"
               options-selected-class="bg-dark text-positive" input-class="text-positive"
-              label-color="positive" class="full-width" @new-value="createValue" hide-selected use-chips filled
+              label-color="positive" class="full-width" hide-selected use-chips filled
               v-model="clubName" use-input fill-input input-debounce="0" :options="filterOptions"
               @filter="filterFna" label="Wybierz Klub">
               <template v-slot:no-option>
@@ -322,27 +322,6 @@ export default {
           })
         }
       })
-    },
-    createValue (val, done) {
-      if (val.length > 0) {
-        const model = (this.clubNames || []).slice()
-
-        val
-          .split(/[,;|]+/)
-          .map(v => v.trim())
-          .filter(v => v.length > 0)
-          .forEach(v => {
-            if (this.clubNames.includes(v) === false) {
-              this.clubNames.push(v)
-            }
-            if (model.includes(v) === false) {
-              model.push(v)
-            }
-          })
-
-        done(null)
-        this.clubNames = model
-      }
     },
     filterFna (val, update) {
       update(() => {

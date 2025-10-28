@@ -48,16 +48,21 @@
           <div class="text-h6 text-bold text-center col">Informacje o połączeniu: {{ temp.connectionName }}</div>
           <q-btn icon="close" color="primary" round dense v-close-popup/>
         </q-card-actions>
-        <q-card-section>
-          <div>nazwa: {{ temp.connectionName }}</div>
-          <div>identyfikator: {{ temp.uuid }}</div>
-          <div>host: {{ temp.host }}</div>
-          <div>port: {{ temp.port }}</div>
-          <div>nazwa użytkownika: {{ temp.username }}</div>
+        <q-card-section class="row">
+          <div class="col">
+            <div>nazwa: {{ temp.connectionName }}</div>
+            <div>identyfikator: {{ temp.uuid }}</div>
+            <div>host: {{ temp.host }}</div>
+            <div>port: {{ temp.port }}</div>
+            <div>nazwa użytkownika: {{ temp.username }}</div>
+          </div>
+          <div class="col">
+            <q-toggle v-for="(index, item) in emailSendList" :key="item" class="full-width" :value="index" @input="setMailingConfigList(item)">{{item }}</q-toggle>
+          </div>
         </q-card-section>
         <q-card-section>
           <q-btn glossy class="q-mr-md" label="testuj" color="primary" rounded @click="testConnection = true"/>
-          <q-btn glossy class="q-mr-md" label="edytuj" color="primary" rounded @click="uuid = temp.uuid;editConnection = true"/>
+          <q-btn glossy class="q-mr-md" label="Edytuj" color="primary" rounded @click="editConnection = true"/>
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -70,7 +75,8 @@
         <q-card-section>
           <q-input v-model="testEmail" label="adres e-mail" class="q-ma-md border-secondary" style="border: 2px solid" label-color="positive" input-class="text-positive" dense filled/>
           <q-btn glossy color="primary" class="q-ma-md" rounded :label="`wyślij test na adres: ${testEmail}`" @click="sendTestEmail()"/>
-          <q-btn glossy color="primary" class="q-ma-md" rounded :label="`wyślij test1 na adres: ${testEmail}`" @click="sendTestEmail1()"/>
+          <q-btn glossy color="primary" class="q-ma-md" rounded :label="`wyślij przypomnienie o składce dla nieaktywnych`" @click="sendManualRemindersForNonActive()"/>
+          <q-btn glossy color="primary" class="q-ma-md" rounded :label="`wyślij przypomnienie o składce dla aktywnych`" @click="manualRemindersForActive()"/>
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -121,8 +127,8 @@
         </q-card-section>
       </q-card>
     </q-dialog>
-    <q-dialog position="top" v-model="failure" class="bg-warning">
-      <q-card>
+    <q-dialog position="standard" v-model="failure">
+      <q-card class="bg-warning">
         <q-card-section>
           <div class="text-h6">{{ message }}</div>
         </q-card-section>
@@ -167,7 +173,6 @@ export default {
   data () {
     return {
       temp: null,
-      uuid: '',
       testEmail: '',
       testConnection: false,
       editConnection: false,
@@ -175,6 +180,7 @@ export default {
       save: false,
       saveEdit: false,
       connectionList: [],
+      emailSendList: [],
       connectionName: null,
       host: null,
       port: null,
@@ -196,6 +202,7 @@ export default {
   },
   created () {
     this.getConnections()
+    this.getMailingConfigList()
   },
   setup () {
     function simulateProgress () {
@@ -233,6 +240,43 @@ export default {
           this.connectionList = response
         })
     },
+    setMailingConfigList (key) {
+      this.emailSendList[key] = !this.emailSendList[key]
+      fetch(`${this.local}/email/mailingConfigList`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(this.emailSendList)
+      }).then(response => {
+        if (response.status === 200) {
+          response.text().then(() => {
+            this.autoClose()
+          })
+        } else {
+          response.text().then(response => {
+            this.message = response
+            this.failure = true
+            this.autoClose()
+          })
+        }
+      }).catch(() => {
+        this.message = 'coś jest nie tak'
+        this.failure = true
+        this.autoClose()
+      })
+    },
+    getMailingConfigList () {
+      fetch(`${this.local}/email/mailingConfigList`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => response.json())
+        .then(response => {
+          this.emailSendList = response
+        })
+    },
     sendTestEmail () {
       const data = {
         to: this.testEmail,
@@ -267,20 +311,32 @@ export default {
         }
       })
     },
-    sendTestEmail1 () {
-      const data = {
-        to: this.testEmail,
-        subject: 'test',
-        htmlContent: 'test',
-        attachments: [],
-        inlineImages: []
-      }
-      fetch(`${this.local}/email/test1`, {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json'
+    sendManualRemindersForNonActive () {
+      fetch(`${this.local}/email/manualRemindersForNonActive`, {
+        method: 'POST'
+      }).then(response => {
+        if (response.status === 200) {
+          response.text().then(
+            response => {
+              this.message = response
+              this.success = true
+              this.autoClose()
+            }
+          )
+        } else {
+          response.text().then(
+            response => {
+              this.message = response
+              this.failure = true
+              this.autoClose()
+            }
+          )
         }
+      })
+    },
+    manualRemindersForActive () {
+      fetch(`${this.local}/email/manualRemindersForActive`, {
+        method: 'POST'
       }).then(response => {
         if (response.status === 200) {
           response.text().then(
@@ -349,7 +405,7 @@ export default {
         starttls: true,
         sslTrust: '*'
       }
-      fetch(`${this.local}/email/edit?pinCode=${this.code}&uuid=${this.uuid}`, {
+      fetch(`${this.local}/email/edit?pinCode=${this.code}&uuid=${this.temp.uuid}`, {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {
@@ -359,6 +415,7 @@ export default {
         if (response.status === 200) {
           response.text().then(
             response => {
+              this.getConnections()
               this.message = response
               this.success = true
               this.autoClose()

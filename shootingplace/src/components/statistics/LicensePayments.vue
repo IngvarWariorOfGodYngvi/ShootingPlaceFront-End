@@ -79,7 +79,7 @@
                 :name="sortProlong ? 'arrow_drop_up' : 'arrow_drop_down'" />Nowa /<br />Przedłużenie</div>
           </div>
           <q-scroll-area style="height: 50vh">
-            <div v-for="(item, index) in quantitySumLicenseRearrangeTable" :key="index"
+            <div v-for="(item, index) in quantitySumLicenseRearrangeTable" :key="index" @click.ctrl="pushOrRemove(item.email)"
               class="row hover1 items-center text-center"
               @dblclick="legitimationNumber = item.legitimationNumber; memberDial = true">
               <Tooltip2clickToShow></Tooltip2clickToShow>
@@ -156,6 +156,7 @@
 <style src="src/style/style.scss" lang="scss"></style>
 <script>
 import App from 'src/App.vue'
+import { pushOrRemoveEmailFromList } from 'src/scripts/pushOrRemoveEmailFromList'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox'
 export default {
@@ -214,6 +215,9 @@ export default {
         day = (date.getDate())
       }
       return date.getFullYear() + '/' + month + '/' + day
+    },
+    pushOrRemove (email) {
+      pushOrRemoveEmailFromList(email)
     },
     sortF (type) {
       if (type === 'name') {

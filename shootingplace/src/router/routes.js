@@ -203,6 +203,11 @@ if (App.main) {
           component: () => import(/* webpackChunkName: "Ustawienia" */'pages/settings.vue')
         },
         {
+          path: '/juryPanel',
+          name: 'panel sędziego',
+          component: () => import(/* webpackChunkName: "Panel Sędziego" */'pages/juryPanel.vue')
+        },
+        {
           path: '/evidenceBook',
           name: 'Książka',
           component: () => import('src/pages/EvidenceBookPage.vue')

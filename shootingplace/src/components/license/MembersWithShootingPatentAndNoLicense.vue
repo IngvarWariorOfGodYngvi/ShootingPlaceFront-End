@@ -1,32 +1,5 @@
 <template>
   <div>
-    <div>
-      <q-page-sticky v-if="mailingList.length > 0" position="top-right" expand :offset="[6, 6]" style="z-index: 10;">
-        <q-tooltip anchor="center start" :hide-delay="200" class="bg-primary" content-class="bg-primary">
-          <div class="text-h6 text-center">
-            LISTA MAILINGOWA
-          </div>
-        </q-tooltip>
-        <q-fab v-model="mailing" label-position="bottom" color="secondary" icon="email" direction="down"
-          style="border: 2px solid white;">
-          <div v-if="mailingList.length > 0" class="bg-secondary text-white"
-            style="border-radius: 5% 5% 0 0; margin-right: 15vw; font-size: small; width: 18vw">
-            <q-btn dense class="text-caption full-width" align="center" label="wyczyść listę" color="primary"
-              icon="delete" rounded @click="clearMailingList()" />
-            <q-btn dense class="text-caption full-width" align="center"
-              :label="'kopiuj ' + mailingList.length + ' do schowka'" color="primary" icon="content_copy" rounded
-              @click="unsecuredCopyToClipboard(mailingList)" />
-            <q-virtual-scroll :items="mailingList" class="text-center" style="height: auto;max-height: 40vh;width: auto">
-              <template v-slot="{ item, index }">
-                <q-item dense style="padding: 0 10px 0 10px;margin: 0">
-                  {{ index + 1 }} {{ item }}
-                </q-item>
-              </template>
-            </q-virtual-scroll>
-          </div>
-        </q-fab>
-      </q-page-sticky>
-    </div>
     <q-card class="text-body2 bg-dark">
       <div class="row">
         <div class="q-pa-md text-left col full-width no-outline text-h5 text-bold text-positive">Ilość osób {{ list.length }}
@@ -40,7 +13,7 @@
       <q-scroll-area style="height: 50vh">
         <div v-if="!visible">
           <div v-for="(item, index) in list" :key="index" class="row hover1 items-center"
-          @click.ctrl="pushOrRemoveEmailToList(item.legitimationNumber)"
+          @click.ctrl="pushOrRemove(item.email)"
           @dblclick="legitimationNumber = item.legitimationNumber;memberDial=true">
             <Tooltip2clickToShow></Tooltip2clickToShow>
             <div class="col-4">&nbsp;
@@ -96,7 +69,7 @@
 import App from 'src/App.vue'
 import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox.vue'
-
+import { pushOrRemoveEmailFromList } from 'src/scripts/pushOrRemoveEmailFromList'
 export default {
   name: 'MembersWithShootingPatentAndNoLicense',
   data () {
@@ -144,23 +117,8 @@ export default {
           this.visible = false
         })
     },
-    pushOrRemoveEmailToList (number) {
-      console.log(number)
-      fetch(`${this.local}/member/getMemberEmail?number=${number}`, {
-        method: 'GET'
-      }).then(response => response.text())
-        .then(response => {
-          console.log(response)
-          const parse = JSON.parse(window.localStorage.getItem('mailingList'))
-          if (!parse.includes(response)) {
-            parse.push(response)
-          } else {
-            const number1 = this.mailingList.indexOf(response)
-            parse.splice(number1, number1 + 1)
-          }
-          window.localStorage.setItem('mailingList', JSON.stringify(parse))
-          this.mailingList = parse
-        })
+    pushOrRemove (email) {
+      pushOrRemoveEmailFromList(email)
     },
     clearMailingList () {
       window.localStorage.setItem('mailingList', JSON.stringify([]))

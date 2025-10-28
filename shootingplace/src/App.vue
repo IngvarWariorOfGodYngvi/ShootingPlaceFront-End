@@ -11,9 +11,9 @@ import { scripts } from 'src/scripts/SetLocalStorageVariables.js'
 export default {
   created () {
     this.shootingPlace = window.localStorage.getItem('shootingPlace')
+    this.getEnv()
   },
   beforeMount () {
-    this.getEnv()
     this.createMain()
   },
   methods: {
@@ -33,21 +33,9 @@ export default {
           method: 'GET'
         }).then(response => {
           if (response.status === 200) {
-            response.text().then(response => {
-              window.localStorage.setItem('shootingPlace', response)
-              switch (response) {
-                case 'prod':
-                  window.localStorage.setItem('shootingPlaceName', 'DZIESIĄTKAŁÓDŹ')
-                  break
-                case 'rcs':
-                  window.localStorage.setItem('shootingPlaceName', 'RCSPANASZEW')
-                  break;
-                case 'test':
-                  window.localStorage.setItem('shootingPlaceName', 'TEST')
-                  break;
-                default:
-                  window.localStorage.setItem('shootingPlaceName', 'TEST')
-              }
+            response.json().then(response => {
+              window.localStorage.setItem('shootingPlace', response[0])
+              window.localStorage.setItem('shootingPlaceName', response[1])
             })
           }
         })

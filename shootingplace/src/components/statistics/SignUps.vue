@@ -62,7 +62,7 @@
                 :name="sortStatus ? 'arrow_drop_up' : 'arrow_drop_down'" />Status</div>
           </div>
           <q-scroll-area style="height: 50vh">
-            <div v-for="(item, index) in list" :key="index" class="row hover1 items-center"
+            <div v-for="(item, index) in list" :key="index" class="row hover1 items-center" @click.ctrl="pushOrRemove(item.email)"
               @dblclick="legitimationNumber = item.legitimation_number; memberDial = true">
               <Tooltip2clickToShow></Tooltip2clickToShow>
               <div class="col">{{ index + 1 }}&nbsp;
@@ -119,6 +119,7 @@ import lazyLoadComponent from 'src/utils/lazyLoadComponent'
 import SkeletonBox from 'src/utils/SkeletonBox'
 import axios from 'axios'
 import App from 'src/App'
+import { pushOrRemoveEmailFromList } from 'src/scripts/pushOrRemoveEmailFromList'
 
 export default {
   name: 'SignUps.vue',
@@ -184,6 +185,9 @@ export default {
         day = (date.getDate())
       }
       return date.getFullYear() + '/' + month + '/' + day
+    },
+    pushOrRemove (email) {
+      pushOrRemoveEmailFromList(email)
     },
     getSumJoinDate () {
       fetch(`${this.local}/statistics/joinDateSum?firstDate=${this.firstDateJoinDate.replace(/\//gi, '-')}&secondDate=${this.secondDateJoinDate.replace(/\//gi, '-')}`, {

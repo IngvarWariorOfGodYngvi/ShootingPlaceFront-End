@@ -66,7 +66,7 @@
     <q-dialog v-model="emailInfo">
       <q-card v-if="temp != null" class="bg-dark text-positive" style="min-width: 60vw;">
         <q-card-actions align="right">
-          <div class="col text-h6 text-bold text-center">Informacje o wiadomości</div>
+          <div class="col text-h6 text-bold text-center">Informacje o wysłanej wiadomości</div>
           <q-btn icon="close" color="primary" round dense v-close-popup />
         </q-card-actions>
         <q-card-section>
@@ -78,7 +78,7 @@
             <div class="col-2">Odbiorca:</div>
             <div class="col">{{ temp.recipient }} ({{ temp.memberName }})</div>
           </div>
-          <q-editor v-model="temp.content" :toolbar="[]" :fonts="[]" class="bg-dark text-positive" readonly
+          <q-editor v-model="temp.content" :toolbar="[]" :fonts="[]" class="bg-dark text-positive border-positive" readonly
             content-class="bg-dark text-positive"></q-editor>
         </q-card-section>
       </q-card>

@@ -228,30 +228,6 @@ export default {
         }
       })
     },
-    createValue (val, done) {
-      if (val.length > 0) {
-        const model = (this.clubName || []).slice()
-
-        val
-          .split(/[,;|]+/)
-          .map(v => v.trim())
-          .filter(v => v.length > 0)
-          .forEach(v => {
-            if (this.clubs.includes(v) === false) {
-              this.clubs.push(v)
-            }
-            if (model.includes(v) === false) {
-              model.push(v)
-            }
-          })
-
-        done(null)
-        this.clubName = model
-      }
-      this.message = 'dodano do listy'
-      this.success = true
-      this.autoClose()
-    },
     autoClose () {
       setTimeout(() => {
         this.message = null

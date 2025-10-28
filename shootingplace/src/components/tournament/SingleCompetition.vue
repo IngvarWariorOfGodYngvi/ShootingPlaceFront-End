@@ -11,7 +11,7 @@
     <div v-for="(item, index) in competition.scoreList" :key="index" class="full-width q-pa-none ghover">
       <div class="row text-body2 full-width">
         <!-- button -->
-        <div class="row" style="width: 5%;">
+        <div class="row items-center" style="width: 5%;">
           <q-btn dense glossy class="full-width box text-positive"
             :icon="item.ammunition === false && item.gun === false ? 'book' : item.ammunition === true && item.gun === false ? 'done book' : item.ammunition === false && item.gun === true ? 'book done' : item.ammunition === true && item.gun === true ? 'done' : 'book'"
             @click="scoreUUID = item.uuid; temp = item.member != null ? item.member : item.otherPersonEntity.secondName; item.member != null ? (memberLeg = item.member.legitimationNumber, otherID = 0) : (otherID = item.otherPersonEntity.id, memberLeg = 0); getListCalibers(); caliberUUID = competition.caliberUUID; ammoQuantity = competition.practiceShots + competition.numberOfShots; member = item.member; other = item.otherPersonEntity; addAmmo = true">
@@ -615,7 +615,7 @@ export default {
       startNumber: '',
       member: null,
       other: null,
-      compName: null,
+      compName: '',
       name: '',
       date: '',
       compList: [],

@@ -105,7 +105,7 @@
           </div>
         </q-item>
       </div>
-      <div v-if="(main || !main) && main != null" @click="showloading(); changeTitle('Panel Sędziego')" class="q-pa-xs">
+      <div @click="showloading(); changeTitle('Panel Sędziego')" class="q-pa-xs">
         <q-item class="q-pa-none xyz2" clickable tag="a" target="_self" :href="app + 'juryPanel'" width="max">
           <div class="row text-grey-7 text-left">
             <q-icon class="q-pa-md text-h5" name="done" />

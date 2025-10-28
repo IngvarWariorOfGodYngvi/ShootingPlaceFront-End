@@ -40,7 +40,7 @@
             <div class="col-2">Odbiorca:</div>
             <div class="col">{{ temp.recipient }} ({{ temp.memberName }})</div>
           </div>
-          <q-editor v-model="temp.htmlContent" :toolbar="toolbar" :fonts="fonts" class="bg-dark text-positive" :style="tempEditText?'':'border: 2px solid white'" :readonly="tempEditText" content-class="bg-dark text-positive"></q-editor>
+          <q-editor v-model="temp.htmlContent" :toolbar="toolbar" :fonts="fonts" class="bg-dark text-positive" :class="tempEditText?'':'border-positive'" :readonly="tempEditText" content-class="bg-dark text-positive"></q-editor>
         </q-card-section>
         <q-card-section align="right">
           <q-btn glossy class="q-ma-xs" color="red" label="usuń wiadomość" rounded @click="deleteScheduledEmails(temp.uuid)" v-close-popup/>
